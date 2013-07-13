@@ -8615,8 +8615,8 @@ jarvis.objects.Dimensions.List = function(sender, options, callback) {
     return jarvis.objects.Dimensions
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Dimensions.svc/List", {}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/dimensions.list", {}, function(sender, data, error) {
+      result = data.dimensions;
       jarvis.objects.Dimensions.splice(0, jarvis.objects.Dimensions.length);
       $(result).each(function(index, item) {
         jarvis.objects.Dimensions.push(item)
@@ -8624,8 +8624,8 @@ jarvis.objects.Dimensions.List = function(sender, options, callback) {
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Dimensions.svc/List", null, null);
-    var data = $.parseJSON(result.data);
+    result = jarvis.dataaccess.fetch(this, "/dimensions.list", null, null);
+    var data = result.dimensions;
     jarvis.objects.Dimensions.splice(0, jarvis.objects.Dimensions.length);
     $(data).each(function(index, item) {
       jarvis.objects.Dimensions.push(item)
@@ -8636,12 +8636,13 @@ jarvis.objects.Dimensions.List = function(sender, options, callback) {
 jarvis.objects.Dimensions.Get = function(sender, options, callback) {
   var result;
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Dimensions.svc/Get", {id:options.id}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/dimensions.get", {id:options.id}, function(sender, data, error) {
+      result = data.dimension;
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Dimensions.svc/Get", {id:options.id}, null)
+    result = jarvis.dataaccess.fetch(this, "/dimensions.get", {id:options.id}, null);
+    result = result.dimension
   }
   return result
 };
@@ -8677,22 +8678,20 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
     return jarvis.objects.Metrics
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Metrics.svc/List", {}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/metrics.list", {}, function(sender, data, error) {
+      result = data.metrics;
       jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
       $(result).each(function(index, item) {
-        jarvis.objects.Metrics.push(item);
-        jarvis.dataaccess.metrics.push(item)
+        jarvis.objects.Metrics.push(item)
       });
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Metrics.svc/List", null, null);
-    var data = $.parseJSON(result.data);
+    result = jarvis.dataaccess.fetch(this, "/metrics.list", null, null);
+    var data = result.metrics;
     jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
     $(data).each(function(index, item) {
-      jarvis.objects.Metrics.push(item);
-      jarvis.dataaccess.metrics.push(item)
+      jarvis.objects.Metrics.push(item)
     })
   }
   return result
@@ -8700,12 +8699,13 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
 jarvis.objects.Metrics.Get = function(sender, options, callback) {
   var result;
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Metrics.svc/Get", {id:options.id}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/metrics.get", {id:options.id}, function(sender, data, error) {
+      result = data.metric;
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Metrics.svc/Get", {id:options.id}, null)
+    result = jarvis.dataaccess.fetch(this, "/metrics.get", {id:options.id}, null);
+    result = result.metric
   }
   return result
 };
@@ -8801,8 +8801,8 @@ jarvis.objects.Dashboards.List = function(sender, options, callback) {
     return jarvis.objects.Dashboards
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Dashboards.svc/List", null, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/dashboards.list", null, function(sender, data, error) {
+      result = data.dashboards;
       jarvis.objects.Dashboards.splice(0, jarvis.objects.Dashboards.length);
       $(result).each(function(index, item) {
         jarvis.objects.Dashboards.push(item)
@@ -8810,8 +8810,8 @@ jarvis.objects.Dashboards.List = function(sender, options, callback) {
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Dashboards.svc/List", null, null);
-    var data = $.parseJSON(result.data);
+    result = jarvis.dataaccess.fetch(this, "/dashboards.list", null, null);
+    var data = result.dashboards;
     jarvis.objects.Dashboards.splice(0, jarvis.objects.Dashboards.length);
     $(data).each(function(index, item) {
       jarvis.objects.Dashboards.push(item)
@@ -8823,16 +8823,17 @@ jarvis.objects.Dashboards.Get = function(sender, options, callback, force) {
   var result;
   if(jarvis.objects.Dashboards.length > 0 && typeof callback !== "function" && !force) {
     return _.find(jarvis.objects.Dashboards, function(item) {
-      return item.ID == options.id
+      return item.id == options.id
     })
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Dashboards.svc/Get", {id:options.id}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/dashboards.get", {id:options.id}, function(sender, data, error) {
+      result = data.dashboard;
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Dashboards.svc/Get", {id:options.id}, null)
+    result = jarvis.dataaccess.fetch(this, "dashboards.get", {id:options.id}, null);
+    result = result.dashboard
   }
   return result
 };
@@ -14665,7 +14666,7 @@ jarvis.visualisation.dashboard.Panel = function(options) {
   }
   if(this.panelID == -1) {
     try {
-      this.panelID = jarvis.objects.Dashboards[0].ID
+      this.panelID = jarvis.objects.Dashboards[0].id
     }catch(e) {
       this.panelID = -1
     }
@@ -14709,7 +14710,7 @@ jarvis.visualisation.dashboard.Panel.prototype.init = function(options, containe
   }catch(e) {
   }
   if(_this.panelID == -1) {
-    _this.panelID = jarvis.objects.Dashboards[0].ID
+    _this.panelID = jarvis.objects.Dashboards[0].id
   }
   jarvis.debug.log("INFO", "jarvis.visualisation.dashboard.Panel", 6, "Building panel for ID ('" + _this.panelID + "')");
   _this.setDisplay();
@@ -14803,7 +14804,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
           metricslist += ", " + item.SecondaryMetric.Name
         }
-        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
+        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14821,7 +14822,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.Dimension == null || item.Dimension.Name == null) {
           break
         }
-        _html = '<div class="jarvis dashboard bar widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-dimensions="' + item.Dimension.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
+        _html = '<div class="jarvis dashboard bar widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-dimensions="' + item.Dimension.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14836,7 +14837,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.PrimaryMetric.Name == null) {
           break
         }
-        _html = '<div class="jarvis dashboard metricbox widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-dimensions="' + "" + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-minichart-height="' + _this.options.widgets.metricbox.minichart.height + '" data-minichart-width="' + _this.options.widgets.metricbox.minichart.width + '"></div>';
+        _html = '<div class="jarvis dashboard metricbox widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + "" + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-minichart-height="' + _this.options.widgets.metricbox.minichart.height + '" data-minichart-width="' + _this.options.widgets.metricbox.minichart.width + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14858,7 +14859,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
           metricslist += ", " + item.SecondaryMetric.Name
         }
-        _html = '<div class="jarvis dashboard jtable widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
+        _html = '<div class="jarvis dashboard jtable widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14880,7 +14881,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
           metricslist += ", " + item.SecondaryMetric.Name
         }
-        _html = '<div class="jarvis dashboard bartable widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
+        _html = '<div class="jarvis dashboard bartable widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14898,7 +14899,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.Dimension == null || item.Dimension.Name == null) {
           break
         }
-        _html = '<div class="jarvis dashboard pie widget" data-widgetid="' + item.ID + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-legend="' + _this.options.widgets.pie.legend + '"></div>';
+        _html = '<div class="jarvis dashboard pie widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-legend="' + _this.options.widgets.pie.legend + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14942,7 +14943,7 @@ jarvis.visualisation.dashboard.Panel.prototype.get = function(sender, id) {
     return
   }
   var data = jarvis.objects.Dashboards.Get(null, {id:id});
-  sender.panelID = data.ID;
+  sender.panelID = data.id;
   return data
 };
 jarvis.visualisation.dashboard.Panel.prototype.updateDisplay = function(options) {
@@ -15009,7 +15010,7 @@ jarvis.visualisation.dashboard.Panel.prototype.showEdit = function(options) {
       data = $.parseJSON(data.data);
       jarvis.objects.Dashboards.List(null, null, null, true);
       buildContentMenu_Dashboards();
-      _this.panelID = jarvis.objects.Dashboards[0].ID;
+      _this.panelID = jarvis.objects.Dashboards[0].id;
       _this.init(null, null, true);
       $modal.modal("hide")
     })
