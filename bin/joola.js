@@ -6746,7 +6746,7 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
   }
   var oResult = null;
   var options = {type:"GET", timeout:timeout ? timeout : null, dataType:"json", async:typeof callback === "function", url:endPoint, contentType:"application/json;", data:queryOptions, beforeSend:function(xhr, settings) {
-    xhr.setRequestHeader("jarvis-token", jarvis.TOKEN);
+    xhr.setRequestHeader("joola-token", jarvis.TOKEN);
     $(".simpleloading").css("display", "block");
     $(".simpleloading").show()
   }, error:function(xhr, textStatus, error) {
@@ -6806,7 +6806,7 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
   }
   endPoint = jarvis.endpoints.query + endPoint;
   var options = {type:"GET", dataType:"json", url:endPoint, contentType:"application/json;", xhrFields:{withCredentials:true}, data:queryOptions, beforeSend:function(xhr, settings) {
-    xhr.setRequestHeader("jarvis-token", jarvis.TOKEN)
+    xhr.setRequestHeader("joola-token", jarvis.TOKEN)
   }, error:function(xhr, textStatus, error) {
     console.log("Error during ajax call.", textStatus, error);
     if(xhr.status == 500 || xhr.readyState != 0) {
@@ -7688,13 +7688,13 @@ jarvis.objects.Auth.prototype.GetToken = function(sender, options, callback) {
 jarvis.objects.Auth.prototype.GetUser = function(sender, options, callback) {
   var result;
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Auth.svc/GetUser", null, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/auth.getUser", null, function(sender, data, error) {
+      result = data.user;
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Auth.svc/GetUser", null, null);
-    result = $.parseJSON(result.data)
+    result = jarvis.dataaccess.fetch(this, "/auth.getUser", null, null);
+    result = result.user
   }
   return result
 };
@@ -8317,9 +8317,8 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
   }
   jarvis.inSaveState = true;
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Query.svc/SystemStartDate", null, function(sender, data, error) {
-      result = data.data;
-      result = new Date(result);
+    jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, function(sender, data, error) {
+      result = data.startDate;
       jarvis.systemStartDate = new Date(result);
       setTimeout(function() {
         jarvis.inSaveState = false
@@ -8327,9 +8326,8 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Query.svc/SystemStartDate", null, null);
-    result = result.data;
-    result = new Date(result);
+    result = jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, null);
+    result = result.startDate;
     jarvis.systemStartDate = new Date(result);
     setTimeout(function() {
       jarvis.inSaveState = false
@@ -8344,9 +8342,8 @@ jarvis.objects.Query.prototype.SystemEndDate = function(sender, options, callbac
   }
   jarvis.inSaveState = true;
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Query.svc/SystemEndDate", null, function(sender, data, error) {
-      result = data.data;
-      result = new Date(result);
+    jarvis.dataaccess.fetch(this, "/status.systemEndDate", null, function(sender, data, error) {
+      result = data.endDate;
       jarvis.systemEndDate = new Date(result);
       setTimeout(function() {
         jarvis.inSaveState = false
@@ -8354,9 +8351,8 @@ jarvis.objects.Query.prototype.SystemEndDate = function(sender, options, callbac
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Query.svc/SystemEndDate", null, null);
-    result = result.data;
-    result = new Date(result);
+    result = jarvis.dataaccess.fetch(this, "/status.systemEndDate", null, null);
+    result = result.endDate;
     jarvis.systemEndDate = new Date(result);
     setTimeout(function() {
       jarvis.inSaveState = false
@@ -9288,64 +9284,77 @@ jarvis.visualisation.picker.DateBox.init = function(options, container) {
   this.original_base_todate = null;
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
-  this.min_date = (new jarvis.objects.Query).SystemStartDate();
-  this.max_date = (new jarvis.objects.Query).SystemEndDate();
-  this.base_todate = (new jarvis.objects.Query).SystemEndDate();
-  this.base_fromdate = _this.addDays(this.base_todate, -30);
-  var rangelength = Date.dateDiff("d", this.base_fromdate, this.base_todate);
-  this.compare_todate = _this.addDays(this.base_fromdate, -1);
-  this.compare_fromdate = _this.addDays(this.compare_todate, -1 * rangelength);
-  this.original_base_fromdate = this.base_fromdate;
-  this.original_base_todate = this.base_todate;
-  this.original_compare_fromdate = this.compare_fromdate;
-  this.original_compare_todate = this.compare_todate;
-  this.applied_base_fromdate = this.base_fromdate;
-  this.applied_base_todate = this.base_todate;
-  this.applied_compare_fromdate = this.compare_fromdate;
-  this.applied_compare_todate = this.compare_todate;
-  this.comparePeriod = false;
-  this.isCompareChecked = false;
-  _this.getState(_this);
-  this.offsetX = 0;
-  this.offsetY = 0;
-  this.callbacks = [];
-  this.cssPath = jarvis.hostname + "/assets/css/datebox.css";
-  if(!jarvis.dateboxcssloaded) {
-    jarvis.dateboxcssloaded = true;
-    $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
-  }
-  var matchedContainers = null;
-  if(container) {
-    matchedContainers = $(container)
-  }else {
-    matchedContainers = $(".jarvis.picker.datebox")
-  }
-  if(matchedContainers.length == 0) {
-    return
-  }
-  $(matchedContainers).each(function(index, item) {
-    if(!$(this).parent().hasClass("prettyprint")) {
-      jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 6, "Applying to container ('" + this.id + "')");
-      var offsetX = $(item).attr("data-offsetx");
-      var offsetY = $(item).attr("data-offsety");
-      if(offsetX) {
-        _this.offsetX = offsetX
-      }
-      if(offsetY) {
-        _this.offsetY = offsetY
-      }
-      $(item).empty();
-      _this.draw(item);
-      $(this).bind("data", function(evt, ret) {
-        ret.data = $(this).data().data
-      });
-      $(this).bind("click", function(evt) {
-        $(this).trigger("clicked", $(this).data().data)
-      })
+  var calls = [];
+  var call = function(callback) {
+    this.min_date = (new jarvis.objects.Query).SystemStartDate(this, {}, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  var call = function(callback) {
+    this.max_date = (new jarvis.objects.Query).SystemEndDate(this, {}, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  fork(calls, function() {
+    this.base_todate = new Date(this.max_date);
+    this.base_fromdate = _this.addDays(this.base_todate, -30);
+    var rangelength = Date.dateDiff("d", this.base_fromdate, this.base_todate);
+    this.compare_todate = _this.addDays(this.base_fromdate, -1);
+    this.compare_fromdate = _this.addDays(this.compare_todate, -1 * rangelength);
+    this.original_base_fromdate = this.base_fromdate;
+    this.original_base_todate = this.base_todate;
+    this.original_compare_fromdate = this.compare_fromdate;
+    this.original_compare_todate = this.compare_todate;
+    this.applied_base_fromdate = this.base_fromdate;
+    this.applied_base_todate = this.base_todate;
+    this.applied_compare_fromdate = this.compare_fromdate;
+    this.applied_compare_todate = this.compare_todate;
+    this.comparePeriod = false;
+    this.isCompareChecked = false;
+    _this.getState(_this);
+    this.offsetX = 0;
+    this.offsetY = 0;
+    this.callbacks = [];
+    this.cssPath = jarvis.hostname + "/assets/css/datebox.css";
+    if(!jarvis.dateboxcssloaded) {
+      jarvis.dateboxcssloaded = true;
+      $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
     }
-  });
-  var executionTime = (new Date).getMilliseconds() - start;
-  jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 5, "...init (" + executionTime + "ms)")
+    var matchedContainers = null;
+    if(container) {
+      matchedContainers = $(container)
+    }else {
+      matchedContainers = $(".jarvis.picker.datebox")
+    }
+    if(matchedContainers.length == 0) {
+      return
+    }
+    $(matchedContainers).each(function(index, item) {
+      if(!$(this).parent().hasClass("prettyprint")) {
+        jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 6, "Applying to container ('" + this.id + "')");
+        var offsetX = $(item).attr("data-offsetx");
+        var offsetY = $(item).attr("data-offsety");
+        if(offsetX) {
+          _this.offsetX = offsetX
+        }
+        if(offsetY) {
+          _this.offsetY = offsetY
+        }
+        $(item).empty();
+        _this.draw(item);
+        $(this).bind("data", function(evt, ret) {
+          ret.data = $(this).data().data
+        });
+        $(this).bind("click", function(evt) {
+          $(this).trigger("clicked", $(this).data().data)
+        })
+      }
+    });
+    var executionTime = (new Date).getMilliseconds() - start;
+    jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 5, "...init (" + executionTime + "ms)")
+  })
 };
 jarvis.visualisation.picker.DateBox.addDays = function(o, days) {
   return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days)
@@ -23735,9 +23744,10 @@ jarvis.visualisation.bootstrap = function() {
 };
 jarvis.debug.log("INFO", "Jarvis.Visualisation", 6, "JS source loaded");
 try {
-  jarvis.USER = (new jarvis.objects.Auth).GetUser();
-  jarvis.USER.Display = jarvis.USER[Object.keys(jarvis.USER)[0]];
-  $(".loginname").prepend(jarvis.USER.Display)
+  (new jarvis.objects.Auth).GetUser(this, {}, function(sender, user) {
+    jarvis.USER = user;
+    $(".loginname").prepend(jarvis.USER.displayName)
+  })
 }catch(ex) {
   console.log(ex)
 }
@@ -23779,4 +23789,29 @@ $().ready(function(e) {
     })
   }
 });
+window.fork = function(async_calls, shared_callback) {
+  var counter = async_calls.length;
+  var all_results = [];
+  function makeCallback(index) {
+    return function() {
+      counter--;
+      var results = [];
+      for(var i = 0;i < arguments.length;i++) {
+        results.push(arguments[i])
+      }
+      all_results[index] = results;
+      if(counter == 0) {
+        shared_callback(all_results)
+      }
+    }
+  }
+  for(var i = 0;i < async_calls.length;i++) {
+    try {
+      async_calls[i](makeCallback(i))
+    }catch(ex) {
+      console.log("Forked thread failed: " + ex.message);
+      console.log(ex.stack)
+    }
+  }
+};
 

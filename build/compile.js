@@ -107,6 +107,7 @@ fileList.push(libDir + '/jarvis.visualisation.js');
 fileList.push(libDir + '/jarvis.tail.js');
 
 if (fileList) {
+    /*
     ClosureCompiler.compile(
         fileList,
         {
@@ -138,7 +139,7 @@ if (fileList) {
             }
         }
     );
-
+    */
 
     ClosureCompiler.compile(
         fileList,
