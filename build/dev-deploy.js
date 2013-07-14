@@ -6,10 +6,14 @@ var
 logger.info('Starting build development environment deploy script...');
 
 var basePath = path.join(__dirname + '/..');
-var targetDirectory = path.join(basePath + '/../joola-analytics/node_modules/joola-sdk');
+var targetDirectory = path.join(basePath + '/../joola-analytics/node_modules/joola-sdk', '/bin/joola.js');
+var serverDirectory = path.join(basePath + '/../joola-server/node_modules/joola-analytics/node_modules/joola-sdk', '/bin/joola.js');
+
+var sourceFile = path.join(basePath + '/bin/joola.js');
 
 logger.info('Base path: ' + basePath);
 logger.info('Target path: ' + targetDirectory);
+logger.info('Server path: ' + serverDirectory);
 
 logger.info('Running compiler...');
 var compilerBin = path.join(basePath, './build/compile.js')
@@ -26,13 +30,29 @@ prc.on('close', function (code) {
             return filename.indexOf('git') == -1 && filename.indexOf('.idea') == -1;
         }
     };
+    var calls = [];
 
-    ncp(basePath, targetDirectory, options, function (err) {
-        if (err)
-            logger.error('Failed: ' + err);
-        else
-            logger.info('...Files copied');
-    });
-
-    logger.info('Build script finished');
+    var call = function (callback) {
+        ncp(sourceFile, targetDirectory, options, function (err) {
+            if (err)
+                logger.error('Failed: ' + err);
+            else
+                logger.info('...Files copied');
+            callback();
+        });
+    };
+    calls.push(call);
+    call = function (callback) {
+        ncp(sourceFile, serverDirectory, options, function (err) {
+            if (err)
+                logger.error('Failed: ' + err);
+            else
+                logger.info('...Files copied');
+        });
+        callback();
+    };
+    calls.push(call);
+    fork(calls, function () {
+        logger.info('Build script finished');
+    })
 });

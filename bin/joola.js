@@ -9285,77 +9285,64 @@ jarvis.visualisation.picker.DateBox.init = function(options, container) {
   this.original_base_todate = null;
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
-  var calls = [];
-  var call = function(callback) {
-    this.min_date = (new jarvis.objects.Query).SystemStartDate(this, {}, function() {
-      callback()
-    })
-  };
-  calls.push(call);
-  var call = function(callback) {
-    this.max_date = (new jarvis.objects.Query).SystemEndDate(this, {}, function() {
-      callback()
-    })
-  };
-  calls.push(call);
-  fork(calls, function() {
-    this.base_todate = new Date(this.max_date);
-    this.base_fromdate = _this.addDays(this.base_todate, -30);
-    var rangelength = Date.dateDiff("d", this.base_fromdate, this.base_todate);
-    this.compare_todate = _this.addDays(this.base_fromdate, -1);
-    this.compare_fromdate = _this.addDays(this.compare_todate, -1 * rangelength);
-    this.original_base_fromdate = this.base_fromdate;
-    this.original_base_todate = this.base_todate;
-    this.original_compare_fromdate = this.compare_fromdate;
-    this.original_compare_todate = this.compare_todate;
-    this.applied_base_fromdate = this.base_fromdate;
-    this.applied_base_todate = this.base_todate;
-    this.applied_compare_fromdate = this.compare_fromdate;
-    this.applied_compare_todate = this.compare_todate;
-    this.comparePeriod = false;
-    this.isCompareChecked = false;
-    _this.getState(_this);
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.callbacks = [];
-    this.cssPath = jarvis.hostname + "/assets/css/datebox.css";
-    if(!jarvis.dateboxcssloaded) {
-      jarvis.dateboxcssloaded = true;
-      $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
-    }
-    var matchedContainers = null;
-    if(container) {
-      matchedContainers = $(container)
-    }else {
-      matchedContainers = $(".jarvis.picker.datebox")
-    }
-    if(matchedContainers.length == 0) {
-      return
-    }
-    $(matchedContainers).each(function(index, item) {
-      if(!$(this).parent().hasClass("prettyprint")) {
-        jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 6, "Applying to container ('" + this.id + "')");
-        var offsetX = $(item).attr("data-offsetx");
-        var offsetY = $(item).attr("data-offsety");
-        if(offsetX) {
-          _this.offsetX = offsetX
-        }
-        if(offsetY) {
-          _this.offsetY = offsetY
-        }
-        $(item).empty();
-        _this.draw(item);
-        $(this).bind("data", function(evt, ret) {
-          ret.data = $(this).data().data
-        });
-        $(this).bind("click", function(evt) {
-          $(this).trigger("clicked", $(this).data().data)
-        })
+  this.min_date = (new jarvis.objects.Query).SystemStartDate();
+  this.max_date = (new jarvis.objects.Query).SystemEndDate();
+  this.base_todate = new Date(this.max_date);
+  this.base_fromdate = _this.addDays(this.base_todate, -30);
+  var rangelength = Date.dateDiff("d", this.base_fromdate, this.base_todate);
+  this.compare_todate = _this.addDays(this.base_fromdate, -1);
+  this.compare_fromdate = _this.addDays(this.compare_todate, -1 * rangelength);
+  this.original_base_fromdate = this.base_fromdate;
+  this.original_base_todate = this.base_todate;
+  this.original_compare_fromdate = this.compare_fromdate;
+  this.original_compare_todate = this.compare_todate;
+  this.applied_base_fromdate = this.base_fromdate;
+  this.applied_base_todate = this.base_todate;
+  this.applied_compare_fromdate = this.compare_fromdate;
+  this.applied_compare_todate = this.compare_todate;
+  this.comparePeriod = false;
+  this.isCompareChecked = false;
+  _this.getState(_this);
+  this.offsetX = 0;
+  this.offsetY = 0;
+  this.callbacks = [];
+  this.cssPath = "/assets/css/datebox.css";
+  if(!jarvis.dateboxcssloaded) {
+    jarvis.dateboxcssloaded = true;
+    $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
+  }
+  var matchedContainers = null;
+  if(container) {
+    matchedContainers = $(container)
+  }else {
+    matchedContainers = $(".jarvis.picker.datebox")
+  }
+  if(matchedContainers.length == 0) {
+    return
+  }
+  $(matchedContainers).each(function(index, item) {
+    if(!$(this).parent().hasClass("prettyprint")) {
+      jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 6, "Applying to container ('" + this.id + "')");
+      var offsetX = $(item).attr("data-offsetx");
+      var offsetY = $(item).attr("data-offsety");
+      if(offsetX) {
+        _this.offsetX = offsetX
       }
-    });
-    var executionTime = (new Date).getMilliseconds() - start;
-    jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 5, "...init (" + executionTime + "ms)")
-  })
+      if(offsetY) {
+        _this.offsetY = offsetY
+      }
+      $(item).empty();
+      _this.draw(item);
+      $(this).bind("data", function(evt, ret) {
+        ret.data = $(this).data().data
+      });
+      $(this).bind("click", function(evt) {
+        $(this).trigger("clicked", $(this).data().data)
+      })
+    }
+  });
+  var executionTime = (new Date).getMilliseconds() - start;
+  jarvis.debug.log("INFO", "jarvis.visualisation.picker.DateBox", 5, "...init (" + executionTime + "ms)")
 };
 jarvis.visualisation.picker.DateBox.addDays = function(o, days) {
   return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days)
@@ -13619,6 +13606,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
   var start = (new Date).getMilliseconds();
   this._this = this;
   this.options = $.extend({minichart:{height:18, width:75}}, options);
+  console.log("init");
   this.containers = this.containers || [];
   this.metrics = [];
   var matchedContainers = null;
@@ -13650,7 +13638,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
+      $(jarvis.objects.Metrics).each(function(index, item) {
         if(_metrics.indexOf(item.Name) > -1) {
           _this.metrics[_metrics.indexOf(item.Name)] = item
         }
@@ -13664,6 +13652,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
       $(jarvis.visualisation.report).bind("filter", function(filter) {
         _this.fetch(_this)
       });
+      console.log(_this);
       $(item).empty();
       _this.draw(item);
       _this.fetch(_this, item);
@@ -14671,9 +14660,6 @@ jarvis.visualisation.dashboard.Panel = function(options) {
       this.panelID = -1
     }
   }
-  jarvis.objects.Dashboards.List();
-  jarvis.objects.Dimensions.List();
-  jarvis.objects.Metrics.List();
   jarvis.setDashboard(this);
   this.containers = [];
   var $addwidgetbutton = $("body").find(".widget-add");
@@ -14761,7 +14747,8 @@ jarvis.visualisation.dashboard.Panel.prototype.setDisplay = function() {
 jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, container, redraw) {
   var _this = sender;
   var panel = _this.panel;
-  var widgets = panel.Widgets;
+  console.log(panel);
+  var widgets = panel.widgets;
   var _html = _this.baseHTML();
   $(container).empty();
   $(container).append(_html);
@@ -14794,17 +14781,17 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
   }, stop:function(event, ui) {
   }}).disableSelection();
   $(widgets).each(function(index, item) {
-    jarvis.debug.log("INFO", "Jarvis.Dashboards.Visualisation.Panel", 6, "Drawing widget ('" + item.Name + "')");
-    switch(item.Type) {
+    jarvis.debug.log("INFO", "Jarvis.Dashboards.Visualisation.Panel", 6, "Drawing widget ('" + item.title + "')");
+    switch(item.type) {
       case "Timeline":
-        if(item.PrimaryMetric.Name == null) {
+        if(item.metrics[0] == null) {
           break
         }
-        var metricslist = item.PrimaryMetric.Name;
-        if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
-          metricslist += ", " + item.SecondaryMetric.Name
+        var metricslist = item.metrics[0];
+        if(item.item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+          metricslist += ", " + item.metrics[1]
         }
-        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
+        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -14833,11 +14820,12 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
           }
         }
         break;
-      case "Metric Box":
-        if(item.PrimaryMetric.Name == null) {
+      case "metricbox":
+        if(item.metrics[0] == null) {
           break
         }
-        _html = '<div class="jarvis dashboard metricbox widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + "" + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-minichart-height="' + _this.options.widgets.metricbox.minichart.height + '" data-minichart-width="' + _this.options.widgets.metricbox.minichart.width + '"></div>';
+        console.log("test");
+        _html = '<div class="jarvis dashboard metricbox widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + "" + '" data-metrics="' + item.metrics[0] + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-minichart-height="' + _this.options.widgets.metricbox.minichart.height + '" data-minichart-width="' + _this.options.widgets.metricbox.minichart.width + '"></div>';
         if(item.Column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
@@ -23200,102 +23188,104 @@ jarvis.visualisation.init = function() {
     jarvis.debug.log("INFO", "Dashboard.Visualisation", 6, "Bootstrap is not needed.");
     return
   }
-  var $container_metrics = $(".jarvis.jcontainer.metrics:not([data-uid])");
-  if($container_metrics.length > 0) {
-    jarvis.require("jarvis.visualisation.picker.metrics");
-    jarvis.require("jarvis.visualisation.container.metrics");
-    waitforScript("jarvis.visualisation.picker.metrics", function() {
-      waitforScript("jarvis.visualisation.container.metrics", function() {
-        jarvis.visualisation.init_container_metrics($container_metrics)
+  $(jarvis).bind("jarvis-initialized", function() {
+    var $container_metrics = $(".jarvis.jcontainer.metrics:not([data-uid])");
+    if($container_metrics.length > 0) {
+      jarvis.require("jarvis.visualisation.picker.metrics");
+      jarvis.require("jarvis.visualisation.container.metrics");
+      waitforScript("jarvis.visualisation.picker.metrics", function() {
+        waitforScript("jarvis.visualisation.container.metrics", function() {
+          jarvis.visualisation.init_container_metrics($container_metrics)
+        })
       })
-    })
-  }
-  var $container_dimensions = $(".jarvis.jcontainer.dimensions:not([data-uid])");
-  if($container_dimensions.length > 0) {
-    jarvis.require("jarvis.visualisation.container.dimensions");
-    waitforScript("jarvis.visualisation.container.dimensions", function() {
-      jarvis.visualisation.init_container_dimensions($container_dimensions)
-    })
-  }
-  var $picker_metrics = $(".jarvis.picker.metrics:not([data-uid])");
-  if($picker_metrics.length > 0) {
-    jarvis.require("jarvis.visualisation.picker.metrics");
-    waitforScript("jarvis.visualisation.picker.metrics", function() {
-      jarvis.visualisation.init_picker_metrics($picker_metrics)
-    })
-  }
-  var $picker_dimensions = $(".jarvis.picker.dimensions:not([data-uid])");
-  if($picker_dimensions.length > 0) {
-    jarvis.require("jarvis.visualisation.picker.dimensions");
-    waitforScript("jarvis.visualisation.picker.dimensions", function() {
-      jarvis.visualisation.init_picker_dimensions($picker_dimensions)
-    })
-  }
-  jarvis.visualisation.bootstrap();
-  if($(".jarvis.panel").length == 0) {
-    jarvis.debug.log("INFO", "Jarvis.Visualisation", 4, "Searching for standalone components on page.");
-    if($(".jarvis.report.metricgroups").length > 0) {
-      (new jarvis.visualisation.report.MetricGroup).init()
     }
-    if($(".jarvis.report.tabs").length > 0) {
-      (new jarvis.visualisation.report.Tabs).init()
+    var $container_dimensions = $(".jarvis.jcontainer.dimensions:not([data-uid])");
+    if($container_dimensions.length > 0) {
+      jarvis.require("jarvis.visualisation.container.dimensions");
+      waitforScript("jarvis.visualisation.container.dimensions", function() {
+        jarvis.visualisation.init_container_dimensions($container_dimensions)
+      })
     }
-    if($(".jarvis.report.metricbox").length > 0) {
-      (new jarvis.visualisation.report.MetricBox).init()
+    var $picker_metrics = $(".jarvis.picker.metrics:not([data-uid])");
+    if($picker_metrics.length > 0) {
+      jarvis.require("jarvis.visualisation.picker.metrics");
+      waitforScript("jarvis.visualisation.picker.metrics", function() {
+        jarvis.visualisation.init_picker_metrics($picker_metrics)
+      })
     }
-    if($(".jarvis.report.timeline").length > 0) {
-      (new jarvis.visualisation.report.Timeline).init()
+    var $picker_dimensions = $(".jarvis.picker.dimensions:not([data-uid])");
+    if($picker_dimensions.length > 0) {
+      jarvis.require("jarvis.visualisation.picker.dimensions");
+      waitforScript("jarvis.visualisation.picker.dimensions", function() {
+        jarvis.visualisation.init_picker_dimensions($picker_dimensions)
+      })
     }
-    if($(".jarvis.report.jtable").length > 0) {
-      (new jarvis.visualisation.report.Table).init()
-    }
-    if($(".jarvis.dashboard.metricbox").length > 0) {
-      (new jarvis.visualisation.dashboard.MetricBox).init()
-    }
-    if($(".jarvis.dashboard.pie").length > 0) {
-      (new jarvis.visualisation.dashboard.Pie).init()
-    }
-    if($(".jarvis.dashboard.jtable").length > 0) {
-      (new jarvis.visualisation.dashboard.Table).init()
-    }
-    if($(".jarvis.dashboard.timeline").length > 0) {
-      (new jarvis.visualisation.dashboard.Timeline).init()
-    }
-    if($(".jarvis.realtime.geo").length > 0) {
-      (new jarvis.visualisation.realtime.Geo).init()
-    }
-    if($(".jarvis.realtime.metricbox").length > 0) {
-      (new jarvis.visualisation.realtime.MetricBox).init()
-    }
-    if($(".jarvis.realtime.startstop").length > 0) {
-      jarvis.visualisation.realtime.StartStop.init()
-    }
-    if($(".jarvis.realtime.status").length > 0) {
-      jarvis.visualisation.realtime.Status.init()
-    }
-    if($(".jarvis.realtime.table").length > 0) {
-      (new jarvis.visualisation.realtime.Table).init()
-    }
-    if($(".jarvis.realtime.timeline").length > 0) {
-      (new jarvis.visualisation.realtime.Timeline).init()
-    }
-  }else {
-    if($(".jarvis.panel").length > 0) {
-      jarvis.debug.log("INFO", "Jarvis.Visualisation", 4, "Searching for panels on page.");
-      if($(".jarvis.dashboard.panel").length > 0) {
-        (new jarvis.visualisation.dashboard.Panel).init(null, null, true);
-        $(".jarvis.dashboard.panel").show()
-      }else {
-        if($(".jarvis.report.panel").length > 0) {
-          jarvis.visualisation.showReport()
+    jarvis.visualisation.bootstrap();
+    if($(".jarvis.panel").length == 0) {
+      jarvis.debug.log("INFO", "Jarvis.Visualisation", 4, "Searching for standalone components on page.");
+      if($(".jarvis.report.metricgroups").length > 0) {
+        (new jarvis.visualisation.report.MetricGroup).init()
+      }
+      if($(".jarvis.report.tabs").length > 0) {
+        (new jarvis.visualisation.report.Tabs).init()
+      }
+      if($(".jarvis.report.metricbox").length > 0) {
+        (new jarvis.visualisation.report.MetricBox).init()
+      }
+      if($(".jarvis.report.timeline").length > 0) {
+        (new jarvis.visualisation.report.Timeline).init()
+      }
+      if($(".jarvis.report.jtable").length > 0) {
+        (new jarvis.visualisation.report.Table).init()
+      }
+      if($(".jarvis.dashboard.metricbox").length > 0) {
+        (new jarvis.visualisation.dashboard.MetricBox).init()
+      }
+      if($(".jarvis.dashboard.pie").length > 0) {
+        (new jarvis.visualisation.dashboard.Pie).init()
+      }
+      if($(".jarvis.dashboard.jtable").length > 0) {
+        (new jarvis.visualisation.dashboard.Table).init()
+      }
+      if($(".jarvis.dashboard.timeline").length > 0) {
+        (new jarvis.visualisation.dashboard.Timeline).init()
+      }
+      if($(".jarvis.realtime.geo").length > 0) {
+        (new jarvis.visualisation.realtime.Geo).init()
+      }
+      if($(".jarvis.realtime.metricbox").length > 0) {
+        (new jarvis.visualisation.realtime.MetricBox).init()
+      }
+      if($(".jarvis.realtime.startstop").length > 0) {
+        jarvis.visualisation.realtime.StartStop.init()
+      }
+      if($(".jarvis.realtime.status").length > 0) {
+        jarvis.visualisation.realtime.Status.init()
+      }
+      if($(".jarvis.realtime.table").length > 0) {
+        (new jarvis.visualisation.realtime.Table).init()
+      }
+      if($(".jarvis.realtime.timeline").length > 0) {
+        (new jarvis.visualisation.realtime.Timeline).init()
+      }
+    }else {
+      if($(".jarvis.panel").length > 0) {
+        jarvis.debug.log("INFO", "Jarvis.Visualisation", 4, "Searching for panels on page.");
+        if($(".jarvis.dashboard.panel").length > 0) {
+          (new jarvis.visualisation.dashboard.Panel).init(null, null, true);
+          $(".jarvis.dashboard.panel").show()
         }else {
-          if($(".jarvis.realtime.panel").length > 0) {
-            (new jarvis.visualisation.realtime.Panel).init(null, null, true)
+          if($(".jarvis.report.panel").length > 0) {
+            jarvis.visualisation.showReport()
+          }else {
+            if($(".jarvis.realtime.panel").length > 0) {
+              (new jarvis.visualisation.realtime.Panel).init(null, null, true)
+            }
           }
         }
       }
     }
-  }
+  })
 };
 waitforScript = function(id, callback) {
   setTimeout(function() {
@@ -23575,6 +23565,7 @@ jarvis.visualisation.showError = function(error) {
 jarvis.visualisation.showNotice = function() {
 };
 jarvis.visualisation.setDisplay = function(show) {
+  console.log("test");
   var $body = $("body");
   var $jarvis = $(".jarvis._container");
   var $report = $body.find(".jarvis.report.panel");
@@ -23815,4 +23806,40 @@ window.fork = function(async_calls, shared_callback) {
     }
   }
 };
+$(window).bind("jarvis-loaded", function() {
+  var calls = [];
+  var call = function(callback) {
+    jarvis.objects.Dashboards.List(null, null, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  call = function(callback) {
+    jarvis.objects.Dimensions.List(null, null, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  call = function(callback) {
+    jarvis.objects.Metrics.List(null, null, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  call = function(callback) {
+    (new jarvis.objects.Query).SystemStartDate(this, {}, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  var call = function(callback) {
+    (new jarvis.objects.Query).SystemEndDate(this, {}, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  fork(calls, function() {
+    $(jarvis).trigger("jarvis-initialized")
+  })
+});
 
