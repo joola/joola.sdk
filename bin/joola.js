@@ -5884,7 +5884,7 @@ jarvis.VERSION = "[[JARVIS-VERSION]]";
 jarvis.TOKEN = "[[JARVIS-TOKEN]]";
 jarvis.global = this;
 jarvis.panelDraw = false;
-jarvis.managestate = true;
+jarvis.managestate = false;
 jarvis.loadTimestamp = new Date;
 jarvis.DEBUG = true;
 jarvis.DEBUGLEVEL = 10;
@@ -6805,7 +6805,7 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
   }catch(e) {
   }
   endPoint = jarvis.endpoints.query + endPoint;
-  var options = {type:"GET", dataType:"json", url:endPoint, contentType:"application/json;", xhrFields:{withCredentials:true}, data:queryOptions, beforeSend:function(xhr, settings) {
+  var options = {type:"GET", dataType:"json", url:endPoint, contentType:"application/json;", data:queryOptions, beforeSend:function(xhr, settings) {
     xhr.setRequestHeader("joola-token", jarvis.TOKEN)
   }, error:function(xhr, textStatus, error) {
     console.log("Error during ajax call.", textStatus, error);
@@ -6815,6 +6815,24 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
     jarvis.debug.log("ERROR", "jarvis.dataaccess", 5, "Executing Multi Async: " + endPoint + ", error: " + error)
   }, success:function(result) {
     result.id = queryOptions.id;
+    result.data = {};
+    result.data.Result = {};
+    result.data.Result.Columns = [];
+    result.data.Result.Rows = [];
+    _.each(result.results.dimensions, function(d) {
+      result.data.Result.Columns.push(d)
+    });
+    _.each(result.results.metrics, function(m) {
+      result.data.Result.Columns.push(m)
+    });
+    _.each(result.results.rows, function(r) {
+      var row = {Values:[], FormattedValues:[]};
+      _.each(result.data.Result.Columns, function(col) {
+        row.Values.push(r[col.name]);
+        row.FormattedValues.push(r[col.name])
+      });
+      result.data.Result.Rows.push(row)
+    });
     callback(result)
   }};
   try {
@@ -13035,9 +13053,9 @@ jarvis.visualisation.dashboard.Timeline.prototype.init = function(options, conta
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+      $(jarvis.objects.Metrics).each(function(index, item) {
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -13086,30 +13104,30 @@ jarvis.visualisation.dashboard.Timeline.prototype.fetch = function(sender, conta
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var mindex = -1;
-    $(jarvis.dataaccess.metrics).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[mindex];
+    _metrics[index] = jarvis.objects.Metrics[mindex];
     _this.metrics.push(_metrics[index])
   });
-  $(jarvis.dataaccess.metrics).each(function(index, item) {
-    if(_metrics.indexOf(item.Name) > -1) {
-      _this.metrics[_metrics.indexOf(item.Name)] = item
+  $(jarvis.objects.Metrics).each(function(index, item) {
+    if(_metrics.indexOf(item.id) > -1) {
+      _this.metrics[_metrics.indexOf(item.id)] = item
     }
   });
   if(!_metrics) {
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_metricslist, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_metricslist, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -13262,10 +13280,10 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
     var formattedDate = "";
     if(this.points.length == 1) {
       var nextindex = 0;
-      if(_this.Resolution == "Hour" || _this.Resolution == "Minute") {
+      if(_this.Resolution == "hour" || _this.Resolution == "minute") {
         formattedDate = Highcharts.dateFormat("%A, %B %d, %Y %H:%M", this.points[0].point.x)
       }else {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -13290,7 +13308,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
             formattedDate += " - " + jarvis.date.formatDate(points[0].point.x)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[0].series.xData).each(function(index, item) {
               if(item == points[0].point.x) {
                 nextindex = index + 1
@@ -13314,7 +13332,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
       return'<div style="padding-bottom:5px;"><b>' + formattedDate + '</b></div><div><div style="border: 3px solid white; border-color: #058DC7; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">' + '</div><div style="padding-left:3px;display:inline">' + this.points[0].point.name.replace("_x0020_", " ") + ": " + this.points[0].point.formattedy + "</div>" + "</div>"
     }else {
       if(this.points[1].point.compare) {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -13339,7 +13357,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
             formattedDate += " - " + jarvis.date.formatDate(points[0].point.x)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[0].series.xData).each(function(index, item) {
               if(item == points[0].point.x) {
                 nextindex = index + 1
@@ -13372,7 +13390,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
         });
         _html += "</div>";
         var nextindex = 0;
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[1].series.points).each(function(index, item) {
             if(item.actualdate == points[1].point.actualdate) {
               nextindex = index + 1
@@ -13398,7 +13416,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
             formattedDate += " - " + jarvis.date.formatDate(sDate)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[1].series.points).each(function(index, item) {
               if(item.actualdate == points[1].point.actualdate) {
                 nextindex = index + 1
@@ -13431,7 +13449,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
         });
         _html += "</div>"
       }else {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -13456,7 +13474,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
             formattedDate += " - " + jarvis.date.formatDate(points[0].point.x)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[0].series.xData).each(function(index, item) {
               if(item == points[0].point.x) {
                 nextindex = index + 1
@@ -13491,7 +13509,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
     }
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:true}, plotOptions:{column:{allowPointSelect:true}, line:{shadow:true}, series:{shadow:true, connectNulls:true, fillOpacity:0.1, marker:{symbol:"circle", enabled:Math.abs(Date.dateDiff("d", _this.DateBox.getDate().base_fromdate, _this.DateBox.getDate().base_todate)) > 90 ? "false" : "true", states:{hover:{enabled:true}}}}}, series:[{name:function() {
     var name = "";
-    name = columns[columns.length - 1].Name;
+    name = columns[columns.length - 1].name;
     return name
   }(), data:function() {
     var result = [];
@@ -13499,7 +13517,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
     $(data).each(function(index, item) {
       var x = new Date(item.FormattedValues[0]);
       var y = parseFloat(item.Values[item.Values.length - 1]);
-      result.push({x:x, y:y, name:columns[columns.length - 1].Name, formattedy:item.FormattedValues[1], compare:false})
+      result.push({x:x, y:y, name:columns[columns.length - 1].name, formattedy:item.FormattedValues[1], compare:false})
     });
     return result
   }(), yAxis:0}]});
@@ -13512,7 +13530,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
           var x = chart.options.series[0].data[index].x;
           var y = parseFloat(item.Values[item.Values.length - 1]);
           var actualdate = jarvis.date.flatDate(item.FormattedValues[0]);
-          result.push({x:x, y:y, name:columns[columns.length - 1].Name, formattedy:item.FormattedValues[1], compare:_series.id.indexOf("compare") > -1 ? true : false, actualdate:actualdate})
+          result.push({x:x, y:y, name:columns[columns.length - 1].name, formattedy:item.FormattedValues[1], compare:_series.id.indexOf("compare") > -1 ? true : false, actualdate:actualdate})
         }catch(ex) {
           jarvis.debug.log("ERROR", "jarvis.visualisation.dashboard.Timeline", 6, "Failed to draw x point: " + ex.message)
         }
@@ -13541,7 +13559,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
           _color = jarvis.colors[index]
         }
       }
-      var chartSeries = {name:_series.Columns[1].Name, lineWidth:2, type:"line", yAxis:_yaxis, shadow:true, data:result, color:_color};
+      var chartSeries = {name:_series.Columns[1].name, lineWidth:2, type:"line", yAxis:_yaxis, shadow:true, data:result, color:_color};
       _seriesholder.push(chartSeries)
     }
   });
@@ -13606,7 +13624,6 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
   var start = (new Date).getMilliseconds();
   this._this = this;
   this.options = $.extend({minichart:{height:18, width:75}}, options);
-  console.log("init");
   this.containers = this.containers || [];
   this.metrics = [];
   var matchedContainers = null;
@@ -13652,7 +13669,6 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
       $(jarvis.visualisation.report).bind("filter", function(filter) {
         _this.fetch(_this)
       });
-      console.log(_this);
       $(item).empty();
       _this.draw(item);
       _this.fetch(_this, item);
@@ -13689,37 +13705,37 @@ jarvis.visualisation.dashboard.MetricBox.prototype.fetch = function(sender, cont
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var imetric = -1;
-    $(jarvis.dataaccess.metrics).each(function(i, o) {
-      if(o.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(i, o) {
+      if(o.id == $.trim(item)) {
         imetric = i
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[imetric]
+    _metrics[index] = jarvis.objects.Metrics[imetric]
   });
   if(typeof _metrics[0] == "undefined") {
     return""
   }
   $(_metrics).each(function(index, metric) {
     var queryOptions = [];
-    var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.dashboard.globalfilter};
+    var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter};
     queryOptions.push(_queryOptions);
-    _queryOptions = {id:"primary_total", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter};
+    _queryOptions = {id:"primary_total", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter};
     queryOptions.push(_queryOptions);
     if(_this.DateBox.comparePeriod) {
-      _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.dashboard.globalfilter};
+      _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter};
       queryOptions.push(_queryOptions);
-      _queryOptions = {id:"compare_primary_total", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter};
+      _queryOptions = {id:"compare_primary_total", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter};
       queryOptions.push(_queryOptions)
     }
     if(jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "") {
-      var _queryOptions = {id:"total", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:""};
+      var _queryOptions = {id:"total", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:""};
       queryOptions.push(_queryOptions)
     }
     if(_this.DateBox.comparePeriod && jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "") {
-      _queryOptions = {id:"compare_total", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:""};
+      _queryOptions = {id:"compare_total", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:""};
       queryOptions.push(_queryOptions)
     }
-    jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+    jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
       var series = [];
       $(data).each(function(index, item) {
         try {
@@ -13727,13 +13743,13 @@ jarvis.visualisation.dashboard.MetricBox.prototype.fetch = function(sender, cont
             var result = item.data.Result;
             var request = item.data.Request;
             var _data = item.data.Result.Rows;
-            var points = {total:0, ftotal:0, data:[], id:data.id};
+            var points = {total:0, ftotal:0, data:[], id:item.id};
             $(_data).each(function(i, row) {
               var point = {value:row.Values[1], fvalue:row.FormattedValues[1]};
               points.total += parseFloat(point.value);
               points.data.push(point)
             });
-            if(metric.AggregationType == "AVG") {
+            if(metric.aggregation == "avg" || metric.aggregation == "count") {
               points.avg = points.total / _data.length
             }
             $(data).each(function(i, o) {
@@ -13767,41 +13783,44 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     return
   }
   $(series).each(function(si, so) {
-    if(metric.DataType == "INT") {
+    if(metric.type == "int") {
       so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
     }else {
-      if(metric.DataType == "FLOAT") {
+      if(metric.type == "float") {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }else {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }
     }
-    if(metric.Suffix && metric.Suffix != "") {
-      so.ftotal += metric.Suffix
+    if(metric.suffix && metric.suffix != "") {
+      so.ftotal += metric.suffix
     }
-    if(metric.Prefix && metric.Prefix != "") {
-      so.ftotal = metric.Prefix + so.ftotal
+    if(metric.prefix && metric.prefix != "") {
+      so.ftotal = metric.prefix + so.ftotal
     }
   });
   $(series[0]).each(function(si, so) {
     $(container).find(".compare").hide();
     var $metric = $(container).find(".base");
-    var dataTable = new google.visualization.DataTable;
-    dataTable.addColumn("number");
-    dataTable.addRows(so.data.length);
     var totalsum = so.total;
-    $(so.data).each(function(i, row) {
-      dataTable.setValue(i, 0, Math.round(parseFloat(row.value)))
-    });
+    try {
+      var dataTable = new google.visualization.DataTable;
+      dataTable.addColumn("number");
+      dataTable.addRows(so.data.length);
+      $(so.data).each(function(i, row) {
+        dataTable.setValue(i, 0, Math.round(parseFloat(row.value)))
+      })
+    }catch(ex) {
+    }
     var datebox = jarvis.visualisation.picker.DateBox;
     var ratio;
-    if(metric.AggregationType == "AVG") {
+    if(metric.AggregationType == "avg" || metric.aggregation == "count") {
       ratio = 0;
       if(series[0].total > 0) {
         ratio = percentageChange(series.length == 1 ? series[0].total : series[1].total, series[0].total)
       }
       if(series.length == 1) {
-        $metric.find(".site").html('Overall Avg: <span class="summaryvalue">' + (metric.Suffix == "seconds" ? jarvis.string.intToTime(so.total) : so.ftotal) + "</span><br> (" + jarvis.string.formatNumber(ratio, 2) + "%)")
+        $metric.find(".site").html('Overall Avg: <span class="summaryvalue">' + (metric.suffix == "seconds" ? jarvis.string.intToTime(so.total) : so.ftotal) + "</span><br> (" + jarvis.string.formatNumber(ratio, 2) + "%)")
       }else {
         $metric.find(".site").html('% of Total: <span class="summaryvalue">' + jarvis.string.formatNumber(ratio, 2) + "%</span><br> (" + series[1].ftotal + ")")
       }
@@ -13819,34 +13838,34 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     if(totalsum > 1E6 || totalsum < -1E6) {
       totalsum = jarvis.string.shortenNumber(totalsum)
     }else {
-      if(metric.DataType == "INT") {
-        if(metric.Suffix == "seconds") {
+      if(metric.type == "int") {
+        if(metric.suffix == "seconds") {
           totalsum = jarvis.string.intToTime(series[0].total)
         }else {
           totalsum = jarvis.string.formatNumber(totalsum, 0, true)
         }
       }else {
-        if(metric.DataType == "FLOAT") {
+        if(metric.type == "float") {
           totalsum = jarvis.string.formatNumber(totalsum, 0, true)
         }else {
           totalsum = jarvis.string.formatNumber(totalsum, 0, true)
         }
       }
     }
-    if(metric.Suffix && metric.Suffix != "" && metric.Suffix != "seconds") {
-      totalsum += metric.Suffix
+    if(metric.suffix && metric.suffix != "" && metric.suffix != "seconds") {
+      totalsum += metric.suffix
     }
-    if(metric.Prefix && metric.Prefix != "") {
-      totalsum = metric.Prefix + totalsum
+    if(metric.prefix && metric.prefix != "") {
+      totalsum = metric.prefix + totalsum
     }
     $metric.find(".daterange").html(datebox.formatDate(datebox.getDate().base_fromdate) + " - " + datebox.formatDate(datebox.getDate().base_todate));
-    if(metric.AggregationType == "AVG" && metric.Suffix != "seconds") {
+    if(metric.AggregationType == "avg" && metric.suffix != "seconds") {
       so.avg = jarvis.string.formatNumber(so.avg, 2);
-      if(metric.Suffix && metric.Suffix != "") {
-        so.avg += metric.Suffix
+      if(metric.suffix && metric.suffix != "") {
+        so.avg += metric.suffix
       }
-      if(metric.Prefix && metric.Prefix != "") {
-        so.avg = metric.Prefix + so.avg
+      if(metric.prefix && metric.prefix != "") {
+        so.avg = metric.prefix + so.avg
       }
       $metric.find(".value").html(so.avg)
     }else {
@@ -13862,7 +13881,6 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
         vis.draw(dataTable, goptions)
       }
     }catch(ex) {
-      throw"(drawSpark) " + "Exception: " + ex.message;
     }
   })
 };
@@ -13886,20 +13904,20 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
     _class = "negative"
   }
   $(series).each(function(si, so) {
-    if(metric.DataType == "INT") {
+    if(metric.type == "int") {
       so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
     }else {
-      if(metric.DataType == "FLOAT") {
+      if(metric.type == "float") {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }else {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }
     }
-    if(metric.Suffix && metric.Suffix != "") {
-      so.ftotal += metric.Suffix
+    if(metric.suffix && metric.suffix != "") {
+      so.ftotal += metric.suffix
     }
-    if(metric.Prefix && metric.Prefix != "") {
-      so.ftotal = metric.Prefix + so.ftotal
+    if(metric.prefix && metric.prefix != "") {
+      so.ftotal = metric.prefix + so.ftotal
     }
   });
   var $metric = $(container).find(".base");
@@ -13907,7 +13925,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
   $metric.find(".value").html(value);
   $metric.find(".value").removeClass("negative").removeClass("positive");
   $metric.find(".value").addClass(_class);
-  $metric.find(".site").html((metric.Suffix == "seconds" ? jarvis.string.intToTime(series[0].total) : series[0].ftotal) + " vs " + (metric.Suffix == "seconds" ? jarvis.string.intToTime(series[1].total) : series[1].ftotal))
+  $metric.find(".site").html((metric.suffix == "seconds" ? jarvis.string.intToTime(series[0].total) : series[0].ftotal) + " vs " + (metric.suffix == "seconds" ? jarvis.string.intToTime(series[1].total) : series[1].ftotal))
 };
 jarvis.visualisation.dashboard.MetricBox.prototype.baseHTML = function(sender) {
   var _this = sender;
@@ -13991,9 +14009,9 @@ jarvis.visualisation.dashboard.Table.prototype.init = function(options, containe
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+      $(jarvis.objects.Metrics).each(function(index, item) {
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -14043,17 +14061,17 @@ jarvis.visualisation.dashboard.Table.prototype.fetch = function(sender, containe
   _dimensions = _dimensions.split(",");
   $(_dimensions).each(function(index, item) {
     var dindex = -1;
-    $(jarvis.dataaccess.dimensions).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Dimensions).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         dindex = mi
       }
     });
-    _dimensions[index] = jarvis.dataaccess.dimensions[dindex];
+    _dimensions[index] = jarvis.objects.Dimensions[dindex];
     _this.dimensions.push(_dimensions[index])
   });
-  $(jarvis.dataaccess.dimensions).each(function(index, item) {
-    if(_dimensions.indexOf(item.Name) > -1) {
-      _this.dimensions[_dimensions.indexOf(item.Name)] = item
+  $(jarvis.objects.Dimensions).each(function(index, item) {
+    if(_dimensions.indexOf(item.id) > -1) {
+      _this.dimensions[_dimensions.indexOf(item.id)] = item
     }
   });
   var _metrics = $(container).attr("data-metrics");
@@ -14064,30 +14082,30 @@ jarvis.visualisation.dashboard.Table.prototype.fetch = function(sender, containe
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var mindex = -1;
-    $(jarvis.dataaccess.metrics).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[mindex];
+    _metrics[index] = jarvis.objects.Metrics[mindex];
     _this.metrics.push(_metrics[index])
   });
-  $(jarvis.dataaccess.metrics).each(function(index, item) {
-    if(_metrics.indexOf(item.Name) > -1) {
-      _this.metrics[_metrics.indexOf(item.Name)] = item
+  $(jarvis.objects.Metrics).each(function(index, item) {
+    if(_metrics.indexOf(item.id) > -1) {
+      _this.metrics[_metrics.indexOf(item.id)] = item
     }
   });
   if(!_metrics) {
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -14105,21 +14123,21 @@ jarvis.visualisation.dashboard.Table.prototype.fetch = function(sender, containe
           lastRow.FormattedValues[0] = "Other";
           lastRow.Values[1] = sum1;
           sum1 = jarvis.string.formatNumber(sum1, 0, true);
-          if(item.data.Result.Columns[1].Prefix != "") {
-            sum1 = item.data.Result.Columns[1].Prefix + sum1
+          if(item.data.Result.Columns[1].prefix != "") {
+            sum1 = item.data.Result.Columns[1].prefix + sum1
           }
-          if(item.data.Result.Columns[1].Suffix != "") {
-            sum1 += item.data.Result.Columns[1].Suffix
+          if(item.data.Result.Columns[1].suffix != "") {
+            sum1 += item.data.Result.Columns[1].suffix
           }
           lastRow.FormattedValues[1] = sum1;
           if(lastRow.Values.length > 2) {
             lastRow.Values[2] = sum2;
             sum2 = jarvis.string.formatNumber(sum2, 0, true);
-            if(item.data.Result.Columns[2].Prefix != "") {
-              sum2 = item.data.Result.Columns[2].Prefix + sum1
+            if(item.data.Result.Columns[2].prefix != "") {
+              sum2 = item.data.Result.Columns[2].prefix + sum1
             }
-            if(item.data.Result.Columns[2].Suffix != "") {
-              sum2 += item.data.Result.Columns[2].Suffix
+            if(item.data.Result.Columns[2].suffix != "") {
+              sum2 += item.data.Result.Columns[2].suffix
             }
             lastRow.FormattedValues[2] = sum2
           }
@@ -14146,8 +14164,8 @@ jarvis.visualisation.dashboard.Table.prototype.update = function(sender, dimensi
   $table.empty();
   var $tr = $("<tr></tr>");
   $(series[0].Columns).each(function(index, col) {
-    var $th = $("<th>" + col.Name + "</th>");
-    if(col.AggregationType) {
+    var $th = $("<th>" + col.name + "</th>");
+    if(col.aggregation) {
       $th.addClass("metric")
     }else {
       $th.addClass("dimension")
@@ -14159,7 +14177,7 @@ jarvis.visualisation.dashboard.Table.prototype.update = function(sender, dimensi
     var $tr = $("<tr></tr>");
     $(row.FormattedValues).each(function(i, v) {
       var $td = $("<td>" + v + "</td>");
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         $td.addClass("metric")
       }else {
         $td.addClass("dimension")
@@ -14179,8 +14197,8 @@ jarvis.visualisation.dashboard.Table.prototype.updateCompare = function(sender, 
   $table.empty();
   var $tr = $("<tr></tr>");
   $(series[0].Columns).each(function(index, col) {
-    var $th = $("<th>" + col.Name + "</th>");
-    if(col.AggregationType) {
+    var $th = $("<th>" + col.name + "</th>");
+    if(col.aggregation) {
       $th.addClass("metric")
     }else {
       $th.addClass("dimension")
@@ -14194,7 +14212,7 @@ jarvis.visualisation.dashboard.Table.prototype.updateCompare = function(sender, 
     var base_value = 0;
     var compare_value = 0;
     $(row.Values).each(function(i, v) {
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         var $td;
         base_value = v;
         $(series[1].Rows).each(function(compareindex, comparerow) {
@@ -14331,9 +14349,9 @@ jarvis.visualisation.dashboard.Pie.prototype.init = function(options, container)
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+      $(jarvis.objects.Metrics).each(function(index, item) {
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -14382,17 +14400,17 @@ jarvis.visualisation.dashboard.Pie.prototype.fetch = function(sender, container)
   _dimensions = _dimensions.split(",");
   $(_dimensions).each(function(index, item) {
     var dindex = -1;
-    $(jarvis.dataaccess.dimensions).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Dimensions).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         dindex = mi
       }
     });
-    _dimensions[index] = jarvis.dataaccess.dimensions[dindex];
+    _dimensions[index] = jarvis.objects.Dimensions[dindex];
     _this.dimensions.push(_dimensions[index])
   });
-  $(jarvis.dataaccess.dimensions).each(function(index, item) {
-    if(_dimensions.indexOf(item.Name) > -1) {
-      _this.dimensions[_dimensions.indexOf(item.Name)] = item
+  $(jarvis.objects.Dimensions).each(function(index, item) {
+    if(_dimensions.indexOf(item.id) > -1) {
+      _this.dimensions[_dimensions.indexOf(item.id)] = item
     }
   });
   var _metrics = $(container).attr("data-metrics");
@@ -14403,30 +14421,31 @@ jarvis.visualisation.dashboard.Pie.prototype.fetch = function(sender, container)
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var mindex = -1;
-    $(jarvis.dataaccess.metrics).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[mindex];
+    _metrics[index] = jarvis.objects.Metrics[mindex];
     _this.metrics.push(_metrics[index])
   });
-  $(jarvis.dataaccess.metrics).each(function(index, item) {
-    if(_metrics.indexOf(item.Name) > -1) {
-      _this.metrics[_metrics.indexOf(item.Name)] = item
+  $(jarvis.objects.Metrics).each(function(index, item) {
+    if(_metrics.indexOf(item.id) > -1) {
+      _this.metrics[_metrics.indexOf(item.id)] = item
     }
   });
   if(!_metrics) {
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
+    console.log("test3");
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -14460,7 +14479,7 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
     return"<b>" + this.point.name + "</b><br/>" + this.series.name + ": " + jarvis.string.formatNumber(this.percentage, 2) + " %"
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:false}, plotOptions:{pie:{showInLegend:true, size:"100%", animation:false}}, series:[{name:function() {
     var name = "";
-    name = columns[columns.length - 1].Name;
+    name = columns[columns.length - 1].name;
     return name
   }(), type:"pie", data:function() {
     var result = [];
@@ -14469,9 +14488,9 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
       if(index < _this.itemCount) {
         var name = "";
         $(columns).each(function(ci, co) {
-          if(co.AggregationType) {
+          if(co.aggregation) {
           }else {
-            name += columns[ci].Name + ": " + item.FormattedValues[ci]
+            name += columns[ci].name + ": " + item.FormattedValues[ci]
           }
         });
         name = name.substring(0, name.length - 5);
@@ -14491,7 +14510,7 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
     return this.y > 5 ? this.point.name : null
   }, color:"white", distance:-30, enabled:false}}, {name:function() {
     var name = "inner";
-    name = columns[columns.length - 1].Name;
+    name = columns[columns.length - 1].name;
     return name
   }(), type:"pie", innerSize:"70%", data:function() {
     var result = [];
@@ -14509,9 +14528,9 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
             if(item.FormattedValues[0] == key) {
               var name = "";
               $(columns).each(function(ci, co) {
-                if(co.AggregationType) {
+                if(co.aggregation) {
                 }else {
-                  name += columns[ci].Name + ": " + item.FormattedValues[ci]
+                  name += columns[ci].name + ": " + item.FormattedValues[ci]
                 }
               });
               var y = 0;
@@ -14540,7 +14559,7 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
     if(index < _this.itemCount) {
       var name = "";
       $(columns).each(function(ci, co) {
-        if(co.AggregationType) {
+        if(co.aggregation) {
         }else {
           name += item.FormattedValues[ci] + "<br/>"
         }
@@ -14550,7 +14569,7 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
       y = item.Values[item.Values.length - 1] / _totalsum * 100;
       sum += y;
       shownsum += parseFloat(item.Values[item.Values.length - 1]);
-      result.push({seriesname:columns[columns.length - 1].Name, name:name, y:y, value:item.FormattedValues[item.Values.length - 1], color:jarvis.colors[index]})
+      result.push({seriesname:columns[columns.length - 1].name, name:name, y:y, value:item.FormattedValues[item.Values.length - 1], color:jarvis.colors[index]})
     }
     totalsum += parseFloat(item.Values[item.Values.length - 1])
   });
@@ -14747,7 +14766,6 @@ jarvis.visualisation.dashboard.Panel.prototype.setDisplay = function() {
 jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, container, redraw) {
   var _this = sender;
   var panel = _this.panel;
-  console.log(panel);
   var widgets = panel.widgets;
   var _html = _this.baseHTML();
   $(container).empty();
@@ -14783,37 +14801,37 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
   $(widgets).each(function(index, item) {
     jarvis.debug.log("INFO", "Jarvis.Dashboards.Visualisation.Panel", 6, "Drawing widget ('" + item.title + "')");
     switch(item.type) {
-      case "Timeline":
+      case "timeline":
         if(item.metrics[0] == null) {
           break
         }
         var metricslist = item.metrics[0];
-        if(item.item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
           metricslist += ", " + item.metrics[1]
         }
-        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
-        if(item.Column == 1) {
+        _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
           }
         }
         break;
-      case "Bar":
-        if(item.PrimaryMetric.Name == null) {
+      case "bar":
+        if(item.metrics[0] == null) {
           break
         }
-        if(item.Dimension == null || item.Dimension.Name == null) {
+        if(item.dimensions[0] == null) {
           break
         }
-        _html = '<div class="jarvis dashboard bar widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-dimensions="' + item.Dimension.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
-        if(item.Column == 1) {
+        _html = '<div class="jarvis dashboard bar widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-metrics="' + item.metrics[0] + '" data-dimensions="' + item.dimensions[0] + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
@@ -14824,74 +14842,73 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
         if(item.metrics[0] == null) {
           break
         }
-        console.log("test");
         _html = '<div class="jarvis dashboard metricbox widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + "" + '" data-metrics="' + item.metrics[0] + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-minichart-height="' + _this.options.widgets.metricbox.minichart.height + '" data-minichart-width="' + _this.options.widgets.metricbox.minichart.width + '"></div>';
-        if(item.Column == 1) {
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
           }
         }
         break;
-      case "Table":
-        if(item.PrimaryMetric.Name == null) {
+      case "table":
+        if(item.metrics[0] == null) {
           break
         }
-        if(item.Dimension == null || item.Dimension.Name == null) {
+        if(item.dimensions[0] == null) {
           break
         }
-        var metricslist = item.PrimaryMetric.Name;
-        if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
-          metricslist += ", " + item.SecondaryMetric.Name
+        var metricslist = item.metrics[0];
+        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+          metricslist += ", " + item.metrics[1]
         }
-        _html = '<div class="jarvis dashboard jtable widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
-        if(item.Column == 1) {
+        _html = '<div class="jarvis dashboard jtable widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + item.dimensions[0] + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '"></div>';
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
           }
         }
         break;
-      case "BarTable":
-        if(item.PrimaryMetric.Name == null) {
+      case "bartable":
+        if(item.metrics[0] == null) {
           break
         }
-        if(item.Dimension == null || item.Dimension.Name == null) {
+        if(item.dimensions[0] == null) {
           break
         }
-        var metricslist = item.PrimaryMetric.Name;
-        if(item.SecondaryMetric && item.SecondaryMetric.Name != null && item.SecondaryMetric.Name != "") {
-          metricslist += ", " + item.SecondaryMetric.Name
+        var metricslist = item.metrics[0];
+        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+          metricslist += ", " + item.metrics[1]
         }
-        _html = '<div class="jarvis dashboard bartable widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + metricslist + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '"></div>';
-        if(item.Column == 1) {
+        _html = '<div class="jarvis dashboard bartable widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + item.dimensions[0] + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '"></div>';
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
           }
         }
         break;
-      case "Pie Chart":
-        if(item.PrimaryMetric.Name == null) {
+      case "pie":
+        if(item.metrics[0] == null) {
           break
         }
-        if(item.Dimension == null || item.Dimension.Name == null) {
+        if(item.dimensions[0] == null) {
           break
         }
-        _html = '<div class="jarvis dashboard pie widget" data-widgetid="' + item.id + '" data-title="' + item.Name + '" data-dimensions="' + item.Dimension.Name + '" data-metrics="' + item.PrimaryMetric.Name + '" data-period="' + item.Period + '" data-limit="' + item.itemCount + '" data-legend="' + _this.options.widgets.pie.legend + '"></div>';
-        if(item.Column == 1) {
+        _html = '<div class="jarvis dashboard pie widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + item.dimensions[0] + '" data-metrics="' + item.metrics[0] + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-legend="' + _this.options.widgets.pie.legend + '"></div>';
+        if(item.column == 1) {
           $(container).find(".column-left").append(_html)
         }else {
-          if(item.Column == 2) {
+          if(item.column == 2) {
             $(container).find(".column-mid").append(_html)
           }else {
             $(container).find(".column-right").append(_html)
@@ -15326,9 +15343,9 @@ jarvis.visualisation.dashboard.Bar.prototype.init = function(options, container)
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+      $(jarvis.objects.Metrics).each(function(index, item) {
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -15379,17 +15396,17 @@ jarvis.visualisation.dashboard.Bar.prototype.fetch = function(sender, container)
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var mindex = -1;
-    $(jarvis.dataaccess.metrics).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[mindex];
+    _metrics[index] = jarvis.objects.Metrics[mindex];
     _this.metrics.push(_metrics[index])
   });
-  $(jarvis.dataaccess.metrics).each(function(index, item) {
-    if(_metrics.indexOf(item.Name) > -1) {
-      _this.metrics[_metrics.indexOf(item.Name)] = item
+  $(jarvis.objects.Metrics).each(function(index, item) {
+    if(_metrics.indexOf(item.id) > -1) {
+      _this.metrics[_metrics.indexOf(item.id)] = item
     }
   });
   if(!_metrics) {
@@ -15402,7 +15419,7 @@ jarvis.visualisation.dashboard.Bar.prototype.fetch = function(sender, container)
   $(_dimensions).each(function(index, item) {
     var mindex = -1;
     $(jarvis.objects.Dimensions).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
@@ -15410,21 +15427,21 @@ jarvis.visualisation.dashboard.Bar.prototype.fetch = function(sender, container)
     _this.dimensions.push(_dimensions[index])
   });
   $(jarvis.objects.Dimensions).each(function(index, item) {
-    if(_dimensions.indexOf(item.Name) > -1) {
-      _this.dimensions[_dimensions.indexOf(item.Name)] = item
+    if(_dimensions.indexOf(item.id) > -1) {
+      _this.dimensions[_dimensions.indexOf(item.id)] = item
     }
   });
   if(!_dimensions) {
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -15519,10 +15536,10 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
     var formattedDate = "";
     if(this.points.length == 1) {
       var nextindex = 0;
-      if(_this.Resolution == "Hour" || _this.Resolution == "Minute") {
+      if(_this.Resolution == "hour" || _this.Resolution == "minute") {
         formattedDate = Highcharts.dateFormat("%A, %B %d, %Y %H:%M", this.points[0].point.x)
       }else {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -15574,7 +15591,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
       return'<div style="padding-bottom:5px;"><b>' + formattedDate + '</b></div><div><div style="border: 3px solid white; border-color: #058DC7; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">' + '</div><div style="padding-left:3px;display:inline">' + this.points[0].point.name.replace("_x0020_", " ") + ": " + this.points[0].point.formattedy + "</div>" + "</div>"
     }else {
       if(this.points[1].point.compare) {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -15599,7 +15616,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
             formattedDate += " - " + Highcharts.dateFormat("%b %d, %Y", points[0].point.x)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[0].series.xData).each(function(index, item) {
               if(item == points[0].point.x) {
                 nextindex = index + 1
@@ -15635,7 +15652,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
         });
         _html += "</div>";
         var nextindex = 0;
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[1].series.points).each(function(index, item) {
             if(item.actualdate == points[1].point.actualdate) {
               nextindex = index + 1
@@ -15697,7 +15714,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
         });
         _html += "</div>"
       }else {
-        if(_this.Resolution == "Month") {
+        if(_this.Resolution == "month") {
           $(points[0].series.xData).each(function(index, item) {
             if(item == points[0].point.x) {
               nextindex = index + 1
@@ -15722,7 +15739,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
             formattedDate += " - " + Highcharts.dateFormat("%b %d, %Y", points[0].point.x)
           }
         }else {
-          if(_this.Resolution == "Week") {
+          if(_this.Resolution == "week") {
             $(points[0].series.xData).each(function(index, item) {
               if(item == points[0].point.x) {
                 nextindex = index + 1
@@ -15760,7 +15777,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
     }
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:true}, plotOptions:{column:{allowPointSelect:true, shadow:false}, line:{shadow:false}, series:{shadow:false, connectNulls:true, fillOpacity:0.1, marker:{symbol:"circle", enabled:Math.abs(Date.dateDiff("d", _this.DateBox.getDate().base_fromdate, _this.DateBox.getDate().base_todate)) > 90 ? "false" : "true", states:{hover:{enabled:true}}}}}, series:[{pointPadding:0, groupPadding:0.2, name:function() {
     var name = "";
-    name = columns[columns.length - 1].Name;
+    name = columns[columns.length - 1].name;
     return name
   }(), data:function() {
     var result = [];
@@ -15848,7 +15865,7 @@ jarvis.visualisation.dashboard.Bar.prototype.update = function(sender, metrics, 
           _color = jarvis.colors[index]
         }
       }
-      var chartSeries = {name:_series.Columns[1].Name, lineWidth:2, type:"column", yAxis:0, shadow:false, data:result, color:_color, pointPadding:0, groupPadding:0.2};
+      var chartSeries = {name:_series.Columns[1].name, lineWidth:2, type:"column", yAxis:0, shadow:false, data:result, color:_color, pointPadding:0, groupPadding:0.2};
       _seriesholder.push(chartSeries)
     }
   });
@@ -15943,8 +15960,8 @@ jarvis.visualisation.dashboard.BarTable.prototype.init = function(options, conta
         _metrics[index] = $.trim(_metrics[index]);
         _this.metrics.push(_metrics[index])
       });
-      $(jarvis.dataaccess.metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
+      $(jarvis.objects.Metrics).each(function(index, item) {
+        if(_metrics.indexOf(item.id) > -1) {
           _this.metrics[_metrics.indexOf(item.Name)] = item
         }
       });
@@ -15995,17 +16012,17 @@ jarvis.visualisation.dashboard.BarTable.prototype.fetch = function(sender, conta
   _dimensions = _dimensions.split(",");
   $(_dimensions).each(function(index, item) {
     var dindex = -1;
-    $(jarvis.dataaccess.dimensions).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Dimensions).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         dindex = mi
       }
     });
-    _dimensions[index] = jarvis.dataaccess.dimensions[dindex];
+    _dimensions[index] = jarvis.objects.Dimensions[dindex];
     _this.dimensions.push(_dimensions[index])
   });
-  $(jarvis.dataaccess.dimensions).each(function(index, item) {
-    if(_dimensions.indexOf(item.Name) > -1) {
-      _this.dimensions[_dimensions.indexOf(item.Name)] = item
+  $(jarvis.objects.Dimensions).each(function(index, item) {
+    if(_dimensions.indexOf(item.id) > -1) {
+      _this.dimensions[_dimensions.indexOf(item.id)] = item
     }
   });
   var _metrics = $(container).attr("data-metrics");
@@ -16016,30 +16033,30 @@ jarvis.visualisation.dashboard.BarTable.prototype.fetch = function(sender, conta
   _metrics = _metrics.split(",");
   $(_metrics).each(function(index, item) {
     var mindex = -1;
-    $(jarvis.dataaccess.metrics).each(function(mi, mo) {
-      if(mo.Name == $.trim(item)) {
+    $(jarvis.objects.Metrics).each(function(mi, mo) {
+      if(mo.id == $.trim(item)) {
         mindex = mi
       }
     });
-    _metrics[index] = jarvis.dataaccess.metrics[mindex];
+    _metrics[index] = jarvis.objects.Metrics[mindex];
     _this.metrics.push(_metrics[index])
   });
-  $(jarvis.dataaccess.metrics).each(function(index, item) {
-    if(_metrics.indexOf(item.Name) > -1) {
-      _this.metrics[_metrics.indexOf(item.Name)] = item
+  $(jarvis.objects.Metrics).each(function(index, item) {
+    if(_metrics.indexOf(item.id) > -1) {
+      _this.metrics[_metrics.indexOf(item.id)] = item
     }
   });
   if(!_metrics) {
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:_dimensionslist, Metrics:_metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].Name, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:_dimensionslist, metrics:_metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -16085,12 +16102,12 @@ jarvis.visualisation.dashboard.BarTable.prototype.update = function(sender, dime
   $table.empty();
   var totalSum = 0;
   $(series[0].Rows).each(function(index, row) {
-    if(series[0].Columns[1].AggregationType) {
+    if(series[0].Columns[1].aggregation) {
       totalSum += parseFloat(row.Values[1])
     }
   });
   $(series[0].Rows).each(function(index, row) {
-    if(series[0].Columns[1].AggregationType) {
+    if(series[0].Columns[1].aggregation) {
       row.percentage = parseFloat(row.Values[1]) / totalSum
     }
   });
@@ -16108,7 +16125,7 @@ jarvis.visualisation.dashboard.BarTable.prototype.update = function(sender, dime
     var $caption = $('<div class="barcaption"><div class="caption"></div><div class="subcaption"></div></div>');
     $caption.find(".caption").text(jarvis.string.formatNumber(row.percentage * 100, 2) + "% " + row.FormattedValues[0]);
     $caption.find(".caption").attr("title", row.FormattedValues[0]);
-    $caption.find(".subcaption").text(row.FormattedValues[1] + " " + series[0].Columns[1].Name);
+    $caption.find(".subcaption").text(row.FormattedValues[1] + " " + series[0].Columns[1].name);
     $td.append($barwrapper);
     $td.append($caption);
     $tr.append($td);
