@@ -8940,20 +8940,21 @@ jarvis.objects.Reports.List = function(sender, options, callback, force) {
 jarvis.objects.Reports.Get = function(sender, options, callback, force) {
   var result;
   if(jarvis.objects.Reports.length > 0 && typeof callback !== "function" && !force) {
-    return _.find(jarvis.objects.Reports, function(item) {
-      return item.ID == options.id
-    })
+    result = _.find(jarvis.objects.Reports, function(item) {
+      return item.id == options.id
+    });
+    return result
   }
   if(typeof callback == "function") {
     jarvis.dataaccess.fetch(this, "/reports.get", {id:options.id}, function(sender, data, error) {
-      result = result.report;
+      result = data.report;
       callback(sender, result)
     })
   }else {
     result = jarvis.dataaccess.fetch(this, "/reports.get", {id:options.id}, null);
     var data = result.report;
     for(i = 0;i < jarvis.objects.Reports.length;i++) {
-      if(jarvis.objects.Reports[i].ID == data.ID) {
+      if(jarvis.objects.Reports[i].id == data.id) {
         jarvis.objects.Reports[i] = data
       }
     }
@@ -10010,7 +10011,7 @@ jarvis.visualisation.picker.Metrics.prototype.setSelected = function(sender, met
   }
   var metrics = jarvis.objects.Metrics;
   $(metrics).each(function(i, m) {
-    if(m.Name == metricname) {
+    if(m.name == metricname) {
       _this.selectedMetric = m
     }
   })
@@ -10018,7 +10019,7 @@ jarvis.visualisation.picker.Metrics.prototype.setSelected = function(sender, met
 jarvis.visualisation.picker.Metrics.prototype.disableMetric = function(sender, metricname) {
   var container = sender.container[0];
   $(container).find(".key").each(function(i, m) {
-    if($(m).text() == metricname.Name) {
+    if($(m).text() == metricname.name) {
       $(m).closest(".node").off("click");
       $(m).closest(".node").on("click", function(e) {
         e.stopPropagation()
@@ -10128,12 +10129,12 @@ jarvis.visualisation.picker.Metrics.prototype.baseHTML = function(sender) {
     $list.append('<div class="category">' + item[0].Category + "</div>");
     $list.append('<ul class="jcontainer"></ul>');
     $.each(item, function(index, metric) {
-      if(_this.options.exclude.indexOf(metric.Name) == -1) {
-        var list = '<li class="node leaf ' + "level_" + "1" + '" data-metricname="' + metric.Name + '" data-metricid="' + metric.Id + '">';
+      if(_this.options.exclude.indexOf(metric.name) == -1) {
+        var list = '<li class="node leaf ' + "level_" + "1" + '" data-metricname="' + metric.name + '" data-metricid="' + metric.id + '">';
         list += '<div class="box">';
         list += '<div class="keyvaluepair">';
-        list += '<div class="key">' + metric.Name + "</div>";
-        list += '<div class="help"> <i class="tipsy icon-question-sign icon-white" data-caption="' + metric.Name + '" data-text="' + metric.HelpText + '" data-title="' + (metric.HelpText == "" ? "Information not available." : metric.HelpText) + '"></i> </div>';
+        list += '<div class="key">' + metric.name + "</div>";
+        list += '<div class="help"> <i class="tipsy icon-question-sign icon-white" data-caption="' + metric.name + '" data-text="' + metric.description + '" data-title="' + (metric.HelpText == "" ? "Information not available." : metric.HelpText) + '"></i> </div>';
         list += "</div>";
         list += "</div>";
         list += "</li>";
@@ -10429,6 +10430,9 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
     return obj.Category.Name
   });
   _dimensions = _.sortBy(_dimensions, function(item) {
+    if(!item[0].Category) {
+      item[0].Category = {Name:item.category, Ordinal:0}
+    }
     return item[0].Category.Ordinal
   });
   $container.append('<ul class="categorylist"></ul>');
@@ -10436,16 +10440,16 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
   _.each(_dimensions, function(item, index) {
     if(item[0].Category && item[0].Category.Name != "(not set)") {
       var $list = $('<li class="node  ' + "level_" + "0" + '"></li>');
-      $list.append('<div class="category">' + (!item[0].Category ? "(not set)" : item[0].Category.Name) + "</div>");
+      $list.append('<div class="category">' + (!item[0].Category ? "(not set)" : item[0].Category.name) + "</div>");
       $list.append('<ul class="jcontainer"></ul>');
       var bDrawn = false;
       $.each(item, function(index, dimension) {
         if(dimension.ColumnName != dimension.DictionaryTable_Column || dimension.Id <= -1) {
-          var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.Name + '" data-dimensionid="' + dimension.Id + '">';
+          var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.name + '" data-dimensionid="' + dimension.id + '">';
           list += '<div class="box">';
           list += '<div class="keyvaluepair">';
-          list += '<div class="key">' + dimension.Name + "</div>";
-          list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.Name + '" data-text="' + dimension.HelpText + '"></i> </div>';
+          list += '<div class="key">' + dimension.name + "</div>";
+          list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.name + '" data-text="' + dimension.helptext + '"></i> </div>';
           list += "</div>";
           list += "</div>";
           list += "</li>";
@@ -16327,12 +16331,12 @@ jarvis.visualisation.report.Timeline.prototype.init = function(options, containe
   _this.showPrimary = this.options.showPrimary;
   $(matchedContainers).each(function(index, item) {
     jarvis.debug.log("INFO", "jarvis.visualisation.report.Timeline", 6, "Applying to container ('" + this.id + "')");
-    if(_this.primaryMetric == null) {
-      if(options != null) {
+    if(_this.primaryMetric == null || typeof _this.primaryMetric == "undefined") {
+      if(options != null && options.primaryMetric && typeof options.primaryMetric != "undefined") {
         _this.primaryMetric = options.primaryMetric;
         _this.metrics.push(options.primaryMetric);
         $(jarvis.objects.Metrics).each(function(i, o) {
-          if(o.Name == _this.metrics[0]) {
+          if(o.id == _this.metrics[0]) {
             _this.primaryMetric = o
           }
         })
@@ -16346,7 +16350,7 @@ jarvis.visualisation.report.Timeline.prototype.init = function(options, containe
           });
           _this.primaryMetric = _this.metrics[0];
           $(jarvis.objects.Metrics).each(function(i, o) {
-            if(o.Name == _this.metrics[0]) {
+            if(o.id == _this.metrics[0]) {
               _this.primaryMetric = o
             }
           })
@@ -16354,13 +16358,13 @@ jarvis.visualisation.report.Timeline.prototype.init = function(options, containe
           _this.primaryMetric = jarvis.objects.Metrics[0];
           _this.metrics = [];
           _this.metrics.push(_this.primaryMetric);
-          $(item).attr("data-metrics", _this.primaryMetric.Name)
+          $(item).attr("data-metrics", _this.primaryMetric.id)
         }
       }
     }else {
       _this.metrics = [];
       _this.metrics.push(_this.primaryMetric);
-      $(item).attr("data-metrics", _this.primaryMetric.Name)
+      $(item).attr("data-metrics", _this.primaryMetric.name)
     }
     _this.drawChart(item);
     _this.fetch(_this);
@@ -16391,33 +16395,33 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
     var compare_enddate = jarvis.visualisation.picker.DateBox.getDate().compare_todate
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.primaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.report.globalfilter};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.report.globalfilter};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.primaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.report.globalfilter};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.report.globalfilter};
     queryOptions.push(_queryOptions)
   }
   if(_this.secondaryMetric) {
-    _queryOptions = {id:"secondary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.secondaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.report.globalfilter};
+    _queryOptions = {id:"secondary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.secondaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.report.globalfilter};
     queryOptions.push(_queryOptions);
     if(_this.DateBox.comparePeriod) {
-      _queryOptions = {id:"compare_secondary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.secondaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:jarvis.visualisation.report.globalfilter};
+      _queryOptions = {id:"compare_secondary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.secondaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.report.globalfilter};
       queryOptions.push(_queryOptions)
     }
   }
   if(_this.Filters.length > 0) {
     $(_this.Filters).each(function(i, dimension) {
-      _queryOptions = {id:"filter", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.primaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:dimension};
+      _queryOptions = {id:"filter", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", mMetrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
       queryOptions.push(_queryOptions);
       if(_this.DateBox.comparePeriod) {
-        _queryOptions = {id:"compare_filter", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.primaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:dimension};
+        _queryOptions = {id:"compare_filter", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), startdate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
         queryOptions.push(_queryOptions)
       }
       if(_this.secondaryMetric) {
-        _queryOptions = {id:"filter_secondary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.secondaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:dimension};
+        _queryOptions = {id:"filter_secondary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.secondaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
         queryOptions.push(_queryOptions);
         if(_this.DateBox.comparePeriod) {
-          _queryOptions = {id:"compare_filter_secondary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:_this.secondaryMetric.Name, Resolution:_this.Resolution, omitDate:false, Filter:dimension};
+          _queryOptions = {id:"compare_filter_secondary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.secondaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
           queryOptions.push(_queryOptions)
         }
       }
@@ -16429,7 +16433,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
   if(!_this.options.showPrimary) {
     nextcolor = 0
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var yaxismin = [];
     $(data).each(function(index, item) {
       var series = [];
@@ -16450,13 +16454,13 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
         var y = parseFloat(point.Values[1]);
         if(item.id == "primary") {
           var x = jarvis.date.flatDate(point.Values[0]);
-          _series.push({x:x, y:y, name:result.Columns[1].Name, formattedy:point.FormattedValues[1], compare:false});
+          _series.push({x:x, y:y, name:result.Columns[1].name, formattedy:point.FormattedValues[1], compare:false});
           baseSeries.push(x)
         }else {
           var x = baseSeries[oindex];
           var actualdate = jarvis.date.flatDate(point.FormattedValues[0]);
           if(typeof x != "undefined") {
-            _series.push({x:x, y:y, name:result.Columns[1].Name, formattedy:point.FormattedValues[1], compare:item.id.indexOf("compare") > -1 ? true : false, actualdate:actualdate})
+            _series.push({x:x, y:y, name:result.Columns[1].name, formattedy:point.FormattedValues[1], compare:item.id.indexOf("compare") > -1 ? true : false, actualdate:actualdate})
           }
         }
       });
@@ -16467,16 +16471,16 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       var _yAxis = 0;
       var _shadow = true;
       var _ordinal = 0;
-      var _ytype = result.Columns[1].Suffix;
+      var _ytype = result.Columns[1].suffix;
       if(item.id == "primary") {
-        _name = result.Columns[1].Name;
+        _name = result.Columns[1].name;
         _color = jarvis.colors[0];
         yaxismin[0] = _.min(_series, function(item) {
           return item.y
         }).y
       }
       if(item.id == "secondary") {
-        _name = result.Columns[1].Name;
+        _name = result.Columns[1].name;
         _color = jarvis.colors[1];
         _lineWidth = 2;
         _type = "line";
@@ -16495,7 +16499,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
           _name += s.split("=")[1] + ", "
         });
         _name = _name.substring(0, _name.length - 2);
-        _name += ": " + result.Columns[1].Name;
+        _name += ": " + result.Columns[1].name;
         _lineWidth = 2;
         _type = "line";
         _yAxis = 0;
@@ -16514,7 +16518,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
           _name += s.split("=")[1] + ", "
         });
         _name = _name.substring(0, _name.length - 2);
-        _name += ": " + result.Columns[1].Name;
+        _name += ": " + result.Columns[1].name;
         _lineWidth = 2;
         _type = "line";
         _yAxis = 1;
@@ -16526,7 +16530,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
         _ordinal = 3
       }
       if(item.id == "compare_primary") {
-        _name = result.Columns[1].Name;
+        _name = result.Columns[1].name;
         _color = jarvis.offcolors[0];
         _lineWidth = 2;
         _type = "line";
@@ -16551,7 +16555,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
           _name += s.split("=")[1] + ", "
         });
         _name = _name.substring(0, _name.length - 2);
-        _name += ": " + result.Columns[1].Name;
+        _name += ": " + result.Columns[1].name;
         _lineWidth = 2;
         _type = "line";
         _yAxis = 0;
@@ -16568,7 +16572,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
           _name += s.split("=")[1] + ", "
         });
         _name = _name.substring(0, _name.length - 2);
-        _name += ": " + result.Columns[1].Name;
+        _name += ": " + result.Columns[1].name;
         _lineWidth = 2;
         _type = "line";
         _yAxis = 1;
@@ -16709,23 +16713,23 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
     var reportID = jarvis.visualisation.reportWrapper.reportID;
     var report = jarvis.objects.Reports.Get(_this, {id:reportID});
     var tabID = jarvis.visualisation.reportWrapper.tabID;
-    var tab = report.Tabs[tabID];
-    var mgs = tab.MetricGroups;
+    var tab = report.tabs[tabID];
+    var mgs = tab.metricgroups;
     $(mgs).each(function(index, mg) {
-      var metrics = mg.Metrics;
+      var metrics = mg.metrics;
       $(metrics).each(function(index, metric) {
-        metric.Category = mg.Name;
+        metric.Category = mg.name;
         _metrics.push(metric)
       })
     })
   }else {
     _metrics = jarvis.objects.Metrics
   }
-  var picker_metrics = new jarvis.visualisation.picker.Metrics({container:$item, exclude:_this.options.excludeMetrics, selected:_this.primaryMetric.Name});
+  var picker_metrics = new jarvis.visualisation.picker.Metrics({container:$item, exclude:_this.options.excludeMetrics, selected:_this.primaryMetric.name});
   _this.selectedMetric = picker_metrics.selectedMetric;
   $(picker_metrics).bind("select", function(data, metric) {
     metric = _.find(jarvis.objects.Metrics, function(item) {
-      return item.Name == metric
+      return item.id == metric
     });
     _this.primaryMetric = metric;
     _this.fetch(_this);
@@ -16735,7 +16739,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   $(jarvis.visualisation).unbind("metricbox-primarymetric");
   $(jarvis.visualisation).bind("metricbox-primarymetric", function(e, sender, metric) {
     if(sender.type != _this.type) {
-      picker_metrics.setSelected(_this, metric.Name);
+      picker_metrics.setSelected(_this, metric.name);
       _this.primaryMetric = metric;
       _this.fetch(_this);
       _this.setState(_this)
@@ -16743,11 +16747,11 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   });
   var $item = $('<div class="jarvis picker metrics" data-type="button"></div>');
   $(Container).find(".comparemetricwrapper").append($item);
-  var picker_secondary = new jarvis.visualisation.picker.Metrics({container:$item, allowremove:true, exclude:_this.options.excludeMetrics, selected:_this.secondaryMetric ? _this.secondaryMetric.Name : ""});
+  var picker_secondary = new jarvis.visualisation.picker.Metrics({container:$item, allowremove:true, exclude:_this.options.excludeMetrics, selected:_this.secondaryMetric ? _this.secondaryMetric.name : ""});
   picker_secondary.disableMetric(picker_secondary, _this.primaryMetric);
   $(picker_secondary).bind("select", function(data, metric) {
     metric = _.find(jarvis.objects.Metrics, function(item) {
-      return item.Name == metric
+      return item.id == metric
     });
     _this.secondaryMetric = metric;
     _this.fetch(_this);
@@ -16758,7 +16762,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   $(jarvis.visualisation).bind("secondarymetric", function(e, sender, metric) {
     if(sender.type != _this.type) {
       metric = _.find(jarvis.objects.Metrics, function(item) {
-        return item.Name == metric
+        return item.id == metric
       });
       _this.secondaryMetric = metric;
       _this.fetch(_this);
@@ -16769,17 +16773,17 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   $metlist += "</ul>";
   $metlist = $($metlist);
   $(jarvis.objects.Metrics).each(function(index, metric) {
-    var item = $('<li class="jarvis metriclink" data-id="' + metric.Id + '"><a >' + metric.Name + "</a></li>");
+    var item = $('<li class="jarvis metriclink" data-id="' + metric.Id + '"><a >' + metric.name + "</a></li>");
     item.off("click");
     item.click(function(e) {
       var $parent = $($(this).parent());
       var _primaryMetric = !$($parent.parent()).parent().hasClass("comparemetricpicker");
       if(_primaryMetric) {
         _this.primaryMetric = metric;
-        $(".jarvis.metricname").html(metric.Name)
+        $(".jarvis.metricname").html(metric.name)
       }else {
         _this.secondaryMetric = metric;
-        $(".jarvis.secondarymetricname").html(metric.Name);
+        $(".jarvis.secondarymetricname").html(metric.name);
         $(".jarvis.removecomparemetric.icon-remove").show();
         $(".jarvis.comparemetricwrapper.btn.dropdown-toggle.dropdown").addClass("selected")
       }
@@ -16795,7 +16799,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
     });
     $($metlist).append(item)
   });
-  $(".jarvis.metricname").html(_this.primaryMetric.Name);
+  $(".jarvis.metricname").html(_this.primaryMetric.name);
   $(Container).find(".jarvis.metriccontainer.current").append($metlist);
   $(Container).find(".jarvis.metriccontainer.alltabs").append($metlist.clone(true));
   $(Container).append('<div class="chart" style="width:100%;display:block;"></div>');
@@ -17249,7 +17253,7 @@ jarvis.visualisation.report.MetricBox.prototype.init = function(options, contain
       _this.Container = item;
       var _metrics = $(item).attr("data-metrics");
       if(!_metrics) {
-        _metrics = jarvis.objects.Metrics[0].Name
+        _metrics = jarvis.objects.Metrics[0].id
       }
       _metrics = _metrics.split(",");
       $(_metrics).each(function(index, item) {
@@ -17257,8 +17261,8 @@ jarvis.visualisation.report.MetricBox.prototype.init = function(options, contain
         _this.metrics.push(_metrics[index])
       });
       $(jarvis.objects.Metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(item).empty();
@@ -17278,14 +17282,14 @@ jarvis.visualisation.report.MetricBox.prototype.init = function(options, contain
       });
       $(jarvis.visualisation).bind("timeline-primarymetric", function(e, sender, metric) {
         $(".jmetricbox").removeClass("primaryactive");
-        var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+        var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
         $metric.addClass("primaryactive");
         $metric.find(".legendmark").css({"border-color":jarvis.colors[0]});
         $(jarvis).trigger("report-metricbox-draw", [$metric, true])
       });
       $(jarvis.visualisation).bind("timeline-secondarymetric", function(e, sender, metric) {
         $(".jmetricbox").removeClass("secondaryactive");
-        var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+        var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
         if(metric) {
           $metric.addClass("secondaryactive");
           $metric.find(".legendmark").css({"border-color":jarvis.colors[1]})
@@ -17311,23 +17315,27 @@ jarvis.visualisation.report.MetricBox.prototype.fetch = function(sender, contain
   }
   $(_this.metrics).each(function(index, metric) {
     var queryOptions = [];
-    var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.report.globalfilter};
+    var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.report.globalfilter};
     queryOptions.push(_queryOptions);
     if(_this.DateBox.comparePeriod) {
-      _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.report.globalfilter};
+      _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.report.globalfilter};
       queryOptions.push(_queryOptions)
     }
     if(!_this.DateBox.comparePeriod && jarvis.visualisation.report.globalfilter && jarvis.visualisation.report.globalfilter != "") {
-      var _queryOptions = {id:"total", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:true, Filter:""};
+      var _queryOptions = {id:"total", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:""};
       queryOptions.push(_queryOptions)
     }
-    jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+    jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
       var series = [];
       $(data).each(function(index, item) {
         var result = item.data.Result;
         var request = item.data.Request;
         var _data = item.data.Result.Rows;
-        var point = {value:_data[0].Values[0], fvalue:_data[0].FormattedValues[0], totalvalue:_data[0].Values[0], ftotalvalue:_data[0].FormattedValues[0]};
+        try {
+          var point = {value:_data[0].Values[0], fvalue:_data[0].FormattedValues[0], totalvalue:_data[0].Values[0], ftotalvalue:_data[0].FormattedValues[0]}
+        }catch(ex) {
+          var point = {value:0, fvalue:0, totalvalue:0, ftotalvalue:0}
+        }
         series.push(point)
       });
       if(_this.DateBox.comparePeriod == false) {
@@ -17336,7 +17344,7 @@ jarvis.visualisation.report.MetricBox.prototype.fetch = function(sender, contain
         _this.updateCompare(sender, metric, series)
       }
       var primary;
-      if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.Name == metric.Name) {
+      if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.id == metric.id) {
         primary = false
       }else {
         primary = true
@@ -17347,7 +17355,7 @@ jarvis.visualisation.report.MetricBox.prototype.fetch = function(sender, contain
 };
 jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric, series) {
   var _this = sender;
-  var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+  var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
   var displayValue = series[0].value;
   if(displayValue > 1E6 || displayValue < -1E6) {
     displayValue = jarvis.string.shortenNumber(displayValue);
@@ -17365,7 +17373,7 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
   $metric.find(".value").removeClass("negative");
   $metric.find(".value").removeClass("positive");
   var ratio;
-  if(metric.AggregationType == "SUM" || metric.AggregationType == "COUNT") {
+  if(metric.aggregation == "SUM" || metric.aggregation == "COUNT") {
     ratio = 100;
     if(series[0].totalvalue > 0) {
       ratio = series[0].value / (series.length == 1 ? series[0].value : series[1].value) * 100
@@ -17376,7 +17384,7 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
       $metric.find(".summary").html('<span class="summaryvalue">' + jarvis.string.formatNumber(ratio, 2) + "%</span> of Total<br>(" + series[1].ftotalvalue + ")")
     }
   }else {
-    if(metric.AggregationType == "AVG") {
+    if(metric.aggregation == "AVG") {
       ratio = 0;
       if(series[0].totalvalue > 0) {
         ratio = percentageChange(series.length == 1 ? series[0].value : series[1].value, series[0].totalvalue)
@@ -17388,12 +17396,12 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
       }
     }
   }
-  if(jarvis.visualisation.primarymetric && jarvis.visualisation.primarymetric.Name == metric.Name) {
+  if(jarvis.visualisation.primarymetric && jarvis.visualisation.primarymetric.id == metric.id) {
     $metric.addClass("primaryactive")
   }else {
     $metric.removeClass("primaryactive")
   }
-  if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.Name == metric.Name) {
+  if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.id == metric.id) {
     $metric.addClass("secondaryactive")
   }else {
     $metric.removeClass("secondaryactive")
@@ -17408,9 +17416,8 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
 };
 jarvis.visualisation.report.MetricBox.prototype.updateCompare = function(sender, metric, series) {
   var _this = sender;
-  var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+  var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
   var value = percentageChange(series[1].value, series[0].value);
-  console.log(value);
   $metric.find(".value").removeClass("negative");
   $metric.find(".value").removeClass("positive");
   var _class = "neutral";
@@ -17427,16 +17434,15 @@ jarvis.visualisation.report.MetricBox.prototype.updateCompare = function(sender,
     _class = "negative"
   }
   value = jarvis.string.formatNumber(value, 2) + "%";
-  console.log(value);
   $metric.find(".value").html(value);
   $metric.find(".value").addClass(_class);
   $metric.find(".summary").html(series[0].fvalue + " vs " + series[1].fvalue);
-  if(jarvis.visualisation.primarymetric && jarvis.visualisation.primarymetric.Name == metric.Name) {
+  if(jarvis.visualisation.primarymetric && jarvis.visualisation.primarymetric.id == metric.id) {
     $metric.addClass("primaryactive")
   }else {
     $metric.removeClass("primaryactive")
   }
-  if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.Name == metric.Name) {
+  if(jarvis.visualisation.secondarymetric && jarvis.visualisation.secondarymetric.id == metric.id) {
     $metric.addClass("secondaryactive")
   }else {
     $metric.removeClass("secondaryactive")
@@ -17450,13 +17456,13 @@ jarvis.visualisation.report.MetricBox.prototype.updateCompare = function(sender,
   })
 };
 jarvis.visualisation.report.MetricBox.prototype.baseHTML = function(item) {
-  return'<div class="caption">' + item.Name + "</div>" + '<div class="valuewrapper"><span class="legendmark" style=""></span><div class="value"></div></div>' + '<div class="summary"></div>'
+  return'<div class="caption">' + item.name + "</div>" + '<div class="valuewrapper"><span class="legendmark" style=""></span><div class="value"></div></div>' + '<div class="summary"></div>'
 };
 jarvis.visualisation.report.MetricBox.prototype.draw = function(Container) {
   var _this = this;
   var metrics = _this.metrics;
   $(metrics).each(function(index, item) {
-    var _html = '<div class="jmetricbox" style="width:' + Math.floor(100 / metrics.length) + '%" data-metric="' + item.Name + '"></div>';
+    var _html = '<div class="jmetricbox" style="width:' + Math.floor(100 / metrics.length) + '%" data-metric="' + item.id + '"></div>';
     var $html = $(_html);
     $(Container).append($html);
     _html = _this.baseHTML(item);
@@ -17464,7 +17470,7 @@ jarvis.visualisation.report.MetricBox.prototype.draw = function(Container) {
   });
   if(jarvis.visualisation.primarymetric != null) {
     var metric = jarvis.visualisation.primarymetric;
-    var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+    var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
     $(".jmetricbox").removeClass("primaryactive");
     $metric.addClass("primaryactive");
     $metric.find(".legendmark").css({"border-color":jarvis.colors[0]});
@@ -17472,7 +17478,7 @@ jarvis.visualisation.report.MetricBox.prototype.draw = function(Container) {
   }
   if(jarvis.visualisation.secondarymetric != null) {
     var metric = jarvis.visualisation.secondarymetric;
-    var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.Name + '"]');
+    var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
     $(".jmetricbox").removeClass("secondaryactive");
     $metric.addClass("secondaryactive");
     $metric.find(".legendmark").css({"border-color":jarvis.colors[1]});
@@ -18648,7 +18654,7 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
           $(_this.levels).each(function(index, level) {
             $(level).each(function(index2, dimension) {
               $(jarvis.objects.Dimensions).each(function(index3, item) {
-                if(dimension == item.Name) {
+                if(dimension == item.id) {
                   if(index == _this.drilldownlevel) {
                     _this.dimensions.push(item)
                   }
@@ -18666,8 +18672,8 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
             _this.dimensions.push(_dimensions[index])
           });
           $(jarvis.objects.Dimensions).each(function(index, item) {
-            if(_dimensions.indexOf(item.Name) > -1) {
-              _this.dimensions[_dimensions.indexOf(item.Name)] = item
+            if(_dimensions.indexOf(item.id) > -1) {
+              _this.dimensions[_dimensions.indexOf(item.id)] = item
             }
           })
         }
@@ -18683,8 +18689,8 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
         _this.metrics.push(_metrics[index])
       });
       $(jarvis.objects.Metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(item).empty();
@@ -18741,22 +18747,22 @@ jarvis.visualisation.report.Table.prototype.fetch = function(sender, container) 
   }
   var dimensionslist = "";
   $(_this.dimensions).each(function(index, item) {
-    dimensionslist += item.Name + ", "
+    dimensionslist += item.id + ", "
   });
   dimensionslist = dimensionslist.substring(0, dimensionslist.length - 2);
   var metricslist = "";
   $(_this.metrics).each(function(index, item) {
-    metricslist += item.Name + ", "
+    metricslist += item.id + ", "
   });
   metricslist = metricslist.substring(0, metricslist.length - 2);
   var queryOptions = [];
-  var _queryOptions = {id:"primary", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:dimensionslist, Metrics:metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.report.globalfilter, SortKey:_this.metrics[0].Name, SortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:dimensionslist, metrics:metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.report.globalfilter, sortKey:_this.metrics[0].id, sortDir:"DESC"};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:dimensionslist, Metrics:metricslist, Resolution:_this.Resolution, omitDate:true, Filter:jarvis.visualisation.report.globalfilter, SortKey:_this.metrics[0].Name, SortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:dimensionslist, metrics:metricslist, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.report.globalfilter, sortKey:_this.metrics[0].id, sortDir:"DESC"};
     queryOptions.push(_queryOptions)
   }
-  jarvis.dataaccess.multifetch(_this, "/engine/Query.svc/fetch", queryOptions, function(sender, data, error) {
+  jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
     var series = [];
     $(data).each(function(index, item) {
       var result = item.data.Result;
@@ -18800,7 +18806,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   $table.find("tr").remove();
   if(_this.sortColumnIndex == -1) {
     $(_columns).each(function(index, column) {
-      if(column.AggregationType) {
+      if(column.aggregation) {
       }else {
         _this.sortColumnIndex = index + 1
       }
@@ -18808,7 +18814,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   }
   if(_this.ColumnIndex == -1) {
     $(_columns).each(function(index, column) {
-      if(column.AggregationType) {
+      if(column.aggregation) {
       }else {
         _this.ColumnIndex = index + 1
       }
@@ -18818,7 +18824,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   _data = $(_data).sort(function(a, b) {
     var valuea = a.Values[_this.sortColumnIndex];
     var valueb = b.Values[_this.sortColumnIndex];
-    if(_columns[_this.sortColumnIndex].AggregationType) {
+    if(_columns[_this.sortColumnIndex].aggregation) {
       valuea = parseFloat(valuea);
       valueb = parseFloat(valueb)
     }
@@ -18831,7 +18837,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   _data_compare = $(_data_compare).sort(function(a, b) {
     var valuea = a.Values[_this.sortColumnIndex];
     var valueb = b.Values[_this.sortColumnIndex];
-    if(_columns[_this.sortColumnIndex].AggregationType) {
+    if(_columns[_this.sortColumnIndex].aggregation) {
       valuea = parseFloat(valuea);
       valueb = parseFloat(valueb)
     }
@@ -18850,19 +18856,19 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     $(_datatoshow).each(function(pi, po) {
       var point = {FormattedValues:[], Values:[]};
       $(_columns).each(function(ci, co) {
-        if(!co.AggregationType) {
+        if(!co.aggregation) {
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
       });
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.ColumnIndex) {
+        if(co.aggregation && ci == _this.ColumnIndex) {
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
       });
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.compareColumnIndex) {
+        if(co.aggregation && ci == _this.compareColumnIndex) {
           comparecolumnname = co.Name;
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
@@ -18874,11 +18880,11 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     $(_data).each(function(pi, po) {
       var point = {FormattedValues:[], Values:[]};
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.ColumnIndex) {
+        if(co.aggregation && ci == _this.ColumnIndex) {
           _totalsum += parseFloat(po.Values[ci])
         }
-        if(co.AggregationType && ci == _this.compareColumnIndex) {
-          comparecolumnname = co.Name;
+        if(co.aggregation && ci == _this.compareColumnIndex) {
+          comparecolumnname = co.name;
           _totalsumcompare += parseFloat(po.Values[ci])
         }
       })
@@ -18896,20 +18902,20 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     $(_data_compare_toshow).each(function(pi, po) {
       var point = {FormattedValues:[], Values:[]};
       $(_columns).each(function(ci, co) {
-        if(!co.AggregationType) {
+        if(!co.aggregation) {
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
       });
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.ColumnIndex) {
+        if(co.aggregation && ci == _this.ColumnIndex) {
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
       });
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.compareColumnIndex) {
-          comparecolumnname = co.Name;
+        if(co.aggregation && ci == _this.compareColumnIndex) {
+          comparecolumnname = co.name;
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
@@ -18922,11 +18928,11 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     $(_data_compare).each(function(pi, po) {
       var point = {FormattedValues:[], Values:[]};
       $(_columns).each(function(ci, co) {
-        if(co.AggregationType && ci == _this.ColumnIndex) {
+        if(co.aggregation && ci == _this.ColumnIndex) {
           _totalsum += parseFloat(po.Values[ci])
         }
-        if(co.AggregationType && ci == _this.compareColumnIndex) {
-          comparecolumnname = co.Name;
+        if(co.aggregation && ci == _this.compareColumnIndex) {
+          comparecolumnname = co.name;
           _totalsumcompare += parseFloat(po.Values[ci])
         }
       })
@@ -18944,16 +18950,16 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
     _temp = [];
     $(_columns).each(function(ci, co) {
-      if(co.AggregationType && ci == _this.ColumnIndex) {
+      if(co.aggregation && ci == _this.ColumnIndex) {
         _temp.push(co)
       }else {
-        if(!co.AggregationType) {
+        if(!co.aggregation) {
           _temp.push(co)
         }
       }
     });
     _columns = _temp;
-    _columns.push({Name:comparecolumnname, AggregationType:"Special"})
+    _columns.push({Name:comparecolumnname, aggregation:"Special"})
   }
   var $tr = $("<tr></tr>");
   var $th = $('<th class="check"></th>');
@@ -18962,13 +18968,13 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   $tr.append($th);
   var sortIndex = 0;
   $(_columns).each(function(index, column) {
-    if(column.AggregationType) {
+    if(column.aggregation) {
       var metric = column;
       if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
         if(index == _columns.length - 2) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.AggregationType) {
+            if(ao.aggregation) {
               $th.find(".metricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
@@ -18981,18 +18987,18 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th.find(".metricpicker").on("change", function(e) {
             var selected = $(this).val();
             $(_allcolumns).each(function(ai, ao) {
-              if(ao.Name == selected) {
+              if(ao.name == selected) {
                 _this.ColumnIndex = ai
               }
             });
             _this.update(_this)
           })
         }else {
-          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + _columns[_columns.length - 1].Name + "</th>")
+          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + _columns[_columns.length - 1].name + "</th>")
         }
       }else {
         if(_this.mode != "pie") {
-          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + metric.Name + "</th>");
+          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + metric.name + "</th>");
           if(sortIndex == _this.sortColumnIndex) {
             $th.addClass("sortkey");
             $th.addClass(_this.sortDir)
@@ -19026,14 +19032,14 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     }else {
       var dimension = column;
       if(index == 0) {
-        $th = $('<th class="dimension" data-sortindex="' + sortIndex + '">' + dimension.Name + "</th>")
+        $th = $('<th class="dimension" data-sortindex="' + sortIndex + '">' + dimension.name + "</th>")
       }else {
-        $th = $('<th class="dimension" data-sortindex="' + sortIndex + '">' + dimension.Name + "" + '<i class="jarvis removesecondarydimension icon-remove" style=" margin-top: 2px; margin-left: 5px; cursor: pointer; "></i>' + "" + "</th>");
+        $th = $('<th class="dimension" data-sortindex="' + sortIndex + '">' + dimension.name + "" + '<i class="jarvis removesecondarydimension icon-remove" style=" margin-top: 2px; margin-left: 5px; cursor: pointer; "></i>' + "" + "</th>");
         $($th.find(".removesecondarydimension")).off("click");
         $($th.find(".removesecondarydimension")).on("click", function(e) {
           var dindex = -1;
           $(_this.dimensions).each(function(i, d) {
-            if(d.Name == dimension.Name) {
+            if(d.name == dimension.name) {
               dindex = i
             }
           });
@@ -19092,14 +19098,14 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       var shortfilter = "";
       $(_columns).each(function(i, cell) {
         $td = $("<td></td>");
-        if(_columns[i].AggregationType) {
+        if(_columns[i].aggregation) {
           $td.addClass("metricvalue")
         }else {
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].Name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].Name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -19183,8 +19189,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         if(index == 0) {
           var $th = $('<th class="special pie">Contribution to total: <select class="input-medium comparemetricpicker"></select></th>');
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.AggregationType) {
-              $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+            if(ao.aggregation) {
+              $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
             }
           });
           $th.find(".comparemetricpicker").off("click");
@@ -19194,7 +19200,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th.find(".comparemetricpicker").on("change", function(e) {
             var selected = $(this).val();
             $(_allcolumns).each(function(ai, ao) {
-              if(ao.Name == selected) {
+              if(ao.name == selected) {
                 _this.compareColumnIndex = ai
               }
             });
@@ -19215,8 +19221,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           if(index == 0) {
             var $th = $('<th class="special perf"><select class="input-medium comparemetricpicker"></select></th>');
             $(_allcolumns).each(function(ai, ao) {
-              if(ao.AggregationType) {
-                $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+              if(ao.aggregation) {
+                $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
               }
             });
             $th.find(".comparemetricpicker").off("click");
@@ -19226,7 +19232,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             $th.find(".comparemetricpicker").on("change", function(e) {
               var selected = $(this).val();
               $(_allcolumns).each(function(ai, ao) {
-                if(ao.Name == selected) {
+                if(ao.name == selected) {
                   _this.compareColumnIndex = ai
                 }
               });
@@ -19249,8 +19255,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             if(index == 0) {
               var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
               $(_allcolumns).each(function(ai, ao) {
-                if(ao.AggregationType) {
-                  $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+                if(ao.aggregation) {
+                  $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
                 }
               });
               $th.find(".comparemetricpicker").off("click");
@@ -19260,7 +19266,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
               $th.find(".comparemetricpicker").on("change", function(e) {
                 var selected = $(this).val();
                 $(_allcolumns).each(function(ai, ao) {
-                  if(ao.Name == selected) {
+                  if(ao.name == selected) {
                     _this.compareColumnIndex = ai
                   }
                 });
@@ -19301,7 +19307,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       var shortfilter = "";
       $(_columns).each(function(i, cell) {
         $td = $("<td></td>");
-        if(_columns[i].AggregationType) {
+        if(_columns[i].aggregation) {
           $td.addClass("metricvalue")
         }else {
           $td.html('<span class="drilldownlink c">' + row.FormattedValues[i] + "</span>");
@@ -19318,9 +19324,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           }
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].Name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].Name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -19331,8 +19337,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         if(index == 0) {
           var $th = $('<th class="special pie">Contribution to total: <select class="input-medium comparemetricpicker"></select></th>');
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.AggregationType) {
-              $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+            if(ao.aggregation) {
+              $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
             }
           });
           $th.find(".comparemetricpicker").off("click");
@@ -19342,7 +19348,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th.find(".comparemetricpicker").on("change", function(e) {
             var selected = $(this).val();
             $(_allcolumns).each(function(ai, ao) {
-              if(ao.Name == selected) {
+              if(ao.name == selected) {
                 _this.compareColumnIndex = ai
               }
             });
@@ -19363,8 +19369,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           if(index == 0) {
             var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
             $(_allcolumns).each(function(ai, ao) {
-              if(ao.AggregationType) {
-                $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+              if(ao.aggregation) {
+                $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
               }
             });
             $th.find(".comparemetricpicker").off("click");
@@ -19374,7 +19380,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             $th.find(".comparemetricpicker").on("change", function(e) {
               var selected = $(this).val();
               $(_allcolumns).each(function(ai, ao) {
-                if(ao.Name == selected) {
+                if(ao.name == selected) {
                   _this.compareColumnIndex = ai
                 }
               });
@@ -19390,8 +19396,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             if(index == 0) {
               var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
               $(_allcolumns).each(function(ai, ao) {
-                if(ao.AggregationType) {
-                  $th.find(".comparemetricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>")
+                if(ao.aggregation) {
+                  $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
                 }
               });
               $th.find(".comparemetricpicker").off("click");
@@ -19401,7 +19407,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
               $th.find(".comparemetricpicker").on("change", function(e) {
                 var selected = $(this).val();
                 $(_allcolumns).each(function(ai, ao) {
-                  if(ao.Name == selected) {
+                  if(ao.name == selected) {
                     _this.compareColumnIndex = ai
                   }
                 });
@@ -19460,7 +19466,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       $tr.append($td);
       $(_columns).each(function(i, cell) {
         $td = $("<td></td>");
-        if(_columns[i].AggregationType) {
+        if(_columns[i].aggregation) {
           $td.addClass("metricvalue");
           if(_this.mode != "pie") {
             $td.html('<span class="drilldownlink d">' + row.FormattedValues[i] + "</span>")
@@ -19482,7 +19488,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             $td = null
           }
         }
-        if(i == _this.sortColumnIndex && _columns[i].AggregationType) {
+        if(i == _this.sortColumnIndex && _columns[i].aggregation) {
           $td.addClass("sortkey")
         }
         $tr.append($td)
@@ -19516,7 +19522,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       $tr.append($td);
       var key = "";
       $(_columns).each(function(i, cell) {
-        if(_columns[i].AggregationType == null) {
+        if(_columns[i].aggregation == null) {
           key += row.Values[i]
         }
       });
@@ -19524,7 +19530,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       $(_data_compare_toshow).each(function(icompare, checkrow) {
         var key_compare = "";
         $(_columns).each(function(i, cell) {
-          if(_columns[i].AggregationType == null) {
+          if(_columns[i].aggregation == null) {
             key_compare += checkrow.Values[i]
           }
         });
@@ -19534,7 +19540,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       });
       $(_columns).each(function(i, cell) {
         $td = $("<td></td>");
-        if(_columns[i].AggregationType) {
+        if(_columns[i].aggregation) {
           $td.addClass("metricvalue");
           try {
             if(_this.mode != "pie") {
@@ -19570,7 +19576,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             $td = null
           }
         }
-        if(i == _this.sortColumnIndex && _columns[i].AggregationType) {
+        if(i == _this.sortColumnIndex && _columns[i].aggregation) {
           $td.addClass("sortkey")
         }
         $tr.append($td)
@@ -19617,7 +19623,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         $tr.append($td);
         $(_columns).each(function(i, cell) {
           $td = $("<td></td>");
-          if(_columns[i].AggregationType) {
+          if(_columns[i].aggregation) {
             var useNA = false;
             $td.addClass("metricvalue comparison");
             try {
@@ -19676,7 +19682,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
               $td = null
             }
           }
-          if(i == _this.sortColumnIndex && _columns[i].AggregationType) {
+          if(i == _this.sortColumnIndex && _columns[i].aggregation) {
             $td.addClass("sortkey")
           }
           $tr.append($td)
@@ -19732,15 +19738,15 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     });
     _html = _html.substring(0, _html.length - 2);
     $($tablecontrol).find(".secondarybutton").html(_html);
-    var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].Name})
+    var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].name})
   }else {
     var $item = $('<div class="jarvis picker dimensions" data-type="button"></div>');
     $($tablecontrol).find(".secondary").empty();
     $($tablecontrol).find(".secondary").append($item);
-    var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].Name});
+    var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].name});
     $(o).bind("select", function(data, dimension) {
       dimension = _.find(jarvis.objects.Dimensions, function(item) {
-        return item.Name == dimension
+        return item.name == dimension
       });
       if(_this.dimensions.indexOf(dimension) == -1) {
         if(_this.dimensions.length == 1) {
@@ -19756,7 +19762,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     })
   }
   if(!_this.isother) {
-    $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].Name);
+    $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].name);
     $(".japi.primarydimension").addClass("on");
     $(".japi.other.picker").removeClass("on");
     $(".japi.other.picker .jbtn").html('Other <span class="caret"></span>')
@@ -19790,7 +19796,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
     return"<b>" + this.point.name + "</b><br/>" + this.series.name + ": " + jarvis.string.formatNumber(this.percentage, 2) + " %"
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:false}, plotOptions:{pie:{showInLegend:true, size:"90%"}}, series:[{name:function() {
     var name = "test";
-    name = columns[columns.length - 2].Name;
+    name = columns[columns.length - 2].name;
     return name
   }(), type:"pie", data:function() {
     var result = [];
@@ -19799,9 +19805,9 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
       if(index < 10) {
         var name = "";
         $(columns).each(function(ci, co) {
-          if(co.AggregationType) {
+          if(co.aggregation) {
           }else {
-            name += columns[ci].Name + ": " + item.FormattedValues[ci] + "<br/>"
+            name += columns[ci].name + ": " + item.FormattedValues[ci] + "<br/>"
           }
         });
         name = name.substring(0, name.length - 5);
@@ -19821,7 +19827,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
     return this.y > 5 ? this.point.name : null
   }, color:"white", distance:-30, enabled:false}}, {name:function() {
     var name = "test";
-    name = columns[columns.length - 1].Name;
+    name = columns[columns.length - 1].name;
     return name
   }(), type:"pie", innerSize:"70%", data:function() {
     var result = [];
@@ -19831,9 +19837,9 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
         if(index < 10) {
           var name = "";
           $(columns).each(function(ci, co) {
-            if(co.AggregationType) {
+            if(co.aggregation) {
             }else {
-              name += columns[ci].Name + ": " + item.FormattedValues[ci] + "<br/>"
+              name += columns[ci].name + ": " + item.FormattedValues[ci] + "<br/>"
             }
           });
           name = name.substring(0, name.length - 5);
@@ -19895,7 +19901,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $footer.append($footer_content);
   $(Container).append($footer);
   _html = '<div class="drilldownwrapper"><span class="japi dimensionpickerlabel" style="display: inline-block;font: normal 12px Arial;height: 22px;vertical-align: middle;">Primary Dimension: </span>';
-  _html += '<li class="japi primarydimension" data-id="' + "Nane" + '" style="">';
+  _html += '<li class="japi primarydimension" data-id="' + "Name" + '" style="">';
   _html += "Name" + "</li>";
   _html += '<div class="japi other picker btn-group  jarvis dimensions" style="display:inline;">';
   _html += '<li class="japi other picker dropdown" data-type="button" data-toggle="dropdown" style="background-color:white;position: absolute;display: inline-block; margin-left:5px;color:#08C;cursor:pointer;" onclick="">';
@@ -19919,7 +19925,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
     if($search.val() == "") {
       jarvis.visualisation.report.setFilter("")
     }else {
-      var shortfilter = _this.dimensions[0].Name + "=" + $search.val() + "[AND]";
+      var shortfilter = _this.dimensions[0].name + "=" + $search.val() + "[AND]";
       jarvis.visualisation.report.setFilter(shortfilter)
     }
   });
@@ -19953,14 +19959,14 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   });
   $tablecontrol.find(".tabletype").html($charttype);
   var $dimlist = $($tablecontrol.find(".jarvis.secondarylistcontainer"));
-  $dimlist.append($('<li class="nav-header">' + _this.dimensions[0].Name + "</li>"));
+  $dimlist.append($('<li class="nav-header">' + _this.dimensions[0].name + "</li>"));
   var $item = $('<div class="jarvis picker dimensions" data-type="button"></div>');
   $($tablecontrol).find(".secondary").empty();
   $($tablecontrol).find(".secondary").append($item);
-  var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].Name});
+  var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].name});
   $(o).bind("select", function(data, dimension) {
     dimension = _.find(jarvis.objects.Dimensions, function(item) {
-      return item.Name == dimension
+      return item.name == dimension
     });
     if(_this.dimensions.indexOf(dimension) == -1) {
       if(_this.dimensions.length == 1) {
@@ -19975,10 +19981,10 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
     }
   });
   $item = $($header.find(".japi.other.picker.dropdown"));
-  o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"", placeholdertext:"Other", type:"none", selected:_this.isother ? _this.dimensions[0].Name : ""});
+  o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"", placeholdertext:"Other", type:"none", selected:_this.isother ? _this.dimensions[0].name : ""});
   $(o).bind("select", function(data, dimension) {
     dimension = _.find(jarvis.objects.Dimensions, function(item) {
-      return item.Name == dimension
+      return item.name == dimension
     });
     if(_this.dimensions.indexOf(dimension) == -1) {
       _this.dimensions[0] = dimension;
@@ -19990,7 +19996,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $(".japi.primarydimension").on("click", function(e) {
     var dimension = $(".japi.primarydimension").text();
     dimension = _.find(jarvis.objects.Dimensions, function(item) {
-      return item.Name == dimension
+      return item.name == dimension
     });
     _this.dimensions[0] = dimension;
     _this.isother = false;
@@ -20010,7 +20016,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
       $advancedsearch.show()
     }
   });
-  $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].Name);
+  $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].name);
   if(!_this.isother) {
     $(".japi.primarydimension").addClass("on");
     $(".japi.other.picker").removeClass("on");
@@ -21998,13 +22004,13 @@ jarvis.visualisation.report.MetricGroup.prototype.init = function(options, conta
     var _mgid = $(item).attr("data-mgid");
     try {
       if(!_reportid && !options.reportid) {
-        _reportid = jarvis.objects.Reports[0].ID
+        _reportid = jarvis.objects.Reports[0].id
       }
       if(_reportid == "") {
-        _reportid = jarvis.objects.Reports[0].ID
+        _reportid = jarvis.objects.Reports[0].id
       }
     }catch(ex) {
-      _reportid = jarvis.objects.Reports[0].ID
+      _reportid = jarvis.objects.Reports[0].id
     }
     _this.reportID = _reportid;
     _this.mgid = _mgid;
@@ -22028,16 +22034,16 @@ jarvis.visualisation.report.MetricGroup.prototype.get = function(sender, id) {
     return
   }
   var data = jarvis.objects.Reports.Get(sender, {id:id});
-  sender.reportID = data.ID;
+  sender.reportID = data.id;
   return data
 };
 jarvis.visualisation.report.MetricGroup.prototype.updateDisplay = function(options) {
   var _this = options._this;
   var _html = "";
   _html += '<ul class="nav nav-pills">';
-  $(_this.panel.Tabs[_this.tabid].MetricGroups).each(function(i, mg) {
+  $(_this.panel.tabs[_this.tabid].metricgroups).each(function(i, mg) {
     _html += '<li class="' + (i == _this.mgid ? "active" : "") + '">';
-    _html += '<a class="mglink" data-mgid="' + i + '">' + mg.Name + "</a>";
+    _html += '<a class="mglink" data-mgid="' + i + '">' + mg.name + "</a>";
     _html += "</li>"
   });
   _html += "</ul>";
@@ -22053,7 +22059,7 @@ jarvis.visualisation.report.MetricGroup.prototype.updateDisplay = function(optio
       $($link).addClass("active")
     })
   });
-  if(_this.panel.Tabs[_this.tabid].MetricGroups.length == 1) {
+  if(_this.panel.tabs[_this.tabid].metricgroups.length == 1) {
     $html.hide()
   }
   $(options.container).empty();
@@ -22284,25 +22290,40 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
   var widgets = panel.Widgets;
   var _html = "";
   _this.dispose();
-  var dimensions = sender.panel.tabs[_this.tabID].dimensions;
-  var drilldowns = sender.panel.tabs[_this.tabID].drilldowns;
-  var metrics = sender.panel.tabs[_this.tabID].metricGroups[_this.metricgroupID].metrics;
+  var dimensions = cloneextend(sender.panel.tabs[_this.tabID].dimensions);
+  var drilldowns = cloneextend(sender.panel.tabs[_this.tabID].drilldowns);
+  var metrics = sender.panel.tabs[_this.tabID].metricgroups[_this.metricgroupID].metrics.slice(0);
+  if(typeof(metrics[0] != "object")) {
+    _.each(metrics, function(m, i) {
+      metrics[i] = jarvis.objects.Metrics.Get(null, {id:m})
+    })
+  }
+  if(typeof(dimensions[0] != "object")) {
+    _.each(dimensions, function(d, i) {
+      dimensions[i] = jarvis.objects.Dimensions.Get(null, {id:d})
+    })
+  }
+  if(typeof(drilldowns[0] != "object")) {
+    _.each(drilldowns, function(d, i) {
+      drilldowns[i] = jarvis.objects.Dimensions.Get(null, {id:d.dimensions[0].id})
+    })
+  }
   var dimensionslist = "";
   var metricslist = "";
   $(dimensions).each(function(i, o) {
-    dimensionslist += o.name + ", "
+    dimensionslist += o.id + ", "
   });
   dimensionslist = dimensionslist.substring(0, dimensionslist.length - 2);
   $(metrics).each(function(i, o) {
-    metricslist += o.name + ", "
+    metricslist += o.id + ", "
   });
   metricslist = metricslist.substring(0, metricslist.length - 2);
   var levels = [];
   $(drilldowns).each(function(i, l) {
     var dimensions = [];
     $(l).each(function(i2, d) {
-      $(d.Dimensions).each(function(i3, dimension) {
-        dimensions.push(dimension.name)
+      $(d.dimensions).each(function(i3, dimension) {
+        dimensions.push(dimension.id)
       })
     });
     levels.push(dimensions)
@@ -22319,20 +22340,20 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
   $table.empty();
   $table.removeClass("histogram");
   $tabs.attr("data-reportid", _this.panel.id);
-  jarvis.visualisation.report.tabs = (new jarvis.visualisation.report.tabs).init({selected:this.tabID});
+  jarvis.visualisation.report.tabs = (new jarvis.visualisation.report.Tabs).init({selected:this.tabID});
   $mgs.attr("data-reportid", _this.panel.id);
   $mgs.attr("data-tabid", _this.tabID);
   $mgs.attr("data-mgid", _this.metricgroupID);
-  $timeline.attr("data-metrics", metrics[0].name);
+  $timeline.attr("data-metrics", metrics[0].id);
   $metricbox.attr("data-metrics", metricslist);
-  $table.attr("data-dimensions", JSON.stringify(levels));
+  $table.attr("data-dimensions", dimensions[0].id);
   $table.attr("data-metrics", metricslist);
   if(this.tabType == "explorer") {
     $(".jarvis.report.metricgroups").show();
     $(".jarvis.report.row-top").show();
     $(".jarvis.report.row-middle").show();
     jarvis.visualisation.report.metricgroup = (new jarvis.visualisation.report.MetricGroup).init();
-    jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].name, height:_this.options.widgets.timeline.height, excludeMetrics:_this.options.widgets.timeline.excludeMetrics, showPrimary:_this.options.widgets.timeline.showPrimary});
+    jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].id, height:_this.options.widgets.timeline.height, excludeMetrics:_this.options.widgets.timeline.excludeMetrics, showPrimary:_this.options.widgets.timeline.showPrimary});
     jarvis.visualisation.report.metricbox = (new jarvis.visualisation.report.MetricBox).init();
     if(!_this.options.widgets.table) {
       _this.options.widgets.table = {pageSize:10}
@@ -23581,7 +23602,6 @@ jarvis.visualisation.showError = function(error) {
 jarvis.visualisation.showNotice = function() {
 };
 jarvis.visualisation.setDisplay = function(show) {
-  console.log("test");
   var $body = $("body");
   var $jarvis = $(".jarvis._container");
   var $report = $body.find(".jarvis.report.panel");
@@ -23732,7 +23752,6 @@ jarvis.visualisation.bootstrap = function() {
     jarvis.state.tabID = null;
     jarvis.state.metricgroupID = null;
     jarvis.state.tabType = null;
-    console.log("state", jarvis.state);
     jarvis.visualisation.showReport(reportID)
   });
   $(jarvis).unbind("dashboardchange");
@@ -23858,4 +23877,79 @@ $(window).bind("jarvis-loaded", function() {
     $(jarvis).trigger("jarvis-initialized")
   })
 });
-
+function extend(a, b, context, newobjs, aparent, aname, haveaparent) {
+  if(a == b) {
+    return a
+  }
+  if(!b) {
+    return a
+  }
+  var key, clean_context = false, return_sublevel = false, b_pos;
+  if(!haveaparent) {
+    aparent = {"a":a};
+    aname = "a"
+  }
+  if(!context) {
+    clean_context = true;
+    context = [];
+    newobjs = []
+  }
+  b_pos = context.indexOf(b);
+  if(b_pos == -1) {
+    context.push(b);
+    newobjs.push([aparent, aname])
+  }else {
+    return newobjs[b_pos][0][newobjs[b_pos][1]]
+  }
+  for(key in b) {
+    if(b.hasOwnProperty(key)) {
+      if(typeof a[key] === "undefined") {
+        if(typeof b[key] === "object") {
+          if(b[key] instanceof Array) {
+            a[key] = extend([], b[key], context, newobjs, a, key, true)
+          }else {
+            if(b[key] === null) {
+              a[key] = null
+            }else {
+              if(b[key] instanceof Date) {
+                a[key] = new b[key].constructor;
+                a[key].setTime(b[key].getTime())
+              }else {
+                a[key] = extend({}, b[key], context, newobjs, a, key, true)
+              }
+            }
+          }
+        }else {
+          a[key] = b[key]
+        }
+      }else {
+        if(typeof a[key] === "object" && a[key] !== null) {
+          a[key] = extend(a[key], b[key], context, newobjs, a, key, true)
+        }else {
+          a[key] = b[key]
+        }
+      }
+    }
+  }
+  if(clean_context) {
+    context = null;
+    newobjs = null
+  }
+  if(!haveaparent) {
+    aparent = null;
+    return a
+  }
+  if(typeof a === "object" && !(a instanceof Array)) {
+  }
+  return a
+}
+function cloneextend(obj, exteddata) {
+  if(typeof obj === "object") {
+    if(obj === null) {
+      return null
+    }
+    return extend(clone(obj), exteddata)
+  }
+  return obj
+}
+;
