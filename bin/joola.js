@@ -8918,8 +8918,8 @@ jarvis.objects.Reports.List = function(sender, options, callback, force) {
     return jarvis.objects.Reports
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Reports.svc/List", null, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/reports.list", null, function(sender, data, error) {
+      result = data.reports;
       jarvis.objects.Reports.splice(0, jarvis.objects.Reports.length);
       $(result).each(function(index, item) {
         jarvis.objects.Reports.push(item)
@@ -8927,8 +8927,8 @@ jarvis.objects.Reports.List = function(sender, options, callback, force) {
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Reports.svc/List", null, null);
-    var data = $.parseJSON(result.data);
+    result = jarvis.dataaccess.fetch(this, "/reports.list", null, null);
+    var data = result.reports;
     jarvis.objects.Reports.splice(0, jarvis.objects.Reports.length);
     $(data).each(function(index, item) {
       jarvis.objects.Reports.push(item)
@@ -8945,13 +8945,13 @@ jarvis.objects.Reports.Get = function(sender, options, callback, force) {
     })
   }
   if(typeof callback == "function") {
-    jarvis.dataaccess.fetch(this, "/engine/Reports.svc/Get", {id:options.id}, function(sender, data, error) {
-      result = $.parseJSON(data.data);
+    jarvis.dataaccess.fetch(this, "/reports.get", {id:options.id}, function(sender, data, error) {
+      result = result.report;
       callback(sender, result)
     })
   }else {
-    result = jarvis.dataaccess.fetch(this, "/engine/Reports.svc/Get", {id:options.id}, null);
-    var data = $.parseJSON(result.data);
+    result = jarvis.dataaccess.fetch(this, "/reports.get", {id:options.id}, null);
+    var data = result.report;
     for(i = 0;i < jarvis.objects.Reports.length;i++) {
       if(jarvis.objects.Reports[i].ID == data.ID) {
         jarvis.objects.Reports[i] = data
@@ -14445,7 +14445,6 @@ jarvis.visualisation.dashboard.Pie.prototype.fetch = function(sender, container)
     queryOptions.push(_queryOptions)
   }
   jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
-    console.log("test3");
     var series = [];
     $(data).each(function(index, item) {
       try {
@@ -22074,7 +22073,7 @@ jarvis.visualisation.report.Panel = function(options) {
   try {
     this.reportID = options.reportID
   }catch(e) {
-    this.reportID = jarvis.objects.Reports[0].ID
+    this.reportID = jarvis.objects.Reports[0].id
   }
   this.containers = [];
   var matchedContainers = null;
@@ -22159,11 +22158,11 @@ jarvis.visualisation.report.Panel.prototype.init = function(options, container, 
     }
   }catch(e) {
     if(this.reportID == -1) {
-      _this.reportID = jarvis.objects.Reports[0].ID
+      _this.reportID = jarvis.objects.Reports[0].id
     }
   }
   if(_this.reportID == null || _this.reportID == "undefined") {
-    _this.reportID = jarvis.objects.Reports[0].ID
+    _this.reportID = jarvis.objects.Reports[0].id
   }
   if(_this.tabID == null || _this.tabID == "undefined") {
     _this.tabID = 0
@@ -22175,13 +22174,13 @@ jarvis.visualisation.report.Panel.prototype.init = function(options, container, 
     _this.metricgroupID = 0
   }
   if(_this.reportID == -1) {
-    _this.reportID = jarvis.objects.Reports[0].ID
+    _this.reportID = jarvis.objects.Reports[0].id
   }
   _this.panel = _this.get(_this, _this.reportID);
   if(!this.panel) {
     return
   }
-  _this.tabType = _this.panel.Tabs[_this.tabID].Type;
+  _this.tabType = _this.panel.tabs[_this.tabID].type;
   _this.setDisplay();
   if(typeof saveState == "undefined" || saveState == true) {
     jarvis.state.view = "report";
@@ -22285,17 +22284,17 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
   var widgets = panel.Widgets;
   var _html = "";
   _this.dispose();
-  var dimensions = sender.panel.Tabs[_this.tabID].Dimensions;
-  var drilldowns = sender.panel.Tabs[_this.tabID].Drilldowns;
-  var metrics = sender.panel.Tabs[_this.tabID].MetricGroups[_this.metricgroupID].Metrics;
+  var dimensions = sender.panel.tabs[_this.tabID].dimensions;
+  var drilldowns = sender.panel.tabs[_this.tabID].drilldowns;
+  var metrics = sender.panel.tabs[_this.tabID].metricGroups[_this.metricgroupID].metrics;
   var dimensionslist = "";
   var metricslist = "";
   $(dimensions).each(function(i, o) {
-    dimensionslist += o.Name + ", "
+    dimensionslist += o.name + ", "
   });
   dimensionslist = dimensionslist.substring(0, dimensionslist.length - 2);
   $(metrics).each(function(i, o) {
-    metricslist += o.Name + ", "
+    metricslist += o.name + ", "
   });
   metricslist = metricslist.substring(0, metricslist.length - 2);
   var levels = [];
@@ -22303,7 +22302,7 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
     var dimensions = [];
     $(l).each(function(i2, d) {
       $(d.Dimensions).each(function(i3, dimension) {
-        dimensions.push(dimension.Name)
+        dimensions.push(dimension.name)
       })
     });
     levels.push(dimensions)
@@ -22319,12 +22318,12 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
   $metricbox.empty();
   $table.empty();
   $table.removeClass("histogram");
-  $tabs.attr("data-reportid", _this.panel.ID);
-  jarvis.visualisation.report.tabs = (new jarvis.visualisation.report.Tabs).init({selected:this.tabID});
-  $mgs.attr("data-reportid", _this.panel.ID);
+  $tabs.attr("data-reportid", _this.panel.id);
+  jarvis.visualisation.report.tabs = (new jarvis.visualisation.report.tabs).init({selected:this.tabID});
+  $mgs.attr("data-reportid", _this.panel.id);
   $mgs.attr("data-tabid", _this.tabID);
   $mgs.attr("data-mgid", _this.metricgroupID);
-  $timeline.attr("data-metrics", metrics[0].Name);
+  $timeline.attr("data-metrics", metrics[0].name);
   $metricbox.attr("data-metrics", metricslist);
   $table.attr("data-dimensions", JSON.stringify(levels));
   $table.attr("data-metrics", metricslist);
@@ -22333,7 +22332,7 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
     $(".jarvis.report.row-top").show();
     $(".jarvis.report.row-middle").show();
     jarvis.visualisation.report.metricgroup = (new jarvis.visualisation.report.MetricGroup).init();
-    jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].Name, height:_this.options.widgets.timeline.height, excludeMetrics:_this.options.widgets.timeline.excludeMetrics, showPrimary:_this.options.widgets.timeline.showPrimary});
+    jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].name, height:_this.options.widgets.timeline.height, excludeMetrics:_this.options.widgets.timeline.excludeMetrics, showPrimary:_this.options.widgets.timeline.showPrimary});
     jarvis.visualisation.report.metricbox = (new jarvis.visualisation.report.MetricBox).init();
     if(!_this.options.widgets.table) {
       _this.options.widgets.table = {pageSize:10}
@@ -22354,18 +22353,18 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
         $(".jarvis.report.metricgroups").show();
         $(".jarvis.report.row-top").show();
         $(".jarvis.report.row-middle").show();
-        jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].Name, height:180});
-        var metrics = _this.panel.Tabs[0].MetricGroups[0].Metrics;
-        var dimensions = _this.panel.Tabs[0].Dimensions;
+        jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[0].name, height:180});
+        var metrics = _this.panel.tabs[0].metricgroups[0].metrics;
+        var dimensions = _this.panel.tabs[0].dimensions;
         $(dimensions).each(function(index, dimension) {
-          _html = '<div class="jarvis report dashboard overviewpie pie widget" data-dimensions="' + dimension.Name + '" data-metrics="' + metrics[0].Name + '" style="float:right;" data-limit="4"></div>';
+          _html = '<div class="jarvis report dashboard overviewpie pie widget" data-dimensions="' + dimension.name + '" data-metrics="' + metrics[0].name + '" style="float:right;" data-limit="4"></div>';
           $metricbox.append(_html)
         });
         $(metrics).each(function(index, metric) {
-          _html = '<div class="jarvis report overviewmetricbox widget" data-metrics="' + metric.Name + '"></div>';
+          _html = '<div class="jarvis report overviewmetricbox widget" data-metrics="' + metric.name + '"></div>';
           $metricbox.append(_html)
         });
-        _html = '<div class="jarvis report summarytable" data-dimensions="' + dimensions[0].Name + '" data-metrics="' + metrics[0].Name + '" data-limit="10" style="margin-top:-20px;"></div>';
+        _html = '<div class="jarvis report summarytable" data-dimensions="' + dimensions[0].name + '" data-metrics="' + metrics[0].name + '" data-limit="10" style="margin-top:-20px;"></div>';
         $table.append(_html);
         var mb = (new jarvis.visualisation.report.OverviewMetricBox).init();
         var pie = (new jarvis.visualisation.report.OverviewPie).init();
@@ -22375,22 +22374,22 @@ jarvis.visualisation.report.Panel.prototype.drawWidgets = function(sender, conta
           metricslist = "";
           $(metrics).each(function(i, o) {
             if(i > 0) {
-              metricslist += o.Name + ", "
+              metricslist += o.name + ", "
             }
           });
           metricslist = metricslist.substring(0, metricslist.length - 2);
-          $mgs.attr("data-reportid", _this.panel.ID);
+          $mgs.attr("data-reportid", _this.panel.id);
           $mgs.attr("data-tabid", _this.tabID);
           $mgs.attr("data-mgid", _this.metricgroupID);
-          $timeline.attr("data-metrics", metrics[1].Name);
+          $timeline.attr("data-metrics", metrics[1].name);
           $metricbox.attr("data-metrics", metricslist);
-          $table.attr("data-dimensions", dimensions[0].Name);
+          $table.attr("data-dimensions", dimensions[0].name);
           $table.addClass("histogram");
           $(".jarvis.report.metricgroups").show();
           $(".jarvis.report.row-top").show();
           $(".jarvis.report.row-middle").show();
           jarvis.visualisation.report.metricgroup = (new jarvis.visualisation.report.MetricGroup).init();
-          jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[1].Name});
+          jarvis.visualisation.report.timeline = (new jarvis.visualisation.report.Timeline).init({primaryMetric:metrics[1].name});
           jarvis.visualisation.report.metricbox = (new jarvis.visualisation.report.MetricBox).init();
           jarvis.visualisation.report.histogram = (new jarvis.visualisation.report.Histogram).init()
         }
@@ -22406,20 +22405,20 @@ jarvis.visualisation.report.Panel.prototype.get = function(sender, id) {
     return
   }
   var data = jarvis.objects.Reports.Get(sender, {id:id});
-  sender.reportID = data.ID;
+  sender.reportID = data.id;
   return data
 };
 jarvis.visualisation.report.Panel.prototype.updateDisplay = function(options) {
   var $container = $(options.container);
   var data = options._this.panel;
-  $("body").find(".jarvis.caption").text(data.Name.replace("&amp;", "&")).trigger("contentchange");
-  $("body").find(".jarvis.description").text(data.Description).trigger("contentchange");
+  $("body").find(".jarvis.caption").text(data.name.replace("&amp;", "&")).trigger("contentchange");
+  $("body").find(".jarvis.description").text(data.description).trigger("contentchange");
   if($("body").attr("class")) {
-    if(!$("body").attr("class").indexOf(data.Name)) {
-      $("body").addClass(data.Name)
+    if(!$("body").attr("class").indexOf(data.name)) {
+      $("body").addClass(data.name)
     }
   }else {
-    $("body").addClass(data.Name)
+    $("body").addClass(data.name)
   }
 };
 jarvis.debug.log("INFO", "Report.Visualisation.Panel", 6, "JS source loaded");
