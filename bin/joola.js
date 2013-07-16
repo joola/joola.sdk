@@ -8651,8 +8651,14 @@ jarvis.objects.Dimensions.List = function(sender, options, callback) {
   }
   return result
 };
-jarvis.objects.Dimensions.Get = function(sender, options, callback) {
+jarvis.objects.Dimensions.Get = function(sender, options, callback, force) {
   var result;
+  if(jarvis.objects.Dimensions.length > 0 && typeof callback !== "function" && !force) {
+    result = _.find(jarvis.objects.Dimensions, function(item) {
+      return item.id == options.id
+    });
+    return result
+  }
   if(typeof callback == "function") {
     jarvis.dataaccess.fetch(this, "/dimensions.get", {id:options.id}, function(sender, data, error) {
       result = data.dimension;
@@ -8714,8 +8720,14 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
   }
   return result
 };
-jarvis.objects.Metrics.Get = function(sender, options, callback) {
+jarvis.objects.Metrics.Get = function(sender, options, callback, force) {
   var result;
+  if(jarvis.objects.Metrics.length > 0 && typeof callback !== "function" && !force) {
+    result = _.find(jarvis.objects.Metrics, function(item) {
+      return item.id == options.id
+    });
+    return result
+  }
   if(typeof callback == "function") {
     jarvis.dataaccess.fetch(this, "/metrics.get", {id:options.id}, function(sender, data, error) {
       result = data.metric;
@@ -19912,9 +19924,9 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $tablecontrol.append('<div class="secondary btn-group"><button class="btn secondarywrapper dropdown-toggle dropdown" data-toggle="dropdown"><span class="secondarybutton">Add secondary dimension...</span>&nbsp;<span class="caret"></span></button><div class="secondarylist"><ul class="jarvis secondarylistcontainer dropdown-menu"></ul></div></div>');
   $tablecontrol.append('<div class="toolbar"><div class="tabletype"></div><div class="search input-prepend"><input type="text" class="quicksearch span2" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div><span class="advancedcaption">Advanced</span></div></div>');
   var $charttype = $('<div class="toolbaroptions btn-group" data-toggle="buttons-radio" ></div>');
-  $charttype.append('<button rel="tooltip" title="Table" class="btn btn_table active">' + '<img src="' + jarvis.hostname + '/assets/img/glyphicons_114_list.png""/>' + "</i></button>");
-  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie">' + '<img src="' + jarvis.hostname + '/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
-  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf">' + '<img src="' + jarvis.hostname + '/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Table" class="btn btn_table active">' + '<img src="/assets/img/glyphicons_114_list.png""/>' + "</i></button>");
+  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie">' + '<img src="/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf">' + '<img src="/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
   $tablecontrol.find(".add-on").off("click");
   $tablecontrol.find(".add-on").on("click", function(e) {
     var $search = $($tablecontrol.find(".quicksearch")[$tablecontrol.find(".quicksearch").length - 1]);
@@ -23314,10 +23326,6 @@ jarvis.visualisation.init = function() {
         }else {
           if($(".jarvis.report.panel").length > 0) {
             jarvis.visualisation.showReport()
-          }else {
-            if($(".jarvis.realtime.panel").length > 0) {
-              (new jarvis.visualisation.realtime.Panel).init(null, null, true)
-            }
           }
         }
       }
