@@ -6826,18 +6826,19 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
       result.data.Result.Columns.push(m);
       switch(m.type) {
         case "int":
-          m.formatter = function(value) {
-            return jarvis.string.formatNumber(parseInt(value), 0, true)
-          };
+          if(m.suffix == "seconds") {
+            m.formatter = function(value) {
+              return jarvis.string.intToTime(parseInt(value))
+            }
+          }else {
+            m.formatter = function(value) {
+              return jarvis.string.formatNumber(parseInt(value), 0, true)
+            }
+          }
           break;
         case "float":
           m.formatter = function(value) {
             return jarvis.string.formatNumber(parseFloat(value), 2, true)
-          };
-          break;
-        case "seconds":
-          m.formatter = function(value) {
-            return jarvis.string.intToTime(parseInt(value))
           };
           break;
         default:
@@ -8728,22 +8729,28 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
     jarvis.dataaccess.fetch(this, "/metrics.list", {}, function(sender, data, error) {
       result = data.metrics;
       jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
-      $(result).each(function(index, item) {
-        switch(item.type) {
+      $(result).each(function(index, m) {
+        switch(m.type) {
           case "int":
-            item.formatter = function(value) {
-              return parseInt(value)
-            };
+            if(m.suffix == "seconds") {
+              m.formatter = function(value) {
+                return jarvis.string.intToTime(parseInt(value))
+              }
+            }else {
+              m.formatter = function(value) {
+                return jarvis.string.formatNumber(parseInt(value), 0, true)
+              }
+            }
             break;
           case "float":
-            item.formatter = function(value) {
-              return parseFloat(value).toFixed(2)
+            m.formatter = function(value) {
+              return jarvis.string.formatNumber(parseFloat(value), 2, true)
             };
             break;
           default:
             break
         }
-        jarvis.objects.Metrics.push(item)
+        jarvis.objects.Metrics.push(m)
       });
       callback(sender, result)
     })
@@ -8751,22 +8758,28 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
     result = jarvis.dataaccess.fetch(this, "/metrics.list", null, null);
     var data = result.metrics;
     jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
-    $(data).each(function(index, item) {
-      switch(item.type) {
+    $(data).each(function(index, m) {
+      switch(m.type) {
         case "int":
-          item.formatter = function(value) {
-            return parseInt(value)
-          };
+          if(m.suffix == "seconds") {
+            m.formatter = function(value) {
+              return jarvis.string.intToTime(parseInt(value))
+            }
+          }else {
+            m.formatter = function(value) {
+              return jarvis.string.formatNumber(parseInt(value), 0, true)
+            }
+          }
           break;
         case "float":
-          item.formatter = function(value) {
-            return parseFloat(value).toFixed(2)
+          m.formatter = function(value) {
+            return jarvis.string.formatNumber(parseFloat(value), 2, true)
           };
           break;
         default:
           break
       }
-      jarvis.objects.Metrics.push(item)
+      jarvis.objects.Metrics.push(m)
     })
   }
   return result
@@ -13301,7 +13314,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
   }, fontFamily:"Signika", enabled:true, style:{fontSize:"11px;", color:"#999"}, y:30}, tickLength:0, startOnTick:false, endOnTick:false, showFirstLabel:false, showLastLabel:false}, yAxis:[{gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
     try {
-      ytype = series[0].Columns[1].Suffix
+      ytype = series[0].Columns[1].suffix
     }catch(e) {
       ytype = ""
     }
@@ -13326,7 +13339,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
   }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, align:"left", x:20, y:15}, plotLines:[{value:0, width:1, color:"#ffffff"}]}, {gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
     try {
-      ytype = series[1].Columns[1].Suffix
+      ytype = series[1].Columns[1].suffix
     }catch(e) {
       ytype = ""
     }
@@ -13887,7 +13900,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     }
     var datebox = jarvis.visualisation.picker.DateBox;
     var ratio;
-    if(metric.AggregationType == "avg" || metric.aggregation == "count") {
+    if(metric.aggregation == "avg" || metric.aggregation == "count") {
       ratio = 0;
       if(series[0].total > 0) {
         ratio = percentageChange(series.length == 1 ? series[0].total : series[1].total, series[0].total)
@@ -13932,7 +13945,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
       totalsum = metric.prefix + totalsum
     }
     $metric.find(".daterange").html(datebox.formatDate(datebox.getDate().base_fromdate) + " - " + datebox.formatDate(datebox.getDate().base_todate));
-    if(metric.AggregationType == "avg" && metric.suffix != "seconds") {
+    if(metric.aggregation == "avg" && metric.suffix != "seconds") {
       so.avg = jarvis.string.formatNumber(so.avg, 2);
       if(metric.suffix && metric.suffix != "") {
         so.avg += metric.suffix
@@ -16541,6 +16554,8 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       var _shadow = true;
       var _ordinal = 0;
       var _ytype = result.Columns[1].suffix;
+      console.log(result.Columns[1]);
+      console.log(_ytype, result.Columns[1].suffix);
       if(item.id == "primary") {
         _name = result.Columns[1].name;
         _color = jarvis.colors[0];
@@ -17429,11 +17444,11 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
   var displayValue = series[0].value;
   if(displayValue > 1E6 || displayValue < -1E6) {
     displayValue = jarvis.string.shortenNumber(displayValue);
-    if(metric.Suffix != "") {
-      displayValue += metric.Suffix
+    if(metric.suffix != "") {
+      displayValue += metric.suffix
     }
-    if(metric.Prefix != "") {
-      displayValue = metric.Prefix + displayValue
+    if(metric.prefix != "") {
+      displayValue = metric.prefix + displayValue
     }
   }else {
     displayValue = series[0].fvalue
@@ -17702,7 +17717,7 @@ jarvis.visualisation.report.OverviewMetricBox.prototype.fetch = function(sender,
               points.total += parseFloat(point.value);
               points.data.push(point)
             });
-            if(metric.AggregationType == "AVG") {
+            if(metric.aggregation == "AVG") {
               points.avg = points.total / _data.length
             }
             $(data).each(function(i, o) {
@@ -17753,11 +17768,11 @@ jarvis.visualisation.report.OverviewMetricBox.prototype.update = function(sender
         totalsum = jarvis.string.formatNumber(totalsum, 0, true)
       }
     }
-    if(metric.Suffix && metric.Suffix != "") {
-      totalsum += metric.Suffix
+    if(metric.suffix && metric.suffix != "") {
+      totalsum += metric.suffix
     }
-    if(metric.Prefix && metric.Prefix != "") {
-      totalsum = metric.Prefix + totalsum
+    if(metric.prefix && metric.prefix != "") {
+      totalsum = metric.prefix + totalsum
     }
     $metric.find(".daterange").html(datebox.formatDate(datebox.getDate().base_fromdate) + " - " + datebox.formatDate(datebox.getDate().base_todate));
     $metric.find(".value").removeClass("positive");
@@ -18070,7 +18085,7 @@ jarvis.visualisation.report.OverviewPie.prototype.update = function(sender, dime
       if(index < _this.itemCount) {
         var name = "";
         $(columns).each(function(ci, co) {
-          if(co.AggregationType) {
+          if(co.aggregation) {
           }else {
             name += columns[ci].Name + ": " + item.FormattedValues[ci]
           }
@@ -18110,7 +18125,7 @@ jarvis.visualisation.report.OverviewPie.prototype.update = function(sender, dime
             if(item.FormattedValues[0] == key) {
               var name = "";
               $(columns).each(function(ci, co) {
-                if(co.AggregationType) {
+                if(co.aggregation) {
                 }else {
                   name += columns[ci].Name + ": " + item.FormattedValues[ci]
                 }
@@ -18141,7 +18156,7 @@ jarvis.visualisation.report.OverviewPie.prototype.update = function(sender, dime
     if(index < _this.itemCount) {
       var name = "";
       $(columns).each(function(ci, co) {
-        if(co.AggregationType) {
+        if(co.aggregation) {
         }else {
           name += item.FormattedValues[ci] + "<br/>"
         }
@@ -18481,7 +18496,7 @@ jarvis.visualisation.report.SummaryTable.prototype.update = function(sender, dim
   var $tr = $("<tr></tr>");
   $(series[0].Columns).each(function(index, col) {
     var $th = $('<th class="nopaddingtop">' + col.Name + "</th>");
-    if(col.AggregationType) {
+    if(col.aggregation) {
       $th.addClass("metric")
     }else {
       $th.addClass("dimension")
@@ -18500,7 +18515,7 @@ jarvis.visualisation.report.SummaryTable.prototype.update = function(sender, dim
     var $tr = $("<tr></tr>");
     $(row.FormattedValues).each(function(i, v) {
       var $td = $("<td>" + v + "</td>");
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         $td.addClass("metric")
       }else {
         $td.addClass("dimension")
@@ -18528,7 +18543,7 @@ jarvis.visualisation.report.SummaryTable.prototype.updateCompare = function(send
   var $tr = $("<tr></tr>");
   $(series[0].Columns).each(function(index, col) {
     var $th = $('<th class="nopaddingtop">' + col.Name + "</th>");
-    if(col.AggregationType) {
+    if(col.aggregation) {
       $th.addClass("metric")
     }else {
       $th.addClass("dimension")
@@ -18542,7 +18557,7 @@ jarvis.visualisation.report.SummaryTable.prototype.updateCompare = function(send
     var base_value = 0;
     var compare_value = 0;
     $(row.FormattedValues).each(function(i, v) {
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         var $td = $("<td></td>");
         $td.addClass("metric empty")
       }else {
@@ -18555,7 +18570,7 @@ jarvis.visualisation.report.SummaryTable.prototype.updateCompare = function(send
     $table.append($tr);
     var $tr = $("<tr></tr>");
     $(row.FormattedValues).each(function(i, v) {
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         var $td = $("<td>" + v + "</td>");
         $td.addClass("metric empty")
       }else {
@@ -18567,7 +18582,7 @@ jarvis.visualisation.report.SummaryTable.prototype.updateCompare = function(send
     $table.append($tr);
     var $tr = $("<tr></tr>");
     $(row.FormattedValues).each(function(i, v) {
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         var $td;
         $(series[1].Rows).each(function(compareindex, comparerow) {
           if(comparerow.FormattedValues[0] == lookupdimension) {
@@ -18591,7 +18606,7 @@ jarvis.visualisation.report.SummaryTable.prototype.updateCompare = function(send
     base_value = 0;
     compare_value = 0;
     $(row.Values).each(function(i, v) {
-      if(series[0].Columns[i].AggregationType) {
+      if(series[0].Columns[i].aggregation) {
         var $td;
         base_value = v;
         $(series[1].Rows).each(function(compareindex, comparerow) {
@@ -21810,7 +21825,7 @@ jarvis.visualisation.report.Histogram.prototype.update = function(sender, dimens
     $(row.FormattedValues).each(function(i, v) {
       if(i == 4) {
         var $td = $('<td class="values">' + v + "</td>");
-        if(series[0].Columns[i].AggregationType) {
+        if(series[0].Columns[i].aggregation) {
           $td.addClass("metric")
         }else {
           $td.addClass("dimension")
@@ -21822,7 +21837,7 @@ jarvis.visualisation.report.Histogram.prototype.update = function(sender, dimens
           var width = Math.ceil(v) + "%";
           var $_bar = $('<div class="barwrapper"><span class="barvalue">' + jarvis.string.formatNumber(v, 2) + '%</span><div class="percentagebar" style="width:' + width + '"></div>' + '<td class="percentagecaption"></div>');
           $td.html($_bar);
-          if(series[0].Columns[i].AggregationType) {
+          if(series[0].Columns[i].aggregation) {
             $td.addClass("metric")
           }else {
             $td.addClass("dimension")
