@@ -10082,15 +10082,21 @@ jarvis.visualisation.picker.Metrics.prototype.setSelected = function(sender, met
 jarvis.visualisation.picker.Metrics.prototype.disableMetric = function(sender, metricname) {
   var container = sender.container[0];
   $(container).find(".key").each(function(i, m) {
-    if($(m).text() == metricname.name) {
+    if($(m).closest(".node .disabled")[0]) {
       $(m).closest(".node").off("click");
       $(m).closest(".node").on("click", function(e) {
-        e.stopPropagation()
+        sender.setSelected(sender, $(m).text())
+      })
+    }
+    $(m).closest(".node").removeClass("disabled")
+  });
+  $(container).find(".key").each(function(i, m) {
+    if($(m).text() == metricname.name) {
+      $(m).closest(".node").unbind("click");
+      $(m).closest(".node").bind("click", function(e) {
       });
       var nodeParent = $(m).closest(".node");
       $(nodeParent).addClass("disabled")
-    }else {
-      $(m).closest(".node").removeClass("disabled")
     }
   })
 };
@@ -10487,27 +10493,27 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
   });
   $container.append($search);
   var _dimensions = _.groupBy(jarvis.objects.Dimensions, function(obj) {
-    if(!obj.Category) {
+    if(!obj.category) {
       return"(not set)"
     }
-    return obj.Category.Name
+    return obj.category.name
   });
   _dimensions = _.sortBy(_dimensions, function(item) {
-    if(!item[0].Category) {
-      item[0].Category = {Name:item.category, Ordinal:0}
+    if(!item[0].category) {
+      item[0].category = {name:item.category, ordinal:0}
     }
-    return item[0].Category.Ordinal
+    return item[0].category.ordinal
   });
   $container.append('<ul class="categorylist"></ul>');
   var $categorylist = $($container.find(".categorylist"));
   _.each(_dimensions, function(item, index) {
-    if(item[0].Category && item[0].Category.Name != "(not set)") {
+    if(item[0].category && item[0].category.name != "(not set)") {
       var $list = $('<li class="node  ' + "level_" + "0" + '"></li>');
-      $list.append('<div class="category">' + (!item[0].Category ? "(not set)" : item[0].Category.name) + "</div>");
+      $list.append('<div class="category">' + (!item[0].category ? "(not set)" : item[0].category.name) + "</div>");
       $list.append('<ul class="jcontainer"></ul>');
       var bDrawn = false;
       $.each(item, function(index, dimension) {
-        if(dimension.ColumnName != dimension.DictionaryTable_Column || dimension.Id <= -1) {
+        if(dimension.ColumnName != dimension.DictionaryTable_Column || dimension.id <= -1) {
           var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.name + '" data-dimensionid="' + dimension.id + '">';
           list += '<div class="box">';
           list += '<div class="keyvaluepair">';
@@ -10663,14 +10669,14 @@ jarvis.visualisation.container.Metrics.prototype.baseHTML = function(sender) {
       $close.off("click");
       $close.on("click", function(e) {
         $metric.remove();
-        $(_this).trigger("metric-removed", metric.Name)
+        $(_this).trigger("metric-removed", metric.name)
       });
-      var v = new jarvis.visualisation.picker.Metrics({container:$($metric.find(".picker")), showgrip:true, selected:metric.Name});
+      var v = new jarvis.visualisation.picker.Metrics({container:$($metric.find(".picker")), showgrip:true, selected:metric.name});
       $(v).bind("select", function(event, value) {
         if(value != "") {
           $close.attr("data-id", value);
           _this.addMetricBox(_this, "");
-          $(_this).trigger("metric-removed", metric.Name);
+          $(_this).trigger("metric-removed", metric.name);
           $(_this).trigger("metric-added", value)
         }else {
           v.options.container.remove();
@@ -10789,14 +10795,14 @@ jarvis.visualisation.container.Dimensions.prototype.baseHTML = function(sender) 
         $close.off("click");
         $close.on("click", function(e) {
           $dimension.remove();
-          $(_this).trigger("dimension-removed", dimension.Name)
+          $(_this).trigger("dimension-removed", dimension.name)
         });
-        var v = new jarvis.visualisation.picker.Dimensions({container:$($dimension.find(".picker")), showgrip:true, selected:dimension.Name});
+        var v = new jarvis.visualisation.picker.Dimensions({container:$($dimension.find(".picker")), showgrip:true, selected:dimension.name});
         $(v).bind("select", function(event, value) {
           if(value != "") {
             $close.attr("data-id", value);
             _this.addDimensionBox(_this, "");
-            $(_this).trigger("dimension-removed", dimension.Name);
+            $(_this).trigger("dimension-removed", dimension.name);
             $(_this).trigger("dimension-added", value)
           }else {
             v.options.container.remove();
@@ -13723,8 +13729,8 @@ jarvis.visualisation.dashboard.MetricBox.prototype.init = function(options, cont
         _this.metrics.push(_metrics[index])
       });
       $(jarvis.objects.Metrics).each(function(index, item) {
-        if(_metrics.indexOf(item.Name) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+        if(_metrics.indexOf(item.id) > -1) {
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -14642,7 +14648,7 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
   if(totalsum - shownsum > 0) {
     var name = "Other";
     var y = 100 - sum;
-    result.push({name:name, y:y, color:jarvis.colors[11], value:jarvis.string.formatNumber(totalsum - shownsum, 0, true), seriesname:columns[columns.length - 1].Name})
+    result.push({name:name, y:y, color:jarvis.colors[11], value:jarvis.string.formatNumber(totalsum - shownsum, 0, true), seriesname:columns[columns.length - 1].name})
   }
   var compare_shownsum = 0;
   var compare_totalsum = 0;
@@ -15020,14 +15026,14 @@ jarvis.visualisation.dashboard.Panel.prototype.get = function(sender, id) {
 jarvis.visualisation.dashboard.Panel.prototype.updateDisplay = function(options) {
   var $container = $(options.container);
   var data = options._this.panel;
-  $("body").find(".jarvis.caption").text(data.Name).trigger("contentchange");
-  $("body").find(".jarvis.description").text(data.Description).trigger("contentchange");
+  $("body").find(".jarvis.caption").text(data.name).trigger("contentchange");
+  $("body").find(".jarvis.description").text(data.description).trigger("contentchange");
   if($("body").attr("class")) {
-    if(!$("body").attr("class").indexOf(data.Name)) {
-      $("body").addClass(data.Name)
+    if(!$("body").attr("class").indexOf(data.name)) {
+      $("body").addClass(data.name)
     }
   }else {
-    $("body").addClass(data.Name)
+    $("body").addClass(data.name)
   }
 };
 jarvis.visualisation.dashboard.Panel.prototype.showEdit = function(options) {
@@ -15060,8 +15066,8 @@ jarvis.visualisation.dashboard.Panel.prototype.showEdit = function(options) {
     _html += '<div class="modal-body" style="padding:30px;padding-bottom: 0;">';
     _html += '<form class="form-horizontal">';
     _html += "<fieldset>";
-    _html += '<div class="control-group">' + '<label class="control-label" for="panel-edit-name">Name</label>' + '<div class="controls">' + '<input type="text" class="input-xlarge" id="panel-edit-name" value="' + panel.Name + '">' + "</div>" + "</div>";
-    _html += '<div class="control-group">' + '<label class="control-label" for="panel-edit-description">Description</label>' + '<div class="controls">' + '<textarea class="input-xlarge" id="panel-edit-description" rows="3">' + panel.Description + "</textarea>" + "</div>" + "</div>";
+    _html += '<div class="control-group">' + '<label class="control-label" for="panel-edit-name">Name</label>' + '<div class="controls">' + '<input type="text" class="input-xlarge" id="panel-edit-name" value="' + panel.name + '">' + "</div>" + "</div>";
+    _html += '<div class="control-group">' + '<label class="control-label" for="panel-edit-description">Description</label>' + '<div class="controls">' + '<textarea class="input-xlarge" id="panel-edit-description" rows="3">' + panel.description + "</textarea>" + "</div>" + "</div>";
     _html += "</fieldset>";
     _html += "</form>";
     _html += "</div>";
@@ -15118,32 +15124,32 @@ jarvis.visualisation.dashboard.Panel.prototype.generateSettings = function(type,
   var secondaryMetric = "";
   if(widget) {
     if(widget.Dimension) {
-      dimension = widget.Dimension.Name
+      dimension = widget.Dimension.name
     }
-    metric = widget.PrimaryMetric.Name;
+    metric = widget.PrimaryMetric.name;
     if(widget.SecondaryMetric) {
-      secondaryMetric = widget.SecondaryMetric.Name
+      secondaryMetric = widget.SecondaryMetric.name
     }
   }
   if(type == "Table" || type == "Pie Chart") {
     _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-dimension">Dimension</label>' + '<div class="controls">' + '<select id="widget-edit-dimension">';
     var dimensions = jarvis.objects.Dimensions;
     $(dimensions).each(function(index, item) {
-      _html += '<option value="' + item.Id + '" ' + (dimension == item.Name ? "selected" : "") + " >" + item.Name + "</option>"
+      _html += '<option value="' + item.id + '" ' + (dimension == item.name ? "selected" : "") + " >" + item.name + "</option>"
     });
     _html += "</select>" + "</div>" + "</div>"
   }
   _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-metric">Metric</label>' + '<div class="controls">' + '<select id="widget-edit-metric">';
   var metrics = jarvis.objects.Metrics;
   $(metrics).each(function(index, item) {
-    _html += '<option value="' + item.Id + '" ' + (metric == item.Name ? "selected" : "") + ">" + item.Name + "</option>"
+    _html += '<option value="' + item.Id + '" ' + (metric == item.name ? "selected" : "") + ">" + item.name + "</option>"
   });
   _html += "</select>" + "</div>" + "</div>";
   if(type == "Table" || type == "Timeline") {
     _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-secondarymetric">Secondary Metric</label>' + '<div class="controls">' + '<select id="widget-edit-secondarymetric">' + '<option value="-1">Please select</option>';
     var metrics = jarvis.objects.Metrics;
     $(metrics).each(function(index, item) {
-      _html += '<option value="' + item.Id + '" ' + (secondaryMetric == item.Name ? "selected" : "") + ">" + item.Name + "</option>"
+      _html += '<option value="' + item.Id + '" ' + (secondaryMetric == item.name ? "selected" : "") + ">" + item.name + "</option>"
     });
     _html += "</select>" + "</div>" + "</div>"
   }
@@ -15203,7 +15209,7 @@ jarvis.visualisation.dashboard.Panel.prototype.showEditWidget = function(options
     _html += '<div class="modal-body" style="padding:30px;padding-bottom: 0;">';
     _html += '<form class="form-horizontal">';
     _html += "<fieldset>";
-    _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-name">Caption</label>' + '<div class="controls">' + '<input type="text" class="input-xlarge" id="widget-edit-name" placeholder="Enter a caption for the new Widget" value="' + widget.Name + '">' + "</div>" + "</div>";
+    _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-name">Caption</label>' + '<div class="controls">' + '<input type="text" class="input-xlarge" id="widget-edit-name" placeholder="Enter a caption for the new Widget" value="' + widget.name + '">' + "</div>" + "</div>";
     _html += '<div class="control-group">' + '<label class="control-label" for="widget-edit-type">Type</label>' + '<div class="controls">' + '<select id="widget-edit-type">' + '<option value="Metric Box" ' + (widgetType == "Metric Box" ? "selected" : "") + ">Metric Box</option>" + '<option value="Table" ' + (widgetType == "Table" ? "selected" : "") + ">Table</option>" + '<option value="Pie Chart" ' + (widgetType == "Pie Chart" ? "selected" : "") + ">Pie Chart</option>" + '<option value="Timeline" ' + 
     (widgetType == "Timeline" ? "selected" : "") + ">Timeline</option>" + "</select>" + "</div>" + "</div>";
     _html += "<hr >";
@@ -16028,7 +16034,7 @@ jarvis.visualisation.dashboard.BarTable.prototype.init = function(options, conta
       });
       $(jarvis.objects.Metrics).each(function(index, item) {
         if(_metrics.indexOf(item.id) > -1) {
-          _this.metrics[_metrics.indexOf(item.Name)] = item
+          _this.metrics[_metrics.indexOf(item.id)] = item
         }
       });
       $(this).bind("data", function(evt, ret) {
@@ -16602,7 +16608,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
         _ordinal = 4
       }
       if(item.id == "compare_secondary") {
-        _name = result.Columns[1].Name;
+        _name = result.Columns[1].name;
         _color = jarvis.offcolors[1];
         _lineWidth = 2;
         _type = "line";
@@ -16805,7 +16811,8 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
       picker_metrics.setSelected(_this, metric.name);
       _this.primaryMetric = metric;
       _this.fetch(_this);
-      _this.setState(_this)
+      _this.setState(_this);
+      picker_secondary.disableMetric(picker_secondary, metric)
     }
   });
   var $item = $('<div class="jarvis picker metrics" data-type="button"></div>');
@@ -16836,7 +16843,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   $metlist += "</ul>";
   $metlist = $($metlist);
   $(jarvis.objects.Metrics).each(function(index, metric) {
-    var item = $('<li class="jarvis metriclink" data-id="' + metric.Id + '"><a >' + metric.name + "</a></li>");
+    var item = $('<li class="jarvis metriclink" data-id="' + metric.id + '"><a >' + metric.name + "</a></li>");
     item.off("click");
     item.click(function(e) {
       var $parent = $($(this).parent());
@@ -17539,8 +17546,8 @@ jarvis.visualisation.report.MetricBox.prototype.draw = function(Container) {
     $metric.find(".legendmark").css({"border-color":jarvis.colors[0]});
     $(jarvis).trigger("report-metricbox-draw", [$metric, true, jarvis.colors[0]])
   }
-  if(jarvis.visualisation.secondarymetric != null) {
-    var metric = jarvis.visualisation.secondarymetric;
+  if(jarvis.visualisation.report.timeline.secondaryMetric != null) {
+    var metric = jarvis.visualisation.report.timeline.secondaryMetric;
     var $metric = $(_this.Container).find('.jmetricbox[data-metric="' + metric.id + '"]');
     $(".jmetricbox").removeClass("secondaryactive");
     $metric.addClass("secondaryactive");
@@ -18932,7 +18939,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       });
       $(_columns).each(function(ci, co) {
         if(co.aggregation && ci == _this.compareColumnIndex) {
-          comparecolumnname = co.Name;
+          comparecolumnname = co.name;
           point.FormattedValues.push(po.FormattedValues[ci]);
           point.Values.push(po.Values[ci])
         }
@@ -19038,7 +19045,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
           $(_allcolumns).each(function(ai, ao) {
             if(ao.aggregation) {
-              $th.find(".metricpicker").append('<option value="' + ao.Name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>");
+              $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
             }
@@ -19796,7 +19803,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     var _html = "Secondary dimension" + (_this.dimensions.length > 2 ? "s" : "") + ": ";
     $(_this.dimensions).each(function(i, d) {
       if(i > 0) {
-        _html += d.Name + ", "
+        _html += d.name + ", "
       }
     });
     _html = _html.substring(0, _html.length - 2);
@@ -22017,7 +22024,7 @@ jarvis.visualisation.report.Tabs.prototype.updateDisplay = function(options) {
   _html += '<ul class="nav nav-tabs">';
   $(_this.panel.Tabs).each(function(i, tab) {
     _html += '<li class="' + (i == options.selected ? "active" : "") + '">';
-    _html += '<a class="tablink" data-tabid="' + i + '">' + tab.Name + "</a>";
+    _html += '<a class="tablink" data-tabid="' + i + '">' + tab.name + "</a>";
     _html += "</li>"
   });
   _html += "</ul>";
