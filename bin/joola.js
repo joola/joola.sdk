@@ -10103,15 +10103,17 @@ jarvis.visualisation.picker.Metrics.prototype.disableMetric = function(sender, m
     }
     $(m).closest(".node").removeClass("disabled")
   });
-  $(container).find(".key").each(function(i, m) {
-    if($(m).text() == metricname.name) {
-      $(m).closest(".node").unbind("click");
-      $(m).closest(".node").bind("click", function(e) {
-      });
-      var nodeParent = $(m).closest(".node");
-      $(nodeParent).addClass("disabled")
-    }
-  })
+  if(metricname && metricname != "") {
+    $(container).find(".key").each(function(i, m) {
+      if($(m).text() == metricname.name) {
+        $(m).closest(".node").unbind("click");
+        $(m).closest(".node").bind("click", function(e) {
+        });
+        var nodeParent = $(m).closest(".node");
+        $(nodeParent).addClass("disabled")
+      }
+    })
+  }
 };
 jarvis.visualisation.picker.Metrics.prototype.ensureVisible = function(sender, metricname) {
   if(metricname != "") {
@@ -10509,36 +10511,34 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
     if(!obj.category) {
       return"(not set)"
     }
-    return obj.category.name
+    return obj.category
   });
   _dimensions = _.sortBy(_dimensions, function(item) {
     if(!item[0].category) {
-      item[0].category = {name:item.category, ordinal:0}
+      item[0].category = "(not set)"
     }
-    return item[0].category.ordinal
+    return item[0].category
   });
   $container.append('<ul class="categorylist"></ul>');
   var $categorylist = $($container.find(".categorylist"));
   _.each(_dimensions, function(item, index) {
-    if(item[0].category && item[0].category.name != "(not set)") {
+    if(item[0].category && item[0].category != "(not set)") {
       var $list = $('<li class="node  ' + "level_" + "0" + '"></li>');
-      $list.append('<div class="category">' + (!item[0].category ? "(not set)" : item[0].category.name) + "</div>");
+      $list.append('<div class="category">' + (!item[0].category ? "(not set)" : item[0].category) + "</div>");
       $list.append('<ul class="jcontainer"></ul>');
       var bDrawn = false;
       $.each(item, function(index, dimension) {
-        if(dimension.ColumnName != dimension.DictionaryTable_Column || dimension.id <= -1) {
-          var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.name + '" data-dimensionid="' + dimension.id + '">';
-          list += '<div class="box">';
-          list += '<div class="keyvaluepair">';
-          list += '<div class="key">' + dimension.name + "</div>";
-          list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.name + '" data-text="' + dimension.helptext + '"></i> </div>';
-          list += "</div>";
-          list += "</div>";
-          list += "</li>";
-          var $li = $(list);
-          $($list.find(".jcontainer:last-of-type")).append($li);
-          bDrawn = true
-        }
+        var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.name + '" data-dimensionid="' + dimension.id + '">';
+        list += '<div class="box">';
+        list += '<div class="keyvaluepair">';
+        list += '<div class="key">' + dimension.name + "</div>";
+        list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.name + '" data-text="' + dimension.helptext + '"></i> </div>';
+        list += "</div>";
+        list += "</div>";
+        list += "</li>";
+        var $li = $(list);
+        $($list.find(".jcontainer:last-of-type")).append($li);
+        bDrawn = true
       });
       if(bDrawn) {
         $categorylist.append($list)
@@ -16554,8 +16554,6 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       var _shadow = true;
       var _ordinal = 0;
       var _ytype = result.Columns[1].suffix;
-      console.log(result.Columns[1]);
-      console.log(_ytype, result.Columns[1].suffix);
       if(item.id == "primary") {
         _name = result.Columns[1].name;
         _color = jarvis.colors[0];
@@ -16813,7 +16811,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   _this.selectedMetric = picker_metrics.selectedMetric;
   $(picker_metrics).bind("select", function(data, metric) {
     metric = _.find(jarvis.objects.Metrics, function(item) {
-      return item.id == metric
+      return item.name == metric
     });
     _this.primaryMetric = metric;
     _this.fetch(_this);
@@ -16836,7 +16834,7 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
   picker_secondary.disableMetric(picker_secondary, _this.primaryMetric);
   $(picker_secondary).bind("select", function(data, metric) {
     metric = _.find(jarvis.objects.Metrics, function(item) {
-      return item.id == metric
+      return item.name == metric
     });
     _this.secondaryMetric = metric;
     _this.fetch(_this);
@@ -18764,6 +18762,19 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
         }
       }else {
       }
+      _.each(_this.levels, function(level, ilevel) {
+        _.each(level, function(d, id) {
+          console.log(d, typeof d);
+          if(typeof d != "object") {
+            d = _.find(jarvis.objects.Dimensions, function(_d) {
+              return _d.id == d
+            });
+            if(d) {
+              _this.levels[ilevel][id] = d
+            }
+          }
+        })
+      });
       var _metrics = $(item).attr("data-metrics");
       if(!_metrics) {
         return
@@ -19060,7 +19071,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
           $(_allcolumns).each(function(ai, ao) {
             if(ao.aggregation) {
-              $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.name + "</option>");
+              $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
             }
@@ -19818,7 +19829,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     var _html = "Secondary dimension" + (_this.dimensions.length > 2 ? "s" : "") + ": ";
     $(_this.dimensions).each(function(i, d) {
       if(i > 0) {
-        _html += d.name + ", "
+        _html += d.Name + ", "
       }
     });
     _html = _html.substring(0, _html.length - 2);
@@ -20101,6 +20112,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
       $advancedsearch.show()
     }
   });
+  console.log(_this);
   $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].name);
   if(!_this.isother) {
     $(".japi.primarydimension").addClass("on");
