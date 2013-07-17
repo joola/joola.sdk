@@ -6823,13 +6823,36 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
       result.data.Result.Columns.push(d)
     });
     _.each(result.results.metrics, function(m) {
-      result.data.Result.Columns.push(m)
+      result.data.Result.Columns.push(m);
+      switch(m.type) {
+        case "int":
+          m.formatter = function(value) {
+            return jarvis.string.formatNumber(parseInt(value), 0, true)
+          };
+          break;
+        case "float":
+          m.formatter = function(value) {
+            return jarvis.string.formatNumber(parseFloat(value), 2, true)
+          };
+          break;
+        case "seconds":
+          m.formatter = function(value) {
+            return jarvis.string.intToTime(parseInt(value))
+          };
+          break;
+        default:
+          break
+      }
     });
     _.each(result.results.rows, function(r) {
       var row = {Values:[], FormattedValues:[]};
       _.each(result.data.Result.Columns, function(col) {
         row.Values.push(r[col.name]);
-        row.FormattedValues.push(r[col.name])
+        if(col.formatter) {
+          row.FormattedValues.push(col.formatter(r[col.name]))
+        }else {
+          row.FormattedValues.push(r[col.name])
+        }
       });
       result.data.Result.Rows.push(row)
     });
@@ -8706,6 +8729,20 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
       result = data.metrics;
       jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
       $(result).each(function(index, item) {
+        switch(item.type) {
+          case "int":
+            item.formatter = function(value) {
+              return parseInt(value)
+            };
+            break;
+          case "float":
+            item.formatter = function(value) {
+              return parseFloat(value).toFixed(2)
+            };
+            break;
+          default:
+            break
+        }
         jarvis.objects.Metrics.push(item)
       });
       callback(sender, result)
@@ -8715,6 +8752,20 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
     var data = result.metrics;
     jarvis.objects.Metrics.splice(0, jarvis.objects.Metrics.length);
     $(data).each(function(index, item) {
+      switch(item.type) {
+        case "int":
+          item.formatter = function(value) {
+            return parseInt(value)
+          };
+          break;
+        case "float":
+          item.formatter = function(value) {
+            return parseFloat(value).toFixed(2)
+          };
+          break;
+        default:
+          break
+      }
       jarvis.objects.Metrics.push(item)
     })
   }
