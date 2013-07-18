@@ -13209,10 +13209,10 @@ jarvis.visualisation.dashboard.Timeline.prototype.fetch = function(sender, conta
     return""
   }
   var queryOptions = [];
-  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
+  var _queryOptions = {id:"primary", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter};
   queryOptions.push(_queryOptions);
   if(_this.DateBox.comparePeriod) {
-    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter, sortKey:_metrics[_metrics.length - 1].id, sortDir:"DESC"};
+    _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_metricslist, resolution:_this.Resolution, omitDate:false, filter:jarvis.visualisation.dashboard.globalfilter};
     queryOptions.push(_queryOptions)
   }
   jarvis.dataaccess.multifetch(_this, "/query.fetch", queryOptions, function(sender, data, error) {
