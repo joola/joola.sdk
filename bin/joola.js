@@ -6403,9 +6403,10 @@ jarvis.load = function(lib, callback) {
 };
 function callback() {
 }
+jarvis.contenthost = "[[JARVIS-CONTENTHOST]]";
 jarvis.hostname = "[[JARVIS-HOST]]";
 jarvis.endpoints = {content:"[[JARVIS-ENDPOINT-CONTENT]]", query:"[[JARVIS-ENDPOINT-QUERY]]" == "" ? jarvis.hostname : "[[JARVIS-ENDPOINT-QUERY]]", api:"[[JARVIS-ENDPOINT-API]]" == "" ? jarvis.hostname : "[[JARVIS-ENDPOINT-API]]"};
-var cssPath = "/assets/css/jarvis.css";
+var cssPath = jarvis.contenthost + "/assets/css/jarvis.css";
 try {
   if(typeof jarvis.hostname == "undefined" || jarvis.hostname == "") {
     var getLocation = function(href) {
@@ -6781,6 +6782,7 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
       }
     }catch(e) {
       console.log("Exception during ajax call: " + e.message);
+      console.log(e.stack);
       jarvis.visualisation.showError(e.message);
       if(typeof callback === "function") {
         callback(sender, result, this)
@@ -9401,7 +9403,7 @@ jarvis.visualisation.picker.DateBox.init = function(options, container) {
   this.offsetX = 0;
   this.offsetY = 0;
   this.callbacks = [];
-  this.cssPath = "/assets/css/datebox.css";
+  this.cssPath = jarvis.contenthost + "/assets/css/datebox.css";
   if(!jarvis.dateboxcssloaded) {
     jarvis.dateboxcssloaded = true;
     $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
@@ -14790,7 +14792,7 @@ jarvis.visualisation.dashboard.Panel.prototype.dispose = function() {
 jarvis.visualisation.dashboard.Panel.prototype.init = function(options, container, drawWidgets, breakBindLoop, saveState) {
   var _this = this;
   try {
-    if(options.panelID > -1) {
+    if(options.panelID && options.panelID != "") {
       _this.panelID = options.panelID
     }else {
       if(_this.panelID == -1) {
@@ -14855,34 +14857,6 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
   var _html = _this.baseHTML();
   $(container).empty();
   $(container).append(_html);
-  $(".jarvis.dashboard.column-left, .jarvis.dashboard.column-mid, .jarvis.dashboard.column-right").sortable({connectWith:".columns", handle:".header", placeholder:{element:function(currentItem) {
-    return $('<div class="droptarget">' + $(currentItem).attr("data-title") + "</div>")[0]
-  }, update:function(container, p) {
-  }}, update:function(e, p) {
-    var parent = 1;
-    if($(this).attr("class").indexOf("left") > -1) {
-      parent = 1
-    }else {
-      if($(this).attr("class").indexOf("mid") > -1) {
-        parent = 2
-      }else {
-        parent = 3
-      }
-    }
-    $(this).children().each(function(i) {
-      var widgetID = $(this).attr("data-widgetid");
-      if($(this).attr("class").indexOf("pie") > -1) {
-        (new jarvis.visualisation.dashboard.Pie).init(null, $(this))
-      }
-      if($(this).attr("class").indexOf("timeline") > -1) {
-        (new jarvis.visualisation.dashboard.Timeline).init(null, $(this))
-      }
-      jarvis.dataaccess.fetch(this, "/engine/Dashboards.svc/UpdateWidgetPosition", {ID:widgetID, Column:parent, Ordinal:i + 1}, function(sender, data, error) {
-        data = $.parseJSON(data.data)
-      })
-    })
-  }, stop:function(event, ui) {
-  }}).disableSelection();
   $(widgets).each(function(index, item) {
     jarvis.debug.log("INFO", "Jarvis.Dashboards.Visualisation.Panel", 6, "Drawing widget ('" + item.title + "')");
     switch(item.type) {
@@ -15029,7 +15003,7 @@ jarvis.visualisation.dashboard.Panel.prototype.hide = function(sender) {
   $(".jarvis.dashboard.panel").hide()
 };
 jarvis.visualisation.dashboard.Panel.prototype.get = function(sender, id) {
-  if(id == -1) {
+  if(id && id == -1 && typeof id != "undefined" && id != "undefined") {
     return
   }
   var data = jarvis.objects.Dashboards.Get(null, {id:id});
@@ -15039,8 +15013,11 @@ jarvis.visualisation.dashboard.Panel.prototype.get = function(sender, id) {
 jarvis.visualisation.dashboard.Panel.prototype.updateDisplay = function(options) {
   var $container = $(options.container);
   var data = options._this.panel;
-  $("body").find(".jarvis.caption").text(data.name).trigger("contentchange");
-  $("body").find(".jarvis.description").text(data.description).trigger("contentchange");
+  try {
+    $("body").find(".jarvis.caption").text(data.name).trigger("contentchange");
+    $("body").find(".jarvis.description").text(data.description).trigger("contentchange")
+  }catch(e) {
+  }
   if($("body").attr("class")) {
     if(!$("body").attr("class").indexOf(data.name)) {
       $("body").addClass(data.name)
@@ -16493,7 +16470,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
   }
   if(_this.Filters.length > 0) {
     $(_this.Filters).each(function(i, dimension) {
-      _queryOptions = {id:"filter", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", mMetrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
+      _queryOptions = {id:"filter", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
       queryOptions.push(_queryOptions);
       if(_this.DateBox.comparePeriod) {
         _queryOptions = {id:"compare_filter", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), startdate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
@@ -20008,9 +19985,9 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $tablecontrol.append('<div class="secondary btn-group"><button class="btn secondarywrapper dropdown-toggle dropdown" data-toggle="dropdown"><span class="secondarybutton">Add secondary dimension...</span>&nbsp;<span class="caret"></span></button><div class="secondarylist"><ul class="jarvis secondarylistcontainer dropdown-menu"></ul></div></div>');
   $tablecontrol.append('<div class="toolbar"><div class="tabletype"></div><div class="search input-prepend"><input type="text" class="quicksearch span2" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div><span class="advancedcaption">Advanced</span></div></div>');
   var $charttype = $('<div class="toolbaroptions btn-group" data-toggle="buttons-radio" ></div>');
-  $charttype.append('<button rel="tooltip" title="Table" class="btn btn_table active">' + '<img src="/assets/img/glyphicons_114_list.png""/>' + "</i></button>");
-  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie">' + '<img src="/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
-  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf">' + '<img src="/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Table" class="btn btn_table active">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_114_list.png""/>' + "</i></button>");
+  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
   $tablecontrol.find(".add-on").off("click");
   $tablecontrol.find(".add-on").on("click", function(e) {
     var $search = $($tablecontrol.find(".quicksearch")[$tablecontrol.find(".quicksearch").length - 1]);
@@ -23886,29 +23863,6 @@ if(location.hash == "") {
   jarvis.state.view = "dashboard"
 }else {
 }
-$().ready(function(e) {
-  jarvis.visualisation.init();
-  updateState(location.hash, true);
-  $(window).trigger("jarvis-loaded");
-  jQuery.fn.animateAuto = function(prop, speed, callback) {
-    var elem, height, width;
-    return this.each(function(i, el) {
-      el = jQuery(el), elem = el.clone().css({"height":"auto", "width":"auto"}).appendTo("body");
-      height = elem.css("height"), width = elem.css("width"), elem.remove();
-      if(prop === "height") {
-        el.animate({"height":height}, speed, callback)
-      }else {
-        if(prop === "width") {
-          el.animate({"width":width}, speed, callback)
-        }else {
-          if(prop === "both") {
-            el.animate({"width":width, "height":height}, speed, callback)
-          }
-        }
-      }
-    })
-  }
-});
 window.fork = function(async_calls, shared_callback) {
   var counter = async_calls.length;
   var all_results = [];
@@ -23943,6 +23897,12 @@ $(window).bind("jarvis-loaded", function() {
   };
   calls.push(call);
   call = function(callback) {
+    jarvis.objects.Reports.List(null, null, function() {
+      callback()
+    })
+  };
+  calls.push(call);
+  call = function(callback) {
     jarvis.objects.Dimensions.List(null, null, function() {
       callback()
     })
@@ -23967,6 +23927,7 @@ $(window).bind("jarvis-loaded", function() {
   };
   calls.push(call);
   fork(calls, function() {
+    $(window).trigger("jarvis-initialized");
     $(jarvis).trigger("jarvis-initialized")
   })
 });
@@ -24045,4 +24006,27 @@ function cloneextend(obj, exteddata) {
   }
   return obj
 }
-;
+$().ready(function(e) {
+  jarvis.visualisation.init();
+  updateState(location.hash, true);
+  $(window).trigger("jarvis-loaded");
+  jQuery.fn.animateAuto = function(prop, speed, callback) {
+    var elem, height, width;
+    return this.each(function(i, el) {
+      el = jQuery(el), elem = el.clone().css({"height":"auto", "width":"auto"}).appendTo("body");
+      height = elem.css("height"), width = elem.css("width"), elem.remove();
+      if(prop === "height") {
+        el.animate({"height":height}, speed, callback)
+      }else {
+        if(prop === "width") {
+          el.animate({"width":width}, speed, callback)
+        }else {
+          if(prop === "both") {
+            el.animate({"width":width, "height":height}, speed, callback)
+          }
+        }
+      }
+    })
+  }
+});
+
