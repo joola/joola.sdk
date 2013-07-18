@@ -6844,6 +6844,15 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
           };
           break;
         default:
+          if(m.suffix == "seconds") {
+            m.formatter = function(value) {
+              return jarvis.string.intToTime(parseInt(value))
+            }
+          }else {
+            m.formatter = function(value) {
+              return jarvis.string.formatNumber(parseInt(value), 0, true)
+            }
+          }
           break
       }
     });
@@ -6852,7 +6861,11 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
       _.each(result.data.Result.Columns, function(col) {
         row.Values.push(r[col.name]);
         if(col.formatter) {
-          row.FormattedValues.push(col.formatter(r[col.name]))
+          row.FormattedValues.push(col.formatter(r[col.name]));
+          if(col.formatter(r[col.name]) == "NaN") {
+            console.log(r, result.data.Result.Columns);
+            console.log("a", col.name, r[col.name])
+          }
         }else {
           row.FormattedValues.push(r[col.name])
         }
