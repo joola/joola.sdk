@@ -6861,15 +6861,15 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
       _.each(result.data.Result.Columns, function(col) {
         row.Values.push(r[col.name]);
         if(col.formatter) {
-          row.FormattedValues.push(col.formatter(r[col.name]));
-          if(col.formatter(r[col.name]) == "NaN") {
-            console.log(r, result.data.Result.Columns);
-            console.log("a", col.name, r[col.name])
-          }
+          row.FormattedValues.push(col.formatter(r[col.name]))
         }else {
           row.FormattedValues.push(r[col.name])
         }
       });
+      if(result.requestorInformation.receivedParams.filter) {
+        result.data.Request = {};
+        result.data.Request.Filter = result.requestorInformation.receivedParams.filter
+      }
       result.data.Result.Rows.push(row)
     });
     callback(result)
@@ -16665,9 +16665,6 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
     var baseSuffix = series[0].options.ytype == "" ? series[0].options.name : series[0].options.ytype;
     $(series).each(function(index, s) {
       if(index > 0) {
-        if((s.options.ytype == "" ? s.options.name : s.options.ytype) == baseSuffix) {
-          s.update({yAxis:0}, false)
-        }
       }
     });
     _this.Chart.redraw()
@@ -18794,10 +18791,14 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
         _this.fetch(_this);
         if(_this.DateBox.comparePeriod) {
           $("button.btn_pie").attr("disabled", "true");
-          $("button.btn_perf").attr("disabled", "true")
+          $("button.btn_pie").addClass("disabled");
+          $("button.btn_perf").attr("disabled", "true");
+          $("button.btn_perf").addClass("disabled")
         }else {
           $("button.btn_pie").removeAttr("disabled");
-          $("button.btn_perf").removeAttr("disabled")
+          $("button.btn_pie").removeClass("disabled");
+          $("button.btn_perf").removeAttr("disabled");
+          $("button.btn_perf").removeClass("disabled")
         }
       });
       $(jarvis.visualisation.report).bind("filter", function(filter) {
