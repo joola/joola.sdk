@@ -6864,7 +6864,11 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
           row.FormattedValues.push(col.formatter(r[col.name]))
         }else {
           if(col.name == "Date") {
-            row.FormattedValues.push(jarvis.date.formatDate(new Date(r["Date"])))
+            var _date = new Date(r["Date"]);
+            console.log(_date, jarvis.date.flatDate(_date), jarvis.date.formatDate(_date), jarvis.date.formatDate(jarvis.date.flatDate(_date)));
+            _date = jarvis.date.flatDate(_date);
+            _date = jarvis.date.formatDate(_date);
+            row.FormattedValues.push(_date)
           }else {
             row.FormattedValues.push(r[col.name])
           }
