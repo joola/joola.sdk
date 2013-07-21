@@ -6639,7 +6639,6 @@ jarvis.string.shortenNumber = function(n) {
     if(n >= 1E3) {
       continue
     }
-    console.log(sgn + n, sgn, n, suffix);
     return(sgn + n).replace(/(\.\d\d).*/, "$1") + suffix
   }while(suffixes.length);
   return sgn + "many"
@@ -19052,7 +19051,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       }
     });
     _columns = _temp;
-    _columns.push({Name:comparecolumnname, aggregation:"Special"})
+    _columns.push({name:comparecolumnname, aggregation:"Special"})
   }
   var $tr = $("<tr></tr>");
   var $th = $('<th class="check"></th>');
@@ -19068,7 +19067,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
           $(_allcolumns).each(function(ai, ao) {
             if(ao.aggregation) {
-              $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.Name + "</option>");
+              $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
             }
@@ -19826,7 +19825,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     var _html = "Secondary dimension" + (_this.dimensions.length > 2 ? "s" : "") + ": ";
     $(_this.dimensions).each(function(i, d) {
       if(i > 0) {
-        _html += d.Name + ", "
+        _html += d.name + ", "
       }
     });
     _html = _html.substring(0, _html.length - 2);
