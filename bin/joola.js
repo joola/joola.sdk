@@ -6639,6 +6639,7 @@ jarvis.string.shortenNumber = function(n) {
     if(n >= 1E3) {
       continue
     }
+    console.log(sgn + n, sgn, n, suffix);
     return(sgn + n).replace(/(\.\d\d).*/, "$1") + suffix
   }while(suffixes.length);
   return sgn + "many"
@@ -10239,7 +10240,7 @@ jarvis.visualisation.picker.Metrics.prototype.baseHTML = function(sender) {
         list += '<div class="box">';
         list += '<div class="keyvaluepair">';
         list += '<div class="key">' + metric.name + "</div>";
-        list += '<div class="help"> <i class="tipsy icon-question-sign icon-white" data-caption="' + metric.name + '" data-text="' + metric.description + '" data-title="' + (metric.HelpText == "" ? "Information not available." : metric.HelpText) + '"></i> </div>';
+        list += '<div class="help"> <i class="tipsy icon-question-sign icon-white" data-caption="' + metric.name + '" data-text="' + metric.description + '" data-title="' + (metric.description == null ? "Information not available." : metric.description) + '"></i> </div>';
         list += "</div>";
         list += "</div>";
         list += "</li>";
@@ -10553,7 +10554,7 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
         list += '<div class="box">';
         list += '<div class="keyvaluepair">';
         list += '<div class="key">' + dimension.name + "</div>";
-        list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.name + '" data-text="' + dimension.helptext + '"></i> </div>';
+        list += '<div class="help"> <i class="icon-question-sign icon-white" data-caption="' + dimension.name + '" data-text="' + dimension.description + '"></i> </div>';
         list += "</div>";
         list += "</div>";
         list += "</li>";
@@ -17435,10 +17436,10 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
   var displayValue = series[0].value;
   if(displayValue > 1E6 || displayValue < -1E6) {
     displayValue = jarvis.string.shortenNumber(displayValue);
-    if(metric.suffix != "") {
+    if(metric.suffix != null) {
       displayValue += metric.suffix
     }
-    if(metric.prefix != "") {
+    if(metric.prefix != null) {
       displayValue = metric.prefix + displayValue
     }
   }else {
