@@ -6406,7 +6406,7 @@ function callback() {
 jarvis.contenthost = "[[JARVIS-CONTENTHOST]]";
 jarvis.hostname = "[[JARVIS-HOST]]";
 jarvis.endpoints = {content:"[[JARVIS-ENDPOINT-CONTENT]]", query:"[[JARVIS-ENDPOINT-QUERY]]" == "" ? jarvis.hostname : "[[JARVIS-ENDPOINT-QUERY]]", api:"[[JARVIS-ENDPOINT-API]]" == "" ? jarvis.hostname : "[[JARVIS-ENDPOINT-API]]"};
-var cssPath = jarvis.contenthost + "/assets/css/jarvis.css";
+var cssPath = "jarvis.css";
 try {
   if(typeof jarvis.hostname == "undefined" || jarvis.hostname == "") {
     var getLocation = function(href) {
@@ -6423,7 +6423,7 @@ try {
   console.log(e)
 }
 if(!$('link[href*="' + this.cssPath + '"]').length) {
-  $("head").append('<style type="text/css">@import "' + this.cssPath + '";</style> ')
+  $("head").append('<style type="text/css">@import "' + jarvis.contenthost + "/assets/css/" + this.cssPath + '"</style> ')
 }
 jarvis.loaded = [];
 function group(data, index1, index2) {
@@ -6863,7 +6863,11 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
         if(col.formatter) {
           row.FormattedValues.push(col.formatter(r[col.name]))
         }else {
-          row.FormattedValues.push(r[col.name])
+          if(col.name == "Date") {
+            row.FormattedValues.push(jarvis.date.formatDate(new Date(r["Date"])))
+          }else {
+            row.FormattedValues.push(r[col.name])
+          }
         }
       });
       if(result.requestorInformation.receivedParams.filter) {
@@ -9483,7 +9487,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
   $(".optionscontainer").append('<div class="daterange comparerange"">' + '<input class="dateoption active" type="text" value="Jan 1, 2012">' + " - " + '<input class="dateoption" type="text" value="Jan 1, 2012">' + "</div>");
   $(".optionscontainer").append("" + '<hr class="divider">' + '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' + '<span class="cancel">Cancel</span></div>');
   var $calendars = $container.find(".calendars");
-  $item = $("<table><tr valign=top>" + '<td class="datetable-prev unselectable"></td>' + '<td class="datetable"><div class="datepicker"></div></td>' + '<td class="datetable"><div class="datepicker"></div></td>' + '<td class="datetable"><div class="datepicker"></div></td>' + '<td class="datetable-next unselectable"></td>' + "</tr></table>");
+  $item = $("<table><tr valign=top>" + '<td class="datetable-prev unselectable"></td>' + '<td class="datetable"><div class="datepicker dp1"></div></td>' + '<td class="datetable"><div class="datepicker dp2"></div></td>' + '<td class="datetable"><div class="datepicker dp3"></div></td>' + '<td class="datetable-next unselectable"></td>' + "</tr></table>");
   $calendars.append($item);
   $(".datetable-prev").append('<div class="prev">' + '<div class="inline-block prev">' + "</div>" + "</div>");
   $(".datetable-prev .prev").off("click");
@@ -9520,7 +9524,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     })
   });
   var currentClickIndex = 0;
-  $(".datepicker").datepicker({dayNamesMin:["S", "M", "T", "W", "T", "F", "S"], firstDay:0, minDate:_this.min_date, maxDate:_this.max_date, beforeShowDay:function(date) {
+  $(".datepicker").datepicker({dayNamesMin:["S", "M", "T", "W", "T", "F", "S"], firstDay:0, beforeShowDay:function(date) {
     return _this.drawCell(date)
   }, onSelect:function(dateText, inst) {
     $(".jarvis .optionscontainer .selector").val("custom");
@@ -9564,7 +9568,6 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     }
     _this.handleChange()
   }});
-  $(".datepicker").datepicker({});
   $(".datepicker").find('a[href="#"]').each(function(index, item) {
     $(this).on("click", function(event) {
       event.stopPropagation()
@@ -9722,7 +9725,10 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
   this.handleChange()
 };
 jarvis.visualisation.picker.DateBox.drawCell = function(date) {
-  if(date >= new Date) {
+  if(date >= this.max_date) {
+    return[false, "daycell disabled"]
+  }
+  if(date <= this.min_date) {
     return[false, "daycell disabled"]
   }
   if(this.currentMode == "base-to") {
@@ -17443,7 +17449,7 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
   $metric.find(".value").removeClass("negative");
   $metric.find(".value").removeClass("positive");
   var ratio;
-  if(metric.aggregation == "SUM" || metric.aggregation == "COUNT") {
+  if(metric.aggregation == "sum" || metric.aggregation == "count") {
     ratio = 100;
     if(series[0].totalvalue > 0) {
       ratio = series[0].value / (series.length == 1 ? series[0].value : series[1].value) * 100
@@ -17454,7 +17460,7 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
       $metric.find(".summary").html('<span class="summaryvalue">' + jarvis.string.formatNumber(ratio, 2) + "%</span> of Total<br>(" + series[1].ftotalvalue + ")")
     }
   }else {
-    if(metric.aggregation == "AVG") {
+    if(metric.aggregation == "avg") {
       ratio = 0;
       if(series[0].totalvalue > 0) {
         ratio = percentageChange(series.length == 1 ? series[0].value : series[1].value, series[0].totalvalue)
@@ -18751,7 +18757,6 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
       }
       _.each(_this.levels, function(level, ilevel) {
         _.each(level, function(d, id) {
-          console.log(d, typeof d);
           if(typeof d != "object") {
             d = _.find(jarvis.objects.Dimensions, function(_d) {
               return _d.id == d
@@ -20103,7 +20108,6 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
       $advancedsearch.show()
     }
   });
-  console.log(_this);
   $(".japi.primarydimension").html(_this.levels[_this.drilldownlevel][0].name);
   if(!_this.isother) {
     $(".japi.primarydimension").addClass("on");
