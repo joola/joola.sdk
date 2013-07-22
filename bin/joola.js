@@ -6865,7 +6865,6 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
         }else {
           if(col.name == "Date") {
             var _date = new Date(r["Date"]);
-            console.log(_date, jarvis.date.flatDate(_date), jarvis.date.formatDate(_date), jarvis.date.formatDate(jarvis.date.flatDate(_date)));
             _date = jarvis.date.flatDate(_date);
             _date = jarvis.date.formatDate(_date);
             row.FormattedValues.push(_date)
@@ -8385,6 +8384,8 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
     jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, function(sender, data, error) {
       result = data.startDate;
       jarvis.systemStartDate = new Date(result);
+      jarvis.systemStartDate.setUTCHours(0, 0, 0, 0);
+      jarvis.systemStartDate.setDate(jarvis.systemStartDate.getDate() + 1);
       setTimeout(function() {
         jarvis.inSaveState = false
       }, 1E3);
@@ -8394,6 +8395,8 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
     result = jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, null);
     result = result.startDate;
     jarvis.systemStartDate = new Date(result);
+    jarvis.systemStartDate.setUTCHours(0, 0, 0, 0);
+    jarvis.systemStartDate.setDate(jarvis.systemStartDate.getDate() + 1);
     setTimeout(function() {
       jarvis.inSaveState = false
     }, 1E3)
@@ -9537,6 +9540,16 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
         _this.currentMode = "base-to";
         _this.base_fromdate = new Date(dateText);
         _this.base_todate = new Date(dateText);
+        var _checkLimit = new Date(_this.min_date);
+        _checkLimit.setUTCHours(0, 0, 0, 0);
+        _checkLimit.setDate(_checkLimit.getDate() + 1);
+        if(_this.base_fromdate.getTime() <= _checkLimit.getTime()) {
+          $(".compareoption .checker").attr("disabled", "disabled")
+        }else {
+          if($(".compareoption .checker").is(":disabled")) {
+            $(".compareoption .checker").removeAttr("disabled")
+          }
+        }
         $($(".daterange.baserange .dateoption")[0]).val(jarvis.date.formatDate(_this.base_fromdate));
         $($(".daterange.baserange .dateoption")[0]).removeClass("invalid");
         $($(".daterange.baserange .dateoption")[1]).val(jarvis.date.formatDate(_this.base_fromdate));
@@ -9635,9 +9648,16 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.base_todate = _this.original_base_todate;
     _this.compare_fromdate = _this.original_compare_fromdate;
     _this.compare_todate = _this.original_compare_todate;
-    if($(".compareoption .checker").is(":checked")) {
-      $(".compareoption .checker").click();
-      $(".compareoption .checker").prop("checked", false)
+    if(!_this.comparePeriod) {
+      if($(".compareoption .checker").is(":checked")) {
+        $(".compareoption .checker").click();
+        $(".compareoption .checker").prop("checked", false)
+      }
+    }else {
+      if(!$(".compareoption .checker").is(":checked")) {
+        $(".compareoption .checker").click();
+        $(".compareoption .checker").prop("checked", true)
+      }
     }
     $($(".daterange.baserange .dateoption")[0]).val(_this.formatDate(_this.base_fromdate));
     $($(".daterange.baserange .dateoption")[1]).val(_this.formatDate(_this.base_todate));
@@ -9882,6 +9902,9 @@ jarvis.visualisation.picker.DateBox.handleChange = function(options) {
     var rangelength = Date.dateDiff("d", _this.base_fromdate, _this.base_todate);
     _this.compare_todate = _this.addDays(_this.base_fromdate, -1);
     _this.compare_fromdate = _this.addDays(_this.compare_todate, -1 * rangelength);
+    if(_this.compare_fromdate < _this.min_date) {
+      _this.compare_fromdate = _this.min_date
+    }
     $($(".daterange.comparerange .dateoption")[0]).val(_this.formatDate(_this.compare_fromdate));
     $($(".daterange.comparerange .dateoption")[1]).val(_this.formatDate(_this.compare_todate));
     _this.handleChange()
@@ -13898,7 +13921,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
       so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
     }else {
       if(metric.type == "float") {
-        so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
+        so.ftotal = jarvis.string.formatNumber(so.total, 2, true)
       }else {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }
@@ -14002,16 +14025,16 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
   }
   var value = percentageChange(series[1].total, series[0].total);
   var _class = "neutral";
-  if(metric.RatioDirection == -1 && Math.round(parseFloat(value)) < 0) {
+  if(metric.ratiodirection == -1 && Math.round(parseFloat(value)) < 0) {
     _class = "positive"
   }
-  if(metric.RatioDirection == -1 && Math.round(parseFloat(value)) > 0) {
+  if(metric.ratiodirection == -1 && Math.round(parseFloat(value)) > 0) {
     _class = "negative"
   }
-  if(metric.RatioDirection == 1 && Math.round(parseFloat(value)) > 0) {
+  if(metric.ratiodirection == 1 && Math.round(parseFloat(value)) > 0) {
     _class = "positive"
   }
-  if(metric.RatioDirection == 1 && Math.round(parseFloat(value)) < 0) {
+  if(metric.ratiodirection == 1 && Math.round(parseFloat(value)) < 0) {
     _class = "negative"
   }
   $(series).each(function(si, so) {
@@ -14019,7 +14042,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
       so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
     }else {
       if(metric.type == "float") {
-        so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
+        so.ftotal = jarvis.string.formatNumber(so.total, 2, true)
       }else {
         so.ftotal = jarvis.string.formatNumber(so.total, 0, true)
       }
@@ -14032,7 +14055,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
     }
   });
   var $metric = $(container).find(".base");
-  value = jarvis.string.formatNumber(value, 0) + "%";
+  value = jarvis.string.formatNumber(value, 2) + "%";
   $metric.find(".value").html(value);
   $metric.find(".value").removeClass("negative").removeClass("positive");
   $metric.find(".value").addClass(_class);
@@ -14338,16 +14361,16 @@ jarvis.visualisation.dashboard.Table.prototype.updateCompare = function(sender, 
           $td.addClass("metric strong");
           var _class = "";
           var metric = series[0].Columns[i];
-          if(metric.RatioDirection == -1 && ratio < 0) {
+          if(metric.ratiodirection == -1 && ratio < 0) {
             _class = "positive"
           }
-          if(metric.RatioDirection == -1 && ratio > 0) {
+          if(metric.ratiodirection == -1 && ratio > 0) {
             _class = "negative"
           }
-          if(metric.RatioDirection == 1 && ratio > 0) {
+          if(metric.ratiodirection == 1 && ratio > 0) {
             _class = "positive"
           }
-          if(metric.RatioDirection == 1 && ratio < 0) {
+          if(metric.ratiodirection == 1 && ratio < 0) {
             _class = "negative"
           }
           if(_class == "") {
@@ -14714,16 +14737,16 @@ jarvis.visualisation.dashboard.Pie.prototype.update = function(sender, dimension
       $(result).each(function(index, item) {
         var _class = "";
         var metric = series[0].Columns[1];
-        if(metric.RatioDirection == -1 && item.diff < 0) {
+        if(metric.ratiodirection == -1 && item.diff < 0) {
           _class = "positive"
         }
-        if(metric.RatioDirection == -1 && item.diff > 0) {
+        if(metric.ratiodirection == -1 && item.diff > 0) {
           _class = "negative"
         }
-        if(metric.RatioDirection == 1 && item.diff > 0) {
+        if(metric.ratiodirection == 1 && item.diff > 0) {
           _class = "positive"
         }
-        if(metric.RatioDirection == 1 && item.diff < 0) {
+        if(metric.ratiodirection == 1 && item.diff < 0) {
           _class = "negative"
         }
         if(_class == "") {
@@ -16269,16 +16292,16 @@ jarvis.visualisation.dashboard.BarTable.prototype.updateCompare = function(sende
       }
       var _class = "";
       var metric = series[0].Columns[1];
-      if(metric.RatioDirection == -1 && ratio < 0) {
+      if(metric.ratiodirection == -1 && ratio < 0) {
         _class = "positive"
       }
-      if(metric.RatioDirection == -1 && ratio > 0) {
+      if(metric.ratiodirection == -1 && ratio > 0) {
         _class = "negative"
       }
-      if(metric.RatioDirection == 1 && ratio > 0) {
+      if(metric.ratiodirection == 1 && ratio > 0) {
         _class = "positive"
       }
-      if(metric.RatioDirection == 1 && ratio < 0) {
+      if(metric.ratiodirection == 1 && ratio < 0) {
         _class = "negative"
       }
       if(_class == "") {
@@ -16496,7 +16519,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       _queryOptions = {id:"filter", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
       queryOptions.push(_queryOptions);
       if(_this.DateBox.comparePeriod) {
-        _queryOptions = {id:"compare_filter", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), startdate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
+        _queryOptions = {id:"compare_filter", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:_this.primaryMetric.id, resolution:_this.Resolution, omitDate:false, filter:dimension};
         queryOptions.push(_queryOptions)
       }
       if(_this.secondaryMetric) {
@@ -17450,6 +17473,7 @@ jarvis.visualisation.report.MetricBox.prototype.update = function(sender, metric
   }
   $metric.find(".value").html(displayValue);
   $metric.find(".value").attr("title", series[0].fvalue);
+  $metric.find(".value").removeClass("neutral");
   $metric.find(".value").removeClass("negative");
   $metric.find(".value").removeClass("positive");
   var ratio;
@@ -17501,16 +17525,16 @@ jarvis.visualisation.report.MetricBox.prototype.updateCompare = function(sender,
   $metric.find(".value").removeClass("negative");
   $metric.find(".value").removeClass("positive");
   var _class = "neutral";
-  if(metric.RatioDirection == -1 && Math.round(parseFloat(value)) < 0) {
+  if(metric.ratiodirection == -1 && Math.round(parseFloat(value)) < 0) {
     _class = "positive"
   }
-  if(metric.RatioDirection == -1 && Math.round(parseFloat(value)) > 0) {
+  if(metric.ratiodirection == -1 && Math.round(parseFloat(value)) > 0) {
     _class = "negative"
   }
-  if(metric.RatioDirection == 1 && Math.round(parseFloat(value)) > 0) {
+  if(metric.ratiodirection == 1 && Math.round(parseFloat(value)) > 0) {
     _class = "positive"
   }
-  if(metric.RatioDirection == 1 && Math.round(parseFloat(value)) < 0) {
+  if(metric.ratiodirection == 1 && Math.round(parseFloat(value)) < 0) {
     _class = "negative"
   }
   value = jarvis.string.formatNumber(value, 2) + "%";
@@ -19730,16 +19754,16 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
             }
             var _class = "";
             var metric = cell;
-            if(metric.RatioDirection == -1 && value < 0) {
+            if(metric.ratiodirection == -1 && value < 0) {
               _class = "positive"
             }
-            if(metric.RatioDirection == -1 && value > 0) {
+            if(metric.ratiodirection == -1 && value > 0) {
               _class = "negative"
             }
-            if(metric.RatioDirection == 1 && value > 0) {
+            if(metric.ratiodirection == 1 && value > 0) {
               _class = "positive"
             }
-            if(metric.RatioDirection == 1 && value < 0) {
+            if(metric.ratiodirection == 1 && value < 0) {
               _class = "negative"
             }
             if(_class == "") {
@@ -20009,8 +20033,8 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $tablecontrol.append('<div class="toolbar"><div class="tabletype"></div><div class="search input-prepend"><input type="text" class="quicksearch span2" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div><span class="advancedcaption">Advanced</span></div></div>');
   var $charttype = $('<div class="toolbaroptions btn-group" data-toggle="buttons-radio" ></div>');
   $charttype.append('<button rel="tooltip" title="Table" class="btn btn_table active">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_114_list.png""/>' + "</i></button>");
-  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
-  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf">' + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Pie chart" class="btn btn_pie ' + (_this.DateBox.comparePeriod ? "disabled" : "") + '" ' + (_this.DateBox.comparePeriod ? 'disabled="disabled"' : "") + ">" + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_042_pie_chart.png"/>' + "</button>");
+  $charttype.append('<button rel="tooltip" title="Performance" class="btn btn_perf ' + (_this.DateBox.comparePeriod ? "disabled" : "") + '" ' + (_this.DateBox.comparePeriod ? 'disabled="disabled"' : "") + ">" + '<img src="' + jarvis.contenthost + '/assets/img/glyphicons_110_align_left.png"/>' + "</button>");
   $tablecontrol.find(".add-on").off("click");
   $tablecontrol.find(".add-on").on("click", function(e) {
     var $search = $($tablecontrol.find(".quicksearch")[$tablecontrol.find(".quicksearch").length - 1]);
