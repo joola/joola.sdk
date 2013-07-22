@@ -6873,12 +6873,12 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
           }
         }
       });
-      if(result.requestorInformation.receivedParams.filter) {
-        result.data.Request = {};
-        result.data.Request.Filter = result.requestorInformation.receivedParams.filter
-      }
       result.data.Result.Rows.push(row)
     });
+    if(queryOptions.filter) {
+      result.data.Request = {};
+      result.data.Request.Filter = queryOptions.filter
+    }
     callback(result)
   }};
   try {
@@ -19204,12 +19204,16 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   }
   if(!_this.DateBox.comparePeriod) {
     $(_datatoshow).each(function(index, row) {
+      var allowCheck = true;
+      if(_this.dimensions[1] && _this.dimensions[1].type == "date") {
+        allowCheck = false
+      }
       $tr = $("<tr ></tr>");
       $td = $('<td class="check" style="vertical-align: middle;"></td>');
       if(_this.mode == "pie") {
         $td.append('<div style="height:11px;width:11px;background-color: ' + (index >= 10 ? jarvis.colors[11] : jarvis.colors[index]) + ';"></div>')
       }else {
-        $td.append('<input class="checkfilter" type=checkbox>')
+        $td.append('<input class="checkfilter" type="checkbox" ' + (allowCheck ? "" : 'disabled="disabled"') + ">")
       }
       $tr.append($td);
       $td = $('<td class="id">' + parseInt((_this.currentPage - 1) * _this.pageSize + index + 1) + ".</td>");
