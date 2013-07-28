@@ -16451,7 +16451,6 @@ jarvis.visualisation.report.init = function() {
   jarvis.debug.log("INFO", "Report", 5, "...report init (" + executionTime + "ms)")
 };
 jarvis.visualisation.report.setFilter = function(filter) {
-  console.log("set", filter, jarvis.visualisation.report.globalfilter);
   jarvis.visualisation.report.globalfilter = filter;
   $(jarvis.visualisation.report).trigger("filter")
 };
@@ -18938,12 +18937,14 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
         $(_this).trigger("clicked", $(this).data().data)
       });
       $(_this.DateBox).bind("datechange", function() {
+        jarvis.visualisation.report.clearFilter();
         _this.fetch(_this);
         if(_this.DateBox.comparePeriod) {
           $("button.btn_pie").attr("disabled", "true");
           $("button.btn_pie").addClass("disabled");
           $("button.btn_perf").attr("disabled", "true");
-          $("button.btn_perf").addClass("disabled")
+          $("button.btn_perf").addClass("disabled");
+          _this.mode = "table"
         }else {
           $("button.btn_pie").removeAttr("disabled");
           $("button.btn_pie").removeClass("disabled");
@@ -18951,8 +18952,10 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
           $("button.btn_perf").removeClass("disabled")
         }
       });
-      $(jarvis.visualisation.report).bind("filter", function(filter) {
-        _this.fetch(_this)
+      $(jarvis.visualisation.report).bind("filter", function(e, options) {
+        if(!options || options && !options.dontrunfetch) {
+          _this.fetch(_this)
+        }
       });
       _this.destroy = function() {
         $(_this.DateBox).unbind("datechange");
@@ -19005,15 +19008,19 @@ jarvis.visualisation.report.Table.prototype.fetch = function(sender, container) 
       var result = item.data.Result;
       var request = item.data.Request;
       var _data = item.data.Result.Rows;
-      if(_this.initialLoad == 0) {
+      if(index == 0) {
         _this.initialLoad = 1;
         if(_this.options.defaultSelected > 0) {
-          for(var i = 0;i < _this.options.defaultSelected;i++) {
+          var _limit = _this.options.defaultSelected;
+          if(_limit > _data.length) {
+            _limit = _data.length
+          }
+          for(var i = 0;i < _limit;i++) {
             var filter = dimensionslist + "=" + [_data[i].Values[0]] + "[AND]";
             $(jarvis.visualisation.report).trigger("addpartialfilter-quick", filter);
             _this.Filters.push(filter)
           }
-          $(jarvis.visualisation.report).trigger("filter")
+          $(jarvis.visualisation.report).trigger("filter", [{dontrunfetch:true}])
         }
       }
       series.push({dimensions:_this.dimensions, metrics:_this.metrics, data:result})
@@ -19346,9 +19353,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         }else {
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].id + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].id + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -19567,9 +19574,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           }
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].id + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].id + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -20039,8 +20046,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
   var chart = new Highcharts.Chart({chart:{renderTo:$(Container).get(0), backgroundColor:null, plotBackgroundColor:null, plotBorderWidth:null, plotShadow:false, width:300, height:300, type:"pie", marginTop:0, marginLeft:0, marginRight:0, marginBottom:0, spacingLeft:0, spacingTop:0, spacingRight:0, spacingBottom:0}, title:{text:null}, tooltip:{formatter:function() {
     return"<b>" + this.point.name + "</b><br/>" + this.series.name + ": " + jarvis.string.formatNumber(this.percentage, 2) + " %"
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:false}, plotOptions:{pie:{showInLegend:true, size:"90%"}}, series:[{name:function() {
-    var name = "test";
-    name = columns[columns.length - 2].name;
+    var name = columns[columns.length - 2].name;
     return name
   }(), type:"pie", data:function() {
     var result = [];
@@ -20055,10 +20061,10 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
           }
         });
         name = name.substring(0, name.length - 5);
-        var y = 0;
-        y = item.Values[item.Values.length - 2] / _totalsum * 100;
+        var y = item.Values[item.Values.length - 2] / _totalsum * 100;
         sum += y;
-        result.push({name:name, y:y, color:jarvis.colors[index]})
+        result.push({name:name, y:y, color:jarvis.colors[index]});
+        console.log("a", index, name, y)
       }
     });
     if(100 - Math.floor(sum) > 0) {
@@ -20070,8 +20076,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
   }(), dataLabels:{formatter:function() {
     return this.y > 5 ? this.point.name : null
   }, color:"white", distance:-30, enabled:false}}, {name:function() {
-    var name = "test";
-    name = columns[columns.length - 1].name;
+    var name = columns[columns.length - 1].name;
     return name
   }(), type:"pie", innerSize:"70%", data:function() {
     var result = [];
@@ -20089,7 +20094,8 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
           name = name.substring(0, name.length - 5);
           y = item.Values[item.Values.length - 1];
           sum += y;
-          result.push({name:name, y:y})
+          result.push({name:name, y:y, color:jarvis.colors[index]});
+          console.log("b", index, name, y)
         }
       });
       if(100 - Math.floor(sum) > 0) {
