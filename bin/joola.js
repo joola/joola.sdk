@@ -19218,7 +19218,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         if(index == _columns.length - 2) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<span class="selectWrapper"><select class="input-medium metricpicker">' + "</select></span></th>");
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.aggregation) {
+            if(ao.aggregation && (ao.aggregation == "sum" || ao.aggregation == "count")) {
               $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
@@ -19439,7 +19439,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         if(index == 0) {
           var $th = $('<th class="special pie">Contribution to total: <span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.aggregation) {
+            if(ao.aggregation && (ao.aggregation == "sum" || ao.aggregation == "count")) {
               $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
             }
           });
