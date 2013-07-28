@@ -9599,6 +9599,10 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.currentMode = "base-from";
     _this.handleChange()
   });
+  $($(".daterange.baserange .dateoption")[0]).blur(function(e) {
+    _this.currentMode = "base-from";
+    _this.handleChange()
+  });
   $($(".daterange.baserange .dateoption")[0]).keyup(function(e) {
     if(new Date($(this).val()) == "Invalid Date") {
       $(this).addClass("invalid")
@@ -9608,6 +9612,10 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     }
   });
   $($(".daterange.baserange .dateoption")[1]).focus(function(e) {
+    _this.currentMode = "base-to";
+    _this.handleChange()
+  });
+  $($(".daterange.baserange .dateoption")[1]).blur(function(e) {
     _this.currentMode = "base-to";
     _this.handleChange()
   });
@@ -9623,6 +9631,10 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.currentMode = "compare-from";
     _this.handleChange()
   });
+  $($(".daterange.comparerange .dateoption")[0]).blur(function(e) {
+    _this.currentMode = "compare-from";
+    _this.handleChange()
+  });
   $($(".daterange.comparerange .dateoption")[0]).keyup(function(e) {
     if(new Date($(this).val()) == "Invalid Date") {
       $(this).addClass("invalid")
@@ -9632,6 +9644,10 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     }
   });
   $($(".daterange.comparerange .dateoption")[1]).focus(function(e) {
+    _this.currentMode = "compare-to";
+    _this.handleChange()
+  });
+  $($(".daterange.comparerange .dateoption")[1]).blur(function(e) {
     _this.currentMode = "compare-to";
     _this.handleChange()
   });
@@ -9858,24 +9874,56 @@ jarvis.visualisation.picker.DateBox.handleChange = function(options) {
   $($(".daterange.comparerange .dateoption")[1]).removeClass("active");
   switch(this.currentMode) {
     case "base-from":
+      if(_this.base_fromdate < _this.min_date) {
+        _this.base_fromdate = _this.min_date;
+        $($(".daterange.baserange .dateoption")[0]).val(_this.formatDate(_this.base_fromdate))
+      }
+      if(_this.base_fromdate > _this.max_date) {
+        _this.base_fromdate = _this.max_date;
+        $($(".daterange.baserange .dateoption")[0]).val(_this.formatDate(_this.base_fromdate))
+      }
       $($(".daterange.baserange .dateoption")[0]).addClass("active");
       $($(".daterange.baserange .dateoption")[1]).removeClass("active");
       $($(".daterange.comparerange .dateoption")[0]).removeClass("active");
       $($(".daterange.comparerange .dateoption")[1]).removeClass("active");
       break;
     case "base-to":
+      if(_this.base_todate < _this.min_date) {
+        _this.base_todate = _this.min_date;
+        $($(".daterange.baserange .dateoption")[1]).val(_this.formatDate(_this.base_todate))
+      }
+      if(_this.base_todate > _this.max_date) {
+        _this.base_todate = _this.max_date;
+        $($(".daterange.baserange .dateoption")[1]).val(_this.formatDate(_this.base_todate))
+      }
       $($(".daterange.baserange .dateoption")[0]).removeClass("active");
       $($(".daterange.baserange .dateoption")[1]).addClass("active");
       $($(".daterange.comparerange .dateoption")[0]).removeClass("active");
       $($(".daterange.comparerange .dateoption")[1]).removeClass("active");
       break;
     case "compare-from":
+      if(_this.compare_fromdate < _this.min_date) {
+        _this.compare_fromdate = _this.min_date;
+        $($(".daterange.comparerange .dateoption")[0]).val(_this.formatDate(_this.compare_fromdate))
+      }
+      if(_this.compare_fromdate > _this.max_date) {
+        _this.compare_fromdate = _this.max_date;
+        $($(".daterange.comparerange .dateoption")[0]).val(_this.formatDate(_this.compare_fromdate))
+      }
       $($(".daterange.baserange .dateoption")[0]).removeClass("active");
       $($(".daterange.baserange .dateoption")[1]).removeClass("active");
       $($(".daterange.comparerange .dateoption")[0]).addClass("active");
       $($(".daterange.comparerange .dateoption")[1]).removeClass("active");
       break;
     case "compare-to":
+      if(_this.compare_todate < _this.min_date) {
+        _this.compare_todate = _this.min_date;
+        $($(".daterange.comparerange .dateoption")[1]).val(_this.formatDate(_this.compare_todate))
+      }
+      if(_this.compare_todate > _this.max_date) {
+        _this.compare_todate = _this.max_date;
+        $($(".daterange.comparerange .dateoption")[1]).val(_this.formatDate(_this.compare_todate))
+      }
       $($(".daterange.baserange .dateoption")[0]).removeClass("active");
       $($(".daterange.baserange .dateoption")[1]).removeClass("active");
       $($(".daterange.comparerange .dateoption")[0]).removeClass("active");
@@ -9883,6 +9931,22 @@ jarvis.visualisation.picker.DateBox.handleChange = function(options) {
       break;
     default:
       break
+  }
+  if((_this.compare_fromdate > _this.base_todate || _this.compare_todate > _this.base_todate) && this.isCompareChecked) {
+    var rangelength = Date.dateDiff("d", _this.base_fromdate, _this.base_todate);
+    _this.compare_todate = _this.addDays(_this.base_fromdate, -1);
+    _this.compare_fromdate = _this.addDays(_this.compare_todate, -1 * rangelength);
+    if(_this.compare_fromdate < _this.min_date) {
+      _this.compare_fromdate = _this.min_date
+    }
+    $($(".daterange.comparerange .dateoption")[0]).val(_this.formatDate(_this.compare_fromdate));
+    $($(".daterange.comparerange .dateoption")[1]).val(_this.formatDate(_this.compare_todate));
+    if(this.currentMode == "compare-to") {
+      $($(".daterange.comparerange .dateoption")[1]).focus()
+    }else {
+      this.currentMode == "compare-from"
+    }
+    $($(".daterange.comparerange .dateoption")[0]).focus()
   }
   if(this.isCompareChecked) {
     $(".jarvis .optionscontainer .checker").prop("checked", true);
@@ -10341,6 +10405,9 @@ jarvis.visualisation.picker.Metrics.prototype.baseHTML = function(sender) {
 $(jarvis).bind("jarvis-picker-metrics-popup", function(e, sender) {
   $(".metricscontainer").hide();
   $(".metricscontainer").removeClass("on");
+  $(".dimensionscontainer").hide();
+  $(".dimensionscontainer").removeClass("on");
+  $(".dimensionswrapper .jbtn").removeClass("active");
   $(".metricswrapper .jbtn").removeClass("active");
   $(".jarvis.picker.datebox .picker").hide();
   $(".jarvis.picker.datebox .container").removeClass("expanded");
@@ -10486,6 +10553,29 @@ jarvis.visualisation.picker.Dimensions.prototype.setSelected = function(sender, 
   _this.options.selected = dimensionname;
   $(_this).trigger("select", dimensionname)
 };
+jarvis.visualisation.picker.Dimensions.prototype.disableDimension = function(sender, dimension) {
+  var container = sender.container[0];
+  $(container).find(".key").each(function(i, m) {
+    if($(m).closest(".node .disabled")[0]) {
+      $(m).closest(".node").off("click");
+      $(m).closest(".node").on("click", function(e) {
+        sender.setSelected(sender, $(m).text())
+      })
+    }
+    $(m).closest(".node").removeClass("disabled")
+  });
+  if(dimension && dimension != "") {
+    $(container).find(".key").each(function(i, m) {
+      if($(m).text() == dimension.name) {
+        $(m).closest(".node").unbind("click");
+        $(m).closest(".node").bind("click", function(e) {
+        });
+        var nodeParent = $(m).closest(".node");
+        $(nodeParent).addClass("disabled")
+      }
+    })
+  }
+};
 jarvis.visualisation.picker.Dimensions.prototype.ensureVisible = function(sender, dimensionname) {
   if(dimensionname != "") {
   }else {
@@ -10598,6 +10688,7 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
   });
   $($html.find(".jbtn")[0]).off("click");
   $($html.find(".jbtn")[0]).on("click", function(e) {
+    $(jarvis).trigger("jarvis-picker-metrics-popup", "");
     $container.toggle();
     $container.toggleClass("on");
     _this.collapseAll(_this);
@@ -13382,7 +13473,11 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
       }
       return sHours + ":" + sMinutes + ":" + sSeconds
     }else {
-      return jarvis.string.formatNumber(this.value, 0, true)
+      if(this.value % Math.round(this.value) == 0) {
+        return jarvis.string.formatNumber(this.value, 0, true)
+      }else {
+        return jarvis.string.formatNumber(this.value, 1, true)
+      }
     }
   }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, align:"left", x:20, y:15}, plotLines:[{value:0, width:1, color:"#ffffff"}]}, {gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
@@ -13407,7 +13502,11 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
       }
       return sHours + ":" + sMinutes + ":" + sSeconds
     }else {
-      return jarvis.string.formatNumber(this.value, 0, true)
+      if(this.value % Math.round(this.value) == 0) {
+        return jarvis.string.formatNumber(this.value, 0, true)
+      }else {
+        return jarvis.string.formatNumber(this.value, 1, true)
+      }
     }
   }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, x:-25, y:15, align:"right"}, opposite:true}], tooltip:{shared:true, useHTML:true, borderColor:"#333333", formatter:function() {
     var points = this.points;
@@ -14008,6 +14107,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     $metric.find(".value").attr("title", totalsum);
     $metric.find(".value").removeClass("negative");
     $metric.find(".value").removeClass("positive");
+    $metric.find(".value").removeClass("neutral");
     try {
       if($($metric.find(".minichart")).length > 0) {
         var vis = new google.visualization.ImageChart($($metric.find(".minichart")).get(0));
@@ -14057,7 +14157,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.updateCompare = function(send
   var $metric = $(container).find(".base");
   value = jarvis.string.formatNumber(value, 2) + "%";
   $metric.find(".value").html(value);
-  $metric.find(".value").removeClass("negative").removeClass("positive");
+  $metric.find(".value").removeClass("negative").removeClass("positive").removeClass("neutral");
   $metric.find(".value").addClass(_class);
   $metric.find(".site").html((metric.suffix == "seconds" ? jarvis.string.intToTime(series[0].total) : series[0].ftotal) + " vs " + (metric.suffix == "seconds" ? jarvis.string.intToTime(series[1].total) : series[1].ftotal))
 };
@@ -16360,6 +16460,9 @@ jarvis.visualisation.report.addPartial = function(partial) {
 jarvis.visualisation.report.removePartial = function(partial) {
   $(jarvis.visualisation.report).trigger("removepartialfilter", partial)
 };
+jarvis.visualisation.report.clearFilter = function(partial) {
+  $(jarvis.visualisation.report).trigger("jarvis-clearfilter")
+};
 jarvis.debug.log("INFO", "Jarvis.Visualisation.", 6, "JS source loaded");
 jarvis.provide("jarvis.visualisation.report.Timeline");
 jarvis.require("jarvis.debug");
@@ -16386,6 +16489,11 @@ jarvis.visualisation.report.Timeline = function(options) {
   });
   $(jarvis.visualisation.report).unbind("filter");
   $(jarvis.visualisation.report).bind("filter", function() {
+    _this.fetch(_this)
+  });
+  $(jarvis.visualisation.report).unbind("jarvis-clearfilter");
+  $(jarvis.visualisation.report).bind("jarvis-clearfilter", function() {
+    _this.Filters = [];
     _this.fetch(_this)
   });
   $(jarvis.visualisation.report).unbind("addpartialfilter-quick");
@@ -17005,7 +17113,11 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
       }
       return sHours + ":" + sMinutes + ":" + sSeconds
     }else {
-      return jarvis.string.formatNumber(this.value, 0, true)
+      if(this.value % Math.round(this.value) == 0) {
+        return jarvis.string.formatNumber(this.value, 0, true)
+      }else {
+        return jarvis.string.formatNumber(this.value, 1, true)
+      }
     }
   }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, align:"left", x:20, y:15}, plotLines:[{value:0, width:1, color:"#ffffff"}]}, {gridLineColor:"#efefef", showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
@@ -17030,7 +17142,11 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
       }
       return sHours + ":" + sMinutes + ":" + sSeconds
     }else {
-      return jarvis.string.formatNumber(this.value, 0, true)
+      if(this.value % Math.round(this.value) == 0) {
+        return jarvis.string.formatNumber(this.value, 0, true)
+      }else {
+        return jarvis.string.formatNumber(this.value, 1, true)
+      }
     }
   }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, x:-25, y:15, align:"right"}, opposite:true}], tooltip:{borderColor:"#333333", shared:true, useHTML:true, formatter:function() {
     var points = this.points;
@@ -18821,12 +18937,14 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
         $(_this).trigger("clicked", $(this).data().data)
       });
       $(_this.DateBox).bind("datechange", function() {
+        jarvis.visualisation.report.clearFilter();
         _this.fetch(_this);
         if(_this.DateBox.comparePeriod) {
           $("button.btn_pie").attr("disabled", "true");
           $("button.btn_pie").addClass("disabled");
           $("button.btn_perf").attr("disabled", "true");
-          $("button.btn_perf").addClass("disabled")
+          $("button.btn_perf").addClass("disabled");
+          _this.mode = "table"
         }else {
           $("button.btn_pie").removeAttr("disabled");
           $("button.btn_pie").removeClass("disabled");
@@ -18834,8 +18952,10 @@ jarvis.visualisation.report.Table.prototype.init = function(options, container) 
           $("button.btn_perf").removeClass("disabled")
         }
       });
-      $(jarvis.visualisation.report).bind("filter", function(filter) {
-        _this.fetch(_this)
+      $(jarvis.visualisation.report).bind("filter", function(e, options) {
+        if(!options || options && !options.dontrunfetch) {
+          _this.fetch(_this)
+        }
       });
       _this.destroy = function() {
         $(_this.DateBox).unbind("datechange");
@@ -18888,15 +19008,19 @@ jarvis.visualisation.report.Table.prototype.fetch = function(sender, container) 
       var result = item.data.Result;
       var request = item.data.Request;
       var _data = item.data.Result.Rows;
-      if(_this.initialLoad == 0) {
+      if(index == 0) {
         _this.initialLoad = 1;
         if(_this.options.defaultSelected > 0) {
-          for(var i = 0;i < _this.options.defaultSelected;i++) {
+          var _limit = _this.options.defaultSelected;
+          if(_limit > _data.length) {
+            _limit = _data.length
+          }
+          for(var i = 0;i < _limit;i++) {
             var filter = dimensionslist + "=" + [_data[i].Values[0]] + "[AND]";
             $(jarvis.visualisation.report).trigger("addpartialfilter-quick", filter);
             _this.Filters.push(filter)
           }
-          $(jarvis.visualisation.report).trigger("filter")
+          $(jarvis.visualisation.report).trigger("filter", [{dontrunfetch:true}])
         }
       }
       series.push({dimensions:_this.dimensions, metrics:_this.metrics, data:result})
@@ -19092,9 +19216,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       var metric = column;
       if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
         if(index == _columns.length - 2) {
-          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
+          $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<span class="selectWrapper"><select class="input-medium metricpicker">' + "</select></span></th>");
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.aggregation) {
+            if(ao.aggregation && (ao.aggregation == "sum" || ao.aggregation == "count")) {
               $th.find(".metricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.ColumnIndex ? "selected" : "") + ">" + ao.name + "</option>");
               $th.addClass("sortkey");
               $th.addClass(_this.sortDir)
@@ -19157,6 +19281,8 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         $th = $('<th class="dimension" data-sortindex="' + sortIndex + '">' + dimension.name + "" + '<i class="jarvis removesecondarydimension icon-remove" style=" margin-top: 2px; margin-left: 5px; cursor: pointer; "></i>' + "" + "</th>");
         $($th.find(".removesecondarydimension")).off("click");
         $($th.find(".removesecondarydimension")).on("click", function(e) {
+          _this.Filters = [];
+          $(jarvis.visualisation.report).trigger("jarvis-clearfilter");
           var dindex = -1;
           $(_this.dimensions).each(function(i, d) {
             if(d.name == dimension.name) {
@@ -19227,9 +19353,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         }else {
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].id + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].id + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -19311,9 +19437,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       }
       if(_this.mode == "pie") {
         if(index == 0) {
-          var $th = $('<th class="special pie">Contribution to total: <select class="input-medium comparemetricpicker"></select></th>');
+          var $th = $('<th class="special pie">Contribution to total: <span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
           $(_allcolumns).each(function(ai, ao) {
-            if(ao.aggregation) {
+            if(ao.aggregation && (ao.aggregation == "sum" || ao.aggregation == "count")) {
               $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
             }
           });
@@ -19343,7 +19469,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       }else {
         if(_this.mode == "perf") {
           if(index == 0) {
-            var $th = $('<th class="special perf"><select class="input-medium comparemetricpicker"></select></th>');
+            var $th = $('<th class="special perf"><span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
             $(_allcolumns).each(function(ai, ao) {
               if(ao.aggregation) {
                 $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
@@ -19377,7 +19503,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         }else {
           if(_this.mode == "compare") {
             if(index == 0) {
-              var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
+              var $th = $('<th class="special pie"><span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
               $(_allcolumns).each(function(ai, ao) {
                 if(ao.aggregation) {
                   $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
@@ -19448,9 +19574,9 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           }
           if(i == 0) {
             $td.addClass("dimensionvalue");
-            shortfilter = _columns[i].name + "=" + row.Values[i] + "[AND]"
+            shortfilter = _columns[i].id + "=" + row.Values[i] + "[AND]"
           }
-          filter += _columns[i].name + "=" + row.Values[i] + "[AND]"
+          filter += _columns[i].id + "=" + row.Values[i] + "[AND]"
         }
         if(i == _this.sortColumnIndex) {
           $td.addClass("sortkey")
@@ -19459,7 +19585,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       });
       if(_this.mode == "pie") {
         if(index == 0) {
-          var $th = $('<th class="special pie">Contribution to total: <select class="input-medium comparemetricpicker"></select></th>');
+          var $th = $('<th class="special pie">Contribution to total: <span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
           $(_allcolumns).each(function(ai, ao) {
             if(ao.aggregation) {
               $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
@@ -19491,7 +19617,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       }else {
         if(_this.mode == "perf") {
           if(index == 0) {
-            var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
+            var $th = $('<th class="special pie"><span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
             $(_allcolumns).each(function(ai, ao) {
               if(ao.aggregation) {
                 $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
@@ -19518,7 +19644,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         }else {
           if(_this.mode == "compare") {
             if(index == 0) {
-              var $th = $('<th class="special pie"><select class="input-medium comparemetricpicker"></select></th>');
+              var $th = $('<th class="special pie"><span class="selectWrapper"><select class="input-medium comparemetricpicker"></select></span></th>');
               $(_allcolumns).each(function(ai, ao) {
                 if(ao.aggregation) {
                   $th.find(".comparemetricpicker").append('<option value="' + ao.name + '" ' + (ai == _this.compareColumnIndex ? "selected" : "") + ">" + ao.name + "</option>")
@@ -19868,6 +19994,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
     $($tablecontrol).find(".secondary").empty();
     $($tablecontrol).find(".secondary").append($item);
     var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].name});
+    _this.dimensionPicker.disableDimension(o, _this.dimensions[0]);
     $(o).bind("select", function(data, dimension) {
       dimension = _.find(jarvis.objects.Dimensions, function(item) {
         return item.name == dimension
@@ -19919,8 +20046,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
   var chart = new Highcharts.Chart({chart:{renderTo:$(Container).get(0), backgroundColor:null, plotBackgroundColor:null, plotBorderWidth:null, plotShadow:false, width:300, height:300, type:"pie", marginTop:0, marginLeft:0, marginRight:0, marginBottom:0, spacingLeft:0, spacingTop:0, spacingRight:0, spacingBottom:0}, title:{text:null}, tooltip:{formatter:function() {
     return"<b>" + this.point.name + "</b><br/>" + this.series.name + ": " + jarvis.string.formatNumber(this.percentage, 2) + " %"
   }}, legend:{enabled:false}, credits:{enabled:false}, exporting:{enabled:false}, plotOptions:{pie:{showInLegend:true, size:"90%"}}, series:[{name:function() {
-    var name = "test";
-    name = columns[columns.length - 2].name;
+    var name = columns[columns.length - 2].name;
     return name
   }(), type:"pie", data:function() {
     var result = [];
@@ -19935,10 +20061,10 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
           }
         });
         name = name.substring(0, name.length - 5);
-        var y = 0;
-        y = item.Values[item.Values.length - 2] / _totalsum * 100;
+        var y = item.Values[item.Values.length - 2] / _totalsum * 100;
         sum += y;
-        result.push({name:name, y:y, color:jarvis.colors[index]})
+        result.push({name:name, y:y, color:jarvis.colors[index]});
+        console.log("a", index, name, y)
       }
     });
     if(100 - Math.floor(sum) > 0) {
@@ -19950,8 +20076,7 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
   }(), dataLabels:{formatter:function() {
     return this.y > 5 ? this.point.name : null
   }, color:"white", distance:-30, enabled:false}}, {name:function() {
-    var name = "test";
-    name = columns[columns.length - 1].name;
+    var name = columns[columns.length - 1].name;
     return name
   }(), type:"pie", innerSize:"70%", data:function() {
     var result = [];
@@ -19969,7 +20094,8 @@ jarvis.visualisation.report.Table.prototype.drawPieChart = function(sender, Cont
           name = name.substring(0, name.length - 5);
           y = item.Values[item.Values.length - 1];
           sum += y;
-          result.push({name:name, y:y})
+          result.push({name:name, y:y, color:jarvis.colors[index]});
+          console.log("b", index, name, y)
         }
       });
       if(100 - Math.floor(sum) > 0) {
@@ -19995,8 +20121,8 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   var $footer = $('<div class="bottomfooter"></div>');
   var $footer_content = $('<div class="footercontent"></div>');
   $footer_content.append('<div class="pagecontrol"></div><div class="pageinfo"></div><div class="pager"></div>');
-  _html = 'Show rows: <select class="pageinfoselect input-mini">' + "<option value=10 " + (_this.pageSize == 10 ? "selected" : "") + " >10</option>" + "<option value=25 " + (_this.pageSize == 25 ? "selected" : "") + " >25</option>" + "<option value=50 " + (_this.pageSize == 50 ? "selected" : "") + " >50</option>" + "<option value=100 " + (_this.pageSize == 100 ? "selected" : "") + " >100</option>" + "<option value=250 " + (_this.pageSize == 250 ? "selected" : "") + " >250</option>" + "<option value=500 " + 
-  (_this.pageSize == 500 ? "selected" : "") + " >500</option>" + "</select>";
+  _html = 'Show rows: <span class="selectWrapper"><select id="rowselect" class="pageinfoselect input-mini">' + "<option value=10 " + (_this.pageSize == 10 ? "selected" : "") + " >10</option>" + "<option value=25 " + (_this.pageSize == 25 ? "selected" : "") + " >25</option>" + "<option value=50 " + (_this.pageSize == 50 ? "selected" : "") + " >50</option>" + "<option value=100 " + (_this.pageSize == 100 ? "selected" : "") + " >100</option>" + "<option value=250 " + (_this.pageSize == 250 ? "selected" : 
+  "") + " >250</option>" + "<option value=500 " + (_this.pageSize == 500 ? "selected" : "") + " >500</option>" + "</select></span>";
   $footer_content.find(".pager").html(_html);
   $footer_content.find(".pager .pageinfoselect").off("change");
   $footer_content.find(".pager .pageinfoselect").on("change", function(e) {
@@ -20088,6 +20214,7 @@ jarvis.visualisation.report.Table.prototype.draw = function(Container) {
   $($tablecontrol).find(".secondary").empty();
   $($tablecontrol).find(".secondary").append($item);
   var o = new jarvis.visualisation.picker.Dimensions({container:$item, prefix:"Secondary dimension: ", placeholdertext:"Add secondary dimension...", selected:_this.dimensions.length == 1 ? "" : _this.dimensions[1].name});
+  _this.dimensionPicker = o;
   $(o).bind("select", function(data, dimension) {
     dimension = _.find(jarvis.objects.Dimensions, function(item) {
       return item.name == dimension
