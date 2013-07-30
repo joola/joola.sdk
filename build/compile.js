@@ -104,6 +104,7 @@ fileList.push(libDir + '/jarvis.visualisation.report.Panel.js');
 fileList.push(libDir + '/jarvis.visualisation.report.Editor.js');
 
 fileList.push(libDir + '/jarvis.visualisation.js');
+fileList.push(libDir + '/jarvis.visualisation.Template.js');
 fileList.push(libDir + '/jarvis.tail.js');
 
 if (fileList) {
