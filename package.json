@@ -10,14 +10,18 @@
         "type": "git",
         "url": "https://github.com/joola/joola-sdk.git"
     },
+    "scripts": {
+        "prepublish": ""
+    },
+
     "dependencies": {
         "path": "*",
-        "ncp":"*",
-        "async":"*",
-        "underscore":"*",
-        "winston":"*",
-        "request":"*",
-        "process":"*"
+        "ncp": "*",
+        "async": "*",
+        "underscore": "*",
+        "winston": "*",
+        "request": "*",
+        "process": "*"
     },
     "devDependencies": {
         "closurecompiler": "*"
