@@ -1,7 +1,7 @@
 {
     "name": "joola-sdk",
     "preferGlobal": false,
-    "version": "2.2.70",
+    "version": "2.3.0",
     "author": "Joola <info@joo.la>",
     "description": "Joola Analytics Software Development Kit",
     "engine": "node >= 0.10.x",
