@@ -10,10 +10,29 @@
         "type": "git",
         "url": "https://github.com/joola/joola-sdk.git"
     },
+    "contributors": [
+        {
+            "name": "Itay Weinberger",
+            "email": "itay@joo.la",
+            "url": "http://joo.la"
+        },
+        {
+            "name": "Or Weinberger",
+            "email": "or@joo.la",
+            "url": "http://joo.la"
+        }
+    ],
     "scripts": {
-        "prepublish": ""
+        "test": "mocha --reporter spec",
+        "citest": "mocha > test-reports.xml",
+        "start": "node joola.js",
+        "debug": "npm-inspector && npm start && open \"http://http://127.0.0.1:8080/debug?port=5858\"",
+        "postinstall": "node ./bin/postinstall.js",
+        "monitor": "mocha --reporter min --watch",
+        "debugtest": "mocha --debug-brk --reporter spec",
+        "coverage": "mochacoverage",
+        "prepublish":""
     },
-
     "dependencies": {
         "path": "*",
         "ncp": "*",
@@ -21,7 +40,14 @@
         "underscore": "*",
         "winston": "*",
         "request": "*",
-        "process": "*"
+        "process": "*",
+        "should":"*",
+        "mocha": "1.11.x",
+        "nodecoverage": "0.6.x",
+        "sinon": "1.7.x",
+        "chai": "1.7.x",
+        "sinon-chai": "2.4.x",
+        "mochawrapper": "*"
     },
     "devDependencies": {
         "closurecompiler": "*"

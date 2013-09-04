@@ -5893,6 +5893,10 @@ jarvis.JarvisPath = "";
 jarvis.contentPath = "/assets/";
 jarvis.svcPath = "";
 jarvis.basePath = "/client/api/";
+jarvis.loginRedirectUrl = "[[JARVIS-LOGINREDIRECTURL]]";
+if(!jarvis.loginRedirectUrl || jarvis.loginRedirectUrl == "null") {
+  jarvis.loginRedirectUrl = null
+}
 jarvis.global.CLOSURE_BASE_PATH = "";
 jarvis.dateformat = "mmm dd, yyyy";
 jarvis.dateboxcssloaded = false;
@@ -6707,6 +6711,24 @@ jarvis.date.flatDate = function(sDate) {
   x.setHours(x.getHours() - x.getTimezoneOffset() / 60);
   return x
 };
+Date.prototype.fixDate = function(force, direction, isZ) {
+  date = this;
+  if(!force) {
+    return date
+  }
+  if(!direction) {
+    var sign = date.getTimezoneOffset() > 0 ? 1 : -1
+  }else {
+    var sign = date.getTimezoneOffset() > 0 ? -1 : 1
+  }
+  var offset = Math.abs(date.getTimezoneOffset());
+  var hours = Math.floor(offset / 60);
+  if(isZ) {
+    date.addHours(hours)
+  }
+  date.setHours(date.getHours() + sign * hours);
+  return date
+};
 jarvis.provide("jarvis.array");
 jarvis.array.min = function(array) {
   return _.min(array)
@@ -6756,13 +6778,21 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
   }, error:function(xhr, textStatus, error) {
     console.log("Error during ajax call.", jarvis.inSaveState, textStatus, error);
     if(!jarvis.inSaveState) {
-      if(xhr.status == 500 || xhr.readyState != 0) {
-        jarvis.visualisation.showError(error);
-        if(typeof callback === "function") {
-          callback(sender, null, error)
+      if(xhr.status == 401) {
+        if(jarvis.loginRedirectUrl == null) {
+          document.location.reload(true)
         }else {
-          if(!jarvis.inSaveState) {
-            throw error;
+          document.location = jarvis.loginRedirectUrl
+        }
+      }else {
+        if(xhr.status == 500 || xhr.readyState != 0) {
+          jarvis.visualisation.showError(error);
+          if(typeof callback === "function") {
+            callback(sender, null, error)
+          }else {
+            if(!jarvis.inSaveState) {
+              throw error;
+            }
           }
         }
       }
@@ -6799,6 +6829,7 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
   }catch(e) {
     throw e;
   }
+  console.log(options);
   return oResult
 };
 jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callback) {
@@ -6814,8 +6845,16 @@ jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callbac
     xhr.setRequestHeader("joola-token", jarvis.TOKEN)
   }, error:function(xhr, textStatus, error) {
     console.log("Error during ajax call.", textStatus, error);
-    if(xhr.status == 500 || xhr.readyState != 0) {
-      jarvis.visualisation.showError(error)
+    if(xhr.status == 401) {
+      if(jarvis.loginRedirectUrl == null) {
+        document.location.reload(true)
+      }else {
+        document.location = jarvis.loginRedirectUrl
+      }
+    }else {
+      if(xhr.status == 500 || xhr.readyState != 0) {
+        jarvis.visualisation.showError(error)
+      }
     }
     jarvis.debug.log("ERROR", "jarvis.dataaccess", 5, "Executing Multi Async: " + endPoint + ", error: " + error)
   }, success:function(result) {
@@ -8399,6 +8438,9 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
   if(typeof callback == "function") {
     jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, function(sender, data, error) {
       result = data.startDate;
+      if(result == null) {
+        result = new Date
+      }
       jarvis.systemStartDate = new Date(result);
       jarvis.systemStartDate.setUTCHours(0, 0, 0, 0);
       jarvis.systemStartDate.setDate(jarvis.systemStartDate.getDate() + 1);
@@ -8410,6 +8452,9 @@ jarvis.objects.Query.prototype.SystemStartDate = function(sender, options, callb
   }else {
     result = jarvis.dataaccess.fetch(this, "/status.systemStartDate", null, null);
     result = result.startDate;
+    if(result == null) {
+      result = new Date
+    }
     jarvis.systemStartDate = new Date(result);
     jarvis.systemStartDate.setUTCHours(0, 0, 0, 0);
     jarvis.systemStartDate.setDate(jarvis.systemStartDate.getDate() + 1);
@@ -8428,6 +8473,9 @@ jarvis.objects.Query.prototype.SystemEndDate = function(sender, options, callbac
   if(typeof callback == "function") {
     jarvis.dataaccess.fetch(this, "/status.systemEndDate", null, function(sender, data, error) {
       result = data.endDate;
+      if(result == null) {
+        result = new Date
+      }
       jarvis.systemEndDate = new Date(result);
       setTimeout(function() {
         jarvis.inSaveState = false
@@ -8437,6 +8485,9 @@ jarvis.objects.Query.prototype.SystemEndDate = function(sender, options, callbac
   }else {
     result = jarvis.dataaccess.fetch(this, "/status.systemEndDate", null, null);
     result = result.endDate;
+    if(result == null) {
+      result = new Date
+    }
     jarvis.systemEndDate = new Date(result);
     setTimeout(function() {
       jarvis.inSaveState = false
@@ -9426,6 +9477,11 @@ jarvis.visualisation.picker.DateBox.init = function(options, container) {
   this.max_date = (new jarvis.objects.Query).SystemEndDate();
   this.base_todate = new Date(this.max_date);
   this.base_fromdate = _this.addDays(this.base_todate, -30);
+  if(this.base_fromdate < this.min_date) {
+    this.base_fromdate = this.min_date.fixDate(true, false);
+    this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
+    this.disableCompare = true
+  }
   var rangelength = Date.dateDiff("d", this.base_fromdate, this.base_todate);
   this.compare_todate = _this.addDays(this.base_fromdate, -1);
   this.compare_fromdate = _this.addDays(this.compare_todate, -1 * rangelength);
@@ -9808,6 +9864,9 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
   });
   if(this.comparePeriod) {
     this.isCompareChecked = true
+  }
+  if(this.disableCompare) {
+    $(".compareoption .checker").attr("disabled", "disabled")
   }
   this.registerDateUpdate(this.updateLabels);
   this.handleChange()
@@ -13495,7 +13554,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
   $(data).each(function(index, row) {
     _totalsum += parseFloat(row.Values[row.Values.length - 1])
   });
-  var chart = new Highcharts.Chart({chart:{height:_this.options.height, marginTop:0, marginLeft:0, marginRight:0, marginBottom:50, spacingLeft:0, spacingTop:15, spacingRight:0, spacingBottom:0, renderTo:$container.get(0), animation:false, type:"area", events:{load:function() {
+  var chart = new Highcharts.Chart({chart:{height:_this.options.height, marginTop:0, marginLeft:-15, marginRight:-20, marginBottom:50, spacingLeft:0, spacingTop:15, spacingRight:0, spacingBottom:0, renderTo:$container.get(0), animation:false, type:"area", events:{load:function() {
   }, redraw:function() {
     $wrapper.find(".jarvis.legend").empty();
     var _series = chart.series;
@@ -13512,13 +13571,13 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
   }}}, title:{text:null}, xAxis:{type:"datetime", dateTimeLabelFormats:{day:"%e %b"}, labels:{formatter:function() {
     var date = new Date(this.value);
     var sDate = "";
-    if(date.getHours() + date.getTimezoneOffset() / 60 != 0) {
-      sDate = jarvis.date.formatDate(date, "mmm dd hh:nn")
+    if(date.getHours() != 0) {
+      sDate = jarvis.date.formatDate(date, "mmm dd")
     }else {
       sDate = jarvis.date.formatDate(date, "mmm dd")
     }
     return sDate
-  }, fontFamily:"Signika", enabled:true, style:{fontSize:"11px;", color:"#999"}, y:15}, tickLength:0, startOnTick:false, endOnTick:false, showFirstLabel:false, showLastLabel:false}, yAxis:[{gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
+  }, fontFamily:"Signika", enabled:true, style:{fontSize:"11px;", color:"#999"}, y:30}, tickLength:0, startOnTick:false, endOnTick:false, showFirstLabel:false, showLastLabel:false}, yAxis:[{gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
     try {
       ytype = series[0].Columns[1].suffix
@@ -13547,7 +13606,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
         return jarvis.string.formatNumber(this.value, 1, true)
       }
     }
-  }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, align:"left", x:5, y:15}, plotLines:[{value:0, width:1, color:"#ffffff"}]}, {gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
+  }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, align:"left", x:20, y:15}, plotLines:[{value:0, width:1, color:"#ffffff"}]}, {gridLineColor:"#efefef", min:0, showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
     try {
       ytype = series[1].Columns[1].suffix
@@ -13576,7 +13635,7 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
         return jarvis.string.formatNumber(this.value, 1, true)
       }
     }
-  }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, x:-5, y:15, align:"right"}, opposite:true}], tooltip:{shared:true, useHTML:true, borderColor:"#333333", formatter:function() {
+  }, style:{fontFamily:"Signika", fontSize:"11px", color:"#999", textShadow:"-1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff"}, x:-25, y:15, align:"right"}, opposite:true}], tooltip:{shared:true, useHTML:true, borderColor:"#333333", formatter:function() {
     var points = this.points;
     var formattedDate = "";
     if(this.points.length == 1) {
@@ -13872,6 +13931,12 @@ jarvis.visualisation.dashboard.Timeline.prototype.update = function(sender, metr
     $(_seriesholder).each(function(index, _series) {
       chart.addSeries(_series, false)
     })
+  }
+  if(chart.xAxis[0].series[0].points.length == 1) {
+    chart.xAxis[0].update({startOnTick:true, endOnTick:true, showFirstLabel:true, showLastLabel:true, labels:{y:25}}, false)
+  }
+  if(chart.yAxis[0].dataMax === 0) {
+    chart.yAxis[0].setExtremes(0, 5, false)
   }
   chart.redraw()
 };
@@ -16387,6 +16452,11 @@ jarvis.visualisation.dashboard.BarTable.prototype.update = function(sender, dime
       row.percentage = parseFloat(row.Values[1]) / totalSum
     }
   });
+  if(series[0].Rows.length == 0) {
+    var $tr = $('<tr class="empty"><td style="text-align: center;" colspan="8">There is no data to display.</td></tr>');
+    $table.append($tr);
+    return
+  }
   $(series[0].Rows).each(function(index, row) {
     var $tr = $("<tr></tr>");
     var $td = $("<td></td>");
@@ -16759,7 +16829,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       $(_data).each(function(oindex, point) {
         var y = parseFloat(point.Values[1]);
         if(item.id == "primary") {
-          var x = jarvis.date.flatDate(point.Values[0]);
+          var x = (new Date(point.Values[0])).fixDate(true, false);
           _series.push({x:x, y:y, name:result.Columns[1].name, formattedy:point.FormattedValues[1], compare:false});
           baseSeries.push(x)
         }else {
@@ -16927,6 +16997,15 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       if(index > 0) {
       }
     });
+    _this.Chart.redraw();
+    if(_this.Chart.xAxis[0] && _this.Chart.xAxis[0].series[0] && _this.Chart.xAxis[0].series[0].points) {
+      if(_this.Chart.xAxis[0].series[0].points.length == 1) {
+        _this.Chart.xAxis[0].update({startOnTick:true, endOnTick:true, showFirstLabel:true, showLastLabel:true, labels:{y:25}}, false)
+      }
+    }
+    if(_this.Chart.yAxis[0].dataMax === 0) {
+      _this.Chart.yAxis[0].setExtremes(0, 5, false)
+    }
     _this.Chart.redraw()
   });
   try {
@@ -17204,13 +17283,13 @@ jarvis.visualisation.report.Timeline.prototype.drawChart = function(Container) {
     var sDate = "";
     var dayDiff = (_this.DateBox.getDate().base_fromdate.getTime() - _this.DateBox.getDate().base_todate.getTime()) / 1E3 / 60 / 60 / 24;
     dayDiff = Math.round(Math.abs(dayDiff));
-    if(date.getHours() + date.getTimezoneOffset() / 60 != 0) {
-      sDate = jarvis.date.formatDate(date, "mmm dd hh:nn")
+    if(date.getHours() != 0) {
+      sDate = jarvis.date.formatDate(date, "mmm dd")
     }else {
       sDate = jarvis.date.formatDate(date, "mmm dd")
     }
     return sDate
-  }, fontFamily:"Signika", enabled:true, style:{fontSize:"11px;", color:"#999"}, y:30}, tickLength:0, endOnTick:false, showFirstLabel:false, showLastLabel:false}, yAxis:[{gridLineColor:"#efefef", showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
+  }, fontFamily:"Signika", enabled:true, style:{fontSize:"11px;", color:"#999"}, y:30}, tickLength:0, startOnTick:false, endOnTick:false, showFirstLabel:false, showLastLabel:false}, yAxis:[{gridLineColor:"#efefef", showFirstLabel:false, showLastLabel:true, endOnTick:true, title:{text:null}, labels:{formatter:function() {
     var ytype = "";
     try {
       ytype = this.chart.series[0].options.ytype
@@ -19538,7 +19617,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   });
   $table.append($tr);
   if(_data.length == 0) {
-    $table.append('<tr class="empty"><td style="text-align: center;" colspan="' + parseInt(_columns.length + 2) + '">There is no data for this view.</td></tr>')
+    $table.append('<tr class="empty"><td style="text-align: center;" colspan="' + parseInt(_columns.length + 2) + '">There is no data to display.</td></tr>')
   }
   if(!_this.DateBox.comparePeriod) {
     $(_datatoshow).each(function(index, row) {
@@ -20246,10 +20325,12 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   if(_this.options.defaultSelected > 0 && _this.Filters == "") {
     for(var i = 0;i < _this.options.defaultSelected;i++) {
       $($(".checkfilter")[i]).attr("checked", "true");
-      $(jarvis.visualisation.report).trigger("addpartialfilter", $($(".checkfilter")[i]).attr("data-filter"));
-      _this.Filters.push($($(".checkfilter")[i]).attr("data-filter"))
+      var _filter = $($(".checkfilter")[i]).attr("data-filter");
+      if(typeof _filter != "undefined") {
+        $(jarvis.visualisation.report).trigger("addpartialfilter", _filter);
+        _this.Filters.push(_filter)
+      }
     }
-    console.log("filters", _this.Filters)
   }
   $(jarvis).trigger("tableresize")
 };
