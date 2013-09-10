@@ -14163,7 +14163,6 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     if(metric.prefix && metric.prefix != "") {
       so.ftotal = metric.prefix + so.ftotal
     }
-    console.log(so)
   });
   $(series[0]).each(function(si, so) {
     $(container).find(".comparenotice").hide();
@@ -16463,10 +16462,10 @@ jarvis.visualisation.dashboard.BarTable.prototype.update = function(sender, dime
     var $barwrapper = $('<div class="barwrapper"><div class="tablebarwrapper"></div></div>');
     var $bar = $('<div class="tablebar" style="width:' + row.percentage * 100 + '%"></div>');
     $barwrapper.append($bar);
-    if(row.FormattedValues[0] != "Other") {
-      $bar.css({"background-color":jarvis.colors[0]})
-    }else {
+    if(row.FormattedValues[0] == "Other" && index == series[0].Rows.length - 1) {
       $bar.css({"background-color":jarvis.colors[11]})
+    }else {
+      $bar.css({"background-color":jarvis.colors[0]})
     }
     var $caption = $('<div class="barcaption"><div class="caption"></div><div class="subcaption"></div></div>');
     $caption.find(".caption").text(jarvis.string.formatNumber(row.percentage * 100, 2) + "% " + row.FormattedValues[0]);
