@@ -6829,7 +6829,6 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
   }catch(e) {
     throw e;
   }
-  console.log(options);
   return oResult
 };
 jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callback) {
@@ -14164,6 +14163,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     if(metric.prefix && metric.prefix != "") {
       so.ftotal = metric.prefix + so.ftotal
     }
+    console.log(so)
   });
   $(series[0]).each(function(si, so) {
     $(container).find(".comparenotice").hide();
@@ -14226,7 +14226,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
     }
     $metric.find(".daterange").html(datebox.formatDate(datebox.getDate().base_fromdate) + " - " + datebox.formatDate(datebox.getDate().base_todate));
     if(metric.aggregation == "avg" && metric.suffix != "seconds") {
-      so.avg = jarvis.string.formatNumber(so.avg, 2);
+      so.avg = jarvis.string.formatNumber(so.total, 2);
       if(metric.suffix && metric.suffix != "") {
         so.avg += metric.suffix
       }
