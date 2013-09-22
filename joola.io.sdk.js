@@ -61,13 +61,13 @@ var httpServer, httpsServer;
 var startHTTP = function (callback) {
   var result = {};
   try {
-    var _httpServer = http.createServer(app).listen(joola.config.general.port || 80,function (err) {
+    var _httpServer = http.createServer(app).listen(joola.config.general.port || 42112,function (err) {
       if (err) {
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }
       status = 'Running';
-      logger.info('Joola Analytics HTTP server listening on port ' + joola.config.general.port || 80);
+      logger.info('Joola Analytics HTTP server listening on port ' + joola.config.general.port || 42112);
       result.status = 'Success';
       httpServer = _httpServer;
       return callback(result);
@@ -76,7 +76,7 @@ var startHTTP = function (callback) {
         return callback(result);
       }).on('close', function () {
         status = 'Stopped';
-        logger.warn('Joola Analytics HTTP server listening on port ' + (joola.config.general.port || 80).toString() + ' received a CLOSE command.');
+        logger.warn('Joola Analytics HTTP server listening on port ' + (joola.config.general.port || 42112).toString() + ' received a CLOSE command.');
       });
   }
   catch (ex) {
