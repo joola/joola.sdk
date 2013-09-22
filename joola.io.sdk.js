@@ -15,18 +15,24 @@ var
   http = require('http'),
   express = require('express');
 
-var configFile = './config/joola.sdk.sample.js';
-if (process.env.JOOLA_CONFIG_ANALYTICS && process.env.JOOLA_CONFIG_ANALYTICS !== '') {
-  logger.info('Loading configuration file from [' + process.env.JOOLA_CONFIG_ANALYTICS + ']');
-  configFile = process.env.JOOLA_CONFIG_ANALYTICS;
-}
-else {
-  logger.warn('Using sample configuration file from [' + configFile + ']');
-}
-
 global.joola = {};
 joola.config = {};
-joola.config.general = require(configFile).configData.general;
+joola.config.general={};
+joola.config.general.port = 42112;
+
+try {
+  var configFile = './config/joola.sdk.sample1.js';
+  if (process.env.JOOLA_CONFIG_ANALYTICS && process.env.JOOLA_CONFIG_ANALYTICS !== '') {
+    logger.info('Loading configuration file from [' + process.env.JOOLA_CONFIG_ANALYTICS + ']');
+    configFile = process.env.JOOLA_CONFIG_ANALYTICS;
+  }
+  else {
+    logger.warn('Using sample configuration file from [' + configFile + ']');
+  }
+  joola.config.general = require(configFile).configData.general;
+}
+catch (ex) {
+}
 
 var app = global.app = express();
 
@@ -99,7 +105,7 @@ var startHTTPS = function (callback) {
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }
-      logger.info('Joola Analytics HTTPS server listening on port ' + joola.config.general.port || 80);
+      logger.info('Joola Analytics HTTPS server listening on port ' + joola.config.general.port || 443);
       result.status = 'Success';
       httpsServer = _httpsServer;
       return callback(result);
@@ -107,7 +113,7 @@ var startHTTPS = function (callback) {
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }).on('close', function () {
-        logger.warn('Joola Analytics HTTPS server listening on port ' + (joola.config.general.port || 80).toString() + ' received a CLOSE command.');
+        logger.warn('Joola Analytics HTTPS server listening on port ' + (joola.config.general.port || 443).toString() + ' received a CLOSE command.');
       });
   }
   catch (ex) {
