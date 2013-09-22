@@ -1,10 +1,9 @@
 "use strict";
 
 var
-    path = require('path');
+  path = require('path');
 
 global.test = true;
-
 
 global.sinon = require('sinon');
 global.should = require('should');
