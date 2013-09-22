@@ -65,7 +65,7 @@ var options = {
   }
 };
 
-var targetDirectory = path.join(basePath + '/../joola.io.analytics/node_modules/joola.io.sdk');
+var targetDirectory = path.join(basePath + '/../joola.io.analytics/node_modules/joola.io.sdk/');
 ncp(basePath, targetDirectory, options, function (err) {
   if (err)
     logger.error('Failed: ' + err);

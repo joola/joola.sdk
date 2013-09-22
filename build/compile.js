@@ -21,91 +21,90 @@ fileList.push(libDir + '/3rd/bootstrap-popover.js');
 fileList.push(libDir + '/3rd/bootstrapx-clickover.js');
 
 
-fileList.push(libDir + '/jarvis.js');
-fileList.push(libDir + '/jarvis.deps.js');
+fileList.push(libDir + '/joolaio.js');
+fileList.push(libDir + '/joolaio.deps.js');
 
-fileList.push(libDir + '/jarvis.string.js');
-fileList.push(libDir + '/jarvis.date.js');
-fileList.push(libDir + '/jarvis.array.js');
-fileList.push(libDir + '/jarvis.debug.js');
-fileList.push(libDir + '/jarvis.dataaccess.js');
-fileList.push(libDir + '/jarvis.Console.js');
+fileList.push(libDir + '/joolaio.string.js');
+fileList.push(libDir + '/joolaio.date.js');
+fileList.push(libDir + '/joolaio.array.js');
+fileList.push(libDir + '/joolaio.debug.js');
+fileList.push(libDir + '/joolaio.dataaccess.js');
 
-fileList.push(libDir + '/jarvis.tests.js');
-fileList.push(libDir + '/jarvis.tests.Base.js');
+fileList.push(libDir + '/joolaio.tests.js');
+fileList.push(libDir + '/joolaio.tests.Base.js');
 
-fileList.push(libDir + '/jarvis.objects.js');
-fileList.push(libDir + '/jarvis.objects.Auth.js');
-fileList.push(libDir + '/jarvis.objects.Auth.Roles.js');
-fileList.push(libDir + '/jarvis.objects.Auth.Organizations.js');
-fileList.push(libDir + '/jarvis.objects.Auth.Users.js');
-fileList.push(libDir + '/jarvis.objects.Auth.Permissions.js');
-fileList.push(libDir + '/jarvis.objects.APITokens.js');
-fileList.push(libDir + '/jarvis.objects.UserTokens.js');
-fileList.push(libDir + '/jarvis.objects.WebOrigins.js');
-fileList.push(libDir + '/jarvis.objects.Config.js');
-fileList.push(libDir + '/jarvis.objects.Cache.js');
-fileList.push(libDir + '/jarvis.objects.Query.js');
-fileList.push(libDir + '/jarvis.objects.State.js');
-fileList.push(libDir + '/jarvis.objects.Realtime.js');
-fileList.push(libDir + '/jarvis.objects.DataSources.js');
-fileList.push(libDir + '/jarvis.objects.DataTables.js');
-fileList.push(libDir + '/jarvis.objects.Dimensions.js');
-fileList.push(libDir + '/jarvis.objects.Metrics.js');
-fileList.push(libDir + '/jarvis.objects.Dashboards.js');
-fileList.push(libDir + '/jarvis.objects.RealtimePanels.js');
-fileList.push(libDir + '/jarvis.objects.Reports.js');
-fileList.push(libDir + '/jarvis.objects.Update.js');
+fileList.push(libDir + '/joolaio.objects.js');
+fileList.push(libDir + '/joolaio.objects.Auth.js');
+fileList.push(libDir + '/joolaio.objects.Auth.Roles.js');
+fileList.push(libDir + '/joolaio.objects.Auth.Organizations.js');
+fileList.push(libDir + '/joolaio.objects.Auth.Users.js');
+fileList.push(libDir + '/joolaio.objects.Auth.Permissions.js');
+fileList.push(libDir + '/joolaio.objects.APITokens.js');
+fileList.push(libDir + '/joolaio.objects.UserTokens.js');
+fileList.push(libDir + '/joolaio.objects.WebOrigins.js');
+fileList.push(libDir + '/joolaio.objects.Config.js');
+fileList.push(libDir + '/joolaio.objects.Cache.js');
+fileList.push(libDir + '/joolaio.objects.Query.js');
+fileList.push(libDir + '/joolaio.objects.State.js');
+fileList.push(libDir + '/joolaio.objects.Realtime.js');
+fileList.push(libDir + '/joolaio.objects.DataSources.js');
+fileList.push(libDir + '/joolaio.objects.DataTables.js');
+fileList.push(libDir + '/joolaio.objects.Dimensions.js');
+fileList.push(libDir + '/joolaio.objects.Metrics.js');
+fileList.push(libDir + '/joolaio.objects.Dashboards.js');
+fileList.push(libDir + '/joolaio.objects.RealtimePanels.js');
+fileList.push(libDir + '/joolaio.objects.Reports.js');
+fileList.push(libDir + '/joolaio.objects.Update.js');
 
-fileList.push(libDir + '/jarvis.visualisation.notice.js');
-fileList.push(libDir + '/jarvis.visualisation.notice.Session.js');
-fileList.push(libDir + '/jarvis.visualisation.notice.Loading.js');
+fileList.push(libDir + '/joolaio.visualisation.notice.js');
+fileList.push(libDir + '/joolaio.visualisation.notice.Session.js');
+fileList.push(libDir + '/joolaio.visualisation.notice.Loading.js');
 
-fileList.push(libDir + '/jarvis.visualisation.picker.js');
-fileList.push(libDir + '/jarvis.visualisation.picker.DateBox.js');
-fileList.push(libDir + '/jarvis.visualisation.picker.Metrics.js');
-fileList.push(libDir + '/jarvis.visualisation.picker.Dimensions.js');
-fileList.push(libDir + '/jarvis.visualisation.container.js');
-fileList.push(libDir + '/jarvis.visualisation.container.Metrics.js');
-fileList.push(libDir + '/jarvis.visualisation.container.Dimensions.js');
-fileList.push(libDir + '/jarvis.visualisation.container.Filter.js');
+fileList.push(libDir + '/joolaio.visualisation.picker.js');
+fileList.push(libDir + '/joolaio.visualisation.picker.DateBox.js');
+fileList.push(libDir + '/joolaio.visualisation.picker.Metrics.js');
+fileList.push(libDir + '/joolaio.visualisation.picker.Dimensions.js');
+fileList.push(libDir + '/joolaio.visualisation.container.js');
+fileList.push(libDir + '/joolaio.visualisation.container.Metrics.js');
+fileList.push(libDir + '/joolaio.visualisation.container.Dimensions.js');
+fileList.push(libDir + '/joolaio.visualisation.container.Filter.js');
 
-fileList.push(libDir + '/jarvis.visualisation.realtime.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.Status.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.StartStop.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.DateBox.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.Timeline.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.MetricBox.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.Table.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.Geo.js');
-fileList.push(libDir + '/jarvis.visualisation.realtime.Panel.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.Status.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.StartStop.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.DateBox.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.Timeline.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.MetricBox.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.Table.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.Geo.js');
+fileList.push(libDir + '/joolaio.visualisation.realtime.Panel.js');
 
-fileList.push(libDir + '/jarvis.visualisation.dashboard.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.Timeline.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.MetricBox.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.Table.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.Pie.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.Panel.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.Bar.js');
-fileList.push(libDir + '/jarvis.visualisation.dashboard.BarTable.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.Timeline.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.MetricBox.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.Table.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.Pie.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.Panel.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.Bar.js');
+fileList.push(libDir + '/joolaio.visualisation.dashboard.BarTable.js');
 
-fileList.push(libDir + '/jarvis.visualisation.report.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Timeline.js');
-fileList.push(libDir + '/jarvis.visualisation.report.MetricBox.js');
-fileList.push(libDir + '/jarvis.visualisation.report.OverviewMetricBox.js');
-fileList.push(libDir + '/jarvis.visualisation.report.OverviewPie.js');
-fileList.push(libDir + '/jarvis.visualisation.report.SummaryTable.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Table.js');
-fileList.push(libDir + '/jarvis.visualisation.report.TableEx.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Histogram.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Tabs.js');
-fileList.push(libDir + '/jarvis.visualisation.report.MetricGroup.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Panel.js');
-fileList.push(libDir + '/jarvis.visualisation.report.Editor.js');
+fileList.push(libDir + '/joolaio.visualisation.report.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Timeline.js');
+fileList.push(libDir + '/joolaio.visualisation.report.MetricBox.js');
+fileList.push(libDir + '/joolaio.visualisation.report.OverviewMetricBox.js');
+fileList.push(libDir + '/joolaio.visualisation.report.OverviewPie.js');
+fileList.push(libDir + '/joolaio.visualisation.report.SummaryTable.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Table.js');
+fileList.push(libDir + '/joolaio.visualisation.report.TableEx.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Histogram.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Tabs.js');
+fileList.push(libDir + '/joolaio.visualisation.report.MetricGroup.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Panel.js');
+fileList.push(libDir + '/joolaio.visualisation.report.Editor.js');
 
-fileList.push(libDir + '/jarvis.visualisation.js');
-fileList.push(libDir + '/jarvis.visualisation.Template.js');
-fileList.push(libDir + '/jarvis.tail.js');
+fileList.push(libDir + '/joolaio.visualisation.js');
+fileList.push(libDir + '/joolaio.visualisation.Template.js');
+fileList.push(libDir + '/joolaio.tail.js');
 
 if (fileList) {
     /*
@@ -162,11 +161,11 @@ if (fileList) {
             if (result) {
                 // Write result to file
                 // Display error (warnings from stderr)
-                fs.writeFile("./bin/joola.js", result, function (err) {
+                fs.writeFile("./bin/joolaio.js", result, function (err) {
                     if (err) {
                         logger.error('Failed to save whitespace file: ' + err)
                     } else {
-                        logger.info('Whitespace file saved [./bin/joola.js]');
+                        logger.info('Whitespace file saved [./bin/joolaio.js]');
                     }
                 });
 
