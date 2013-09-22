@@ -73,7 +73,7 @@ var startHTTP = function (callback) {
         return callback(result);
       }
       status = 'Running';
-      logger.info('Joola Analytics HTTP server listening on port ' + joola.config.general.port || 42112);
+      logger.info('joola.io SDK HTTP server listening on port ' + joola.config.general.port || 42112);
       result.status = 'Success';
       httpServer = _httpServer;
       return callback(result);
@@ -82,7 +82,7 @@ var startHTTP = function (callback) {
         return callback(result);
       }).on('close', function () {
         status = 'Stopped';
-        logger.warn('Joola Analytics HTTP server listening on port ' + (joola.config.general.port || 42112).toString() + ' received a CLOSE command.');
+        logger.warn('joola.io SDK HTTP server listening on port ' + (joola.config.general.port || 42112).toString() + ' received a CLOSE command.');
       });
   }
   catch (ex) {
@@ -105,7 +105,7 @@ var startHTTPS = function (callback) {
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }
-      logger.info('Joola Analytics HTTPS server listening on port ' + joola.config.general.port || 443);
+      logger.info('joola.io SDK HTTPS server listening on port ' + joola.config.general.port || 443);
       result.status = 'Success';
       httpsServer = _httpsServer;
       return callback(result);
@@ -113,7 +113,7 @@ var startHTTPS = function (callback) {
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }).on('close', function () {
-        logger.warn('Joola Analytics HTTPS server listening on port ' + (joola.config.general.port || 443).toString() + ' received a CLOSE command.');
+        logger.warn('Jjoola.io SDK HTTPS server listening on port ' + (joola.config.general.port || 443).toString() + ' received a CLOSE command.');
       });
   }
   catch (ex) {
