@@ -35,6 +35,8 @@
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
+    "express": "3.x",
+    "jada":"0.x",
     "path": "*",
     "ncp": "*",
     "async": "*",
@@ -54,7 +56,8 @@
     "chai": "1.x",
     "sinon-chai": "2.x",
     "blanket": "1.x",
-    "jshint": "2.x"
+    "jshint": "2.x",
+    "supertest":"0.x"
   },
   "license": "GPL-3.0"
 }
