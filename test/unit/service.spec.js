@@ -5,7 +5,7 @@ var
 describe("services", function () {
   var request;
   before(function (done) {
-    request = require('supertest')('http://localhost:42112',{ debug: false });
+    request = require('supertest')('http://localhost:40003',{ debug: false });
 		done();
 	});
 
