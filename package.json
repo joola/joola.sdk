@@ -35,16 +35,20 @@
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
+    "joola.io.config": "3.x",
+    "joola.io.logger": "3.x",
     "express": "3.x",
-    "node-controlport":"0.x",
-    "jade":"0.x",
+    "node-controlport": "0.x",
+    "jade": "0.x",
     "path": "*",
     "ncp": "*",
     "async": "*",
     "underscore": "*",
     "winston": "*",
     "request": "*",
-    "process": "*"
+    "process": "*",
+    "nconf": "*",
+    "nconf-http": "*"
   },
   "devDependencies": {
     "closurecompiler": "*",
@@ -58,7 +62,7 @@
     "sinon-chai": "2.x",
     "blanket": "1.x",
     "jshint": "2.x",
-    "supertest":"0.x"
+    "supertest": "0.x"
   },
   "license": "GPL-3.0"
 }
