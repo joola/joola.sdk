@@ -1,14 +1,14 @@
 {
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "3.0.2",
+  "version": "3.0.4",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/joola/joola-sdk.git"
+    "url": "https://github.com/joola/joola.io.sdk.git"
   },
   "contributors": [
     {
@@ -29,21 +29,27 @@
     "monitor": "mocha --reporter min --watch",
     "debugtest": "mocha --debug-brk --reporter spec",
     "blanket": {
-      "pattern": "test",
+      "pattern": "lib",
       "data-cover-never": "node_modules"
     },
-    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
+    "citest": "mocha --reporter xunit > test-reports.xml"
   },
   "dependencies": {
+    "joola.io.config": "3.x",
+    "joola.io.logger": "3.x",
     "express": "3.x",
-    "jade":"0.x",
+    "node-controlport": "0.x",
+    "jade": "0.x",
     "path": "*",
     "ncp": "*",
     "async": "*",
     "underscore": "*",
     "winston": "*",
     "request": "*",
-    "process": "*"
+    "process": "*",
+    "nconf": "*",
+    "nconf-http": "*"
   },
   "devDependencies": {
     "closurecompiler": "*",
@@ -57,7 +63,7 @@
     "sinon-chai": "2.x",
     "blanket": "1.x",
     "jshint": "2.x",
-    "supertest":"0.x"
+    "supertest": "0.x"
   },
   "license": "GPL-3.0"
 }

@@ -11,8 +11,6 @@ Installing
 ```
 npm install -g joola.io.sdk
 npm start
-
-navigate to http://localhost:8000
 ```
 
 
