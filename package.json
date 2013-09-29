@@ -1,55 +1,68 @@
 {
-    "name": "joola-sdk",
-    "preferGlobal": false,
-    "version": "2.3.1",
-    "author": "Joola <info@joo.la>",
-    "description": "Joola Analytics Software Development Kit",
-    "engine": "node >= 0.10.x",
-    "private": false,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/joola/joola-sdk.git"
+  "name": "joola.io.sdk",
+  "preferGlobal": false,
+  "version": "3.0.3",
+  "author": "Joola <info@joo.la>",
+  "description": "joola.io's software development kit (SDK)",
+  "engine": "node >= 0.10.x",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joola/joola.io.sdk.git"
+  },
+  "contributors": [
+    {
+      "name": "Itay Weinberger",
+      "email": "itay@joo.la",
+      "url": "http://joo.la"
     },
-    "contributors": [
-        {
-            "name": "Itay Weinberger",
-            "email": "itay@joo.la",
-            "url": "http://joo.la"
-        },
-        {
-            "name": "Or Weinberger",
-            "email": "or@joo.la",
-            "url": "http://joo.la"
-        }
-    ],
-    "scripts": {
-        "test": "mocha --reporter spec",
-        "citest": "mocha > test-reports.xml",
-        "start": "node joola.js",
-        "debug": "npm-inspector && npm start && open \"http://http://127.0.0.1:8080/debug?port=5858\"",
-        "postinstall": "node ./bin/postinstall.js",
-        "monitor": "mocha --reporter min --watch",
-        "debugtest": "mocha --debug-brk --reporter spec",
-        "coverage": "mochacoverage",
-        "prepublish":""
-    },
-    "dependencies": {
-        "path": "*",
-        "ncp": "*",
-        "async": "*",
-        "underscore": "*",
-        "winston": "*",
-        "request": "*",
-        "process": "*",
-        "should":"*",
-        "mocha": "1.11.x",
-        "nodecoverage": "0.6.x",
-        "sinon": "1.7.x",
-        "chai": "1.7.x",
-        "sinon-chai": "2.4.x",
-        "mochawrapper": "*"
-    },
-    "devDependencies": {
-        "closurecompiler": "*"
+    {
+      "name": "Or Weinberger",
+      "email": "or@joo.la",
+      "url": "http://joo.la"
     }
+  ],
+  "scripts": {
+    "test": "make test",
+    "start": "node joola.io.sdk.js",
+    "debug": "npm-inspector && npm start && open \"http://http://127.0.0.1:8080/debug?port=5858\"",
+    "monitor": "mocha --reporter min --watch",
+    "debugtest": "mocha --debug-brk --reporter spec",
+    "blanket": {
+      "pattern": "lib",
+      "data-cover-never": "node_modules"
+    },
+    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "dependencies": {
+    "joola.io.config": "3.x",
+    "joola.io.logger": "3.x",
+    "express": "3.x",
+    "node-controlport": "0.x",
+    "jade": "0.x",
+    "path": "*",
+    "ncp": "*",
+    "async": "*",
+    "underscore": "*",
+    "winston": "*",
+    "request": "*",
+    "process": "*",
+    "nconf": "*",
+    "nconf-http": "*"
+  },
+  "devDependencies": {
+    "closurecompiler": "*",
+    "underscore": "1.x",
+    "mocha-lcov-reporter": "0.x",
+    "coveralls": "2.x",
+    "should": "1.x",
+    "mocha": "1.x",
+    "sinon": "1.x",
+    "chai": "1.x",
+    "sinon-chai": "2.x",
+    "blanket": "1.x",
+    "jshint": "2.x",
+    "supertest": "0.x"
+  },
+  "license": "GPL-3.0"
 }

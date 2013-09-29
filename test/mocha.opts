@@ -1,6 +1,4 @@
 --require ./test/common.js
 
---reporter xunit
+--reporter spec
 --recursive
-
---globals joola,loggername,id,CookieAccessInfo,Cookie,CookieJar,auth,date
