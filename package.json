@@ -32,7 +32,8 @@
       "pattern": "lib",
       "data-cover-never": "node_modules"
     },
-    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
+    "citest": "mocha --reporter xunit > test-reports.xml"
   },
   "dependencies": {
     "joola.io.config": "3.x",
