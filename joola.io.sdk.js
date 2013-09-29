@@ -15,8 +15,7 @@ var express = require('express'),
   path = require('path'),
   fs = require('fs'),
   nconf = require('nconf'),
-  logger = require('joola.io.logger'),
-  app;
+  logger = require('joola.io.logger');
 
 require('nconf-http');
 
@@ -27,23 +26,24 @@ var app = global.app = express();
 var joola = {};
 global.joola = joola;
 joola.config = nconf;
+if (!global.test)
 joola.logger = logger;
-
+else
+  joola.logger = logger.falseLogger;
 //Configuration
 var loadConfig = function (callback) {
   joola.config.argv()
     .env();
-
   nconf.use('http', { url: 'http://localhost:40001/conf/joola.io.sdk',
     callback: function () {
-      joola.config.file({ file: joola.config.get('conf') || './config/joola.io.analytics.json' });
+      joola.config.file({ file: joola.config.get('conf') || './config/joola.io.sdk.json' });
       //Configuration loaded
 
       //Validate config
       if (!joola.config.get('version'))
         throw new Error('Failed to load configuration file');
 
-      joola.logger.setLevel(joola.config.get('loglevel'));
+      joola.logger.setLevel(joola.config.get('loglevel') || 'info');
       callback();
     }
   });
@@ -55,8 +55,6 @@ var setupApplication = function (callback) {
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
-  app.use(express.session({expires: new Date(Date.now() + 1200000)}));
 
   var winstonStream = {
     write: function (message, encoding) {
@@ -70,7 +68,6 @@ var setupApplication = function (callback) {
 };
 
 var setupRoutes = function (callback) {
-
   app.get('/', function (req, res) {
     res.render('index');
   });
@@ -86,7 +83,8 @@ var startHTTP = function (callback) {
   try {
     var _httpServer = http.createServer(app).listen(joola.config.get('server:port'),function (err) {
       if (err) {
-        result.status = 'Failed: ' + ex.message;
+        console.log(err);
+        result.status = 'Failed: ' + err;
         return callback(result);
       }
       status = 'Running';
@@ -95,6 +93,7 @@ var startHTTP = function (callback) {
       httpServer = _httpServer;
       return callback(result);
     }).on('error',function (ex) {
+        console.log(ex);
         result.status = 'Failed: ' + ex.message;
         return callback(result);
       }).on('close', function () {
@@ -103,6 +102,7 @@ var startHTTP = function (callback) {
       });
   }
   catch (ex) {
+    console.log(ex);
     result.status = 'Failed: ' + ex.message;
     return callback(result);
   }
@@ -118,7 +118,7 @@ var startHTTPS = function (callback) {
     };
     var _httpsServer = https.createServer(secureOptions, app).listen(joola.config.get('server:securePort'),function (err) {
       if (err) {
-        result.status = 'Failed: ' + ex.message;
+        result.status = 'Failed: ' + err;
         return callback(result);
       }
       joola.logger.info('Joola Analytics HTTPS server listening on port ' + joola.config.get('server:securePort'));
@@ -141,53 +141,59 @@ var startHTTPS = function (callback) {
 
 //Control Port
 var setupControlPort = function (callback) {
-  var cp = require('node-controlport');
-  var cp_endpoints = [];
+  try {
+    var cp = require('node-controlport');
+    var cp_endpoints = [];
 
-  cp_endpoints.push({
-    endpoint: 'status',
-    exec: function (callback) {
-      callback({status: status, pid: process.pid});
-    }
-  });
-
-  cp_endpoints.push({
-      endpoint: 'start',
+    cp_endpoints.push({
+      endpoint: 'status',
       exec: function (callback) {
-        if (joola.config.get('server:secure') === true) {
-          startHTTP(function () {
-            startHTTPS(callback);
-          });
-        }
-        else {
-          startHTTP(callback);
+        callback({status: status, pid: process.pid});
+      }
+    });
+
+    cp_endpoints.push({
+        endpoint: 'start',
+        exec: function (callback) {
+          if (joola.config.get('server:secure') === true) {
+            startHTTP(function () {
+              startHTTPS(callback);
+            });
+          }
+          else {
+            startHTTP(callback);
+          }
         }
       }
-    }
-  );
+    );
 
-  cp_endpoints.push({
-    endpoint: 'stop',
-    exec: function (callback) {
-      var result = {};
-      result.status = 'Success';
-      try {
-        httpServer.close();
-        if (joola.config.get('server:secure') === true)
-          httpsServer.close();
+    cp_endpoints.push({
+      endpoint: 'stop',
+      exec: function (callback) {
+        var result = {};
+        result.status = 'Success';
+        try {
+          httpServer.close();
+          if (joola.config.get('server:secure') === true)
+            httpsServer.close();
 
-        process.exit(0);
-      }
-      catch (ex) {
-        console.log(ex);
-        result.status = 'Failed: ' + ex.message;
+          process.exit(0);
+        }
+        catch (ex) {
+          console.log(ex);
+          result.status = 'Failed: ' + ex.message;
+          return callback(result);
+        }
         return callback(result);
       }
-      return callback(result);
-    }
-  });
+    });
 
-  cp.start(joola.config.get('server:controlPort:port'), cp_endpoints, callback);
+    cp.start(joola.config.get('server:controlPort:port'), cp_endpoints, callback);
+  }
+  catch (ex) {
+    console.log(ex);
+    callback(ex);
+  }
 };
 
 var done = function () {
