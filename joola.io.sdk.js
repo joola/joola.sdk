@@ -26,13 +26,14 @@ var app = global.app = express();
 var joola = {};
 global.joola = joola;
 joola.config = nconf;
+if (!global.test)
 joola.logger = logger;
-
+else
+  joola.logger = logger.falseLogger;
 //Configuration
 var loadConfig = function (callback) {
   joola.config.argv()
     .env();
-
   nconf.use('http', { url: 'http://localhost:40001/conf/joola.io.sdk',
     callback: function () {
       joola.config.file({ file: joola.config.get('conf') || './config/joola.io.sdk.json' });
