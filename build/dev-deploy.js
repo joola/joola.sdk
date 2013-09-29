@@ -6,7 +6,7 @@ var
 logger.info('Starting build development environment deploy script...');
 
 var basePath = path.join(__dirname + '/..');
-var targetDirectory = path.join(basePath + '/../joola-analytics/node_modules/joola-sdk', '/bin/joola.js');
+var targetDirectory = path.join(basePath + '/../joola.io.analytics/node_modules/joola.io.sdk', '/bin/joola.js');
 var serverDirectory = path.join(basePath + '/../joola-server/node_modules/joola-analytics/node_modules/joola-sdk', '/bin/joola.js');
 
 var sourceFile = path.join(basePath + '/bin/joola.js');

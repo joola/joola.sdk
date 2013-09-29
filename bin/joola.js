@@ -11,7 +11,7 @@
     var a, b = arguments.length, c = {}, d = function(a, b) {
       var c, h;
       for(h in b) {
-        b.hasOwnProperty(h) && (c = b[h], typeof a !== "object" && (a = {}), a[h] = c && typeof c === "object" && Object.prototype.toString.call(c) !== "[object Array]" && typeof c.nodeType !== "number" ? d(a[h] || {}, c) : b[h])
+        b.hasOwnProperty(h) && (c = b[h], typeof a !== "object" && (a = {}), a[h] = c && (typeof c === "object" && (Object.prototype.toString.call(c) !== "[object Array]" && typeof c.nodeType !== "number")) ? d(a[h] || {}, c) : b[h])
       }
       return a
     };
@@ -55,7 +55,7 @@
   function A(a, b, c) {
     var d, e;
     if(fa(b)) {
-      r(c) ? a.setAttribute(b, c) : a && a.getAttribute && (e = a.getAttribute(b))
+      r(c) ? a.setAttribute(b, c) : a && (a.getAttribute && (e = a.getAttribute(b)))
     }else {
       if(r(b) && V(b)) {
         for(d in b) {
@@ -77,7 +77,7 @@
     }
   }
   function L(a, b) {
-    if(Fa && b && b.opacity !== y) {
+    if(Fa && (b && b.opacity !== y)) {
       b.filter = "alpha(opacity=" + b.opacity * 100 + ")"
     }
     v(a.style, b)
@@ -137,7 +137,7 @@
   function ib(a, b, c, d) {
     var e, c = o(c, 1);
     e = a / c;
-    b || (b = [1, 2, 2.5, 5, 10], d && d.allowDecimals === !1 && (c === 1 ? b = [1, 2, 5, 10] : c <= 0.1 && (b = [1 / c])));
+    b || (b = [1, 2, 2.5, 5, 10], d && (d.allowDecimals === !1 && (c === 1 ? b = [1, 2, 5, 10] : c <= 0.1 && (b = [1 / c]))));
     for(d = 0;d < b.length;d++) {
       if(a = b[d], e <= (b[d] + (b[d + 1] || b[d])) / 2) {
         break
@@ -153,8 +153,8 @@
         break
       }
     }
-    e === E[xa] && a < 5 * e && (f = [1, 2, 5]);
-    e === E[xa] && a < 5 * e && (f = [1, 2, 5]);
+    e === E[xa] && (a < 5 * e && (f = [1, 2, 5]));
+    e === E[xa] && (a < 5 * e && (f = [1, 2, 5]));
     c = ib(a / e, f);
     return{unitRange:e, count:c, unitName:d[0]}
   }
@@ -221,7 +221,7 @@
   }
   function Ha(a, b) {
     for(var c in a) {
-      a[c] && a[c] !== b && a[c].destroy && a[c].destroy(), delete a[c]
+      a[c] && (a[c] !== b && (a[c].destroy && a[c].destroy())), delete a[c]
     }
   }
   function Ra(a) {
@@ -267,7 +267,7 @@
     this.pos = b;
     this.type = c || "";
     this.isNew = !0;
-    !c && !d && this.addLabel()
+    !c && (!d && this.addLabel())
   }
   function pb(a, b) {
     this.axis = a;
@@ -302,7 +302,7 @@
     this.init.apply(this, arguments)
   }
   var y, z = document, O = window, I = Math, t = I.round, T = I.floor, ja = I.ceil, q = I.max, K = I.min, Q = I.abs, Y = I.cos, ca = I.sin, Ka = I.PI, bb = Ka * 2 / 360, Aa = navigator.userAgent, Lb = O.opera, Fa = /msie/i.test(Aa) && !Lb, cb = z.documentMode === 8, db = /AppleWebKit/.test(Aa), eb = /Firefox/.test(Aa), Mb = /(Mobile|Android|Windows Phone)/.test(Aa), sa = "http://www.w3.org/2000/svg", Z = !!z.createElementNS && !!z.createElementNS(sa, "svg").createSVGRect, Sb = eb && parseInt(Aa.split("Firefox/")[1], 
-  10) < 4, $ = !Z && !Fa && !!z.createElement("canvas").getContext, Sa, fb = z.documentElement.ontouchstart !== y, Nb = {}, ub = 0, $a, N, Ua, za, vb, E, ta = function() {
+  10) < 4, $ = !Z && (!Fa && !!z.createElement("canvas").getContext), Sa, fb = z.documentElement.ontouchstart !== y, Nb = {}, ub = 0, $a, N, Ua, za, vb, E, ta = function() {
   }, Ba = [], ya = "div", S = "none", Ob = "rgba(192,192,192," + (Z ? 1E-4 : 0.002) + ")", Bb = "millisecond", jb = "second", Va = "minute", Oa = "hour", oa = "day", Wa = "week", Pa = "month", xa = "year", Pb = "stroke-width", Za, kb, lb, nb, Qa, Xa, Ya, Db, Eb, mb, Fb, Gb, aa = {};
   O.Highcharts = O.Highcharts ? qa(16, !0) : {};
   Ua = function(a, b, c) {
@@ -377,7 +377,7 @@
       }});
       a.each(["cur", "_default", "width", "height", "opacity"], function(a, b) {
         var e = d, k, m;
-        b === "cur" ? e = c.prototype : b === "_default" && f && (e = g[b], b = "set");
+        b === "cur" ? e = c.prototype : b === "_default" && (f && (e = g[b], b = "set"));
         (k = e[b]) && (e[b] = function(c) {
           c = a ? c : this;
           m = c.elem;
@@ -427,12 +427,12 @@
       a(b).bind(c, d)
     }, removeEvent:function(b, c, d) {
       var e = z.removeEventListener ? "removeEventListener" : "detachEvent";
-      z[e] && b && !b[e] && (b[e] = function() {
-      });
+      z[e] && (b && (!b[e] && (b[e] = function() {
+      })));
       a(b).unbind(c, d)
     }, fireEvent:function(b, c, d, e) {
       var f = a.Event(c), g = "detached" + c, h;
-      !Fa && d && (delete d.layerX, delete d.layerY);
+      !Fa && (d && (delete d.layerX, delete d.layerY));
       v(f, d);
       b[c] && (b[g] = b[c], b[c] = null);
       a.each(["preventDefault", "stopPropagation"], function(a, b) {
@@ -447,7 +447,7 @@
       });
       a(b).trigger(f);
       b[g] && (b[c] = b[g], b[g] = null);
-      e && !f.isDefaultPrevented() && !h && e(f)
+      e && (!f.isDefaultPrevented() && (!h && e(f)))
     }, washMouseEvent:function(a) {
       var c = a.originalEvent || a;
       if(c.pageX === y) {
@@ -533,15 +533,15 @@
     }
   }, attr:function(a, b) {
     var c, d, e, f, g = this.element, h = g.nodeName.toLowerCase(), i = this.renderer, j, k = this.attrSetters, m = this.shadows, l, p, s = this;
-    fa(a) && r(b) && (c = a, a = {}, a[c] = b);
+    fa(a) && (r(b) && (c = a, a = {}, a[c] = b));
     if(fa(a)) {
-      c = a, h === "circle" ? c = {x:"cx", y:"cy"}[c] || c : c === "strokeWidth" && (c = "stroke-width"), s = A(g, c) || this[c] || 0, c !== "d" && c !== "visibility" && (s = parseFloat(s))
+      c = a, h === "circle" ? c = {x:"cx", y:"cy"}[c] || c : c === "strokeWidth" && (c = "stroke-width"), s = A(g, c) || (this[c] || 0), c !== "d" && (c !== "visibility" && (s = parseFloat(s)))
     }else {
       for(c in a) {
         if(j = !1, d = a[c], e = k[c] && k[c].call(this, d, c), e !== !1) {
           e !== y && (d = e);
           if(c === "d") {
-            d && d.join && (d = d.join(" ")), /(NaN| {2}|^$)/.test(d) && (d = "M 0 0")
+            d && (d.join && (d = d.join(" "))), /(NaN| {2}|^$)/.test(d) && (d = "M 0 0")
           }else {
             if(c === "x" && h === "text") {
               for(e = 0;e < g.childNodes.length;e++) {
@@ -560,7 +560,7 @@
                     if(h === "rect" && c === "r") {
                       A(g, {rx:d, ry:d}), j = !0
                     }else {
-                      if(c === "translateX" || c === "translateY" || c === "rotation" || c === "verticalAlign" || c === "scaleX" || c === "scaleY") {
+                      if(c === "translateX" || (c === "translateY" || (c === "rotation" || (c === "verticalAlign" || (c === "scaleX" || c === "scaleY"))))) {
                         j = p = !0
                       }else {
                         if(c === "stroke") {
@@ -605,19 +605,19 @@
             if(this.stroke && this["stroke-width"]) {
               A(g, "stroke", this.stroke), A(g, "stroke-width", this["stroke-width"]), this.hasStroke = !0
             }else {
-              if(c === "stroke-width" && d === 0 && this.hasStroke) {
+              if(c === "stroke-width" && (d === 0 && this.hasStroke)) {
                 g.removeAttribute("stroke"), this.hasStroke = !1
               }
             }
             j = !0
           }
-          this.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(c) && (l || (this.symbolAttr(a), l = !0), j = !0);
+          this.symbolName && (/^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(c) && (l || (this.symbolAttr(a), l = !0), j = !0));
           if(m && /^(width|height|visibility|x|y|d|transform)$/.test(c)) {
             for(e = m.length;e--;) {
               A(m[e], c, c === "height" ? q(d - (m[e].cutHeight || 0), 0) : d)
             }
           }
-          if((c === "width" || c === "height") && h === "rect" && d < 0) {
+          if((c === "width" || c === "height") && (h === "rect" && d < 0)) {
             d = 0
           }
           this[c] = d;
@@ -639,26 +639,26 @@
   }, clip:function(a) {
     return this.attr("clip-path", a ? "url(" + this.renderer.url + "#" + a.id + ")" : S)
   }, crisp:function(a, b, c, d, e) {
-    var f, g = {}, h = {}, i, a = a || this.strokeWidth || this.attr && this.attr("stroke-width") || 0;
+    var f, g = {}, h = {}, i, a = a || (this.strokeWidth || (this.attr && this.attr("stroke-width") || 0));
     i = t(a) % 2 / 2;
-    h.x = T(b || this.x || 0) + i;
-    h.y = T(c || this.y || 0) + i;
-    h.width = T((d || this.width || 0) - 2 * i);
-    h.height = T((e || this.height || 0) - 2 * i);
+    h.x = T(b || (this.x || 0)) + i;
+    h.y = T(c || (this.y || 0)) + i;
+    h.width = T((d || (this.width || 0)) - 2 * i);
+    h.height = T((e || (this.height || 0)) - 2 * i);
     h.strokeWidth = a;
     for(f in h) {
       this[f] !== h[f] && (this[f] = g[f] = h[f])
     }
     return g
   }, css:function(a) {
-    var b = this.element, c = a && a.width && b.nodeName.toLowerCase() === "text", d, e = "", f = function(a, b) {
+    var b = this.element, c = a && (a.width && b.nodeName.toLowerCase() === "text"), d, e = "", f = function(a, b) {
       return"-" + b.toLowerCase()
     };
     if(a && a.color) {
       a.fill = a.color
     }
     this.styles = a = v(this.styles, a);
-    $ && c && delete a.width;
+    $ && (c && delete a.width);
     if(Fa && !Z) {
       c && delete a.width, L(this.element, a)
     }else {
@@ -667,7 +667,7 @@
       }
       A(b, "style", e)
     }
-    c && this.added && this.renderer.buildText(this);
+    c && (this.added && this.renderer.buildText(this));
     return this
   }, on:function(a, b) {
     if(fb && a === "click") {
@@ -689,7 +689,7 @@
     return this
   }, htmlCss:function(a) {
     var b = this.element;
-    if(b = a && b.tagName === "SPAN" && a.width) {
+    if(b = a && (b.tagName === "SPAN" && a.width)) {
       delete a.width, this.textWidth = b, this.updateTransform()
     }
     this.styles = v(this.styles, a);
@@ -805,7 +805,7 @@
       if(b.isSVG) {
         b = a.width;
         c = a.height;
-        if(Fa && e && e.fontSize === "11px" && c.toPrecision(3) === "22.7") {
+        if(Fa && (e && (e.fontSize === "11px" && c.toPrecision(3) === "22.7"))) {
           a.height = c = 14
         }
         if(d) {
@@ -936,10 +936,10 @@
     return b
   }, draw:function() {
   }, buildText:function(a) {
-    for(var b = a.element, c = this, d = c.forExport, e = o(a.textStr, "").toString().replace(/<(b|strong)>/g, '<span style="font-weight:bold">').replace(/<(i|em)>/g, '<span style="font-style:italic">').replace(/<a/g, "<span").replace(/<\/(b|strong|i|em|a)>/g, "</span>").split(/<br.*?>/g), f = b.childNodes, g = /style="([^"]+)"/, h = /href="([^"]+)"/, i = A(b, "x"), j = a.styles, k = j && j.width && u(j.width), m = j && j.lineHeight, l = f.length;l--;) {
+    for(var b = a.element, c = this, d = c.forExport, e = o(a.textStr, "").toString().replace(/<(b|strong)>/g, '<span style="font-weight:bold">').replace(/<(i|em)>/g, '<span style="font-style:italic">').replace(/<a/g, "<span").replace(/<\/(b|strong|i|em|a)>/g, "</span>").split(/<br.*?>/g), f = b.childNodes, g = /style="([^"]+)"/, h = /href="([^"]+)"/, i = A(b, "x"), j = a.styles, k = j && (j.width && u(j.width)), m = j && j.lineHeight, l = f.length;l--;) {
       b.removeChild(f[l])
     }
-    k && !a.added && this.box.appendChild(b);
+    k && (!a.added && this.box.appendChild(b));
     e[e.length - 1] === "" && e.pop();
     n(e, function(e, f) {
       var l, o = 0, e = e.replace(/<span/g, "|||<span").replace(/<\/span>/g, "</span>|||");
@@ -948,12 +948,12 @@
         if(e !== "" || l.length === 1) {
           var p = {}, n = z.createElementNS(sa, "tspan"), q;
           g.test(e) && (q = e.match(g)[1].replace(/(;| |^)color([ :])/, "$1fill$2"), A(n, "style", q));
-          h.test(e) && !d && (A(n, "onclick", 'location.href="' + e.match(h)[1] + '"'), L(n, {cursor:"pointer"}));
+          h.test(e) && (!d && (A(n, "onclick", 'location.href="' + e.match(h)[1] + '"'), L(n, {cursor:"pointer"})));
           e = (e.replace(/<(.|\n)*?>/g, "") || " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
           n.appendChild(z.createTextNode(e));
           o ? p.dx = 0 : p.x = i;
           A(n, p);
-          !o && f && (!Z && d && L(n, {display:"block"}), A(n, "dy", m || c.fontMetrics(/px$/.test(n.style.fontSize) ? n.style.fontSize : j.fontSize).h, db && n.offsetHeight));
+          !o && (f && (!Z && (d && L(n, {display:"block"})), A(n, "dy", m || c.fontMetrics(/px$/.test(n.style.fontSize) ? n.style.fontSize : j.fontSize).h, db && n.offsetHeight)));
           b.appendChild(n);
           o++;
           if(k) {
@@ -1050,7 +1050,7 @@
   }, diamond:function(a, b, c, d) {
     return["M", a + c / 2, b, "L", a + c, b + d / 2, a + c / 2, b + d, a, b + d / 2, "Z"]
   }, arc:function(a, b, c, d, e) {
-    var f = e.start, c = e.r || c || d, g = e.end - 0.001, d = e.innerR, h = e.open, i = Y(f), j = ca(f), k = Y(g), g = ca(g), e = e.end - f < Ka ? 0 : 1;
+    var f = e.start, c = e.r || (c || d), g = e.end - 0.001, d = e.innerR, h = e.open, i = Y(f), j = ca(f), k = Y(g), g = ca(g), e = e.end - f < Ka ? 0 : 1;
     return["M", a + c * i, b + c * j, "A", c, c, 0, e, 1, a + c * k, b + c * g, h ? "M" : "L", a + d * k, b + d * g, "A", d, d, 0, e, 0, a + d * i, b + d * j, h ? "" : "Z"]
   }}, clipRect:function(a, b, c, d) {
     var e = "highcharts-" + ub++, f = this.createElement("clipPath").attr({id:e}).add(this.defs), a = this.rect(a, b, c, d, 0).add(f);
@@ -1059,14 +1059,14 @@
     return a
   }, color:function(a, b, c) {
     var d = this, e, f = /^rgba/, g, h, i, j, k, m, l, p = [];
-    a && a.linearGradient ? g = "linearGradient" : a && a.radialGradient && (g = "radialGradient");
+    a && a.linearGradient ? g = "linearGradient" : a && (a.radialGradient && (g = "radialGradient"));
     if(g) {
       c = a[g];
       h = d.gradients;
       j = a.stops;
       b = b.radialReference;
       Da(c) && (a[g] = c = {x1:c[0], y1:c[1], x2:c[2], y2:c[3], gradientUnits:"userSpaceOnUse"});
-      g === "radialGradient" && b && !r(c.gradientUnits) && (c = x(c, {cx:b[0] - b[2] / 2 + c.cx * b[2], cy:b[1] - b[2] / 2 + c.cy * b[2], r:c.r * b[2], gradientUnits:"userSpaceOnUse"}));
+      g === "radialGradient" && (b && (!r(c.gradientUnits) && (c = x(c, {cx:b[0] - b[2] / 2 + c.cx * b[2], cy:b[1] - b[2] / 2 + c.cy * b[2], r:c.r * b[2], gradientUnits:"userSpaceOnUse"}))));
       for(l in c) {
         l !== "id" && p.push(l, c[l])
       }
@@ -1148,9 +1148,9 @@
     function j() {
       var a, b;
       a = o.element.style;
-      w = (Ma === void 0 || yb === void 0 || s.styles.textAlign) && o.getBBox();
-      s.width = (Ma || w.width || 0) + 2 * q + hb;
-      s.height = (yb || w.height || 0) + 2 * q;
+      w = (Ma === void 0 || (yb === void 0 || s.styles.textAlign)) && o.getBBox();
+      s.width = (Ma || (w.width || 0)) + 2 * q + hb;
+      s.height = (yb || (w.height || 0)) + 2 * q;
       A = q + p.fontMetrics(a && a.fontSize).b;
       if(z) {
         if(!B) {
@@ -1176,7 +1176,7 @@
     function l() {
       o.add(s);
       s.attr({text:a, x:b, y:c});
-      B && r(e) && s.attr({anchorX:e, anchorY:f})
+      B && (r(e) && s.attr({anchorX:e, anchorY:f}))
     }
     var p = this, s = p.g(i), o = p.text("", 0, 0, g).attr({zIndex:1}), B, w, G = 0, q = 3, hb = 0, Ma, yb, P, H, C = 0, u = {}, A, g = s.attrSetters, z;
     J(s, "add", l);
@@ -1189,11 +1189,11 @@
       return!1
     };
     g.padding = function(a) {
-      r(a) && a !== q && (q = a, k());
+      r(a) && (a !== q && (q = a, k()));
       return!1
     };
     g.paddingLeft = function(a) {
-      r(a) && a !== hb && (hb = a, k());
+      r(a) && (a !== hb && (hb = a, k()));
       return!1
     };
     g.align = function(a) {
@@ -1273,21 +1273,21 @@
       d.push("visibility: ", e ? "hidden" : "visible");
       c.push(' style="', d.join(""), '"/>');
       if(b) {
-        c = e || b === "span" || b === "img" ? c.join("") : a.prepVML(c), this.element = U(c)
+        c = e || (b === "span" || b === "img") ? c.join("") : a.prepVML(c), this.element = U(c)
       }
       this.renderer = a;
       this.attrSetters = {}
     }, add:function(a) {
       var b = this.renderer, c = this.element, d = b.box, d = a ? a.element || a : d;
-      a && a.inverted && b.invertChild(c, d);
+      a && (a.inverted && b.invertChild(c, d));
       d.appendChild(c);
       this.added = !0;
-      this.alignOnAdd && !this.deferUpdateTransform && this.updateTransform();
+      this.alignOnAdd && (!this.deferUpdateTransform && this.updateTransform());
       D(this, "add");
       return this
     }, updateTransform:ra.prototype.htmlUpdateTransform, attr:function(a, b) {
       var c, d, e, f = this.element || {}, g = f.style, h = f.nodeName, i = this.renderer, j = this.symbolName, k, m = this.shadows, l, p = this.attrSetters, s = this;
-      fa(a) && r(b) && (c = a, a = {}, a[c] = b);
+      fa(a) && (r(b) && (c = a, a = {}, a[c] = b));
       if(fa(a)) {
         c = a, s = c === "strokeWidth" || c === "stroke-width" ? this.strokeweight : this[c]
       }else {
@@ -1367,7 +1367,7 @@
                                   if(h === "shape" && c === "rotation") {
                                     this[c] = d, f.style.left = -t(ca(d * bb) + 1) + "px", f.style.top = t(Y(d * bb)) + "px"
                                   }else {
-                                    if(c === "translateX" || c === "translateY" || c === "rotation") {
+                                    if(c === "translateX" || (c === "translateY" || c === "rotation")) {
                                       this[c] = d, this.updateTransform(), l = !0
                                     }else {
                                       if(c === "text") {
@@ -1418,7 +1418,7 @@
       return a.join(" ")
     }, shadow:function(a, b, c) {
       var d = [], e, f = this.element, g = this.renderer, h, i = f.style, j, k = f.path, m, l, p, s;
-      k && typeof k.value !== "string" && (k = "x");
+      k && (typeof k.value !== "string" && (k = "x"));
       l = k;
       if(a) {
         p = o(a.width, 3);
@@ -1461,7 +1461,7 @@
       var e = this.createElement(), f = V(a);
       return v(e, {members:[], left:f ? a.x : a, top:f ? a.y : b, width:f ? a.width : c, height:f ? a.height : d, getCSS:function(a) {
         var b = a.element, c = b.nodeName, a = a.inverted, d = this.top - (c === "shape" ? b.offsetTop : 0), e = this.left, b = e + this.width, f = d + this.height, d = {clip:"rect(" + t(a ? e : d) + "px," + t(a ? f : b) + "px," + t(a ? b : f) + "px," + t(a ? d : e) + "px)"};
-        !a && cb && c === "DIV" && v(d, {width:b + "px", height:f + "px"});
+        !a && (cb && (c === "DIV" && v(d, {width:b + "px", height:f + "px"})));
         return d
       }, updateClipping:function() {
         n(e.members, function(a) {
@@ -1470,7 +1470,7 @@
       }})
     }, color:function(a, b, c, d) {
       var e = this, f, g = /^rgba/, h, i, j = S;
-      a && a.linearGradient ? i = "gradient" : a && a.radialGradient && (i = "pattern");
+      a && a.linearGradient ? i = "gradient" : a && (a.radialGradient && (i = "pattern"));
       if(i) {
         var k, m, l = a.linearGradient || a.radialGradient, p, s, o, B, w, q = "", a = a.stops, r, t = [], y = function() {
           h = ['<fill colors="' + t.join(",") + '" opacity="', o, '" o:opacity2="', s, '" type="', i, '" ', q, 'focus="100%" method="any" />'];
@@ -1487,7 +1487,7 @@
         });
         if(c === "fill") {
           if(i === "gradient") {
-            c = l.x1 || l[0] || 0, a = l.y1 || l[1] || 0, p = l.x2 || l[2] || 0, l = l.y2 || l[3] || 0, q = 'angle="' + (90 - I.atan((l - a) / (p - c)) * 180 / Ka) + '"', y()
+            c = l.x1 || (l[0] || 0), a = l.y1 || (l[1] || 0), p = l.x2 || (l[2] || 0), l = l.y2 || (l[3] || 0), q = 'angle="' + (90 - I.atan((l - a) / (p - c)) * 180 / Ka) + '"', y()
           }else {
             var j = l.r, v = j * 2, P = j * 2, H = l.cx, C = l.cy, x = b.radialReference, u, j = function() {
               x && (u = d.getBBox(), H += (x[0] - u.x) / u.width - 0.5, C += (x[1] - u.y) / u.height - 0.5, v *= x[2] / u.width, P *= x[2] / u.height);
@@ -1546,17 +1546,17 @@
       var c = b.style;
       L(a, {flip:"x", left:u(c.width) - 1, top:u(c.height) - 1, rotation:-90})
     }, symbols:{arc:function(a, b, c, d, e) {
-      var f = e.start, g = e.end, h = e.r || c || d, c = e.innerR, d = Y(f), i = ca(f), j = Y(g), k = ca(g);
+      var f = e.start, g = e.end, h = e.r || (c || d), c = e.innerR, d = Y(f), i = ca(f), j = Y(g), k = ca(g);
       if(g - f === 0) {
         return["x"]
       }
       f = ["wa", a - h, b - h, a + h, b + h, a + h * d, b + h * i, a + h * j, b + h * k];
-      e.open && !c && f.push("e", "M", a, b);
+      e.open && (!c && f.push("e", "M", a, b));
       f.push("at", a - c, b - c, a + c, b + c, a + c * j, b + c * k, a + c * d, b + c * i, "x", "e");
       f.isArc = !0;
       return f
     }, circle:function(a, b, c, d, e) {
-      e && e.isCircle && (a -= c / 2, b -= d / 2);
+      e && (e.isCircle && (a -= c / 2, b -= d / 2));
       return["wa", a, b, a + c, b + d, a + c, b + d / 2, a + c, b + d / 2, "e"]
     }, rect:function(a, b, c, d, e) {
       var f = a + c, g = b + d, h;
@@ -1589,8 +1589,8 @@
     }(), Sa = F
   }
   Ja.prototype = {addLabel:function() {
-    var a = this.axis, b = a.options, c = a.chart, d = a.horiz, e = a.categories, f = a.series[0] && a.series[0].names, g = this.pos, h = b.labels, i = a.tickPositions, d = d && e && !h.step && !h.staggerLines && !h.rotation && c.plotWidth / i.length || !d && (c.optionsMarginLeft || c.plotWidth / 2), j = g === i[0], k = g === i[i.length - 1], f = e ? o(e[g], f && f[g], g) : g, e = this.label, i = i.info, m;
-    a.isDatetimeAxis && i && (m = b.dateTimeLabelFormats[i.higherRanks[g] || i.unitName]);
+    var a = this.axis, b = a.options, c = a.chart, d = a.horiz, e = a.categories, f = a.series[0] && a.series[0].names, g = this.pos, h = b.labels, i = a.tickPositions, d = d && (e && (!h.step && (!h.staggerLines && (!h.rotation && c.plotWidth / i.length)))) || !d && (c.optionsMarginLeft || c.plotWidth / 2), j = g === i[0], k = g === i[i.length - 1], f = e ? o(e[g], f && f[g], g) : g, e = this.label, i = i.info, m;
+    a.isDatetimeAxis && (i && (m = b.dateTimeLabelFormats[i.higherRanks[g] || i.unitName]));
     this.isFirst = j;
     this.isLast = k;
     b = a.labelFormatter.call({axis:a, chart:c, isFirst:j, isLast:k, dateTimeLabelFormat:m, value:a.isLog ? ia(da(f)) : f});
@@ -1614,8 +1614,8 @@
   }, handleOverflow:function(a, b) {
     var c = !0, d = this.axis, e = d.chart, f = this.isFirst, g = this.isLast, h = b.x, i = d.reversed, j = d.tickPositions;
     if(f || g) {
-      var k = this.getLabelSides(), m = k[0], k = k[1], e = e.plotLeft, l = e + d.len, j = (d = d.ticks[j[a + (f ? 1 : -1)]]) && d.label.xy && d.label.xy.x + d.getLabelSides()[f ? 0 : 1];
-      f && !i || g && i ? h + m < e && (h = e - m, d && h + k > j && (c = !1)) : h + k > l && (h = l - k, d && h + m < j && (c = !1));
+      var k = this.getLabelSides(), m = k[0], k = k[1], e = e.plotLeft, l = e + d.len, j = (d = d.ticks[j[a + (f ? 1 : -1)]]) && (d.label.xy && d.label.xy.x + d.getLabelSides()[f ? 0 : 1]);
+      f && !i || g && i ? h + m < e && (h = e - m, d && (h + k > j && (c = !1))) : h + k > l && (h = l - k, d && (h + m < j && (c = !1)));
       b.x = h
     }
     return c
@@ -1648,7 +1648,7 @@
         }
         this.gridLine = m = s ? f.path(j).attr(m).add(d.gridGroup) : null
       }
-      if(!b && m && j) {
+      if(!b && (m && j)) {
         m[this.isNew ? "attr" : "animate"]({d:j, opacity:c})
       }
     }
@@ -1656,7 +1656,7 @@
       r === "inside" && (w = -w), d.opposite && (w = -w), b = this.getMarkPath(H, P, w, l * C, g, f), p ? p.animate({d:b, opacity:c}) : this.mark = f.path(b).attr({stroke:q, "stroke-width":l, opacity:c}).add(d.axisGroup)
     }
     if(i && !isNaN(H)) {
-      i.xy = P = this.getLabelPosition(H, P, i, g, k, u, a, t), this.isFirst && !o(e.showFirstLabel, 1) || this.isLast && !o(e.showLastLabel, 1) ? v = !1 : !x && g && k.overflow === "justify" && !this.handleOverflow(a, P) && (v = !1), t && a % t && (v = !1), v && !isNaN(P.y) ? (P.opacity = c, i[this.isNew ? "attr" : "animate"](P), this.isNew = !1) : i.attr("y", -9999)
+      i.xy = P = this.getLabelPosition(H, P, i, g, k, u, a, t), this.isFirst && !o(e.showFirstLabel, 1) || this.isLast && !o(e.showLastLabel, 1) ? v = !1 : !x && (g && (k.overflow === "justify" && (!this.handleOverflow(a, P) && (v = !1)))), t && (a % t && (v = !1)), v && !isNaN(P.y) ? (P.opacity = c, i[this.isNew ? "attr" : "animate"](P), this.isNew = !1) : i.attr("y", -9999)
     }
   }, destroy:function() {
     Ha(this, this.axis)
@@ -1685,7 +1685,7 @@
         p.show()
       })
     }else {
-      if(s && s.length && (a.svgElem = p = t.path(s).attr(d).add(), G)) {
+      if(s && (s.length && (a.svgElem = p = t.path(s).attr(d).add(), G))) {
         for(n in e = function(b) {
           p.on(b, function(c) {
             G[b].apply(a, [c])
@@ -1695,8 +1695,8 @@
         }
       }
     }
-    if(f && r(f.text) && s && s.length && b.width > 0 && b.height > 0) {
-      f = x({align:c && k && "center", x:c ? !k && 4 : 10, verticalAlign:!c && k && "middle", y:c ? k ? 16 : 10 : k ? 6 : -4, rotation:c && !k && 90}, f);
+    if(f && (r(f.text) && (s && (s.length && (b.width > 0 && b.height > 0))))) {
+      f = x({align:c && (k && "center"), x:c ? !k && 4 : 10, verticalAlign:!c && (k && "middle"), y:c ? k ? 16 : 10 : k ? 6 : -4, rotation:c && (!k && 90)}, f);
       if(!g) {
         a.label = g = t.text(f.text, 0, 0).attr({align:f.textAlign || f.align, rotation:f.rotation, zIndex:w}).css(f.style).add()
       }
@@ -1764,7 +1764,7 @@
     var f, d = this.options.events;
     la(this, a.axes) === -1 && (a.axes.push(this), a[c ? "xAxis" : "yAxis"].push(this));
     this.series = this.series || [];
-    if(a.inverted && c && this.reversed === y) {
+    if(a.inverted && (c && this.reversed === y)) {
       this.reversed = !0
     }
     this.removePlotLine = this.removePlotBand = this.removePlotBandOrLine;
@@ -1810,7 +1810,7 @@
         }else {
           if(f && a >= 1E3) {
             for(;f-- && g === y;) {
-              c = Math.pow(1E3, f + 1), a >= c && e[f] !== null && (g = ua(b / c, -1) + e[f])
+              c = Math.pow(1E3, f + 1), a >= c && (e[f] !== null && (g = ua(b / c, -1) + e[f]))
             }
           }
         }
@@ -1852,8 +1852,8 @@
             if(k) {
               H = (P = G < t) ? l : m, C = P ? n : p, r(H[w]) ? (H[w] = ia(H[w] + G), G = [G, H[w]]) : H[w] = G, c[C] || (c[C] = {}), c[C][w] || (c[C][w] = new Kb(a, a.options.stackLabels, P, w, s, k)), c[C][w].setTotal(H[w]), c[C][w].touched = f
             }
-            if(G !== null && G !== y && (!a.isLog || G.length || G > 0)) {
-              if(E && (G = g.modifyValue(G)), g.getExtremesFromAll || A || (j[h + 1] || w) >= z.min && (j[h - 1] || w) <= z.max) {
+            if(G !== null && (G !== y && (!a.isLog || (G.length || G > 0)))) {
+              if(E && (G = g.modifyValue(G)), g.getExtremesFromAll || (A || (j[h + 1] || w) >= z.min && (j[h - 1] || w) <= z.max)) {
                 if(w = G.length) {
                   for(;w--;) {
                     G[w] !== null && (u[x++] = G[w])
@@ -1942,7 +1942,7 @@
         for(var f = T(b), h, i, j, k, m, e = a > 0.3 ? [1, 2, 4] : a > 0.15 ? [1, 2, 4, 6, 8] : [1, 2, 3, 4, 5, 6, 7, 8, 9];f < c + 1 && !m;f++) {
           i = e.length;
           for(h = 0;h < i && !m;h++) {
-            j = ka(da(f) * e[h]), j > b && (!d || k <= c) && g.push(k), k > c && (m = !0), k = j
+            j = ka(da(f) * e[h]), j > b && ((!d || k <= c) && g.push(k)), k > c && (m = !0), k = j
           }
         }
       }else {
@@ -1974,7 +1974,7 @@
     return d
   }, adjustForMinRange:function() {
     var a = this.options, b = this.min, c = this.max, d, e = this.dataMax - this.dataMin >= this.minRange, f, g, h, i, j;
-    if(this.isXAxis && this.minRange === y && !this.isLog) {
+    if(this.isXAxis && (this.minRange === y && !this.isLog)) {
       r(a.min) || r(a.max) ? this.minRange = null : (n(this.series, function(a) {
         i = a.xData;
         for(g = j = a.xIncrement ? 1 : i.length - 1;g > 0;g--) {
@@ -2010,7 +2010,7 @@
         c = q(c, g);
         e = q(e, h ? 0 : g / 2);
         f = q(f, h === "on" ? 0 : g);
-        !a.noSharedTooltip && r(m) && (d = r(d) ? K(d, m) : m)
+        !a.noSharedTooltip && (r(m) && (d = r(d) ? K(d, m) : m))
       }), g = this.ordinalSlope && d ? this.ordinalSlope / d : 1, this.minPointOffset = e *= g, this.pointRangePadding = f *= g, this.pointRange = K(c, b), this.closestPointRange = d
     }
     if(a) {
@@ -2023,25 +2023,25 @@
     var b = this, c = b.chart, d = b.options, e = b.isLog, f = b.isDatetimeAxis, g = b.isXAxis, h = b.isLinked, i = b.options.tickPositioner, j = d.maxPadding, k = d.minPadding, m = d.tickInterval, l = d.minTickInterval, p = d.tickPixelInterval, s = b.categories;
     h ? (b.linkedParent = c[g ? "xAxis" : "yAxis"][d.linkedTo], c = b.linkedParent.getExtremes(), b.min = o(c.min, c.dataMin), b.max = o(c.max, c.dataMax), d.type !== b.linkedParent.options.type && qa(11, 1)) : (b.min = o(b.userMin, d.min, b.dataMin), b.max = o(b.userMax, d.max, b.dataMax));
     if(e) {
-      !a && K(b.min, o(b.dataMin, b.min)) <= 0 && qa(10, 1), b.min = ia(ka(b.min)), b.max = ia(ka(b.max))
+      !a && (K(b.min, o(b.dataMin, b.min)) <= 0 && qa(10, 1)), b.min = ia(ka(b.min)), b.max = ia(ka(b.max))
     }
     if(b.range && (b.userMin = b.min = q(b.min, b.max - b.range), b.userMax = b.max, a)) {
       b.range = null
     }
     b.beforePadding && b.beforePadding();
     b.adjustForMinRange();
-    if(!s && !b.usePercentage && !h && r(b.min) && r(b.max) && (c = b.max - b.min)) {
-      if(!r(d.min) && !r(b.userMin) && k && (b.dataMin < 0 || !b.ignoreMinPadding)) {
+    if(!s && (!b.usePercentage && (!h && (r(b.min) && (r(b.max) && (c = b.max - b.min)))))) {
+      if(!r(d.min) && (!r(b.userMin) && (k && (b.dataMin < 0 || !b.ignoreMinPadding)))) {
         b.min -= c * k
       }
-      if(!r(d.max) && !r(b.userMax) && j && (b.dataMax > 0 || !b.ignoreMaxPadding)) {
+      if(!r(d.max) && (!r(b.userMax) && (j && (b.dataMax > 0 || !b.ignoreMaxPadding)))) {
         b.max += c * j
       }
     }
-    b.tickInterval = b.min === b.max || b.min === void 0 || b.max === void 0 ? 1 : h && !m && p === b.linkedParent.options.tickPixelInterval ? b.linkedParent.tickInterval : o(m, s ? 1 : (b.max - b.min) * p / (b.len || 1));
-    g && !a && n(b.series, function(a) {
+    b.tickInterval = b.min === b.max || (b.min === void 0 || b.max === void 0) ? 1 : h && (!m && p === b.linkedParent.options.tickPixelInterval) ? b.linkedParent.tickInterval : o(m, s ? 1 : (b.max - b.min) * p / (b.len || 1));
+    g && (!a && n(b.series, function(a) {
       a.processData(b.min !== b.oldMin || b.max !== b.oldMax)
-    });
+    }));
     b.setAxisTranslation(!0);
     b.beforeSetTickPositions && b.beforeSetTickPositions();
     if(b.postProcessTickInterval) {
@@ -2050,7 +2050,7 @@
     if(!m && b.tickInterval < l) {
       b.tickInterval = l
     }
-    if(!f && !e && (a = I.pow(10, T(I.log(b.tickInterval) / I.LN10)), !m)) {
+    if(!f && (!e && (a = I.pow(10, T(I.log(b.tickInterval) / I.LN10)), !m))) {
       b.tickInterval = ib(b.tickInterval, null, a, d)
     }
     b.minorTickInterval = d.minorTickInterval === "auto" && b.tickInterval ? b.tickInterval / 5 : d.minorTickInterval;
@@ -2063,13 +2063,13 @@
     }
   }, setMaxTicks:function() {
     var a = this.chart, b = a.maxTicks || {}, c = this.tickPositions, d = this._maxTicksKey = [this.xOrY, this.pos, this.len].join("-");
-    if(!this.isLinked && !this.isDatetimeAxis && c && c.length > (b[d] || 0) && this.options.alignTicks !== !1) {
+    if(!this.isLinked && (!this.isDatetimeAxis && (c && (c.length > (b[d] || 0) && this.options.alignTicks !== !1)))) {
       b[d] = c.length
     }
     a.maxTicks = b
   }, adjustTickAmount:function() {
     var a = this._maxTicksKey, b = this.tickPositions, c = this.chart.maxTicks;
-    if(c && c[a] && !this.isDatetimeAxis && !this.categories && !this.isLinked && this.options.alignTicks !== !1) {
+    if(c && (c[a] && (!this.isDatetimeAxis && (!this.categories && (!this.isLinked && this.options.alignTicks !== !1))))) {
       var d = this.tickAmount, e = b.length;
       this.tickAmount = a = c[a];
       if(e < a) {
@@ -2091,13 +2091,13 @@
     this.setAxisSize();
     e = this.len !== this.oldAxisLength;
     n(this.series, function(a) {
-      if(a.isDirtyData || a.isDirty || a.xAxis.isDirty) {
+      if(a.isDirtyData || (a.isDirty || a.xAxis.isDirty)) {
         d = !0
       }
     });
-    if(e || d || this.isLinked || this.forceRedraw || this.userMin !== this.oldUserMin || this.userMax !== this.oldUserMax) {
+    if(e || (d || (this.isLinked || (this.forceRedraw || (this.userMin !== this.oldUserMin || this.userMax !== this.oldUserMax))))) {
       if(this.forceRedraw = !1, this.getSeriesExtremes(), this.setTickPositions(), this.oldUserMin = this.userMin, this.oldUserMax = this.userMax, !this.isDirty) {
-        this.isDirty = e || this.min !== this.oldMin || this.max !== this.oldMax
+        this.isDirty = e || (this.min !== this.oldMin || this.max !== this.oldMax)
       }
     }
     if(!this.isXAxis) {
@@ -2149,7 +2149,7 @@
     return c
   }, getOffset:function() {
     var a = this, b = a.chart, c = b.renderer, d = a.options, e = a.tickPositions, f = a.ticks, g = a.horiz, h = a.side, i = b.inverted ? [1, 0, 3, 2][h] : h, j, k = 0, m, l = 0, p = d.title, s = d.labels, t = 0, B = b.axisOffset, w = b.clipOffset, G = [-1, 1, 1, -1][h], v;
-    a.hasData = b = a.hasVisibleSeries || r(a.min) && r(a.max) && !!e;
+    a.hasData = b = a.hasVisibleSeries || r(a.min) && (r(a.max) && !!e);
     a.showAxis = j = b || o(d.showEmpty, !0);
     if(!a.axisGroup) {
       a.gridGroup = c.g("grid").attr({zIndex:d.gridZIndex || 1}).add(), a.axisGroup = c.g("axis").attr({zIndex:d.zIndex || 2}).add(), a.labelGroup = c.g("axis-labels").attr({zIndex:s.zIndex || 7}).add()
@@ -2158,7 +2158,7 @@
       n(e, function(b) {
         f[b] ? f[b].addLabel() : f[b] = new Ja(a, b)
       }), n(e, function(a) {
-        if(h === 0 || h === 2 || {1:"left", 3:"right"}[h] === s.align) {
+        if(h === 0 || (h === 2 || {1:"left", 3:"right"}[h] === s.align)) {
           t = q(f[a].getLabelSize(), t)
         }
       }), a.staggerLines && (t += (a.staggerLines - 1) * 16)
@@ -2167,7 +2167,7 @@
         f[v].destroy(), delete f[v]
       }
     }
-    if(p && p.text && p.enabled !== !1) {
+    if(p && (p.text && p.enabled !== !1)) {
       if(!a.axisTitle) {
         a.axisTitle = c.text(p.text, 0, 0, p.useHTML).attr({zIndex:7, rotation:p.rotation || 0, align:p.textAlign || {low:"left", middle:"center", high:"right"}[p.align]}).css(p.style).add(a.axisGroup), a.axisTitle.isNew = !0
       }
@@ -2177,7 +2177,7 @@
       a.axisTitle[j ? "show" : "hide"]()
     }
     a.offset = G * o(d.offset, B[h]);
-    a.axisTitleMargin = o(m, t + l + (h !== 2 && t && G * d.labels[g ? "y" : "x"]));
+    a.axisTitleMargin = o(m, t + l + (h !== 2 && (t && G * d.labels[g ? "y" : "x"])));
     B[h] = q(B[h], a.axisTitleMargin + k + G * a.offset);
     w[i] = q(w[i], d.lineWidth)
   }, getLinePath:function(a) {
@@ -2189,7 +2189,7 @@
     var a = this.horiz, b = this.left, c = this.top, d = this.len, e = this.options.title, f = a ? b : c, g = this.opposite, h = this.offset, i = u(e.style.fontSize || 12), d = {low:f + (a ? 0 : d), middle:f + d / 2, high:f + (a ? d : 0)}[e.align], b = (a ? c + this.height : b) + (a ? 1 : -1) * (g ? -1 : 1) * this.axisTitleMargin + (this.side === 2 ? i : 0);
     return{x:a ? d : b + (g ? this.width : 0) + h + (e.x || 0), y:a ? b - (g ? this.height : 0) + h : d + (e.y || 0)}
   }, render:function() {
-    var a = this, b = a.chart, c = b.renderer, d = a.options, e = a.isLog, f = a.isLinked, g = a.tickPositions, h = a.axisTitle, i = a.stacks, j = a.ticks, k = a.minorTicks, m = a.alternateBands, l = d.stackLabels, p = d.alternateGridColor, s = a.tickmarkOffset, o = d.lineWidth, B, w = b.hasRendered && r(a.oldMin) && !isNaN(a.oldMin);
+    var a = this, b = a.chart, c = b.renderer, d = a.options, e = a.isLog, f = a.isLinked, g = a.tickPositions, h = a.axisTitle, i = a.stacks, j = a.ticks, k = a.minorTicks, m = a.alternateBands, l = d.stackLabels, p = d.alternateGridColor, s = a.tickmarkOffset, o = d.lineWidth, B, w = b.hasRendered && (r(a.oldMin) && !isNaN(a.oldMin));
     B = a.hasData;
     var q = a.showAxis, t, v;
     n([j, k, m], function(a) {
@@ -2198,16 +2198,16 @@
       }
     });
     if(B || f) {
-      if(a.minorTickInterval && !a.categories && n(a.getMinorTickPositions(), function(b) {
+      if(a.minorTickInterval && (!a.categories && n(a.getMinorTickPositions(), function(b) {
         k[b] || (k[b] = new Ja(a, b, "minor"));
-        w && k[b].isNew && k[b].render(null, !0);
+        w && (k[b].isNew && k[b].render(null, !0));
         k[b].render(null, !1, 1)
-      }), g.length && (n(g.slice(1).concat([g[0]]), function(b, c) {
+      })), g.length && (n(g.slice(1).concat([g[0]]), function(b, c) {
         c = c === g.length - 1 ? 0 : c + 1;
         if(!f || b >= a.min && b <= a.max) {
-          j[b] || (j[b] = new Ja(a, b)), w && j[b].isNew && j[b].render(c, !0), j[b].render(c, !1, 1)
+          j[b] || (j[b] = new Ja(a, b)), w && (j[b].isNew && j[b].render(c, !0)), j[b].render(c, !1, 1)
         }
-      }), s && a.min === 0 && (j[-1] || (j[-1] = new Ja(a, -1, null, !0)), j[-1].render(-1))), p && n(g, function(b, c) {
+      }), s && (a.min === 0 && (j[-1] || (j[-1] = new Ja(a, -1, null, !0)), j[-1].render(-1)))), p && n(g, function(b, c) {
         if(c % 2 === 0 && b < a.max) {
           m[b] || (m[b] = new pb(a)), t = b + s, v = g[c + 1] !== y ? g[c + 1] + s : a.max, m[b].options = {from:e ? da(t) : t, to:e ? da(v) : v, color:p}, m[b].render(), m[b].isActive = !0
         }
@@ -2220,7 +2220,7 @@
     n([j, k, m], function(a) {
       var c, d, e = [], f = za ? za.duration || 500 : 0, g = function() {
         for(d = e.length;d--;) {
-          a[e[d]] && !a[e[d]].isActive && (a[e[d]].destroy(), delete a[e[d]])
+          a[e[d]] && (!a[e[d]].isActive && (a[e[d]].destroy(), delete a[e[d]]))
         }
       };
       for(c in a) {
@@ -2228,7 +2228,7 @@
           a[c].render(c, !1, 0), a[c].isActive = !1, e.push(c)
         }
       }
-      a === m || !b.hasRendered || !f ? g() : f && setTimeout(g, f)
+      a === m || (!b.hasRendered || !f) ? g() : f && setTimeout(g, f)
     });
     if(o) {
       B = a.getLinePath(o), a.axisLine ? a.axisLine.animate({d:B}) : a.axisLine = c.path(B).attr({stroke:d.lineColor, "stroke-width":o, zIndex:7}).add(a.axisGroup), a.axisLine[q ? "show" : "hide"]()
@@ -2326,18 +2326,18 @@
   }, getAnchor:function(a, b) {
     var c, d = this.chart, e = d.inverted, f = d.plotTop, g = 0, h = 0, i, a = ha(a);
     c = a[0].tooltipPos;
-    this.followPointer && b && (b.chartX === y && (b = d.pointer.normalize(b)), c = [b.chartX - d.plotLeft, b.chartY - f]);
+    this.followPointer && (b && (b.chartX === y && (b = d.pointer.normalize(b)), c = [b.chartX - d.plotLeft, b.chartY - f]));
     c || (n(a, function(a) {
       i = a.series.yAxis;
       g += a.plotX;
       h += (a.plotLow ? (a.plotLow + a.plotHigh) / 2 : a.plotY) + (!e && i ? i.top - f : 0)
-    }), g /= a.length, h /= a.length, c = [e ? d.plotWidth - h : g, this.shared && !e && a.length > 1 && b ? b.chartY - f : e ? d.plotHeight - g : h]);
+    }), g /= a.length, h /= a.length, c = [e ? d.plotWidth - h : g, this.shared && (!e && (a.length > 1 && b)) ? b.chartY - f : e ? d.plotHeight - g : h]);
     return La(c, t)
   }, getPosition:function(a, b, c) {
     var d = this.chart, e = d.plotLeft, f = d.plotTop, g = d.plotWidth, h = d.plotHeight, i = o(this.options.distance, 12), j = c.plotX, c = c.plotY, d = j + e + (d.inverted ? i : -a - i), k = c - b + f + 15, m;
     d < 7 && (d = e + q(j, 0) + i);
     d + a > e + g && (d -= d + a - (e + g), k = c - b + f - i, m = !0);
-    k < f + 5 && (k = f + 5, m && c >= k && c <= k + b && (k = c + f + i));
+    k < f + 5 && (k = f + 5, m && (c >= k && (c <= k + b && (k = c + f + i))));
     k + b > f + h && (k = q(f, f + h - b - i));
     return{x:d, y:k}
   }, defaultFormatter:function(a) {
@@ -2367,8 +2367,8 @@
     }), i = {x:a[0].category, y:a[0].y}, i.points = k, a = a[0]) : i = a.getLabelConfig();
     j = j.call(i, this);
     i = a.series;
-    h = h || !i.isCartesian || i.tooltipOutsidePlot || c.isInsidePlot(f, g);
-    j === !1 || !h ? this.hide() : (this.isHidden && (Ta(d), d.attr("opacity", 1).show()), d.attr({text:j}), m = e.borderColor || a.color || i.color || "#606060", d.attr({stroke:m}), this.updatePosition({plotX:f, plotY:g}), this.isHidden = !1);
+    h = h || (!i.isCartesian || (i.tooltipOutsidePlot || c.isInsidePlot(f, g)));
+    j === !1 || !h ? this.hide() : (this.isHidden && (Ta(d), d.attr("opacity", 1).show()), d.attr({text:j}), m = e.borderColor || (a.color || (i.color || "#606060")), d.attr({stroke:m}), this.updatePosition({plotX:f, plotY:g}), this.isHidden = !1);
     if(l) {
       l = ha(l);
       for(d = l.length;d--;) {
@@ -2425,11 +2425,11 @@
     return b.inverted ? b.plotHeight + b.plotTop - a.chartY : a.chartX - b.plotLeft
   }, runPointActions:function(a) {
     var b = this.chart, c = b.series, d = b.tooltip, e, f = b.hoverPoint, g = b.hoverSeries, h, i, j = b.chartWidth, k = this.getIndex(a);
-    if(d && this.options.tooltip.shared && (!g || !g.noSharedTooltip)) {
+    if(d && (this.options.tooltip.shared && (!g || !g.noSharedTooltip))) {
       e = [];
       h = c.length;
       for(i = 0;i < h;i++) {
-        if(c[i].visible && c[i].options.enableMouseTracking !== !1 && !c[i].noSharedTooltip && c[i].tooltipPoints.length && (b = c[i].tooltipPoints[k], b.series)) {
+        if(c[i].visible && (c[i].options.enableMouseTracking !== !1 && (!c[i].noSharedTooltip && (c[i].tooltipPoints.length && (b = c[i].tooltipPoints[k], b.series))))) {
           b._dist = Q(k - b.clientX), j = K(j, b._dist), e.push(b)
         }
       }
@@ -2445,11 +2445,11 @@
         b.onMouseOver(a)
       }
     }else {
-      d && d.followPointer && !d.isHidden && (a = d.getAnchor([{}], a), d.updatePosition({plotX:a[0], plotY:a[1]}))
+      d && (d.followPointer && (!d.isHidden && (a = d.getAnchor([{}], a), d.updatePosition({plotX:a[0], plotY:a[1]}))))
     }
   }, reset:function(a) {
     var b = this.chart, c = b.hoverSeries, d = b.hoverPoint, e = b.tooltip, b = e && e.shared ? b.hoverPoints : d;
-    (a = a && e && b) && ha(b)[0].plotX === y && (a = !1);
+    (a = a && (e && b)) && (ha(b)[0].plotX === y && (a = !1));
     if(a) {
       e.refresh(b)
     }else {
@@ -2465,12 +2465,12 @@
   }, scaleGroups:function(a, b) {
     var c = this.chart;
     n(c.series, function(d) {
-      d.xAxis && d.xAxis.zoomEnabled && (d.group.attr(a), d.markerGroup && (d.markerGroup.attr(a), d.markerGroup.clip(b ? c.clipRect : null)), d.dataLabelsGroup && d.dataLabelsGroup.attr(a))
+      d.xAxis && (d.xAxis.zoomEnabled && (d.group.attr(a), d.markerGroup && (d.markerGroup.attr(a), d.markerGroup.clip(b ? c.clipRect : null)), d.dataLabelsGroup && d.dataLabelsGroup.attr(a)))
     });
     c.clipRect.attr(b || c.clipBox)
   }, pinchTranslateDirection:function(a, b, c, d, e, f, g) {
     var h = this.chart, i = a ? "x" : "y", j = a ? "X" : "Y", k = "chart" + j, m = a ? "width" : "height", l = h["plot" + (a ? "Left" : "Top")], p, s, o = 1, n = h.inverted, w = h.bounds[a ? "h" : "v"], q = b.length === 1, t = b[0][k], r = c[0][k], v = !q && b[1][k], u = !q && c[1][k], x, c = function() {
-      !q && Q(t - v) > 20 && (o = Q(r - u) / Q(t - v));
+      !q && (Q(t - v) > 20 && (o = Q(r - u) / Q(t - v)));
       s = (l - r) / o + t;
       p = h["plot" + (a ? "Width" : "Height")] / o
     };
@@ -2486,7 +2486,7 @@
     d["translate" + j] = f * l + (r - f * t)
   }, pinch:function(a) {
     var b = this, c = b.chart, d = b.pinchDown, e = c.tooltip && c.tooltip.options.followTouchMove, f = a.touches, g = f.length, h = b.lastValidTouch, i = b.zoomHor || b.pinchHor, j = b.zoomVert || b.pinchVert, k = i || j, m = b.selectionMarker, l = {}, p = {};
-    a.type === "touchstart" && (e || k) && a.preventDefault();
+    a.type === "touchstart" && ((e || k) && a.preventDefault());
     La(f, function(a) {
       return b.normalize(a)
     });
@@ -2509,7 +2509,7 @@
         j && b.pinchTranslateDirection(!1, d, f, l, m, p, h);
         b.hasPinched = k;
         b.scaleGroups(l, p);
-        !k && e && g === 1 && this.runPointActions(b.normalize(a))
+        !k && (e && (g === 1 && this.runPointActions(b.normalize(a))))
       }
     }
   }, dragStart:function(a) {
@@ -2525,12 +2525,12 @@
     this.hasDragged = Math.sqrt(Math.pow(m - d, 2) + Math.pow(l - a, 2));
     if(this.hasDragged > 10) {
       k = b.isInsidePlot(m - g, l - h);
-      if(b.hasCartesianSeries && (this.zoomX || this.zoomY) && k && !this.selectionMarker) {
+      if(b.hasCartesianSeries && ((this.zoomX || this.zoomY) && (k && !this.selectionMarker))) {
         this.selectionMarker = b.renderer.rect(g, h, e ? 1 : i, f ? 1 : j, 0).attr({fill:c.selectionMarkerFill || "rgba(69,114,167,0.25)", zIndex:7}).add()
       }
-      this.selectionMarker && e && (e = d - m, this.selectionMarker.attr({width:Q(e), x:(e > 0 ? 0 : e) + m}));
-      this.selectionMarker && f && (e = a - l, this.selectionMarker.attr({height:Q(e), y:(e > 0 ? 0 : e) + l}));
-      k && !this.selectionMarker && c.panning && b.pan(d)
+      this.selectionMarker && (e && (e = d - m, this.selectionMarker.attr({width:Q(e), x:(e > 0 ? 0 : e) + m})));
+      this.selectionMarker && (f && (e = a - l, this.selectionMarker.attr({height:Q(e), y:(e > 0 ? 0 : e) + l})));
+      k && (!this.selectionMarker && (c.panning && b.pan(d)))
     }
   }, drop:function(a) {
     var b = this.chart, c = this.hasPinched;
@@ -2540,7 +2540,7 @@
         n(b.axes, function(a) {
           if(a.zoomEnabled) {
             var b = a.horiz, c = a.toValue(b ? f : g), b = a.toValue(b ? f + e.width : g + e.height);
-            !isNaN(c) && !isNaN(b) && (d[a.xOrY + "Axis"].push({axis:a, min:K(c, b), max:q(c, b)}), h = !0)
+            !isNaN(c) && (!isNaN(b) && (d[a.xOrY + "Axis"].push({axis:a, min:K(c, b), max:q(c, b)}), h = !0))
           }
         }), h && D(b, "selection", d, function(a) {
           b.zoom(v(a, c ? {animation:!1} : null))
@@ -2560,7 +2560,7 @@
     this.drop(a)
   }, onDocumentMouseMove:function(a) {
     var b = this.chart, c = this.chartPosition, d = b.hoverSeries, a = Qb(a);
-    c && d && d.isCartesian && !b.isInsidePlot(a.pageX - c.left - b.plotLeft, a.pageY - c.top - b.plotTop) && this.reset()
+    c && (d && (d.isCartesian && (!b.isInsidePlot(a.pageX - c.left - b.plotLeft, a.pageY - c.top - b.plotTop) && this.reset())))
   }, onContainerMouseLeave:function() {
     this.reset();
     this.chartPosition = null
@@ -2568,7 +2568,7 @@
     var b = this.chart, a = this.normalize(a);
     a.returnValue = !1;
     b.mouseIsDown === "mousedown" && this.drag(a);
-    b.isInsidePlot(a.chartX - b.plotLeft, a.chartY - b.plotTop) && !b.openMenu && this.runPointActions(a)
+    b.isInsidePlot(a.chartX - b.plotLeft, a.chartY - b.plotTop) && (!b.openMenu && this.runPointActions(a))
   }, inClass:function(a, b) {
     for(var c;a;) {
       if(c = A(a, "class")) {
@@ -2584,7 +2584,7 @@
     }
   }, onTrackerMouseOut:function(a) {
     var b = this.chart.hoverSeries;
-    if(b && !b.options.stickyTracking && !this.inClass(a.toElement || a.relatedTarget, "highcharts-tooltip")) {
+    if(b && (!b.options.stickyTracking && !this.inClass(a.toElement || a.relatedTarget, "highcharts-tooltip"))) {
       b.onMouseOut()
     }
   }, onContainerClick:function(a) {
@@ -2722,7 +2722,7 @@
     e = [];
     n(b.series, function(a) {
       var b = a.options;
-      b.showInLegend && !r(b.linkedTo) && (e = e.concat(a.legendItems || (b.legendType === "point" ? a.data : a)))
+      b.showInLegend && (!r(b.linkedTo) && (e = e.concat(a.legendItems || (b.legendType === "point" ? a.data : a))))
     });
     Ib(e, function(a, b) {
       return(a.options && a.options.legendIndex || 0) - (b.options && b.options.legendIndex || 0)
@@ -2828,7 +2828,7 @@
     f.firstRender()
   }, initSeries:function(a) {
     var b = this.options.chart;
-    (b = aa[a.type || b.type || b.defaultSeriesType]) || qa(17, !0);
+    (b = aa[a.type || (b.type || b.defaultSeriesType)]) || qa(17, !0);
     b = new b;
     b.init(this, a);
     return b
@@ -2848,7 +2848,7 @@
     o(c, !0) && this.redraw(d)
   }, isInsidePlot:function(a, b, c) {
     var d = c ? b : a, a = c ? a : b;
-    return d >= 0 && d <= this.plotWidth && a >= 0 && a <= this.plotHeight
+    return d >= 0 && (d <= this.plotWidth && (a >= 0 && a <= this.plotHeight))
   }, adjustTickAmounts:function() {
     this.options.chart.alignTicks !== !1 && n(this.axes, function(a) {
       a.adjustTickAmount()
@@ -2871,7 +2871,7 @@
       }
     }
     n(c, function(a) {
-      a.isDirty && a.options.legendType === "point" && (f = !0)
+      a.isDirty && (a.options.legendType === "point" && (f = !0))
     });
     if(f && e.options.enabled) {
       e.render(), this.isDirtyLegend = !1
@@ -2890,16 +2890,16 @@
             D(a, "afterSetExtremes", a.getExtremes())
           })
         }
-        if(a.isDirty || h || g) {
+        if(a.isDirty || (h || g)) {
           a.redraw(), h = !0
         }
       })
     }
     h && this.drawChartBox();
     n(c, function(a) {
-      a.isDirty && a.visible && (!a.isCartesian || a.xAxis) && a.redraw()
+      a.isDirty && (a.visible && ((!a.isCartesian || a.xAxis) && a.redraw()))
     });
-    d && d.reset && d.reset(!0);
+    d && (d.reset && d.reset(!0));
     k.draw();
     D(this, "redraw");
     m && this.cloneRenderTo(!0);
@@ -3002,7 +3002,7 @@
     (d = this.hoverPoints) && n(d, function(a) {
       a.setState()
     });
-    b.series.length && f > K(e.dataMin, e.min) && c < q(e.dataMax, e.max) && b.setExtremes(f, c, !0, !1, {trigger:"pan"});
+    b.series.length && (f > K(e.dataMin, e.min) && (c < q(e.dataMax, e.max) && b.setExtremes(f, c, !0, !1, {trigger:"pan"})));
     this.mouseDownX = a;
     L(this.container, {cursor:"move"})
   }, setTitle:function(a, b) {
@@ -3012,14 +3012,14 @@
     f = d.subtitle = x(d.subtitle, b), d = f;
     n([["title", a, e], ["subtitle", b, d]], function(a) {
       var b = a[0], d = c[b], e = a[1], a = a[2];
-      d && e && (c[b] = d = d.destroy());
-      a && a.text && !d && (c[b] = c.renderer.text(a.text, 0, 0, a.useHTML).attr({align:a.align, "class":"highcharts-" + b, zIndex:a.zIndex || 4}).css(a.style).add().align(a, !1, "spacingBox"))
+      d && (e && (c[b] = d = d.destroy()));
+      a && (a.text && (!d && (c[b] = c.renderer.text(a.text, 0, 0, a.useHTML).attr({align:a.align, "class":"highcharts-" + b, zIndex:a.zIndex || 4}).css(a.style).add().align(a, !1, "spacingBox"))))
     })
   }, getChartSize:function() {
     var a = this.options.chart, b = this.renderToClone || this.renderTo;
     this.containerWidth = gb(b, "width");
     this.containerHeight = gb(b, "height");
-    this.chartWidth = q(0, a.width || this.containerWidth || 600);
+    this.chartWidth = q(0, a.width || (this.containerWidth || 600));
     this.chartHeight = q(0, o(a.height, this.containerHeight > 19 ? this.containerHeight : 400))
   }, cloneRenderTo:function(a) {
     var b = this.renderToClone, c = this.container;
@@ -3033,7 +3033,7 @@
     }
     a || qa(13, !0);
     c = u(A(a, "data-highcharts-chart"));
-    !isNaN(c) && Ba[c] && Ba[c].destroy();
+    !isNaN(c) && (Ba[c] && Ba[c].destroy());
     A(a, "data-highcharts-chart", this.index);
     a.innerHTML = "";
     a.offsetWidth || this.cloneRenderTo();
@@ -3049,7 +3049,7 @@
     this.resetMargins();
     e = this.axisOffset;
     if((this.title || this.subtitle) && !r(this.optionsMarginTop)) {
-      if(m = q(this.title && !k.floating && !k.verticalAlign && k.y || 0, this.subtitle && !m.floating && !m.verticalAlign && m.y || 0)) {
+      if(m = q(this.title && (!k.floating && (!k.verticalAlign && k.y)) || 0, this.subtitle && (!m.floating && (!m.verticalAlign && m.y)) || 0)) {
         this.plotTop = q(this.plotTop, m + o(k.margin, 15) + b)
       }
     }
@@ -3089,7 +3089,7 @@
   }, initReflow:function() {
     function a(a) {
       var g = c.width || gb(d, "width"), h = c.height || gb(d, "height"), a = a ? a.target : O;
-      if(!b.hasUserSize && g && h && (a === O || a === z)) {
+      if(!b.hasUserSize && (g && (h && (a === O || a === z)))) {
         if(g !== b.containerWidth || h !== b.containerHeight) {
           clearTimeout(e), b.reflowTimeout = e = setTimeout(function() {
             if(b.container) {
@@ -3196,9 +3196,9 @@
     var a = this, b = a.options.chart, c, d = a.options.series, e, f;
     n(["inverted", "angular", "polar"], function(g) {
       c = aa[b.type || b.defaultSeriesType];
-      f = a[g] || b[g] || c && c.prototype[g];
+      f = a[g] || (b[g] || c && c.prototype[g]);
       for(e = d && d.length;!f && e--;) {
-        (c = aa[d[e].type]) && c.prototype[g] && (f = !0)
+        (c = aa[d[e].type]) && (c.prototype[g] && (f = !0))
       }
       a[g] = f
     })
@@ -3257,7 +3257,7 @@
     }
     n("title,subtitle,chartBackground,plotBackground,plotBGImage,plotBorder,seriesGroup,clipRect,credits,pointer,scroller,rangeSelector,legend,resetZoomButton,tooltip,renderer".split(","), function(b) {
       var c = a[b];
-      c && c.destroy && (a[b] = c.destroy())
+      c && (c.destroy && (a[b] = c.destroy()))
     });
     if(d) {
       d.innerHTML = "", ba(d), f && Ra(d)
@@ -3267,7 +3267,7 @@
     }
   }, isReadyToRender:function() {
     var a = this;
-    return!Z && O == O.top && z.readyState !== "complete" || $ && !O.canvg ? ($ ? Rb.push(function() {
+    return!Z && (O == O.top && z.readyState !== "complete") || $ && !O.canvg ? ($ ? Rb.push(function() {
       a.firstRender()
     }, a.options.global.canvasToolsURL) : z.attachEvent("onreadystatechange", function() {
       z.detachEvent("onreadystatechange", a.firstRender);
@@ -3380,7 +3380,7 @@
       e.onMouseOut()
     }
     this.firePointEvent("mouseOver");
-    d && (!d.shared || b.noSharedTooltip) && d.refresh(this, a);
+    d && ((!d.shared || b.noSharedTooltip) && d.refresh(this, a));
     this.setState("hover");
     c.hoverPoint = this
   }, onMouseOut:function() {
@@ -3430,10 +3430,10 @@
     })
   }, firePointEvent:function(a, b, c) {
     var d = this, e = this.series.options;
-    (e.point.events[a] || d.options && d.options.events && d.options.events[a]) && this.importEvents();
-    a === "click" && e.allowPointSelect && (c = function(a) {
-      d.select(null, a.ctrlKey || a.metaKey || a.shiftKey)
-    });
+    (e.point.events[a] || d.options && (d.options.events && d.options.events[a])) && this.importEvents();
+    a === "click" && (e.allowPointSelect && (c = function(a) {
+      d.select(null, a.ctrlKey || (a.metaKey || a.shiftKey))
+    }));
     D(this, a, b, c)
   }, importEvents:function() {
     if(!this.hasImportedEvents) {
@@ -3446,12 +3446,12 @@
     }
   }, setState:function(a) {
     var b = this.plotX, c = this.plotY, d = this.series, e = d.options.states, f = X[d.type].marker && d.options.marker, g = f && !f.enabled, h = f && f.states[a], i = h && h.enabled === !1, j = d.stateMarkerGraphic, k = this.marker || {}, m = d.chart, l = this.pointAttr, a = a || "";
-    if(!(a === this.state || this.selected && a !== "select" || e[a] && e[a].enabled === !1 || a && (i || g && !h.enabled))) {
+    if(!(a === this.state || (this.selected && a !== "select" || (e[a] && e[a].enabled === !1 || a && (i || g && !h.enabled))))) {
       if(this.graphic) {
-        e = f && this.graphic.symbolName && l[a].r, this.graphic.attr(x(l[a], e ? {x:b - e, y:c - e, width:2 * e, height:2 * e} : {}))
+        e = f && (this.graphic.symbolName && l[a].r), this.graphic.attr(x(l[a], e ? {x:b - e, y:c - e, width:2 * e, height:2 * e} : {}))
       }else {
         if(a && h) {
-          e = h.radius, k = k.symbol || d.symbol, j && j.currentSymbol !== k && (j = j.destroy()), j ? j.attr({x:b - e, y:c - e}) : (d.stateMarkerGraphic = j = m.renderer.symbol(k, b - e, c - e, 2 * e, 2 * e).attr(l[a]).add(d.markerGroup), j.currentSymbol = k)
+          e = h.radius, k = k.symbol || d.symbol, j && (j.currentSymbol !== k && (j = j.destroy())), j ? j.attr({x:b - e, y:c - e}) : (d.stateMarkerGraphic = j = m.renderer.symbol(k, b - e, c - e, 2 * e, 2 * e).attr(l[a]).add(d.markerGroup), j.currentSymbol = k)
         }
         if(j) {
           j[a && m.isInsidePlot(b, c) ? "show" : "hide"]()
@@ -3475,7 +3475,7 @@
     for(c in d) {
       J(this, c, d[c])
     }
-    if(d && d.click || b.point && b.point.events && b.point.events.click || b.allowPointSelect) {
+    if(d && d.click || (b.point && (b.point.events && b.point.events.click) || b.allowPointSelect)) {
       a.runTrackerClick = !0
     }
     this.getColor();
@@ -3503,7 +3503,7 @@
     a.isCartesian && n(["xAxis", "yAxis"], function(e) {
       n(c[e], function(c) {
         d = c.options;
-        if(b[e] === d.index || b[e] !== y && b[e] === d.id || b[e] === y && d.index === 0) {
+        if(b[e] === d.index || (b[e] !== y && b[e] === d.id || b[e] === y && d.index === 0)) {
           c.series.push(a), a[e] = c, c.isDirty = !0
         }
       });
@@ -3594,7 +3594,7 @@
     this.isDirtyData = this.isDirty = !0;
     b && i.redraw()
   }, setData:function(a, b) {
-    var c = this.points, d = this.options, e = this.chart, f = null, g = this.xAxis, h = g && g.categories && !g.categories.length ? [] : null, i;
+    var c = this.points, d = this.options, e = this.chart, f = null, g = this.xAxis, h = g && (g.categories && !g.categories.length) ? [] : null, i;
     this.xIncrement = null;
     this.pointRange = g && g.categories ? 1 : d.pointRange;
     this.colorCounter = 0;
@@ -3630,7 +3630,7 @@
         }
       }
     }
-    this.requireSorting && j.length > 1 && j[1] < j[0] && qa(15);
+    this.requireSorting && (j.length > 1 && (j[1] < j[0] && qa(15)));
     fa(k[0]) && qa(14, !0);
     this.data = [];
     this.options.data = a;
@@ -3639,7 +3639,7 @@
     this.zData = m;
     this.names = h;
     for(i = c && c.length || 0;i--;) {
-      c[i] && c[i].destroy && c[i].destroy()
+      c[i] && (c[i].destroy && c[i].destroy())
     }
     if(g) {
       g.minRange = g.userMinRange
@@ -3658,10 +3658,10 @@
     c.isRemoving = !1
   }, processData:function(a) {
     var b = this.xData, c = this.yData, d = b.length, e = 0, f = d, g, h, i = this.xAxis, j = this.options, k = j.cropThreshold, m = this.isCartesian;
-    if(m && !this.isDirty && !i.isDirty && !this.yAxis.isDirty && !a) {
+    if(m && (!this.isDirty && (!i.isDirty && (!this.yAxis.isDirty && !a)))) {
       return!1
     }
-    if(m && this.sorted && (!k || d > k || this.forceCrop)) {
+    if(m && (this.sorted && (!k || (d > k || this.forceCrop)))) {
       if(a = i.getExtremes(), i = a.min, k = a.max, b[d - 1] < i || b[0] > k) {
         b = [], c = []
       }else {
@@ -3707,7 +3707,7 @@
     }
     if(b && (g !== (c = b.length) || j)) {
       for(l = 0;l < c;l++) {
-        if(l === h && !j && (l += g), b[l]) {
+        if(l === h && (!j && (l += g)), b[l]) {
           b[l].destroyElements(), b[l].plotX = y
         }
       }
@@ -3734,8 +3734,8 @@
         j.y = p = null
       }
       j.plotX = c.translate(l, 0, 0, 0, 1, k);
-      if(b && this.visible && q && q[l]) {
-        n = q[l], q = n.total, n.cum = n = n.cum - p, p = n + p, i && (n = o(m, e.min)), e.isLog && n <= 0 && (n = null), b === "percent" && (n = q ? n * 100 / q : 0, p = q ? p * 100 / q : 0), j.percentage = q ? j.y * 100 / q : 0, j.total = j.stackTotal = q, j.stackY = p
+      if(b && (this.visible && (q && q[l]))) {
+        n = q[l], q = n.total, n.cum = n = n.cum - p, p = n + p, i && (n = o(m, e.min)), e.isLog && (n <= 0 && (n = null)), b === "percent" && (n = q ? n * 100 / q : 0, p = q ? p * 100 / q : 0), j.percentage = q ? j.y * 100 / q : 0, j.total = j.stackTotal = q, j.stackY = p
       }
       j.yBottom = r(n) ? e.translate(n, 0, 1, 0, 1) : null;
       h && (p = this.modifyValue(p, j));
@@ -3754,7 +3754,7 @@
       n(this.segments || this.points, function(a) {
         b = b.concat(a)
       });
-      c && c.reversed && (b = b.reverse());
+      c && (c.reversed && (b = b.reverse()));
       a = b.length;
       for(g = 0;g < a;g++) {
         f = b[g];
@@ -3779,7 +3779,7 @@
         c = d.day
       }
     }
-    f && c && Ea(a.key) && (b = b.replace("{point.key}", "{point.key:" + c + "}"));
+    f && (c && (Ea(a.key) && (b = b.replace("{point.key}", "{point.key:" + c + "}"))));
     return wa(b, {point:a, series:this})
   }, onMouseOver:function() {
     var a = this.chart, b = a.hoverSeries;
@@ -3794,8 +3794,8 @@
     if(d) {
       d.onMouseOut()
     }
-    this && a.events.mouseOut && D(this, "mouseOut");
-    c && !a.stickyTracking && (!c.shared || this.noSharedTooltip) && c.hide();
+    this && (a.events.mouseOut && D(this, "mouseOut"));
+    c && (!a.stickyTracking && ((!c.shared || this.noSharedTooltip) && c.hide()));
     this.setState();
     b.hoverSeries = null
   }, animate:function(a) {
@@ -3819,15 +3819,15 @@
     }
   }, afterAnimate:function() {
     var a = this.chart, b = this.sharedClipKey, c = this.group;
-    c && this.options.clip !== !1 && (c.clip(a.clipRect), this.markerGroup.clip());
+    c && (this.options.clip !== !1 && (c.clip(a.clipRect), this.markerGroup.clip()));
     setTimeout(function() {
-      b && a[b] && (a[b] = a[b].destroy(), a[b + "m"] = a[b + "m"].destroy())
+      b && (a[b] && (a[b] = a[b].destroy(), a[b + "m"] = a[b + "m"].destroy()))
     }, 100)
   }, drawPoints:function() {
     var a, b = this.points, c = this.chart, d, e, f, g, h, i, j, k, m = this.options.marker, l, n = this.markerGroup;
     if(m.enabled || this._hasPointMarkers) {
       for(f = b.length;f--;) {
-        if(g = b[f], d = g.plotX, e = g.plotY, k = g.graphic, i = g.marker || {}, a = m.enabled && i.enabled === y || i.enabled, l = c.isInsidePlot(t(d), e, c.inverted), a && e !== y && !isNaN(e) && g.y !== null) {
+        if(g = b[f], d = g.plotX, e = g.plotY, k = g.graphic, i = g.marker || {}, a = m.enabled && i.enabled === y || i.enabled, l = c.isInsidePlot(t(d), e, c.inverted), a && (e !== y && (!isNaN(e) && g.y !== null))) {
           if(a = g.pointAttr[g.selected ? "select" : ""], h = a.r, i = o(i.symbol, this.symbol), j = i.indexOf("url") === 0, k) {
             k.attr({visibility:l ? Z ? "inherit" : "visible" : "hidden"}).animate(v({x:d - h, y:e - h}, k.symbolName ? {width:2 * h, height:2 * h} : {}))
           }else {
@@ -3881,7 +3881,7 @@
         k[""] = a.convertAttribs(v({color:h.color}, c), j[""]);
         k.hover = a.convertAttribs(d.hover, j.hover, k[""]);
         k.select = a.convertAttribs(d.select, j.select, k[""]);
-        if(h.negative && b.marker && l) {
+        if(h.negative && (b.marker && l)) {
           k[""].fill = k.hover.fill = k.select.fill = a.convertAttribs({fillColor:l}).fill
         }
       }else {
@@ -3906,7 +3906,7 @@
     });
     a.legendItem && a.chart.legend.destroyItem(a);
     for(e = f.length;e--;) {
-      (g = f[e]) && g.destroy && g.destroy()
+      (g = f[e]) && (g.destroy && g.destroy())
     }
     a.points = null;
     clearTimeout(a.animationTimeout);
@@ -3967,7 +3967,7 @@
     var b = this, c = [], d = b.options.step;
     n(a, function(e, f) {
       var g = e.plotX, h = e.plotY, i;
-      b.getPointSpline ? c.push.apply(c, b.getPointSpline(a, e, f)) : (c.push(f ? "L" : "M"), d && f && (i = a[f - 1], d === "right" ? c.push(i.plotX, h) : d === "center" ? c.push((i.plotX + g) / 2, i.plotY, (i.plotX + g) / 2, h) : c.push(g, i.plotY)), c.push(e.plotX, e.plotY))
+      b.getPointSpline ? c.push.apply(c, b.getPointSpline(a, e, f)) : (c.push(f ? "L" : "M"), d && (f && (i = a[f - 1], d === "right" ? c.push(i.plotX, h) : d === "center" ? c.push((i.plotX + g) / 2, i.plotY, (i.plotX + g) / 2, h) : c.push(g, i.plotY))), c.push(e.plotX, e.plotY))
     });
     return c
   }, getGraphPath:function() {
@@ -4000,8 +4000,8 @@
     e = b.chartWidth;
     var j = b.chartHeight, k = q(e, j);
     if(d && (f || g)) {
-      d = ja(this.yAxis.len - this.yAxis.translate(a.threshold || 0)), a = {x:0, y:0, width:k, height:d}, k = {x:0, y:d, width:k, height:k - d}, b.inverted && c.isVML && (a = {x:b.plotWidth - d - b.plotLeft, y:0, width:e, height:j}, k = {x:d + b.plotLeft - e, y:0, width:b.plotLeft + d, height:e}), this.yAxis.reversed ? (b = k, e = a) : (b = a, e = k), h ? (h.animate(b), i.animate(e)) : (this.posClip = h = c.clipRect(b), this.negClip = i = c.clipRect(e), f && (f.clip(h), this.graphNeg.clip(i)), g && 
-      (g.clip(h), this.areaNeg.clip(i)))
+      d = ja(this.yAxis.len - this.yAxis.translate(a.threshold || 0)), a = {x:0, y:0, width:k, height:d}, k = {x:0, y:d, width:k, height:k - d}, b.inverted && (c.isVML && (a = {x:b.plotWidth - d - b.plotLeft, y:0, width:e, height:j}, k = {x:d + b.plotLeft - e, y:0, width:b.plotLeft + d, height:e})), this.yAxis.reversed ? (b = k, e = a) : (b = a, e = k), h ? (h.animate(b), i.animate(e)) : (this.posClip = h = c.clipRect(b), this.negClip = i = c.clipRect(e), f && (f.clip(h), this.graphNeg.clip(i)), 
+      g && (g.clip(h), this.areaNeg.clip(i)))
     }
   }, invertGroups:function() {
     function a() {
@@ -4022,7 +4022,7 @@
     f[g ? "attr" : "animate"]({translateX:i ? i.left : h.plotLeft, translateY:j ? j.top : h.plotTop, scaleX:1, scaleY:1});
     return f
   }, render:function() {
-    var a = this.chart, b, c = this.options, d = c.animation && !!this.animate && a.renderer.isSVG, e = this.visible ? "visible" : "hidden", f = c.zIndex, g = this.hasRendered, h = a.seriesGroup;
+    var a = this.chart, b, c = this.options, d = c.animation && (!!this.animate && a.renderer.isSVG), e = this.visible ? "visible" : "hidden", f = c.zIndex, g = this.hasRendered, h = a.seriesGroup;
     b = this.plotGroup("group", "series", e, f, h);
     this.markerGroup = this.plotGroup("markerGroup", "markers", e, f, h);
     d && this.animate(!0);
@@ -4033,7 +4033,7 @@
     this.drawPoints();
     this.options.enableMouseTracking !== !1 && this.drawTracker();
     a.inverted && this.invertGroups();
-    c.clip !== !1 && !this.sharedClipKey && !g && b.clip(a.clipRect);
+    c.clip !== !1 && (!this.sharedClipKey && (!g && b.clip(a.clipRect)));
     d ? this.animate() : g || this.afterAnimate();
     this.isDirty = this.isDirtyData = !1;
     this.hasRendered = !0
@@ -4047,7 +4047,7 @@
   }, setState:function(a) {
     var b = this.options, c = this.graph, d = this.graphNeg, e = b.states, b = b.lineWidth, a = a || "";
     if(this.state !== a) {
-      this.state = a, e[a] && e[a].enabled === !1 || (a && (b = e[a].lineWidth || b + 1), c && !c.dashstyle && (a = {"stroke-width":b}, c.attr(a), d && d.attr(a)))
+      this.state = a, e[a] && e[a].enabled === !1 || (a && (b = e[a].lineWidth || b + 1), c && (!c.dashstyle && (a = {"stroke-width":b}, c.attr(a), d && d.attr(a))))
     }
   }, setVisible:function(a, b) {
     var c = this, d = c.chart, e = c.legendItem, f, g = d.options.chart.ignoreHiddenSeries, h = c.visible;
@@ -4137,7 +4137,7 @@
     b.length === 3 && c.push("L", b[1], b[2]);
     if(e.stacking && !this.closedStacks) {
       for(d = a.length - 1;d >= 0;d--) {
-        d < a.length - 1 && e.step && c.push(a[d + 1].plotX, a[d].yBottom), c.push(a[d].plotX, a[d].yBottom)
+        d < a.length - 1 && (e.step && c.push(a[d + 1].plotX, a[d].yBottom)), c.push(a[d].plotX, a[d].yBottom)
       }
     }else {
       this.closeSegment(c, a)
@@ -4174,8 +4174,8 @@
       m = (k - i) * (j - d) / (j - h) + e - k;
       i += m;
       k += m;
-      i > a && i > e ? (i = q(a, e), k = 2 * e - i) : i < a && i < e && (i = K(a, e), k = 2 * e - i);
-      k > g && k > e ? (k = q(g, e), i = 2 * e - k) : k < g && k < e && (k = K(g, e), i = 2 * e - k);
+      i > a && i > e ? (i = q(a, e), k = 2 * e - i) : i < a && (i < e && (i = K(a, e), k = 2 * e - i));
+      k > g && k > e ? (k = q(g, e), i = 2 * e - k) : k < g && (k < e && (k = K(g, e), i = 2 * e - k));
       b.rightContX = j;
       b.rightContY = k
     }
@@ -4200,19 +4200,19 @@
     var a = this, b = a.chart, c = a.options, d = this.xAxis, e = d.reversed, f, g = {}, h, i = 0;
     c.grouping === !1 ? i = 1 : n(b.series, function(b) {
       var c = b.options;
-      if(b.type === a.type && b.visible && a.options.group === c.group) {
+      if(b.type === a.type && (b.visible && a.options.group === c.group)) {
         c.stacking ? (f = b.stackKey, g[f] === y && (g[f] = i++), h = g[f]) : c.grouping !== !1 && (h = i++), b.columnIndex = h
       }
     });
-    var b = K(Q(d.transA) * (d.ordinalSlope || c.pointRange || d.closestPointRange || 1), d.len), d = b * c.groupPadding, j = (b - 2 * d) / i, k = c.pointWidth, c = r(k) ? (j - k) / 2 : j * c.pointPadding, k = o(k, j - 2 * c);
+    var b = K(Q(d.transA) * (d.ordinalSlope || (c.pointRange || (d.closestPointRange || 1))), d.len), d = b * c.groupPadding, j = (b - 2 * d) / i, k = c.pointWidth, c = r(k) ? (j - k) / 2 : j * c.pointPadding, k = o(k, j - 2 * c);
     return a.columnMetrics = {width:k, offset:c + (d + ((e ? i - (a.columnIndex || 0) : a.columnIndex) || 0) * j - b / 2) * (e ? -1 : 1)}
   }, translate:function() {
     var a = this, b = a.chart, c = a.options, d = c.stacking, e = c.borderWidth, f = a.yAxis, g = a.translatedThreshold = f.getThreshold(c.threshold), h = o(c.minPointLength, 5), c = a.getColumnMetrics(), i = c.width, j = ja(q(i, 1 + 2 * e)), k = c.offset;
     R.prototype.translate.apply(a);
     n(a.points, function(c) {
       var l = K(q(-999, c.plotY), f.len + 999), n = o(c.yBottom, g), s = c.plotX + k, t = ja(K(l, n)), l = ja(q(l, n) - t), r = f.stacks[(c.y < 0 ? "-" : "") + a.stackKey];
-      d && a.visible && r && r[c.x] && r[c.x].setOffset(k, j);
-      Q(l) < h && h && (l = h, t = Q(t - g) > h ? n - h : g - (f.translate(c.y, 0, 1, 0, 1) <= g ? h : 0));
+      d && (a.visible && (r && (r[c.x] && r[c.x].setOffset(k, j))));
+      Q(l) < h && (h && (l = h, t = Q(t - g) > h ? n - h : g - (f.translate(c.y, 0, 1, 0, 1) <= g ? h : 0)));
       c.barX = s;
       c.pointWidth = i;
       c.shapeType = "rect";
@@ -4223,7 +4223,7 @@
     var a = this, b = a.options, c = a.chart.renderer, d;
     n(a.points, function(e) {
       var f = e.plotY, g = e.graphic;
-      if(f !== y && !isNaN(f) && e.y !== null) {
+      if(f !== y && (!isNaN(f) && e.y !== null)) {
         d = e.shapeArgs, g ? (Ta(g), g.animate(x(d))) : e.graphic = c[e.shapeType](d).attr(e.pointAttr[e.selected ? "select" : ""]).add(a.group).shadow(b.shadow, null, b.stacking && !b.borderRadius)
       }else {
         if(g) {
@@ -4412,7 +4412,7 @@
         a.dataLabel && y[a.half].push(a)
       });
       for(H = 0;!x && b[H];) {
-        x = b[H] && b[H].dataLabel && (b[H].dataLabel.getBBox().height || 21), H++
+        x = b[H] && (b[H].dataLabel && (b[H].dataLabel.getBBox().height || 21)), H++
       }
       for(H = 2;H--;) {
         var b = [], L = [], I = y[H], J = I.length, F;
@@ -4444,7 +4444,7 @@
             if(F < C && b[C] !== null) {
               F = C
             }else {
-              for(w < J - C + F && b[C] !== null && (F = w - J + C);b[F] === null;) {
+              for(w < J - C + F && (b[C] !== null && (F = w - J + C));b[F] === null;) {
                 F++
               }
             }
@@ -4477,17 +4477,17 @@
         }
       }
       if(pa(D) === 0 || this.verifyDataLabelOverflow(D)) {
-        this.placeDataLabels(), r && g && n(this.points, function(b) {
+        this.placeDataLabels(), r && (g && n(this.points, function(b) {
           i = b.connector;
           u = b.labelPos;
           if((v = b.dataLabel) && v._pos) {
-            E = v._attr.visibility, A = v.connX, z = v.connY, j = k ? ["M", A + (u[6] === "left" ? 5 : -5), z, "C", A, z, 2 * u[2] - u[4], 2 * u[3] - u[5], u[2], u[3], "L", u[4], u[5]] : ["M", A + (u[6] === "left" ? 5 : -5), z, "L", u[2], u[3], "L", u[4], u[5]], i ? (i.animate({d:j}), i.attr("visibility", E)) : b.connector = i = a.chart.renderer.path(j).attr({"stroke-width":g, stroke:e.connectorColor || b.color || "#606060", visibility:E}).add(a.group)
+            E = v._attr.visibility, A = v.connX, z = v.connY, j = k ? ["M", A + (u[6] === "left" ? 5 : -5), z, "C", A, z, 2 * u[2] - u[4], 2 * u[3] - u[5], u[2], u[3], "L", u[4], u[5]] : ["M", A + (u[6] === "left" ? 5 : -5), z, "L", u[2], u[3], "L", u[4], u[5]], i ? (i.animate({d:j}), i.attr("visibility", E)) : b.connector = i = a.chart.renderer.path(j).attr({"stroke-width":g, stroke:e.connectorColor || (b.color || "#606060"), visibility:E}).add(a.group)
           }else {
             if(i) {
               b.connector = i.destroy()
             }
           }
-        })
+        }))
       }
     }
   }, verifyDataLabelOverflow:function(a) {
@@ -4562,7 +4562,7 @@
       }
       p = setTimeout(n, $.fn[c].delay)
     }
-    /MSIE/.test(navigator.userAgent) && !d && function() {
+    /MSIE/.test(navigator.userAgent) && (!d && function() {
       var q, r;
       j.start = function() {
         if(!q) {
@@ -4596,7 +4596,7 @@
           q.location.hash = v
         }
       }
-    }();
+    }());
     return j
   }()
 })(jQuery, this);
@@ -4717,7 +4717,7 @@
   var n = this, t = n._, r = {}, e = Array.prototype, u = Object.prototype, i = Function.prototype, a = e.push, o = e.slice, c = e.concat, l = u.toString, f = u.hasOwnProperty, s = e.forEach, p = e.map, h = e.reduce, v = e.reduceRight, d = e.filter, g = e.every, m = e.some, y = e.indexOf, b = e.lastIndexOf, x = Array.isArray, _ = Object.keys, j = i.bind, w = function(n) {
     return n instanceof w ? n : this instanceof w ? (this._wrapped = n, void 0) : new w(n)
   };
-  "undefined" != typeof exports ? ("undefined" != typeof module && module.exports && (exports = module.exports = w), exports._ = w) : n._ = w, w.VERSION = "1.4.4";
+  "undefined" != typeof exports ? ("undefined" != typeof module && (module.exports && (exports = module.exports = w)), exports._ = w) : n._ = w, w.VERSION = "1.4.4";
   var A = w.each = w.forEach = function(n, t, e) {
     if(null != n) {
       if(s && n.forEach === s) {
@@ -4826,7 +4826,7 @@
   }, w.findWhere = function(n, t) {
     return w.where(n, t, !0)
   }, w.max = function(n, t, r) {
-    if(!t && w.isArray(n) && n[0] === +n[0] && 65535 > n.length) {
+    if(!t && (w.isArray(n) && (n[0] === +n[0] && 65535 > n.length))) {
       return Math.max.apply(Math, n)
     }
     if(!t && w.isEmpty(n)) {
@@ -4838,7 +4838,7 @@
       a >= e.computed && (e = {value:n, computed:a})
     }), e.value
   }, w.min = function(n, t, r) {
-    if(!t && w.isArray(n) && n[0] === +n[0] && 65535 > n.length) {
+    if(!t && (w.isArray(n) && (n[0] === +n[0] && 65535 > n.length))) {
       return Math.min.apply(Math, n)
     }
     if(!t && w.isEmpty(n)) {
@@ -5152,7 +5152,7 @@
       case "[object Boolean]":
         return+n == +t;
       case "[object RegExp]":
-        return n.source == t.source && n.global == t.global && n.multiline == t.multiline && n.ignoreCase == t.ignoreCase
+        return n.source == t.source && (n.global == t.global && (n.multiline == t.multiline && n.ignoreCase == t.ignoreCase))
     }
     if("object" != typeof n || "object" != typeof t) {
       return!1
@@ -5171,7 +5171,7 @@
       }
     }else {
       var c = n.constructor, f = t.constructor;
-      if(c !== f && !(w.isFunction(c) && c instanceof c && w.isFunction(f) && f instanceof f)) {
+      if(c !== f && !(w.isFunction(c) && (c instanceof c && (w.isFunction(f) && f instanceof f)))) {
         return!1
       }
       for(var s in n) {
@@ -5224,7 +5224,7 @@
   }, w.isNaN = function(n) {
     return w.isNumber(n) && n != +n
   }, w.isBoolean = function(n) {
-    return n === !0 || n === !1 || "[object Boolean]" == l.call(n)
+    return n === !0 || (n === !1 || "[object Boolean]" == l.call(n))
   }, w.isNull = function(n) {
     return null === n
   }, w.isUndefined = function(n) {
@@ -5304,7 +5304,7 @@
     var t = e[n];
     w.prototype[n] = function() {
       var r = this._wrapped;
-      return t.apply(r, arguments), "shift" != n && "splice" != n || 0 !== r.length || delete r[0], D.call(this, r)
+      return t.apply(r, arguments), "shift" != n && "splice" != n || (0 !== r.length || delete r[0]), D.call(this, r)
     }
   }), A(["concat", "join", "slice"], function(n) {
     var t = e[n];
@@ -5361,7 +5361,7 @@ XRegExp = XRegExp || function(n) {
     y = !0;
     try {
       while(o--) {
-        if(f = p[o], (f.scope === "all" || f.scope === i) && (!f.trigger || f.trigger.call(u)) && (f.pattern.lastIndex = t, e = r.exec.call(f.pattern, n), e && e.index === t)) {
+        if(f = p[o], (f.scope === "all" || f.scope === i) && ((!f.trigger || f.trigger.call(u)) && (f.pattern.lastIndex = t, e = r.exec.call(f.pattern, n), e && e.index === t))) {
           s = {output:f.handler.call(u, e, i), match:e};
           break
         }
@@ -5421,7 +5421,7 @@ XRegExp = XRegExp || function(n) {
     return i.replace.call(n, /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
   }, t.exec = function(n, t, i, u) {
     var e = o(t, "g" + (u && l ? "y" : ""), u === !1 ? "y" : ""), f;
-    return e.lastIndex = i = i || 0, f = r.exec.call(e, n), u && f && f.index !== i && (f = null), t.global && (t.lastIndex = f ? e.lastIndex : 0), f
+    return e.lastIndex = i = i || 0, f = r.exec.call(e, n), u && (f && (f.index !== i && (f = null))), t.global && (t.lastIndex = f ? e.lastIndex : 0), f
   }, t.forEach = function(n, i, r, u) {
     for(var e = 0, o = -1, f;f = t.exec(n, i, e);) {
       r.call(u, f, ++o, n, i), e = f.index + (f[0].length || 1)
@@ -5430,7 +5430,7 @@ XRegExp = XRegExp || function(n) {
   }, t.globalize = function(n) {
     return o(n, "g")
   }, t.install = function(n) {
-    n = d(n), !f.natives && n.natives && tt(!0), !f.extensibility && n.extensibility && b(!0)
+    n = d(n), !f.natives && (n.natives && tt(!0)), !f.extensibility && (n.extensibility && b(!0))
   }, t.isInstalled = function(n) {
     return!!f[n]
   }, t.isRegExp = function(n) {
@@ -5446,13 +5446,13 @@ XRegExp = XRegExp || function(n) {
     }([n], 0)
   }, t.replace = function(i, u, f, e) {
     var c = t.isRegExp(u), s = u, h;
-    return c ? (e === n && u.global && (e = "all"), s = o(u, e === "all" ? "g" : "", e === "all" ? "" : "g")) : e === "all" && (s = new RegExp(t.escape(String(u)), "g")), h = r.replace.call(String(i), s, f), c && u.global && (u.lastIndex = 0), h
+    return c ? (e === n && (u.global && (e = "all")), s = o(u, e === "all" ? "g" : "", e === "all" ? "" : "g")) : e === "all" && (s = new RegExp(t.escape(String(u)), "g")), h = r.replace.call(String(i), s, f), c && (u.global && (u.lastIndex = 0)), h
   }, t.split = function(n, t, i) {
     return r.split.call(n, t, i)
   }, t.test = function(n, i, r, u) {
     return!!t.exec(n, i, r, u)
   }, t.uninstall = function(n) {
-    n = d(n), f.natives && n.natives && tt(!1), f.extensibility && n.extensibility && b(!1)
+    n = d(n), f.natives && (n.natives && tt(!1)), f.extensibility && (n.extensibility && b(!1))
   }, t.union = function(n, i) {
     var l = /(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*]/g, o = 0, f, h, c = function(n, t, i) {
       var r = h[o - f];
@@ -5477,16 +5477,16 @@ XRegExp = XRegExp || function(n) {
   }, t.version = "2.0.0", r.exec = function(t) {
     var r, f, e, o, u;
     if(this.global || (o = this.lastIndex), r = i.exec.apply(this, arguments), r) {
-      if(!ft && r.length > 1 && a(r, "") > -1 && (e = new RegExp(this.source, i.replace.call(g(this), "g", "")), i.replace.call(String(t).slice(r.index), e, function() {
+      if(!ft && (r.length > 1 && (a(r, "") > -1 && (e = new RegExp(this.source, i.replace.call(g(this), "g", "")), i.replace.call(String(t).slice(r.index), e, function() {
         for(var t = 1;t < arguments.length - 2;++t) {
           arguments[t] === n && (r[t] = n)
         }
-      })), this.xregexp && this.xregexp.captureNames) {
+      })))), this.xregexp && this.xregexp.captureNames) {
         for(u = 1;u < r.length;++u) {
           f = this.xregexp.captureNames[u - 1], f && (r[f] = r[u])
         }
       }
-      this.global && !r[0].length && this.lastIndex > r.index && (this.lastIndex = r.index)
+      this.global && (!r[0].length && (this.lastIndex > r.index && (this.lastIndex = r.index)))
     }
     return this.global || (this.lastIndex = o), r
   }, r.test = function(n) {
@@ -5510,7 +5510,7 @@ XRegExp = XRegExp || function(n) {
           u[i] && (t[0][u[i]] = t[i + 1])
         }
       }
-      return e && n.global && (n.lastIndex = t[t.length - 2] + t[0].length), r.apply(null, t)
+      return e && (n.global && (n.lastIndex = t[t.length - 2] + t[0].length)), r.apply(null, t)
     }) : (h = String(this), f = i.replace.call(h, n, function() {
       var n = arguments;
       return i.replace.call(String(r), et, function(t, i, r) {
@@ -5551,7 +5551,7 @@ XRegExp = XRegExp || function(n) {
     }
     var e = String(this), h = r.lastIndex, f = [], o = 0, s;
     return u = (u === n ? -1 : u) >>> 0, t.forEach(e, r, function(n) {
-      n.index + n[0].length > o && (f.push(e.slice(o, n.index)), n.length > 1 && n.index < e.length && Array.prototype.push.apply(f, n.slice(1)), s = n[0].length, o = n.index + s)
+      n.index + n[0].length > o && (f.push(e.slice(o, n.index)), n.length > 1 && (n.index < e.length && Array.prototype.push.apply(f, n.slice(1))), s = n[0].length, o = n.index + s)
     }), o === e.length ? (!i.test.call(r, "") || s) && f.push("") : f.push(e.slice(o)), r.lastIndex = h, f.length > u ? f.slice(0, u) : f
   }, u = c.on, u(/\\([ABCE-RTUVXYZaeg-mopqyz]|c(?![A-Za-z])|u(?![\dA-Fa-f]{4})|x(?![\dA-Fa-f]{2}))/, function(n, t) {
     if(n[1] === "B" && t === e) {
@@ -5582,7 +5582,7 @@ XRegExp = XRegExp || function(n) {
     }
     return this.captureNames.push(n[1]), this.hasNamedCapture = !0, "("
   }), u(/\\(\d+)/, function(n, t) {
-    if(!(t === e && /^[1-9]/.test(n[1]) && +n[1] <= this.captureNames.length) && n[1] !== "0") {
+    if(!(t === e && (/^[1-9]/.test(n[1]) && +n[1] <= this.captureNames.length)) && n[1] !== "0") {
       throw new SyntaxError("can't use octal escape or backreference to undefined group " + n[0]);
     }
     return n[0]
@@ -6135,10 +6135,10 @@ jarvis.typeOf = function(value) {
       if(className == "[object Window]") {
         return"object"
       }
-      if(className == "[object Array]" || typeof value.length == "number" && typeof value.splice != "undefined" && typeof value.propertyIsEnumerable != "undefined" && !value.propertyIsEnumerable("splice")) {
+      if(className == "[object Array]" || typeof value.length == "number" && (typeof value.splice != "undefined" && (typeof value.propertyIsEnumerable != "undefined" && !value.propertyIsEnumerable("splice")))) {
         return"array"
       }
-      if(className == "[object Function]" || typeof value.call != "undefined" && typeof value.propertyIsEnumerable != "undefined" && !value.propertyIsEnumerable("call")) {
+      if(className == "[object Function]" || typeof value.call != "undefined" && (typeof value.propertyIsEnumerable != "undefined" && !value.propertyIsEnumerable("call"))) {
         return"function"
       }
     }else {
@@ -6201,7 +6201,7 @@ jarvis.isFunction = function(val) {
 };
 jarvis.isObject = function(val) {
   var type = jarvis.typeOf(val);
-  return type == "object" || type == "array" || type == "function"
+  return type == "object" || (type == "array" || type == "function")
 };
 Date.dateDiff = function(datepart, fromdate, todate) {
   datepart = datepart.toLowerCase();
@@ -6829,7 +6829,6 @@ jarvis.dataaccess.fetch = function(sender, endPoint, queryOptions, callback, tim
   }catch(e) {
     throw e;
   }
-  console.log(options);
   return oResult
 };
 jarvis.dataaccess.prepareAjax = function(sender, endPoint, queryOptions, callback) {
@@ -7467,7 +7466,7 @@ jarvis.tests.updateDisplay = function() {
       }else {
         $(".filters_txt_duration").html(jarvis.string.formatNumber((jarvis.tests.filters.end - jarvis.tests.filters.start) / 1E3, 0) + " sec.")
       }
-      if(jarvis.tests.base.end && jarvis.tests.deep.end && jarvis.tests.filters.end) {
+      if(jarvis.tests.base.end && (jarvis.tests.deep.end && jarvis.tests.filters.end)) {
         window.clearInterval(intervaltoken)
       }
     }, 1E3)
@@ -8770,7 +8769,7 @@ jarvis.objects.Dimensions.List = function(sender, options, callback) {
 };
 jarvis.objects.Dimensions.Get = function(sender, options, callback, force) {
   var result;
-  if(jarvis.objects.Dimensions.length > 0 && typeof callback !== "function" && !force) {
+  if(jarvis.objects.Dimensions.length > 0 && (typeof callback !== "function" && !force)) {
     result = _.find(jarvis.objects.Dimensions, function(item) {
       return item.id == options.id
     });
@@ -8879,7 +8878,7 @@ jarvis.objects.Metrics.List = function(sender, options, callback) {
 };
 jarvis.objects.Metrics.Get = function(sender, options, callback, force) {
   var result;
-  if(jarvis.objects.Metrics.length > 0 && typeof callback !== "function" && !force) {
+  if(jarvis.objects.Metrics.length > 0 && (typeof callback !== "function" && !force)) {
     result = _.find(jarvis.objects.Metrics, function(item) {
       return item.id == options.id
     });
@@ -9008,7 +9007,7 @@ jarvis.objects.Dashboards.List = function(sender, options, callback) {
 };
 jarvis.objects.Dashboards.Get = function(sender, options, callback, force) {
   var result;
-  if(jarvis.objects.Dashboards.length > 0 && typeof callback !== "function" && !force) {
+  if(jarvis.objects.Dashboards.length > 0 && (typeof callback !== "function" && !force)) {
     return _.find(jarvis.objects.Dashboards, function(item) {
       return item.id == options.id
     })
@@ -9083,7 +9082,7 @@ jarvis.require("jarvis.objects");
 jarvis.objects.Reports = [];
 jarvis.objects.Reports.List = function(sender, options, callback, force) {
   var result;
-  if(jarvis.objects.Reports.length > 0 && typeof callback !== "function" && !force) {
+  if(jarvis.objects.Reports.length > 0 && (typeof callback !== "function" && !force)) {
     return jarvis.objects.Reports
   }
   if(typeof callback == "function") {
@@ -9108,7 +9107,7 @@ jarvis.objects.Reports.List = function(sender, options, callback, force) {
 };
 jarvis.objects.Reports.Get = function(sender, options, callback, force) {
   var result;
-  if(jarvis.objects.Reports.length > 0 && typeof callback !== "function" && !force) {
+  if(jarvis.objects.Reports.length > 0 && (typeof callback !== "function" && !force)) {
     result = _.find(jarvis.objects.Reports, function(item) {
       return item.id == options.id
     });
@@ -9680,7 +9679,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.handleChange()
   });
   $($(".daterange.baserange .dateoption")[0]).keyup(function(e) {
-    if(new Date($(this).val()) == "Invalid Date" || new Date($(this).val()) > _this.base_todate || new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date) {
+    if(new Date($(this).val()) == "Invalid Date" || (new Date($(this).val()) > _this.base_todate || (new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date))) {
       $(this).addClass("invalid");
       $(".btn.apply").addClass("disabled");
       $(".btn.apply").prop("disabled", true)
@@ -9704,7 +9703,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.handleChange()
   });
   $($(".daterange.baserange .dateoption")[1]).keyup(function(e) {
-    if(new Date($(this).val()) == "Invalid Date" || new Date($(this).val()) < _this.base_fromdate || new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date) {
+    if(new Date($(this).val()) == "Invalid Date" || (new Date($(this).val()) < _this.base_fromdate || (new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date))) {
       $(this).addClass("invalid");
       $(".btn.apply").addClass("disabled");
       $(".btn.apply").prop("disabled", true)
@@ -9728,7 +9727,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.handleChange()
   });
   $($(".daterange.comparerange .dateoption")[0]).keyup(function(e) {
-    if(new Date($(this).val()) == "Invalid Date" || new Date($(this).val()) > _this.compare_todate || new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date) {
+    if(new Date($(this).val()) == "Invalid Date" || (new Date($(this).val()) > _this.compare_todate || (new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date))) {
       $(this).addClass("invalid");
       $(".btn.apply").addClass("disabled");
       $(".btn.apply").prop("disabled", true)
@@ -9752,7 +9751,7 @@ jarvis.visualisation.picker.DateBox.draw = function(Container) {
     _this.handleChange()
   });
   $($(".daterange.comparerange .dateoption")[1]).keyup(function(e) {
-    if(new Date($(this).val()) == "Invalid Date" || new Date($(this).val()) < _this.compare_fromdate || new Date($(this).val()) > _this.base_todate || new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date) {
+    if(new Date($(this).val()) == "Invalid Date" || (new Date($(this).val()) < _this.compare_fromdate || (new Date($(this).val()) > _this.base_todate || (new Date($(this).val()) > _this.max_date || new Date($(this).val()) < _this.min_date)))) {
       $(this).addClass("invalid");
       $(".btn.apply").addClass("disabled");
       $(".btn.apply").prop("disabled", true)
@@ -9895,7 +9894,7 @@ jarvis.visualisation.picker.DateBox.drawCell = function(date) {
     if(date == this.compare_todate) {
       return[true, "daycell compare inrange selected todate"]
     }
-    if(date >= this.base_fromdate && date <= this.base_todate && date >= this.compare_fromdate && date <= this.compare_todate) {
+    if(date >= this.base_fromdate && date <= this.base_todate && (date >= this.compare_fromdate && date <= this.compare_todate)) {
       return[true, "daycell basencompare inrange"]
     }
     if(date >= this.compare_fromdate && date <= this.compare_todate) {
@@ -10783,6 +10782,7 @@ jarvis.visualisation.picker.Dimensions.prototype.baseHTML = function(sender) {
       $list.append('<ul class="jcontainer"></ul>');
       var bDrawn = false;
       $.each(item, function(index, dimension) {
+        console.log(_this.options.exclude.indexOf(dimension.name), dimension.name);
         if(_this.options.exclude.indexOf(dimension.name) == -1) {
           var list = '<li class="node leaf ' + "level_" + "1" + '" data-dimensionname="' + dimension.name + '" data-dimensionid="' + dimension.id + '">';
           list += '<div class="box">';
@@ -14097,7 +14097,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.fetch = function(sender, cont
       var _queryOptions = {id:"total", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:""};
       queryOptions.push(_queryOptions)
     }
-    if(_this.DateBox.comparePeriod && jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "") {
+    if(_this.DateBox.comparePeriod && (jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "")) {
       _queryOptions = {id:"compare_total", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"date.date", metrics:metric.id, resolution:_this.Resolution, omitDate:false, filter:""};
       queryOptions.push(_queryOptions)
     }
@@ -14218,7 +14218,7 @@ jarvis.visualisation.dashboard.MetricBox.prototype.update = function(sender, met
         }
       }
     }
-    if(metric.suffix && metric.suffix != "" && metric.suffix != "seconds") {
+    if(metric.suffix && (metric.suffix != "" && metric.suffix != "seconds")) {
       totalsum += metric.suffix
     }
     if(metric.prefix && metric.prefix != "") {
@@ -15144,7 +15144,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
           break
         }
         var metricslist = item.metrics[0];
-        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+        if(item.metrics[1] && (item.metrics[1] != null && item.metrics[1] != "")) {
           metricslist += ", " + item.metrics[1]
         }
         _html = '<div class="jarvis dashboard timeline widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '" data-height="' + _this.options.widgets.timeline.height + '"></div>';
@@ -15199,7 +15199,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
           break
         }
         var metricslist = item.metrics[0];
-        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+        if(item.metrics[1] && (item.metrics[1] != null && item.metrics[1] != "")) {
           metricslist += ", " + item.metrics[1]
         }
         _html = '<div class="jarvis dashboard jtable widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + item.dimensions[0] + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '"></div>';
@@ -15221,7 +15221,7 @@ jarvis.visualisation.dashboard.Panel.prototype.drawWidgets = function(sender, co
           break
         }
         var metricslist = item.metrics[0];
-        if(item.metrics[1] && item.metrics[1] != null && item.metrics[1] != "") {
+        if(item.metrics[1] && (item.metrics[1] != null && item.metrics[1] != "")) {
           metricslist += ", " + item.metrics[1]
         }
         _html = '<div class="jarvis dashboard bartable widget" data-widgetid="' + item.id + '" data-title="' + item.title + '" data-dimensions="' + item.dimensions[0] + '" data-metrics="' + metricslist + '" data-period="' + item.period + '" data-limit="' + item.limit + '"></div>';
@@ -15282,7 +15282,7 @@ jarvis.visualisation.dashboard.Panel.prototype.hide = function(sender) {
   $(".jarvis.dashboard.panel").hide()
 };
 jarvis.visualisation.dashboard.Panel.prototype.get = function(sender, id) {
-  if(id && id == -1 && typeof id != "undefined" && id != "undefined") {
+  if(id && (id == -1 && (typeof id != "undefined" && id != "undefined"))) {
     return
   }
   var data = jarvis.objects.Dashboards.Get(null, {id:id});
@@ -16708,7 +16708,7 @@ jarvis.visualisation.report.Timeline.prototype.init = function(options, containe
   $(matchedContainers).each(function(index, item) {
     jarvis.debug.log("INFO", "jarvis.visualisation.report.Timeline", 6, "Applying to container ('" + this.id + "')");
     if(_this.primaryMetric == null || typeof _this.primaryMetric == "undefined") {
-      if(options != null && options.primaryMetric && typeof options.primaryMetric != "undefined") {
+      if(options != null && (options.primaryMetric && typeof options.primaryMetric != "undefined")) {
         _this.primaryMetric = options.primaryMetric;
         _this.metrics.push(options.primaryMetric);
         $(jarvis.objects.Metrics).each(function(i, o) {
@@ -16998,7 +16998,7 @@ jarvis.visualisation.report.Timeline.prototype.fetch = function(sender) {
       }
     });
     _this.Chart.redraw();
-    if(_this.Chart.xAxis[0] && _this.Chart.xAxis[0].series[0] && _this.Chart.xAxis[0].series[0].points) {
+    if(_this.Chart.xAxis[0] && (_this.Chart.xAxis[0].series[0] && _this.Chart.xAxis[0].series[0].points)) {
       if(_this.Chart.xAxis[0].series[0].points.length == 1) {
         _this.Chart.xAxis[0].update({startOnTick:true, endOnTick:true, showFirstLabel:true, showLastLabel:true, labels:{y:25}}, false)
       }
@@ -17027,7 +17027,7 @@ jarvis.visualisation.report.Timeline.prototype.plot = function(sender, options, 
   var _this = sender;
   $(series).each(function(index, item) {
     var visible = true;
-    if((item.ordinal == 0 || item.ordinal == 4 || item.ordinal == 1 || item.ordinal == 5) && !_this.options.showPrimary) {
+    if((item.ordinal == 0 || (item.ordinal == 4 || (item.ordinal == 1 || item.ordinal == 5))) && !_this.options.showPrimary) {
       visible = false
     }
     sender.Chart.addSeries({visible:visible, turboThreshold:item.data.length, name:item.name, color:item.color, lineWidth:item.lineWidth, type:item.type, shadow:item.shadow, yAxis:item.yaxis, data:item.data, ordinal:item.ordinal, ytype:item.ytype}, false)
@@ -17739,7 +17739,7 @@ jarvis.visualisation.report.MetricBox.prototype.fetch = function(sender, contain
       _queryOptions = {id:"compare_primary", startdate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:jarvis.visualisation.report.globalfilter};
       queryOptions.push(_queryOptions)
     }
-    if(!_this.DateBox.comparePeriod && jarvis.visualisation.report.globalfilter && jarvis.visualisation.report.globalfilter != "") {
+    if(!_this.DateBox.comparePeriod && (jarvis.visualisation.report.globalfilter && jarvis.visualisation.report.globalfilter != "")) {
       var _queryOptions = {id:"total", startdate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), enddate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), dimensions:"", metrics:metric.id, resolution:_this.Resolution, omitDate:true, filter:""};
       queryOptions.push(_queryOptions)
     }
@@ -18034,7 +18034,7 @@ jarvis.visualisation.report.OverviewMetricBox.prototype.fetch = function(sender,
       var _queryOptions = {id:"total", FromDate:jarvis.date.formatDate(startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:""};
       queryOptions.push(_queryOptions)
     }
-    if(_this.DateBox.comparePeriod && jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "") {
+    if(_this.DateBox.comparePeriod && (jarvis.visualisation.dashboard.globalfilter && jarvis.visualisation.dashboard.globalfilter != "")) {
       _queryOptions = {id:"compare_total", FromDate:jarvis.date.formatDate(compare_startdate, "yyyy-mm-dd hh:nn:ss.000"), ToDate:jarvis.date.formatDate(compare_enddate, "yyyy-mm-dd hh:nn:ss.999"), Dimensions:"", Metrics:metric.Name, Resolution:_this.Resolution, omitDate:false, Filter:""};
       queryOptions.push(_queryOptions)
     }
@@ -19385,7 +19385,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   var _datatoshow = _data;
   _datatoshow = _datatoshow.slice((_this.currentPage - 1) * _this.pageSize, _this.currentPage * _this.pageSize);
   _data_compare_toshow = _data_compare;
-  if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+  if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
     var _temp2 = [];
     var comparecolumnname = "";
     $(_datatoshow).each(function(pi, po) {
@@ -19431,7 +19431,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   }
   _totalsum_base = _totalsum;
   _totalsumcompare_base = _totalsumcompare;
-  if((_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") && _this.DateBox.comparePeriod) {
+  if((_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) && _this.DateBox.comparePeriod) {
     var _temp = [];
     var comparecolumnname = "";
     $(_data_compare_toshow).each(function(pi, po) {
@@ -19482,7 +19482,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
       }
     })
   }
-  if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+  if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
     _temp = [];
     $(_columns).each(function(ci, co) {
       if(co.aggregation && ci == _this.ColumnIndex) {
@@ -19505,7 +19505,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
   $(_columns).each(function(index, column) {
     if(column.aggregation) {
       var metric = column;
-      if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+      if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
         if(index == _columns.length - 2) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<span class="selectWrapper"><select class="input-medium metricpicker">' + "</select></span></th>");
           $(_allcolumns).each(function(ai, ao) {
@@ -19541,7 +19541,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         }
       }
       if($th) {
-        if(_this.mode != "pie" && _this.mode != "perf" && _this.mode != "compare" || _this.mode == "pie" && index < _columns.length - 1 || (_this.mode == "perf" || _this.mode == "compare") && index < _columns.length - 1) {
+        if(_this.mode != "pie" && (_this.mode != "perf" && _this.mode != "compare") || (_this.mode == "pie" && index < _columns.length - 1 || (_this.mode == "perf" || _this.mode == "compare") && index < _columns.length - 1)) {
           $th.off("click");
           $th.on("click", function(e) {
             e.stopPropagation();
@@ -19713,7 +19713,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
           jarvis.visualisation.report.setFilter(jarvis.visualisation.report.globalfilter + shortfilter)
         })
       }
-      if(_this.drilldownlevel == _this.levels.length - 1 && jarvis.visualisation.report.globalfilter != "" && (_datatoshow.length == 1 || _datatoshow.length > 1 && _datatoshow[0].FormattedValues[0] == _datatoshow[1].FormattedValues[0])) {
+      if(_this.drilldownlevel == _this.levels.length - 1 && (jarvis.visualisation.report.globalfilter != "" && (_datatoshow.length == 1 || _datatoshow.length > 1 && _datatoshow[0].FormattedValues[0] == _datatoshow[1].FormattedValues[0]))) {
         var $td = $tr.find(".dimensionvalue");
         var $link = $tr.find(".dimensionvalue .drilldownlink");
         $link.off("click");
@@ -19993,7 +19993,7 @@ jarvis.visualisation.report.Table.prototype.update = function(sender) {
         jarvis.debug.log("INFO", "jarvis.visualisation.report.Table", 6, "Drilldown to level " + _this.drilldownlevel + ": " + shortfilter);
         jarvis.visualisation.report.setFilter(jarvis.visualisation.report.globalfilter + shortfilter)
       });
-      if(_this.drilldownlevel == _this.levels.length - 1 && jarvis.visualisation.report.globalfilter != "" && (_datatoshow.length == 1 || _datatoshow.length > 1 && _datatoshow[0].FormattedValues[0] == _datatoshow[1].FormattedValues[0])) {
+      if(_this.drilldownlevel == _this.levels.length - 1 && (jarvis.visualisation.report.globalfilter != "" && (_datatoshow.length == 1 || _datatoshow.length > 1 && _datatoshow[0].FormattedValues[0] == _datatoshow[1].FormattedValues[0]))) {
         var $td = $tr.find(".dimensionvalue");
         var $link = $tr.find(".dimensionvalue .drilldownlink");
         $link.off("click");
@@ -20860,7 +20860,7 @@ jarvis.visualisation.report.TableEx.prototype.update = function(sender) {
   var _datatoshow = _data;
   _datatoshow = _datatoshow.slice((_this.currentPage - 1) * _this.pageSize, _this.currentPage * _this.pageSize);
   _data_compare_toshow = _data_compare;
-  if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+  if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
     var _temp2 = [];
     var comparecolumnname = "";
     $(_datatoshow).each(function(pi, po) {
@@ -20906,7 +20906,7 @@ jarvis.visualisation.report.TableEx.prototype.update = function(sender) {
   }
   _totalsum_base = _totalsum;
   _totalsumcompare_base = _totalsumcompare;
-  if((_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") && _this.DateBox.comparePeriod) {
+  if((_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) && _this.DateBox.comparePeriod) {
     var _temp = [];
     var comparecolumnname = "";
     $(_data_compare_toshow).each(function(pi, po) {
@@ -20957,7 +20957,7 @@ jarvis.visualisation.report.TableEx.prototype.update = function(sender) {
       }
     })
   }
-  if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+  if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
     _temp = [];
     $(_columns).each(function(ci, co) {
       if(co.AggregationType && ci == _this.ColumnIndex) {
@@ -20980,7 +20980,7 @@ jarvis.visualisation.report.TableEx.prototype.update = function(sender) {
   $(_columns).each(function(index, column) {
     if(column.AggregationType) {
       var metric = column;
-      if(_this.mode == "pie" || _this.mode == "perf" || _this.mode == "compare") {
+      if(_this.mode == "pie" || (_this.mode == "perf" || _this.mode == "compare")) {
         if(index == _columns.length - 2) {
           $th = $('<th class="metric" data-sortindex="' + sortIndex + '">' + '<select class="input-medium metricpicker">' + "</select></th>");
           $(_allcolumns).each(function(ai, ao) {
@@ -21016,7 +21016,7 @@ jarvis.visualisation.report.TableEx.prototype.update = function(sender) {
         }
       }
       if($th) {
-        if(_this.mode != "pie" && _this.mode != "perf" && _this.mode != "compare" || _this.mode == "pie" && index < _columns.length - 1 || (_this.mode == "perf" || _this.mode == "compare") && index < _columns.length - 1) {
+        if(_this.mode != "pie" && (_this.mode != "perf" && _this.mode != "compare") || (_this.mode == "pie" && index < _columns.length - 1 || (_this.mode == "perf" || _this.mode == "compare") && index < _columns.length - 1)) {
           $th.off("click");
           $th.on("click", function(e) {
             e.stopPropagation();
@@ -23426,7 +23426,7 @@ jarvis.visualisation.report.Editor.prototype.buildTab = function(sender, options
     $dimensions.find(".controls").append($dcontainer);
     $tab_general.append($dimensions)
   }else {
-    if(oTab.type == "table" || oTab.type == "overview" || oTab.type == "histogram") {
+    if(oTab.type == "table" || (oTab.type == "overview" || oTab.type == "histogram")) {
       var $metrics = $('<div class="control-group"></div>');
       $metrics.append('<label class="control-label" for="">Metrics</label>');
       $metrics.append('<div class="controls"></div>');
