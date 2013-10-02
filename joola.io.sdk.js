@@ -27,7 +27,7 @@ var joola = {};
 global.joola = joola;
 joola.config = nconf;
 if (!global.test)
-joola.logger = logger;
+  joola.logger = logger;
 else
   joola.logger = logger.falseLogger;
 //Configuration
@@ -35,8 +35,10 @@ var loadConfig = function (callback) {
   joola.config.argv()
     .env();
   nconf.use('http', { url: 'http://localhost:40001/conf/joola.io.sdk',
-    callback: function () {
-      joola.config.file({ file: joola.config.get('conf') || './config/joola.io.sdk.json' });
+    callback: function (err) {
+      if (err) {
+        joola.config.file({ file: joola.config.get('conf') || './config/joola.io.sdk.json' });
+      }
       //Configuration loaded
 
       //Validate config
@@ -50,19 +52,19 @@ var loadConfig = function (callback) {
 };
 
 var setupApplication = function (callback) {
+  var winstonStream = {
+    write: function (message, encoding) {
+      joola.logger.info(message);
+    }
+  };
+  app.use(express.logger((global.test ? function (req, res) {
+  } : {stream: winstonStream})));
+
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-
-  var winstonStream = {
-    write: function (message, encoding) {
-      logger.info(message);
-    }
-  };
-  app.use(express.logger((global.test ? function (req, res) {
-  } : {stream: winstonStream})));
 
   callback();
 };
