@@ -66,14 +66,6 @@ var setupApplication = function (callback) {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
 
-  var winstonStream = {
-    write: function (message, encoding) {
-      logger.info(message);
-    }
-  };
-  app.use(express.logger((global.test ? function (req, res) {
-  } : {stream: winstonStream})));
-
   callback();
 };
 
