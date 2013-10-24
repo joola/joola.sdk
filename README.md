@@ -88,3 +88,6 @@ Copyright (c) 2012-2013 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 [30]: http://github.com/itayw/nconf-http
 [31]: http://expressjs.com/
 [32]: https://joolatech.atlassian.net/wiki/display/JAD/Client+SDK
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/joola/joola.io.sdk/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
