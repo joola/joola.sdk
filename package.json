@@ -1,7 +1,7 @@
 {
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "3.1.0",
+  "version": "3.2.2",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -10,6 +10,7 @@
     "type": "git",
     "url": "https://github.com/joola/joola.io.sdk.git"
   },
+  "bugs": "https://joolatech.atlassian.net/browse/JARVIS",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -33,7 +34,8 @@
       "data-cover-never": "node_modules"
     },
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
-    "citest": "mocha --reporter xunit > test-reports.xml"
+    "citest": "mocha --reporter xunit > test-reports.xml",
+    "prepublish":"node ./build/dev-deploy.js"
   },
   "dependencies": {
     "joola.io.config": "3.x",
