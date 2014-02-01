@@ -35,26 +35,17 @@
     },
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
     "citest": "mocha --reporter xunit > test-reports.xml",
-    "prepublish":"node ./build/dev-deploy.js"
+    "prepublish": "node ./build/dev-deploy.js"
   },
   "dependencies": {
-    "joola.io.config": "3.x",
-    "joola.io.logger": "3.x",
-    "express": "3.x",
-    "node-controlport": "0.x",
-    "jade": "0.x",
-    "path": "*",
-    "ncp": "*",
-    "async": "*",
-    "underscore": "*",
-    "winston": "*",
-    "request": "*",
-    "process": "*",
-    "nconf": "*",
-    "nconf-http": "*"
+    "eventemitter2": "~0.4.13",
+    "async": "~0.2.10",
+    "socket.io-browserify": "~0.9.6",
+    "cloneextend": "0.0.3",
+    "event-stream": "~3.1.0",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "closurecompiler": "*",
     "underscore": "1.x",
     "mocha-lcov-reporter": "0.x",
     "coveralls": "2.x",
