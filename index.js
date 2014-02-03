@@ -95,15 +95,18 @@ joolaio.init = function (options, callback) {
       return null;
     };
   }
-  else if (joolaio.options.isBrowser) {
-    if (!joolaio.options.host) {
-
-      joolaio.options.host = location.protocol + '//' + location.host;
-    }
-    var io = require('socket.io-browserify');
-    joolaio.io = io;
-    joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+  //else if (joolaio.options.isBrowser) {
+  if (!joolaio.options.host && joolaio.options.isBrowser) {
+    joolaio.options.host = location.protocol + '//' + location.host;
   }
+
+  if (!joolaio.options.host)
+    throw new Error('joola.io host not specified');
+
+  var io = require('socket.io-browserify');
+  joolaio.io = io;
+  joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+  //}
   //joolaio.config.init(function (err) {
   // if (err)
   //   return callback(err);
@@ -134,7 +137,7 @@ joolaio.init = function (options, callback) {
   //});
 
   //global function hook (for debug)
-  if (joolaio.options.debug&& joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
+  if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
     [joolaio].forEach(function (obj) {
       joolaio.common.hookEvents(obj, function (event) {
       });
