@@ -22,7 +22,8 @@ var joolaio = global.joolaio = exports;
 //base options
 joolaio.options = {
   token: null,
-  //host: 'http://localhost:8080',
+  host: null,
+  logouturl: null,
   isBrowser: function isBrowser() {
     return typeof(window) !== 'undefined';
   }(),
