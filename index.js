@@ -22,7 +22,8 @@ var joolaio = global.joolaio = exports;
 //base options
 joolaio.options = {
   token: null,
-  //host: 'http://localhost:8080',
+  host: null,
+  logouturl: null,
   isBrowser: function isBrowser() {
     return typeof(window) !== 'undefined';
   }(),
@@ -134,7 +135,7 @@ joolaio.init = function (options, callback) {
   //});
 
   //global function hook (for debug)
-  if (joolaio.options.debug&& joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
+  if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
     [joolaio].forEach(function (obj) {
       joolaio.common.hookEvents(obj, function (event) {
       });
