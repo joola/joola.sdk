@@ -29,7 +29,7 @@ joolaio.options = {
   }(),
   maxRequests: 1000,
   debug: {
-    enabled: false,
+    enabled: true,
     events: {
       enabled: false,
       trace: false
@@ -123,6 +123,19 @@ joolaio.init = function (options, callback) {
 
         joolaio.USER = user;
         joolaio.TOKEN = joolaio._token;
+        joolaio.events.emit('core.init.finish');
+        if (callback)
+          return callback(null, joolaio);
+
+      });
+    }
+    else if (joolaio.options.APIToken){
+      joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
+        if (err)
+          return callback(err);
+
+        joolaio.USER = user;
+
         joolaio.events.emit('core.init.finish');
         if (callback)
           return callback(null, joolaio);
