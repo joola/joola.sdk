@@ -9,13 +9,6 @@
  **/
 
 
-var
-  async = require('async'),
-  path = require('path'),
-  EventEmitter2 = require('eventemitter2').EventEmitter2;
-
-this._id = 'core';
-
 //THE OBJECT
 var joolaio = global.joolaio = exports;
 
@@ -42,14 +35,12 @@ joolaio.options = {
 
 //libraries
 joolaio.globals = require('./lib/common/globals');
-//joolaio.config = require('./common/config');
 joolaio.logger = require('./lib/common/logger');
 joolaio.dispatch = require('./lib/common/dispatch');
 joolaio.common = require('./lib/common/index');
 joolaio.events = require('./lib/common/events');
 joolaio.api = require('./lib/common/api');
 joolaio.state = {};
-//joolaio.stats = require('./common/stats');
 joolaio.viz = require('./lib/viz/index');
 
 joolaio.VERSION = require('./package.json').version;
@@ -72,97 +63,132 @@ require('./lib/common/globals');
 //init procedure
 joolaio.init = function (options, callback) {
   joolaio.options = joolaio.common.extend(joolaio.options, options);
+  joolaio.options.isBrowser = function isBrowser() {
+    return typeof(window) !== 'undefined';
+  }();
 
-  if (options.token) {
-    joolaio._token = options.token;
-  }
-  else {
-    if (typeof location !== 'undefined') {
-      var qs = require('querystring');
-      var parts = qs.parse(location.search.substring(1, location.search.length));
-      if (parts.token)
-        joolaio._token = parts.token;
+  function browser3rd(callback) {
+    if (joolaio.options.isBrowser) {
+      var expected = 0;
+
+      function done() {
+        expected--;
+        if (expected == 0)
+          return callback(null);
+      }
+
+      if (typeof (jQuery) === 'undefined') {
+        var script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+          //jQuery.noConflict(true);
+          done();
+        };
+        script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
+        document.head.appendChild(script);
+      }
+
+      //css
+      var css = document.createElement('link');
+      expected++;
+      css.onload = function () {
+        //jQuery.noConflict(true);
+        done();
+      };
+      css.rel = 'stylesheet';
+      css.href = '/joola.io.css';
+      document.head.appendChild(css);
+
+      if (expected === 0)
+        return done();
     }
-  }
-  joolaio.events.emit('core.init.start');
-  joolaio.logger.info('Starting joola.io client SDK, version ' + joolaio.VERSION);
-
-  //jQuery bypass for non-browser execution
-  if (!joolaio.options.isBrowser && typeof $ !== 'undefined') {
-    $ = function () {
-      return null;
-    };
-    $.prototype.fn = function () {
-      return null;
-    };
-  }
-  //else if (joolaio.options.isBrowser) {
-  if (!joolaio.options.host && joolaio.options.isBrowser) {
-    joolaio.options.host = location.protocol + '//' + location.host;
+    else
+      return done();
   }
 
-  if (!joolaio.options.host)
-    throw new Error('joola.io host not specified');
-
-  var io = require('socket.io-browserify');
-  joolaio.io = io;
-  joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
-  //}
-  //joolaio.config.init(function (err) {
-  // if (err)
-  //   return callback(err);
-
-  joolaio.dispatch.buildstub(function (err) {
-    if (err)
-      return callback(err);
-
-    if (joolaio.options.token) {
-      joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
-        if (err)
-          return callback(err);
-
-        joolaio.USER = user;
-        joolaio.TOKEN = joolaio._token;
-        joolaio.events.emit('core.init.finish');
-        if (callback)
-          return callback(null, joolaio);
-
-      });
-    }
-    else if (joolaio.options.APIToken){
-      joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
-        if (err)
-          return callback(err);
-
-        joolaio.USER = user;
-
-        joolaio.events.emit('core.init.finish');
-        if (callback)
-          return callback(null, joolaio);
-
-      });
+  browser3rd(function () {
+    if (options.token) {
+      joolaio._token = options.token;
     }
     else {
-      joolaio.events.emit('core.init.finish');
-      if (typeof callback === 'function')
-        return callback(null, joolaio);
+      if (typeof location !== 'undefined') {
+        var qs = require('querystring');
+        var parts = qs.parse(location.search.substring(1, location.search.length));
+        if (parts.token)
+          joolaio._token = parts.token;
+      }
     }
-  });
-  //});
+    joolaio.events.emit('core.init.start');
+    joolaio.logger.info('Starting joola.io client SDK, version ' + joolaio.VERSION);
 
-  //global function hook (for debug)
-  if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
-    [joolaio].forEach(function (obj) {
-      joolaio.common.hookEvents(obj, function (event) {
+    //else if (joolaio.options.isBrowser) {
+    if (!joolaio.options.host && joolaio.options.isBrowser) {
+      joolaio.options.host = location.protocol + '//' + location.host;
+    }
+
+    if (!joolaio.options.host)
+      throw new Error('joola.io host not specified');
+
+    var io = require('socket.io-browserify');
+    joolaio.io = io;
+    joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+    //}
+    //joolaio.config.init(function (err) {
+    // if (err)
+    //   return callback(err);
+
+    joolaio.dispatch.buildstub(function (err) {
+      if (err)
+        return callback(err);
+
+      if (joolaio.options.token) {
+        joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
+          if (err)
+            return callback(err);
+
+          joolaio.USER = user;
+          joolaio.TOKEN = joolaio._token;
+          joolaio.events.emit('core.init.finish');
+          if (callback)
+            return callback(null, joolaio);
+
+        });
+      }
+      else if (joolaio.options.APIToken) {
+        joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
+          if (err)
+            return callback(err);
+
+          joolaio.USER = user;
+
+          joolaio.events.emit('core.init.finish');
+          if (callback)
+            return callback(null, joolaio);
+
+        });
+      }
+      else {
+        joolaio.events.emit('core.init.finish');
+        if (typeof callback === 'function')
+          return callback(null, joolaio);
+      }
+    });
+    //});
+
+    //global function hook (for debug)
+    if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
+      [joolaio].forEach(function (obj) {
+        joolaio.common.hookEvents(obj, function (event) {
+        });
       });
-    });
 
-  //global event catcher (for debug)
-  if (joolaio.options.debug.enabled && joolaio.options.debug.events)
-    joolaio.events.onAny(function () {
-      if (joolaio.options.debug.events.enabled)
-        joolaio.logger.debug('Event raised: ' + this.event);
-      if (joolaio.options.debug.events.enabled && joolaio.options.debug.events.trace)
-        console.trace();
-    });
+    //global event catcher (for debug)
+    if (joolaio.options.debug.enabled && joolaio.options.debug.events)
+      joolaio.events.onAny(function () {
+        if (joolaio.options.debug.events.enabled)
+          joolaio.logger.debug('Event raised: ' + this.event);
+        if (joolaio.options.debug.events.enabled && joolaio.options.debug.events.trace)
+          console.trace();
+      });
+  });
 };
