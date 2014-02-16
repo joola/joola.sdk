@@ -82,6 +82,16 @@ joolaio.init = function (options, callback) {
         expected++;
         script.onload = function () {
           //jQuery.noConflict(true);
+
+          script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+            //jQuery.noConflict(true);
+            done();
+          };
+          script.src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+          document.head.appendChild(script);
+         
           done();
         };
         script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
