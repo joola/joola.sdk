@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -204,7 +204,7 @@ joolaio.init = function (options, callback) {
   });
 };
 
-},{"./lib/common/api":4,"./lib/common/dispatch":5,"./lib/common/events":6,"./lib/common/globals":7,"./lib/common/index":8,"./lib/common/logger":9,"./lib/viz/index":20,"./package.json":33,"__browserify_process":48,"querystring":56,"socket.io-browserify":31}],2:[function(require,module,exports){
+},{"./lib/common/api":4,"./lib/common/dispatch":5,"./lib/common/events":6,"./lib/common/globals":7,"./lib/common/index":8,"./lib/common/logger":9,"./lib/viz/index":20,"./package.json":33,"__browserify_process":48,"querystring":55,"socket.io-browserify":31}],2:[function(require,module,exports){
 /*
  Highcharts JS v3.0.2 (2013-06-05)
 
@@ -1223,7 +1223,7 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
-},{"http":42,"https":46,"querystring":56,"url":65}],5:[function(require,module,exports){
+},{"http":42,"https":46,"querystring":55,"url":64}],5:[function(require,module,exports){
 /**
  *  joola.io
  *
@@ -1325,7 +1325,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":21,"url":65}],6:[function(require,module,exports){
+},{"cloneextend":21,"url":64}],6:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1449,7 +1449,7 @@ global.nodeState = function () {
 
   return result;
 };
-},{"__browserify_process":48,"cluster":34,"os":52}],8:[function(require,module,exports){
+},{"__browserify_process":48,"cluster":34,"os":51}],8:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1654,7 +1654,7 @@ common.typeof = function (obj) {
   }
   return typeof(obj);
 };
-},{"./modifiers":10,"cloneextend":21,"crypto":36,"event-stream":22,"util":67}],9:[function(require,module,exports){
+},{"./modifiers":10,"cloneextend":21,"crypto":36,"event-stream":22,"util":66}],9:[function(require,module,exports){
 var process=require("__browserify_process");/**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1889,6 +1889,123 @@ JSON.stringify = function (obj) {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+var _events = new EventEmitter2({wildcard: true, newListener: true});
+
+var Canvas = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('canvas.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
+  for (var x in _events) {
+    this[x] = _events[x];
+    this._super[x] = _events[x];
+  }
+
+  var self = this;
+
+  this._id = '_canvas';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    container: null,
+    $container: null,
+    visualizations: {},
+    state: {}
+  };
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.draw = function (options, callback) {
+    var self = this;
+    if (typeof callback === 'function')
+      return callback(null, self);
+  };
+
+  this.addVisualization = function (viz) {
+    this.options.visualizations[viz.uuid] = viz;
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, [
+        {'type': 'canvas'},
+        {'uuid': self.uuid}
+      ], function (err) {
+        if (err)
+          return callback(err);
+
+        joolaio.viz.onscreen.push(self);
+        joolaio.events.emit('canvas.init.finish', self);
+        if (typeof callback === 'function') {
+          return callback(null, self);
+        }
+      });
+    });
+  }
+  catch (err) {
+    return self.onError(err, callback);
+  }
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Canvas = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.Canvas(options, function (err, canvas) {
+          if (err)
+            throw new Error('Failed to initialize canvas.', err);
+          canvas.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+},{"./_proto":18,"eventemitter2":30}],12:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
 
 var Geo = module.exports = function (options, callback) {
   if (!callback)
@@ -2017,7 +2134,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":17}],12:[function(require,module,exports){
+},{"./_proto":18}],13:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2047,6 +2164,7 @@ var Metric = module.exports = function (options, callback) {
   this._id = '_metric';
   this.uuid = joolaio.common.uuid();
   this.options = {
+    canvas: null,
     legend: true,
     container: null,
     $container: null,
@@ -2125,11 +2243,30 @@ var Metric = module.exports = function (options, callback) {
 
         joolaio.viz.onscreen.push(self);
 
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+          elem = self.options.$container.parentsUntil('[jio-type="canvas"]');
+          if (elem.length > 0) {
+            self.options.canvas = $($(elem[0]).parent()).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+          self.options.canvas.on('datechange', function (e) {
+            console.log('metric', 'datechange', e);
+          });
+        }
+
         joolaio.events.emit('metric.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
     });
+
   }
   catch (err) {
     callback(err);
@@ -2161,7 +2298,6 @@ joolaio.events.on('core.init.finish', function () {
         var found = false;
         joolaio.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
-            console.log('found existing viz');
             found = true;
             result = viz;
           }
@@ -2190,7 +2326,7 @@ joolaio.events.on('core.init.finish', function () {
     });
   }
 });
-},{"./_proto":17,"cloneextend":21}],13:[function(require,module,exports){
+},{"./_proto":18,"cloneextend":21}],14:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2463,7 +2599,7 @@ if (typeof (jQuery) != 'undefined') {
   };
 }
 });
-},{"./_proto":17,"underscore":32}],14:[function(require,module,exports){
+},{"./_proto":18,"underscore":32}],15:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2649,7 +2785,7 @@ if (typeof (jQuery) != 'undefined') {
   };
 }
 });
-},{"./_proto":17,"underscore":32}],15:[function(require,module,exports){
+},{"./_proto":18,"underscore":32}],16:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2892,7 +3028,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":17,"underscore":32}],16:[function(require,module,exports){
+},{"./_proto":18,"underscore":32}],17:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3085,7 +3221,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":17}],17:[function(require,module,exports){
+},{"./_proto":18}],18:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3248,7 +3384,7 @@ proto.onError = function (err, callback) {
 proto.find = function (obj) {
 
 };
-},{"cloneextend":21}],18:[function(require,module,exports){
+},{"cloneextend":21}],19:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3671,9 +3807,7 @@ var DatePicker = module.exports = function (options, callback) {
         $('.btn.apply').removeClass('disabled');
         $('.btn.apply').prop('disabled', false);
         self.base_fromdate = new Date($(this).val());
-
       }
-
     });
 
 
@@ -3816,8 +3950,6 @@ var DatePicker = module.exports = function (options, callback) {
           break;
         default:
           break;
-
-
       }
       var rangelength = Date.dateDiff('d', self.base_fromdate, self.base_todate);
       self.compare_todate = self.addDays(self.base_fromdate, -1);
@@ -3888,8 +4020,6 @@ var DatePicker = module.exports = function (options, callback) {
 
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
-
-
   };
 
   this.formatDate = function (date) {
@@ -4124,6 +4254,9 @@ var DatePicker = module.exports = function (options, callback) {
 
       self.handleChange();
     });
+
+    self.options.canvas.emit('datechanging', self);
+    $(self).trigger('datechanging', self);
   };
 
   //here we go
@@ -4142,6 +4275,22 @@ var DatePicker = module.exports = function (options, callback) {
           return callback(err);
 
         joolaio.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+          elem = self.options.$container.parentsUntil('[jio-type="canvas"]');
+          if (elem.length > 0) {
+            self.options.canvas = $($(elem[0]).parent()).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+
+        }
 
         joolaio.events.emit('datepicker.init.finish', self);
         if (typeof callback === 'function')
@@ -4186,9 +4335,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":17,"underscore":32}],19:[function(require,module,exports){
-
-},{}],20:[function(require,module,exports){
+},{"./_proto":18,"underscore":32}],20:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4207,6 +4354,7 @@ viz._id = 'viz';
 viz.DatePicker = require('./datepicker');
 
 //panels
+viz.Canvas = require('./Canvas');
 
 //charts
 viz.Sparkline = require('./Sparkline');
@@ -4223,8 +4371,7 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-require('./general');
-},{"./Geo":11,"./Metric":12,"./MiniTable":13,"./Pie":14,"./PunchCard":15,"./Sparkline":16,"./datepicker":18,"./general":19}],21:[function(require,module,exports){
+},{"./Canvas":11,"./Geo":12,"./Metric":13,"./MiniTable":14,"./Pie":15,"./PunchCard":16,"./Sparkline":17,"./datepicker":19}],21:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -4779,7 +4926,7 @@ es.pipeable = function () {
   throw new Error('[EVENT-STREAM] es.pipeable is deprecated')
 }
 
-},{"__browserify_process":48,"buffer":49,"duplexer":23,"from":24,"map-stream":25,"pause-stream":26,"split":27,"stream":58,"stream-combiner":28,"through":29}],23:[function(require,module,exports){
+},{"__browserify_process":48,"buffer":49,"duplexer":23,"from":24,"map-stream":25,"pause-stream":26,"split":27,"stream":57,"stream-combiner":28,"through":29}],23:[function(require,module,exports){
 var Stream = require("stream")
 var writeMethods = ["write", "end", "destroy"]
 var readMethods = ["resume", "pause"]
@@ -4868,7 +5015,7 @@ function duplex(writer, reader) {
     }
 }
 
-},{"stream":58}],24:[function(require,module,exports){
+},{"stream":57}],24:[function(require,module,exports){
 var process=require("__browserify_process");
 'use strict';
 
@@ -4938,7 +5085,7 @@ function from (source) {
   return s
 }
 
-},{"__browserify_process":48,"stream":58}],25:[function(require,module,exports){
+},{"__browserify_process":48,"stream":57}],25:[function(require,module,exports){
 var process=require("__browserify_process");//filter will reemit the data if cb(err,pass) pass is truthy
 
 // reduce is more tricky
@@ -5085,7 +5232,7 @@ module.exports = function (mapper, opts) {
 
 
 
-},{"__browserify_process":48,"stream":58}],26:[function(require,module,exports){
+},{"__browserify_process":48,"stream":57}],26:[function(require,module,exports){
 //through@2 handles this by default!
 module.exports = require('through')
 
@@ -5151,7 +5298,7 @@ function split (matcher, mapper) {
 }
 
 
-},{"string_decoder":64,"through":29}],28:[function(require,module,exports){
+},{"string_decoder":63,"through":29}],28:[function(require,module,exports){
 var duplexer = require('duplexer')
 
 module.exports = function () {
@@ -5302,7 +5449,7 @@ function through (write, end, opts) {
 }
 
 
-},{"__browserify_process":48,"stream":58}],30:[function(require,module,exports){
+},{"__browserify_process":48,"stream":57}],30:[function(require,module,exports){
 var process=require("__browserify_process");;!function(exports, undefined) {
 
   var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
@@ -10950,7 +11097,7 @@ module.exports={
 }
 
 },{}],34:[function(require,module,exports){
-module.exports=require(19)
+
 },{}],35:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
@@ -11470,78 +11617,49 @@ module.exports = function sha256(buf) {
 };
 
 },{"./helpers":35}],41:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
+var process=require("__browserify_process");if (!process.EventEmitter) process.EventEmitter = function () {};
+
+var EventEmitter = exports.EventEmitter = process.EventEmitter;
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+
+// By default EventEmitters will print a warning if more than
+// 10 listeners are added to it. This is a useful default which
+// helps finding memory leaks.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
 // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
+var defaultMaxListeners = 10;
 EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
+  if (!this._events) this._events = {};
+  this._events.maxListeners = n;
 };
 
+
 EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
   // If there is no 'error' event listener then throw.
   if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
       } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
+        throw new Error("Uncaught, unspecified 'error' event.");
       }
       return false;
     }
   }
 
-  handler = this._events[type];
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
 
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
+  if (typeof handler == 'function') {
     switch (arguments.length) {
       // fast cases
       case 1:
@@ -11555,70 +11673,67 @@ EventEmitter.prototype.emit = function(type) {
         break;
       // slower
       default:
-        len = arguments.length;
-        args = new Array(len - 1);
-        for (i = 1; i < len; i++)
-          args[i - 1] = arguments[i];
+        var args = Array.prototype.slice.call(arguments, 1);
         handler.apply(this, args);
     }
-  } else if (isObject(handler)) {
-    len = arguments.length;
-    args = new Array(len - 1);
-    for (i = 1; i < len; i++)
-      args[i - 1] = arguments[i];
+    return true;
 
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
       listeners[i].apply(this, args);
-  }
+    }
+    return true;
 
-  return true;
+  } else {
+    return false;
+  }
 };
 
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
 EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
 
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
+  if (!this._events) this._events = {};
 
-  if (!this._events)
-    this._events = {};
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
 
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
+  if (!this._events[type]) {
     // Optimize the case of one listener. Don't need the extra array object.
     this._events[type] = listener;
-  else if (isObject(this._events[type]))
+  } else if (isArray(this._events[type])) {
+
+    // Check for listener leak
+    if (!this._events[type].warned) {
+      var m;
+      if (this._events.maxListeners !== undefined) {
+        m = this._events.maxListeners;
+      } else {
+        m = defaultMaxListeners;
+      }
+
+      if (m && m > 0 && this._events[type].length > m) {
+        this._events[type].warned = true;
+        console.error('(node) warning: possible EventEmitter memory ' +
+                      'leak detected. %d listeners added. ' +
+                      'Use emitter.setMaxListeners() to increase limit.',
+                      this._events[type].length);
+        console.trace();
+      }
+    }
+
     // If we've already got an array, just append.
     this._events[type].push(listener);
-  else
+  } else {
     // Adding the second element, need to change to array.
     this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    var m;
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      console.trace();
-    }
   }
 
   return this;
@@ -11627,160 +11742,59 @@ EventEmitter.prototype.addListener = function(type, listener) {
 EventEmitter.prototype.on = EventEmitter.prototype.addListener;
 
 EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
 
   return this;
 };
 
-// emits a 'removeListener' event iff the listener was removed
 EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
 
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
 
-  if (!this._events || !this._events[type])
-    return this;
+  var list = this._events[type];
 
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
+  if (isArray(list)) {
+    var i = list.indexOf(listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
       delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
   }
 
   return this;
 };
 
 EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
   return this;
 };
 
 EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
 };
 
-EventEmitter.listenerCount = function(emitter, type) {
-  var ret;
-  if (!emitter._events || !emitter._events[type])
-    ret = 0;
-  else if (isFunction(emitter._events[type]))
-    ret = 1;
-  else
-    ret = emitter._events[type].length;
-  return ret;
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],42:[function(require,module,exports){
+},{"__browserify_process":48}],42:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
-var url = require('url')
 
 http.request = function (params, cb) {
-    if (typeof params === 'string') {
-        params = url.parse(params)
-    }
     if (!params) params = {};
     if (!params.host && !params.port) {
         params.port = parseInt(window.location.port, 10);
@@ -11852,7 +11866,7 @@ var xhrHttp = (function () {
     }
 })();
 
-},{"./lib/request":43,"events":41,"url":65}],43:[function(require,module,exports){
+},{"./lib/request":43,"events":41}],43:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -11870,8 +11884,7 @@ var Request = module.exports = function (xhr, params) {
         + (params.path || '/')
     ;
     
-    try { xhr.withCredentials = true }
-    catch (e) {}
+    xhr.withCredentials = true;
     
     xhr.open(
         params.method || 'GET',
@@ -12023,7 +12036,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":44,"Base64":45,"inherits":47,"stream":58}],44:[function(require,module,exports){
+},{"./response":44,"Base64":45,"inherits":47,"stream":57}],44:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -12145,17 +12158,16 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":58,"util":67}],45:[function(require,module,exports){
+},{"stream":57,"util":66}],45:[function(require,module,exports){
 ;(function () {
 
-  var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-  function InvalidCharacterError(message) {
-    this.message = message;
-  }
-  InvalidCharacterError.prototype = new Error;
-  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+  var
+    object = typeof exports != 'undefined' ? exports : this, // #8: web workers
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+    INVALID_CHARACTER_ERR = (function () {
+      // fabricate a suitable error object
+      try { document.createElement('$'); }
+      catch (error) { return error; }}());
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
@@ -12172,9 +12184,7 @@ var isArray = Array.isArray || function (xs) {
       output += map.charAt(63 & block >> 8 - idx % 1 * 8)
     ) {
       charCode = input.charCodeAt(idx += 3/4);
-      if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-      }
+      if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
       block = block << 8 | charCode;
     }
     return output;
@@ -12185,9 +12195,7 @@ var isArray = Array.isArray || function (xs) {
   object.atob || (
   object.atob = function (input) {
     input = input.replace(/=+$/, '')
-    if (input.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-    }
+    if (input.length % 4 == 1) throw INVALID_CHARACTER_ERR;
     for (
       // initialize result and counters
       var bc = 0, bs, buffer, idx = 0, output = '';
@@ -12266,8 +12274,7 @@ process.nextTick = (function () {
     if (canPost) {
         var queue = [];
         window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
+            if (ev.source === window && ev.data === 'process-tick') {
                 ev.stopPropagation();
                 if (queue.length > 0) {
                     var fn = queue.shift();
@@ -12303,38 +12310,12 @@ process.chdir = function (dir) {
 };
 
 },{}],49:[function(require,module,exports){
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-
 exports.Buffer = Buffer
 exports.SlowBuffer = Buffer
 exports.INSPECT_MAX_BYTES = 50
 Buffer.poolSize = 8192
 
-/**
- * If `Buffer._useTypedArrays`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (compatible down to IE6)
- */
-Buffer._useTypedArrays = (function () {
-   // Detect if browser supports Typed Arrays. Supported browsers are IE 10+,
-   // Firefox 4+, Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+.
-   if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined')
-      return false
-
-  // Does the browser support adding properties to `Uint8Array` instances? If
-  // not, then that's the same as no `Uint8Array` support. We need to be able to
-  // add all the node Buffer API methods.
-  // Relevant Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
-  try {
-    var arr = new Uint8Array(0)
-    arr.foo = function () { return 42 }
-    return 42 === arr.foo() &&
-        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
-  } catch (e) {
-    return false
-  }
-})()
+var browserSupport
 
 /**
  * Class: Buffer
@@ -12347,15 +12328,16 @@ Buffer._useTypedArrays = (function () {
  *
  * By augmenting the instances, we can avoid modifying the `Uint8Array`
  * prototype.
+ *
+ * Firefox is a special case because it doesn't allow augmenting "native" object
+ * instances. See `ProxyBuffer` below for more details.
  */
-function Buffer (subject, encoding, noZero) {
-  if (!(this instanceof Buffer))
-    return new Buffer(subject, encoding, noZero)
-
+function Buffer (subject, encoding) {
   var type = typeof subject
 
-  // Workaround: node's base64 implementation allows for non-padded strings
-  // while base64-js does not.
+  // Work-around: node's base64 implementation
+  // allows for non-padded strings while base64-js
+  // does not..
   if (encoding === 'base64' && type === 'string') {
     subject = stringtrim(subject)
     while (subject.length % 4 !== 0) {
@@ -12374,25 +12356,13 @@ function Buffer (subject, encoding, noZero) {
   else
     throw new Error('First argument needs to be a number, array or string.')
 
-  var buf
-  if (Buffer._useTypedArrays) {
-    // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = augment(new Uint8Array(length))
-  } else {
-    // Fallback: Return this instance of Buffer
-    buf = this
-    buf.length = length
-    buf._isBuffer = true
-  }
-
-  var i
-  if (Buffer._useTypedArrays && typeof Uint8Array === 'function' &&
-      subject instanceof Uint8Array) {
+  var buf = augment(new Uint8Array(length))
+  if (Buffer.isBuffer(subject)) {
     // Speed optimization -- use set if we're copying from a Uint8Array
-    buf._set(subject)
-  } else if (isArrayish(subject)) {
-    // Treat array-ish objects as a byte array
-    for (i = 0; i < length; i++) {
+    buf.set(subject)
+  } else if (isArrayIsh(subject)) {
+    // Treat array-ish objects as a byte array.
+    for (var i = 0; i < length; i++) {
       if (Buffer.isBuffer(subject))
         buf[i] = subject.readUInt8(i)
       else
@@ -12400,10 +12370,6 @@ function Buffer (subject, encoding, noZero) {
     }
   } else if (type === 'string') {
     buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
-    for (i = 0; i < length; i++) {
-      buf[i] = 0
-    }
   }
 
   return buf
@@ -12412,45 +12378,59 @@ function Buffer (subject, encoding, noZero) {
 // STATIC METHODS
 // ==============
 
-Buffer.isEncoding = function (encoding) {
-  switch (String(encoding).toLowerCase()) {
+Buffer.isEncoding = function(encoding) {
+  switch ((encoding + '').toLowerCase()) {
     case 'hex':
     case 'utf8':
     case 'utf-8':
     case 'ascii':
     case 'binary':
     case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
     case 'raw':
       return true
+
     default:
       return false
   }
 }
 
-Buffer.isBuffer = function (b) {
-  return (b != null && b._isBuffer) || false
+Buffer.isBuffer = function isBuffer (b) {
+  return b && b._isBuffer
 }
 
 Buffer.byteLength = function (str, encoding) {
   switch (encoding || 'utf8') {
     case 'hex':
       return str.length / 2
+
     case 'utf8':
     case 'utf-8':
       return utf8ToBytes(str).length
+
     case 'ascii':
     case 'binary':
       return str.length
+
     case 'base64':
       return base64ToBytes(str).length
+
     default:
       throw new Error('Unknown encoding')
   }
 }
 
 Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
-      'list should be an Array.')
+  if (!Array.isArray(list)) {
+    throw new Error('Usage: Buffer.concat(list, [totalLength])\n' +
+        'list should be an Array.')
+  }
+
+  var i
+  var buf
 
   if (list.length === 0) {
     return new Buffer(0)
@@ -12458,26 +12438,26 @@ Buffer.concat = function (list, totalLength) {
     return list[0]
   }
 
-  var i
   if (typeof totalLength !== 'number') {
     totalLength = 0
     for (i = 0; i < list.length; i++) {
-      totalLength += list[i].length
+      buf = list[i]
+      totalLength += buf.length
     }
   }
 
-  var buf = new Buffer(totalLength)
+  var buffer = new Buffer(totalLength)
   var pos = 0
   for (i = 0; i < list.length; i++) {
-    var item = list[i]
-    item.copy(buf, pos)
-    pos += item.length
+    buf = list[i]
+    buf.copy(buffer, pos)
+    pos += buf.length
   }
-  return buf
+  return buffer
 }
 
-// BUFFER INSTANCE METHODS
-// =======================
+// INSTANCE METHODS
+// ================
 
 function _hexWrite (buf, string, offset, length) {
   offset = Number(offset) || 0
@@ -12493,14 +12473,15 @@ function _hexWrite (buf, string, offset, length) {
 
   // must be an even number of digits
   var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
-
+  if (strLen % 2 !== 0) {
+    throw new Error('Invalid hex string')
+  }
   if (length > strLen / 2) {
     length = strLen / 2
   }
   for (var i = 0; i < length; i++) {
     var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
+    if (isNaN(byte)) throw new Error('Invalid hex string')
     buf[offset + i] = byte
   }
   Buffer._charsWritten = i * 2
@@ -12526,7 +12507,7 @@ function _base64Write (buf, string, offset, length) {
   return Buffer._charsWritten = blitBuffer(base64ToBytes(string), buf, offset, length)
 }
 
-Buffer.prototype.write = function (string, offset, length, encoding) {
+function BufferWrite (string, offset, length, encoding) {
   // Support both (string, offset, length, encoding)
   // and the legacy (string, encoding, offset, length)
   if (isFinite(offset)) {
@@ -12556,22 +12537,29 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
   switch (encoding) {
     case 'hex':
       return _hexWrite(this, string, offset, length)
+
     case 'utf8':
     case 'utf-8':
       return _utf8Write(this, string, offset, length)
+
     case 'ascii':
       return _asciiWrite(this, string, offset, length)
+
     case 'binary':
       return _binaryWrite(this, string, offset, length)
+
     case 'base64':
       return _base64Write(this, string, offset, length)
+
     default:
       throw new Error('Unknown encoding')
   }
 }
 
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
+function BufferToString (encoding, start, end) {
+  var self = (this instanceof ProxyBuffer)
+    ? this._proxy
+    : this
 
   encoding = String(encoding || 'utf8').toLowerCase()
   start = Number(start) || 0
@@ -12586,29 +12574,34 @@ Buffer.prototype.toString = function (encoding, start, end) {
   switch (encoding) {
     case 'hex':
       return _hexSlice(self, start, end)
+
     case 'utf8':
     case 'utf-8':
       return _utf8Slice(self, start, end)
+
     case 'ascii':
       return _asciiSlice(self, start, end)
+
     case 'binary':
       return _binarySlice(self, start, end)
+
     case 'base64':
       return _base64Slice(self, start, end)
+
     default:
       throw new Error('Unknown encoding')
   }
 }
 
-Buffer.prototype.toJSON = function () {
+function BufferToJSON () {
   return {
     type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
+    data: Array.prototype.slice.call(this, 0)
   }
 }
 
 // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
+function BufferCopy (target, target_start, start, end) {
   var source = this
 
   if (!start) start = 0
@@ -12620,11 +12613,14 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   if (target.length === 0 || source.length === 0) return
 
   // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
+  if (end < start)
+    throw new Error('sourceEnd < sourceStart')
+  if (target_start < 0 || target_start >= target.length)
+    throw new Error('targetStart out of bounds')
+  if (start < 0 || start >= source.length)
+    throw new Error('sourceStart out of bounds')
+  if (end < 0 || end > source.length)
+    throw new Error('sourceEnd out of bounds')
 
   // Are we oob?
   if (end > this.length)
@@ -12638,36 +12634,34 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
 }
 
 function _base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
+  var bytes = buf.slice(start, end)
+  return require('base64-js').fromByteArray(bytes)
 }
 
 function _utf8Slice (buf, start, end) {
+  var bytes = buf.slice(start, end)
   var res = ''
   var tmp = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
+  var i = 0
+  while (i < bytes.length) {
+    if (bytes[i] <= 0x7F) {
+      res += decodeUtf8Char(tmp) + String.fromCharCode(bytes[i])
       tmp = ''
     } else {
-      tmp += '%' + buf[i].toString(16)
+      tmp += '%' + bytes[i].toString(16)
     }
+
+    i++
   }
 
   return res + decodeUtf8Char(tmp)
 }
 
 function _asciiSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
   var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++)
-    ret += String.fromCharCode(buf[i])
+  for (var i = 0; i < bytes.length; i++)
+    ret += String.fromCharCode(bytes[i])
   return ret
 }
 
@@ -12688,37 +12682,17 @@ function _hexSlice (buf, start, end) {
   return out
 }
 
+// TODO: add test that modifying the new buffer slice will modify memory in the
+// original buffer! Use code from:
 // http://nodejs.org/api/buffer.html#buffer_buf_slice_start_end
-Buffer.prototype.slice = function (start, end) {
+function BufferSlice (start, end) {
   var len = this.length
   start = clamp(start, len, 0)
   end = clamp(end, len, len)
-
-  if (Buffer._useTypedArrays) {
-    return augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
-    }
-    return newBuf
-  }
+  return augment(this.subarray(start, end)) // Uint8Array built-in method
 }
 
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
-}
-
-Buffer.prototype.readUInt8 = function (offset, noAssert) {
+function BufferReadUInt8 (offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(offset !== undefined && offset !== null, 'missing offset')
@@ -12733,77 +12707,63 @@ Buffer.prototype.readUInt8 = function (offset, noAssert) {
 
 function _readUInt16 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
+  } else if (offset + 1 === len) {
+    var dv = new DataView(new ArrayBuffer(2))
+    dv.setUint8(0, buf[len - 1])
+    return dv.getUint16(0, littleEndian)
   } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
+    return buf._dataview.getUint16(offset, littleEndian)
   }
-  return val
 }
 
-Buffer.prototype.readUInt16LE = function (offset, noAssert) {
+function BufferReadUInt16LE (offset, noAssert) {
   return _readUInt16(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readUInt16BE = function (offset, noAssert) {
+function BufferReadUInt16BE (offset, noAssert) {
   return _readUInt16(this, offset, false, noAssert)
 }
 
 function _readUInt32 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
+  } else if (offset + 3 >= len) {
+    var dv = new DataView(new ArrayBuffer(4))
+    for (var i = 0; i + offset < len; i++) {
+      dv.setUint8(i, buf[i + offset])
+    }
+    return dv.getUint32(0, littleEndian)
   } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
+    return buf._dataview.getUint32(offset, littleEndian)
   }
-  return val
 }
 
-Buffer.prototype.readUInt32LE = function (offset, noAssert) {
+function BufferReadUInt32LE (offset, noAssert) {
   return _readUInt32(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readUInt32BE = function (offset, noAssert) {
+function BufferReadUInt32BE (offset, noAssert) {
   return _readUInt32(this, offset, false, noAssert)
 }
 
-Buffer.prototype.readInt8 = function (offset, noAssert) {
+function BufferReadInt8 (offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(offset !== undefined && offset !== null,
@@ -12814,102 +12774,105 @@ Buffer.prototype.readInt8 = function (offset, noAssert) {
   if (offset >= buf.length)
     return
 
-  var neg = buf[offset] & 0x80
-  if (neg)
-    return (0xff - buf[offset] + 1) * -1
-  else
-    return buf[offset]
+  return buf._dataview.getInt8(offset)
 }
 
 function _readInt16 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
+    assert(offset !== undefined && offset !== null,
+        'missing offset')
     assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  var val = _readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
+  } else if (offset + 1 === len) {
+    var dv = new DataView(new ArrayBuffer(2))
+    dv.setUint8(0, buf[len - 1])
+    return dv.getInt16(0, littleEndian)
+  } else {
+    return buf._dataview.getInt16(offset, littleEndian)
+  }
 }
 
-Buffer.prototype.readInt16LE = function (offset, noAssert) {
+function BufferReadInt16LE (offset, noAssert) {
   return _readInt16(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readInt16BE = function (offset, noAssert) {
+function BufferReadInt16BE (offset, noAssert) {
   return _readInt16(this, offset, false, noAssert)
 }
 
 function _readInt32 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  var val = _readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
+  } else if (offset + 3 >= len) {
+    var dv = new DataView(new ArrayBuffer(4))
+    for (var i = 0; i + offset < len; i++) {
+      dv.setUint8(i, buf[i + offset])
+    }
+    return dv.getInt32(0, littleEndian)
+  } else {
+    return buf._dataview.getInt32(offset, littleEndian)
+  }
 }
 
-Buffer.prototype.readInt32LE = function (offset, noAssert) {
+function BufferReadInt32LE (offset, noAssert) {
   return _readInt32(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readInt32BE = function (offset, noAssert) {
+function BufferReadInt32BE (offset, noAssert) {
   return _readInt32(this, offset, false, noAssert)
 }
 
 function _readFloat (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
+  return buf._dataview.getFloat32(offset, littleEndian)
 }
 
-Buffer.prototype.readFloatLE = function (offset, noAssert) {
+function BufferReadFloatLE (offset, noAssert) {
   return _readFloat(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readFloatBE = function (offset, noAssert) {
+function BufferReadFloatBE (offset, noAssert) {
   return _readFloat(this, offset, false, noAssert)
 }
 
 function _readDouble (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
+  return buf._dataview.getFloat64(offset, littleEndian)
 }
 
-Buffer.prototype.readDoubleLE = function (offset, noAssert) {
+function BufferReadDoubleLE (offset, noAssert) {
   return _readDouble(this, offset, true, noAssert)
 }
 
-Buffer.prototype.readDoubleBE = function (offset, noAssert) {
+function BufferReadDoubleBE (offset, noAssert) {
   return _readDouble(this, offset, false, noAssert)
 }
 
-Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
+function BufferWriteUInt8 (value, offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
@@ -12926,59 +12889,66 @@ Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
 function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
     verifuint(value, 0xffff)
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
+  } else if (offset + 1 === len) {
+    var dv = new DataView(new ArrayBuffer(2))
+    dv.setUint16(0, value, littleEndian)
+    buf[offset] = dv.getUint8(0)
+  } else {
+    buf._dataview.setUint16(offset, value, littleEndian)
   }
 }
 
-Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
+function BufferWriteUInt16LE (value, offset, noAssert) {
   _writeUInt16(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+function BufferWriteUInt16BE (value, offset, noAssert) {
   _writeUInt16(this, value, offset, false, noAssert)
 }
 
 function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
     verifuint(value, 0xffffffff)
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  } else if (offset + 3 >= len) {
+    var dv = new DataView(new ArrayBuffer(4))
+    dv.setUint32(0, value, littleEndian)
+    for (var i = 0; i + offset < len; i++) {
+      buf[i + offset] = dv.getUint8(i)
+    }
+  } else {
+    buf._dataview.setUint32(offset, value, littleEndian)
   }
 }
 
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+function BufferWriteUInt32LE (value, offset, noAssert) {
   _writeUInt32(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+function BufferWriteUInt32BE (value, offset, noAssert) {
   _writeUInt32(this, value, offset, false, noAssert)
 }
 
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+function BufferWriteInt8 (value, offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
@@ -12987,97 +12957,110 @@ Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
     verifsint(value, 0x7f, -0x80)
   }
 
-  if (offset >= buf.length)
-    return
+  if (offset >= buf.length) return
 
-  if (value >= 0)
-    buf.writeUInt8(value, offset, noAssert)
-  else
-    buf.writeUInt8(0xff + value + 1, offset, noAssert)
+  buf._dataview.setInt8(offset, value)
 }
 
 function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
     verifsint(value, 0x7fff, -0x8000)
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  if (value >= 0)
-    _writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
+  } else if (offset + 1 === len) {
+    var dv = new DataView(new ArrayBuffer(2))
+    dv.setInt16(0, value, littleEndian)
+    buf[offset] = dv.getUint8(0)
+  } else {
+    buf._dataview.setInt16(offset, value, littleEndian)
+  }
 }
 
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+function BufferWriteInt16LE (value, offset, noAssert) {
   _writeInt16(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+function BufferWriteInt16BE (value, offset, noAssert) {
   _writeInt16(this, value, offset, false, noAssert)
 }
 
 function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
     verifsint(value, 0x7fffffff, -0x80000000)
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  if (value >= 0)
-    _writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
+  } else if (offset + 3 >= len) {
+    var dv = new DataView(new ArrayBuffer(4))
+    dv.setInt32(0, value, littleEndian)
+    for (var i = 0; i + offset < len; i++) {
+      buf[i + offset] = dv.getUint8(i)
+    }
+  } else {
+    buf._dataview.setInt32(offset, value, littleEndian)
+  }
 }
 
-Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
+function BufferWriteInt32LE (value, offset, noAssert) {
   _writeInt32(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
+function BufferWriteInt32BE (value, offset, noAssert) {
   _writeInt32(this, value, offset, false, noAssert)
 }
 
 function _writeFloat (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
     verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  } else if (offset + 3 >= len) {
+    var dv = new DataView(new ArrayBuffer(4))
+    dv.setFloat32(0, value, littleEndian)
+    for (var i = 0; i + offset < len; i++) {
+      buf[i + offset] = dv.getUint8(i)
+    }
+  } else {
+    buf._dataview.setFloat32(offset, value, littleEndian)
+  }
 }
 
-Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
+function BufferWriteFloatLE (value, offset, noAssert) {
   _writeFloat(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
+function BufferWriteFloatBE (value, offset, noAssert) {
   _writeFloat(this, value, offset, false, noAssert)
 }
 
 function _writeDouble (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(typeof (littleEndian) === 'boolean',
+        'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 7 < buf.length,
         'Trying to write beyond buffer length')
@@ -13085,22 +13068,29 @@ function _writeDouble (buf, value, offset, littleEndian, noAssert) {
   }
 
   var len = buf.length
-  if (offset >= len)
+  if (offset >= len) {
     return
-
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  } else if (offset + 7 >= len) {
+    var dv = new DataView(new ArrayBuffer(8))
+    dv.setFloat64(0, value, littleEndian)
+    for (var i = 0; i + offset < len; i++) {
+      buf[i + offset] = dv.getUint8(i)
+    }
+  } else {
+    buf._dataview.setFloat64(offset, value, littleEndian)
+  }
 }
 
-Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
+function BufferWriteDoubleLE (value, offset, noAssert) {
   _writeDouble(this, value, offset, true, noAssert)
 }
 
-Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
+function BufferWriteDoubleBE (value, offset, noAssert) {
   _writeDouble(this, value, offset, false, noAssert)
 }
 
 // fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function (value, start, end) {
+function BufferFill (value, start, end) {
   if (!value) value = 0
   if (!start) start = 0
   if (!end) end = this.length
@@ -13109,22 +13099,30 @@ Buffer.prototype.fill = function (value, start, end) {
     value = value.charCodeAt(0)
   }
 
-  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
-  assert(end >= start, 'end < start')
+  if (typeof value !== 'number' || isNaN(value)) {
+    throw new Error('value is not a number')
+  }
+
+  if (end < start) throw new Error('end < start')
 
   // Fill 0 bytes; we're done
   if (end === start) return
   if (this.length === 0) return
 
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
+  if (start < 0 || start >= this.length) {
+    throw new Error('start out of bounds')
+  }
+
+  if (end < 0 || end > this.length) {
+    throw new Error('end out of bounds')
+  }
 
   for (var i = start; i < end; i++) {
     this[i] = value
   }
 }
 
-Buffer.prototype.inspect = function () {
+function BufferInspect () {
   var out = []
   var len = this.length
   for (var i = 0; i < len; i++) {
@@ -13137,24 +13135,12 @@ Buffer.prototype.inspect = function () {
   return '<Buffer ' + out.join(' ') + '>'
 }
 
-/**
- * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
- * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
- */
-Buffer.prototype.toArrayBuffer = function () {
-  if (typeof Uint8Array === 'function') {
-    if (Buffer._useTypedArrays) {
-      return (new Buffer(this)).buffer
-    } else {
-      var buf = new Uint8Array(this.length)
-      for (var i = 0, len = buf.length; i < len; i += 1)
-        buf[i] = this[i]
-      return buf.buffer
-    }
-  } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
-  }
+// Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+// Added in Node 0.12.
+function BufferToArrayBuffer () {
+  return (new Buffer(this)).buffer
 }
+
 
 // HELPER FUNCTIONS
 // ================
@@ -13164,61 +13150,173 @@ function stringtrim (str) {
   return str.replace(/^\s+|\s+$/g, '')
 }
 
-var BP = Buffer.prototype
+/**
+ * Check to see if the browser supports augmenting a `Uint8Array` instance.
+ * @return {boolean}
+ */
+function _browserSupport () {
+  var arr = new Uint8Array(0)
+  arr.foo = function () { return 42 }
+
+  try {
+    return (42 === arr.foo())
+  } catch (e) {
+    return false
+  }
+}
 
 /**
- * Augment the Uint8Array *instance* (not the class!) with Buffer methods
+ * Class: ProxyBuffer
+ * ==================
+ *
+ * Only used in Firefox, since Firefox does not allow augmenting "native"
+ * objects (like Uint8Array instances) with new properties for some unknown
+ * (probably silly) reason. So we'll use an ES6 Proxy (supported since
+ * Firefox 18) to wrap the Uint8Array instance without actually adding any
+ * properties to it.
+ *
+ * Instances of this "fake" Buffer class are the "target" of the
+ * ES6 Proxy (see `augment` function).
+ *
+ * We couldn't just use the `Uint8Array` as the target of the `Proxy` because
+ * Proxies have an important limitation on trapping the `toString` method.
+ * `Object.prototype.toString.call(proxy)` gets called whenever something is
+ * implicitly cast to a String. Unfortunately, with a `Proxy` this
+ * unconditionally returns `Object.prototype.toString.call(target)` which would
+ * always return "[object Uint8Array]" if we used the `Uint8Array` instance as
+ * the target. And, remember, in Firefox we cannot redefine the `Uint8Array`
+ * instance's `toString` method.
+ *
+ * So, we use this `ProxyBuffer` class as the proxy's "target". Since this class
+ * has its own custom `toString` method, it will get called whenever `toString`
+ * gets called, implicitly or explicitly, on the `Proxy` instance.
+ *
+ * We also have to define the Uint8Array methods `subarray` and `set` on
+ * `ProxyBuffer` because if we didn't then `proxy.subarray(0)` would have its
+ * `this` set to `proxy` (a `Proxy` instance) which throws an exception in
+ * Firefox which expects it to be a `TypedArray` instance.
  */
+function ProxyBuffer (arr) {
+  this._arr = arr
+
+  if (arr.byteLength !== 0)
+    this._dataview = new DataView(arr.buffer, arr.byteOffset, arr.byteLength)
+}
+
+ProxyBuffer.prototype.write = BufferWrite
+ProxyBuffer.prototype.toString = BufferToString
+ProxyBuffer.prototype.toLocaleString = BufferToString
+ProxyBuffer.prototype.toJSON = BufferToJSON
+ProxyBuffer.prototype.copy = BufferCopy
+ProxyBuffer.prototype.slice = BufferSlice
+ProxyBuffer.prototype.readUInt8 = BufferReadUInt8
+ProxyBuffer.prototype.readUInt16LE = BufferReadUInt16LE
+ProxyBuffer.prototype.readUInt16BE = BufferReadUInt16BE
+ProxyBuffer.prototype.readUInt32LE = BufferReadUInt32LE
+ProxyBuffer.prototype.readUInt32BE = BufferReadUInt32BE
+ProxyBuffer.prototype.readInt8 = BufferReadInt8
+ProxyBuffer.prototype.readInt16LE = BufferReadInt16LE
+ProxyBuffer.prototype.readInt16BE = BufferReadInt16BE
+ProxyBuffer.prototype.readInt32LE = BufferReadInt32LE
+ProxyBuffer.prototype.readInt32BE = BufferReadInt32BE
+ProxyBuffer.prototype.readFloatLE = BufferReadFloatLE
+ProxyBuffer.prototype.readFloatBE = BufferReadFloatBE
+ProxyBuffer.prototype.readDoubleLE = BufferReadDoubleLE
+ProxyBuffer.prototype.readDoubleBE = BufferReadDoubleBE
+ProxyBuffer.prototype.writeUInt8 = BufferWriteUInt8
+ProxyBuffer.prototype.writeUInt16LE = BufferWriteUInt16LE
+ProxyBuffer.prototype.writeUInt16BE = BufferWriteUInt16BE
+ProxyBuffer.prototype.writeUInt32LE = BufferWriteUInt32LE
+ProxyBuffer.prototype.writeUInt32BE = BufferWriteUInt32BE
+ProxyBuffer.prototype.writeInt8 = BufferWriteInt8
+ProxyBuffer.prototype.writeInt16LE = BufferWriteInt16LE
+ProxyBuffer.prototype.writeInt16BE = BufferWriteInt16BE
+ProxyBuffer.prototype.writeInt32LE = BufferWriteInt32LE
+ProxyBuffer.prototype.writeInt32BE = BufferWriteInt32BE
+ProxyBuffer.prototype.writeFloatLE = BufferWriteFloatLE
+ProxyBuffer.prototype.writeFloatBE = BufferWriteFloatBE
+ProxyBuffer.prototype.writeDoubleLE = BufferWriteDoubleLE
+ProxyBuffer.prototype.writeDoubleBE = BufferWriteDoubleBE
+ProxyBuffer.prototype.fill = BufferFill
+ProxyBuffer.prototype.inspect = BufferInspect
+ProxyBuffer.prototype.toArrayBuffer = BufferToArrayBuffer
+ProxyBuffer.prototype._isBuffer = true
+ProxyBuffer.prototype.subarray = function () {
+  return this._arr.subarray.apply(this._arr, arguments)
+}
+ProxyBuffer.prototype.set = function () {
+  return this._arr.set.apply(this._arr, arguments)
+}
+
+var ProxyHandler = {
+  get: function (target, name) {
+    if (name in target) return target[name]
+    else return target._arr[name]
+  },
+  set: function (target, name, value) {
+    target._arr[name] = value
+  }
+}
+
 function augment (arr) {
-  arr._isBuffer = true
+  if (browserSupport === undefined) {
+    browserSupport = _browserSupport()
+  }
 
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
-  arr._set = arr.set
+  if (browserSupport) {
+    // Augment the Uint8Array *instance* (not the class!) with Buffer methods
+    arr.write = BufferWrite
+    arr.toString = BufferToString
+    arr.toLocaleString = BufferToString
+    arr.toJSON = BufferToJSON
+    arr.copy = BufferCopy
+    arr.slice = BufferSlice
+    arr.readUInt8 = BufferReadUInt8
+    arr.readUInt16LE = BufferReadUInt16LE
+    arr.readUInt16BE = BufferReadUInt16BE
+    arr.readUInt32LE = BufferReadUInt32LE
+    arr.readUInt32BE = BufferReadUInt32BE
+    arr.readInt8 = BufferReadInt8
+    arr.readInt16LE = BufferReadInt16LE
+    arr.readInt16BE = BufferReadInt16BE
+    arr.readInt32LE = BufferReadInt32LE
+    arr.readInt32BE = BufferReadInt32BE
+    arr.readFloatLE = BufferReadFloatLE
+    arr.readFloatBE = BufferReadFloatBE
+    arr.readDoubleLE = BufferReadDoubleLE
+    arr.readDoubleBE = BufferReadDoubleBE
+    arr.writeUInt8 = BufferWriteUInt8
+    arr.writeUInt16LE = BufferWriteUInt16LE
+    arr.writeUInt16BE = BufferWriteUInt16BE
+    arr.writeUInt32LE = BufferWriteUInt32LE
+    arr.writeUInt32BE = BufferWriteUInt32BE
+    arr.writeInt8 = BufferWriteInt8
+    arr.writeInt16LE = BufferWriteInt16LE
+    arr.writeInt16BE = BufferWriteInt16BE
+    arr.writeInt32LE = BufferWriteInt32LE
+    arr.writeInt32BE = BufferWriteInt32BE
+    arr.writeFloatLE = BufferWriteFloatLE
+    arr.writeFloatBE = BufferWriteFloatBE
+    arr.writeDoubleLE = BufferWriteDoubleLE
+    arr.writeDoubleBE = BufferWriteDoubleBE
+    arr.fill = BufferFill
+    arr.inspect = BufferInspect
+    arr.toArrayBuffer = BufferToArrayBuffer
+    arr._isBuffer = true
 
-  // deprecated, will be removed in node 0.13+
-  arr.get = BP.get
-  arr.set = BP.set
+    if (arr.byteLength !== 0)
+      arr._dataview = new DataView(arr.buffer, arr.byteOffset, arr.byteLength)
 
-  arr.write = BP.write
-  arr.toString = BP.toString
-  arr.toLocaleString = BP.toString
-  arr.toJSON = BP.toJSON
-  arr.copy = BP.copy
-  arr.slice = BP.slice
-  arr.readUInt8 = BP.readUInt8
-  arr.readUInt16LE = BP.readUInt16LE
-  arr.readUInt16BE = BP.readUInt16BE
-  arr.readUInt32LE = BP.readUInt32LE
-  arr.readUInt32BE = BP.readUInt32BE
-  arr.readInt8 = BP.readInt8
-  arr.readInt16LE = BP.readInt16LE
-  arr.readInt16BE = BP.readInt16BE
-  arr.readInt32LE = BP.readInt32LE
-  arr.readInt32BE = BP.readInt32BE
-  arr.readFloatLE = BP.readFloatLE
-  arr.readFloatBE = BP.readFloatBE
-  arr.readDoubleLE = BP.readDoubleLE
-  arr.readDoubleBE = BP.readDoubleBE
-  arr.writeUInt8 = BP.writeUInt8
-  arr.writeUInt16LE = BP.writeUInt16LE
-  arr.writeUInt16BE = BP.writeUInt16BE
-  arr.writeUInt32LE = BP.writeUInt32LE
-  arr.writeUInt32BE = BP.writeUInt32BE
-  arr.writeInt8 = BP.writeInt8
-  arr.writeInt16LE = BP.writeInt16LE
-  arr.writeInt16BE = BP.writeInt16BE
-  arr.writeInt32LE = BP.writeInt32LE
-  arr.writeInt32BE = BP.writeInt32BE
-  arr.writeFloatLE = BP.writeFloatLE
-  arr.writeFloatBE = BP.writeFloatBE
-  arr.writeDoubleLE = BP.writeDoubleLE
-  arr.writeDoubleBE = BP.writeDoubleBE
-  arr.fill = BP.fill
-  arr.inspect = BP.inspect
-  arr.toArrayBuffer = BP.toArrayBuffer
+    return arr
 
-  return arr
+  } else {
+    // This is a browser that doesn't support augmenting the `Uint8Array`
+    // instance (*ahem* Firefox) so use an ES6 `Proxy`.
+    var proxyBuffer = new ProxyBuffer(arr)
+    var proxy = new Proxy(proxyBuffer, ProxyHandler)
+    proxyBuffer._proxy = proxy
+    return proxy
+  }
 }
 
 // slice(start, end)
@@ -13240,14 +13338,8 @@ function coerce (length) {
   return length < 0 ? 0 : length
 }
 
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
-}
-
-function isArrayish (subject) {
-  return isArray(subject) || Buffer.isBuffer(subject) ||
+function isArrayIsh (subject) {
+  return Array.isArray(subject) || Buffer.isBuffer(subject) ||
       subject && typeof subject === 'object' &&
       typeof subject.length === 'number'
 }
@@ -13259,18 +13351,15 @@ function toHex (n) {
 
 function utf8ToBytes (str) {
   var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    var b = str.charCodeAt(i)
-    if (b <= 0x7F)
+  for (var i = 0; i < str.length; i++)
+    if (str.charCodeAt(i) <= 0x7F)
       byteArray.push(str.charCodeAt(i))
     else {
-      var start = i
-      if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
+      var h = encodeURIComponent(str.charAt(i)).substr(1).split('%')
       for (var j = 0; j < h.length; j++)
         byteArray.push(parseInt(h[j], 16))
     }
-  }
+
   return byteArray
 }
 
@@ -13280,19 +13369,22 @@ function asciiToBytes (str) {
     // Node's code seems to be doing this and not & 0x7F..
     byteArray.push(str.charCodeAt(i) & 0xFF)
   }
+
   return byteArray
 }
 
 function base64ToBytes (str) {
-  return base64.toByteArray(str)
+  return require('base64-js').toByteArray(str)
 }
 
 function blitBuffer (src, dst, offset, length) {
-  var pos
-  for (var i = 0; i < length; i++) {
+  var pos, i = 0
+  while (i < length) {
     if ((i + offset >= dst.length) || (i >= src.length))
       break
+
     dst[i + offset] = src[i]
+    i++
   }
   return i
 }
@@ -13309,24 +13401,31 @@ function decodeUtf8Char (str) {
  * We have to make sure that the value is a valid integer. This means that it
  * is non-negative. It has no fractional component and that it does not
  * exceed the maximum allowed value.
+ *
+ *      value           The number to check for validity
+ *
+ *      max             The maximum value
  */
 function verifuint (value, max) {
-  assert(typeof value == 'number', 'cannot write a non-number as a number')
+  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
   assert(value >= 0,
       'specified a negative value for writing an unsigned value')
   assert(value <= max, 'value is larger than maximum value for type')
   assert(Math.floor(value) === value, 'value has a fractional component')
 }
 
+/*
+ * A series of checks to make sure we actually have a signed 32-bit number
+ */
 function verifsint(value, max, min) {
-  assert(typeof value == 'number', 'cannot write a non-number as a number')
+  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
   assert(value <= max, 'value larger than maximum allowed value')
   assert(value >= min, 'value smaller than minimum allowed value')
   assert(Math.floor(value) === value, 'value has a fractional component')
 }
 
 function verifIEEE754(value, max, min) {
-  assert(typeof value == 'number', 'cannot write a non-number as a number')
+  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
   assert(value <= max, 'value larger than maximum allowed value')
   assert(value >= min, 'value smaller than minimum allowed value')
 }
@@ -13334,45 +13433,17 @@ function verifIEEE754(value, max, min) {
 function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
-
-},{"base64-js":50,"ieee754":51}],50:[function(require,module,exports){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-;(function (exports) {
+},{"base64-js":50}],50:[function(require,module,exports){
+(function (exports) {
 	'use strict';
 
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
+	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-	var ZERO   = '0'.charCodeAt(0)
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS)
-			return 62 // '+'
-		if (code === SLASH)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
-
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
-
+	function b64ToByteArray(b64) {
+		var i, j, l, tmp, placeHolders, arr;
+	
 		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
+			throw 'Invalid string. Length must be a multiple of 4';
 		}
 
 		// the number of equal signs (place holders)
@@ -13380,171 +13451,75 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 		// represent one byte
 		// if there is only one, then the three characters before it represent 2 bytes
 		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+		placeHolders = b64.indexOf('=');
+		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
 
 		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
 
 		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-		var L = 0
-
-		function push (v) {
-			arr[L++] = v
-		}
+		l = placeHolders > 0 ? b64.length - 4 : b64.length;
 
 		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
+			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			arr.push((tmp & 0xFF0000) >> 16);
+			arr.push((tmp & 0xFF00) >> 8);
+			arr.push(tmp & 0xFF);
 		}
 
 		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
+			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			arr.push(tmp & 0xFF);
 		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
+			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			arr.push((tmp >> 8) & 0xFF);
+			arr.push(tmp & 0xFF);
 		}
 
-		return arr
+		return arr;
 	}
 
-	function uint8ToBase64 (uint8) {
+	function uint8ToBase64(uint8) {
 		var i,
 			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
 			output = "",
-			temp, length
-
-		function encode (num) {
-			return lookup.charAt(num)
-		}
+			temp, length;
 
 		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
+			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+		};
 
 		// go through the array every three bytes, we'll deal with trailing stuff later
 		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+			output += tripletToBase64(temp);
 		}
 
 		// pad the end with zeros, but make sure to not forget the extra bytes
 		switch (extraBytes) {
 			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
+				temp = uint8[uint8.length - 1];
+				output += lookup[temp >> 2];
+				output += lookup[(temp << 4) & 0x3F];
+				output += '==';
+				break;
 			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
+				output += lookup[temp >> 10];
+				output += lookup[(temp >> 4) & 0x3F];
+				output += lookup[(temp << 2) & 0x3F];
+				output += '=';
+				break;
 		}
 
-		return output
+		return output;
 	}
 
-	module.exports.toByteArray = b64ToByteArray
-	module.exports.fromByteArray = uint8ToBase64
-}())
+	module.exports.toByteArray = b64ToByteArray;
+	module.exports.fromByteArray = uint8ToBase64;
+}());
 
 },{}],51:[function(require,module,exports){
-exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isLE ? (nBytes - 1) : 0,
-      d = isLE ? -1 : 1,
-      s = buffer[offset + i];
-
-  i += d;
-
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
-
-  if (e === 0) {
-    e = 1 - eBias;
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
-  } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
-
-exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isLE ? 0 : (nBytes - 1),
-      d = isLE ? 1 : -1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-  value = Math.abs(value);
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
-    }
-    if (e + eBias >= 1) {
-      value += rt / c;
-    } else {
-      value += rt * Math.pow(2, 1 - eBias);
-    }
-    if (value * c >= 2) {
-      e++;
-      c /= 2;
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
-
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
-
-  buffer[offset + i - d] |= s * 128;
-};
-
-},{}],52:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -13591,7 +13566,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/punycode v1.2.3 by @mathias */
 ;(function(root) {
 
@@ -14101,7 +14076,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 }(this));
 
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14187,7 +14162,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14274,13 +14249,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":54,"./encode":55}],57:[function(require,module,exports){
+},{"./decode":53,"./encode":54}],56:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14309,12 +14284,13 @@ exports.encode = exports.stringify = require('./encode');
 
 module.exports = Duplex;
 var inherits = require('inherits');
-var setImmediate = require('process/browser.js').nextTick;
+var setImmediate = require('setimmediate');
 var Readable = require('./readable.js');
 var Writable = require('./writable.js');
 
 inherits(Duplex, Readable);
 
+Duplex.prototype.pipe = Writable.prototype.pipe;
 Duplex.prototype.write = Writable.prototype.write;
 Duplex.prototype.end = Writable.prototype.end;
 Duplex.prototype._write = Writable.prototype._write;
@@ -14354,7 +14330,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":61,"./writable.js":63,"inherits":47,"process/browser.js":59}],58:[function(require,module,exports){
+},{"./readable.js":60,"./writable.js":62,"inherits":47,"setimmediate":58}],57:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14483,9 +14459,227 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":57,"./passthrough.js":60,"./readable.js":61,"./transform.js":62,"./writable.js":63,"events":41,"inherits":47}],59:[function(require,module,exports){
-module.exports=require(48)
-},{}],60:[function(require,module,exports){
+},{"./duplex.js":56,"./passthrough.js":59,"./readable.js":60,"./transform.js":61,"./writable.js":62,"events":41,"inherits":47}],58:[function(require,module,exports){
+var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};(function (global, undefined) {
+    "use strict";
+
+    var tasks = (function () {
+        function Task(handler, args) {
+            this.handler = handler;
+            this.args = args;
+        }
+        Task.prototype.run = function () {
+            // See steps in section 5 of the spec.
+            if (typeof this.handler === "function") {
+                // Choice of `thisArg` is not in the setImmediate spec; `undefined` is in the setTimeout spec though:
+                // http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html
+                this.handler.apply(undefined, this.args);
+            } else {
+                var scriptSource = "" + this.handler;
+                /*jshint evil: true */
+                eval(scriptSource);
+            }
+        };
+
+        var nextHandle = 1; // Spec says greater than zero
+        var tasksByHandle = {};
+        var currentlyRunningATask = false;
+
+        return {
+            addFromSetImmediateArguments: function (args) {
+                var handler = args[0];
+                var argsToHandle = Array.prototype.slice.call(args, 1);
+                var task = new Task(handler, argsToHandle);
+
+                var thisHandle = nextHandle++;
+                tasksByHandle[thisHandle] = task;
+                return thisHandle;
+            },
+            runIfPresent: function (handle) {
+                // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+                // So if we're currently running a task, we'll need to delay this invocation.
+                if (!currentlyRunningATask) {
+                    var task = tasksByHandle[handle];
+                    if (task) {
+                        currentlyRunningATask = true;
+                        try {
+                            task.run();
+                        } finally {
+                            delete tasksByHandle[handle];
+                            currentlyRunningATask = false;
+                        }
+                    }
+                } else {
+                    // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+                    // "too much recursion" error.
+                    global.setTimeout(function () {
+                        tasks.runIfPresent(handle);
+                    }, 0);
+                }
+            },
+            remove: function (handle) {
+                delete tasksByHandle[handle];
+            }
+        };
+    }());
+
+    function canUseNextTick() {
+        // Don't get fooled by e.g. browserify environments.
+        return typeof process === "object" &&
+               Object.prototype.toString.call(process) === "[object process]";
+    }
+
+    function canUseMessageChannel() {
+        return !!global.MessageChannel;
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+
+        if (!global.postMessage || global.importScripts) {
+            return false;
+        }
+
+        var postMessageIsAsynchronous = true;
+        var oldOnMessage = global.onmessage;
+        global.onmessage = function () {
+            postMessageIsAsynchronous = false;
+        };
+        global.postMessage("", "*");
+        global.onmessage = oldOnMessage;
+
+        return postMessageIsAsynchronous;
+    }
+
+    function canUseReadyStateChange() {
+        return "document" in global && "onreadystatechange" in global.document.createElement("script");
+    }
+
+    function installNextTickImplementation(attachTo) {
+        attachTo.setImmediate = function () {
+            var handle = tasks.addFromSetImmediateArguments(arguments);
+
+            process.nextTick(function () {
+                tasks.runIfPresent(handle);
+            });
+
+            return handle;
+        };
+    }
+
+    function installMessageChannelImplementation(attachTo) {
+        var channel = new global.MessageChannel();
+        channel.port1.onmessage = function (event) {
+            var handle = event.data;
+            tasks.runIfPresent(handle);
+        };
+        attachTo.setImmediate = function () {
+            var handle = tasks.addFromSetImmediateArguments(arguments);
+
+            channel.port2.postMessage(handle);
+
+            return handle;
+        };
+    }
+
+    function installPostMessageImplementation(attachTo) {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var MESSAGE_PREFIX = "com.bn.NobleJS.setImmediate" + Math.random();
+
+        function isStringAndStartsWith(string, putativeStart) {
+            return typeof string === "string" && string.substring(0, putativeStart.length) === putativeStart;
+        }
+
+        function onGlobalMessage(event) {
+            // This will catch all incoming messages (even from other windows!), so we need to try reasonably hard to
+            // avoid letting anyone else trick us into firing off. We test the origin is still this window, and that a
+            // (randomly generated) unpredictable identifying prefix is present.
+            if (event.source === global && isStringAndStartsWith(event.data, MESSAGE_PREFIX)) {
+                var handle = event.data.substring(MESSAGE_PREFIX.length);
+                tasks.runIfPresent(handle);
+            }
+        }
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        attachTo.setImmediate = function () {
+            var handle = tasks.addFromSetImmediateArguments(arguments);
+
+            // Make `global` post a message to itself with the handle and identifying prefix, thus asynchronously
+            // invoking our onGlobalMessage listener above.
+            global.postMessage(MESSAGE_PREFIX + handle, "*");
+
+            return handle;
+        };
+    }
+
+    function installReadyStateChangeImplementation(attachTo) {
+        attachTo.setImmediate = function () {
+            var handle = tasks.addFromSetImmediateArguments(arguments);
+
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var scriptEl = global.document.createElement("script");
+            scriptEl.onreadystatechange = function () {
+                tasks.runIfPresent(handle);
+
+                scriptEl.onreadystatechange = null;
+                scriptEl.parentNode.removeChild(scriptEl);
+                scriptEl = null;
+            };
+            global.document.documentElement.appendChild(scriptEl);
+
+            return handle;
+        };
+    }
+
+    function installSetTimeoutImplementation(attachTo) {
+        attachTo.setImmediate = function () {
+            var handle = tasks.addFromSetImmediateArguments(arguments);
+
+            global.setTimeout(function () {
+                tasks.runIfPresent(handle);
+            }, 0);
+
+            return handle;
+        };
+    }
+
+    if (!global.setImmediate) {
+        // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+        var attachTo = typeof Object.getPrototypeOf === "function" && "setTimeout" in Object.getPrototypeOf(global) ?
+                          Object.getPrototypeOf(global)
+                        : global;
+
+        if (canUseNextTick()) {
+            // For Node.js before 0.9
+            installNextTickImplementation(attachTo);
+        } else if (canUsePostMessage()) {
+            // For non-IE10 modern browsers
+            installPostMessageImplementation(attachTo);
+        } else if (canUseMessageChannel()) {
+            // For web workers, where supported
+            installMessageChannelImplementation(attachTo);
+        } else if (canUseReadyStateChange()) {
+            // For IE 6–8
+            installReadyStateChangeImplementation(attachTo);
+        } else {
+            // For older browsers
+            installSetTimeoutImplementation(attachTo);
+        }
+
+        attachTo.clearImmediate = tasks.remove;
+    }
+}(typeof global === "object" && global ? global : this));
+
+},{"__browserify_process":48}],59:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14528,7 +14722,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":62,"inherits":47}],61:[function(require,module,exports){
+},{"./transform.js":61,"inherits":47}],60:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14556,7 +14750,7 @@ Readable.ReadableState = ReadableState;
 var EE = require('events').EventEmitter;
 var Stream = require('./index.js');
 var Buffer = require('buffer').Buffer;
-var setImmediate = require('process/browser.js').nextTick;
+var setImmediate = require('setimmediate');
 var StringDecoder;
 
 var inherits = require('inherits');
@@ -15463,7 +15657,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":58,"__browserify_process":48,"buffer":49,"events":41,"inherits":47,"process/browser.js":59,"string_decoder":64}],62:[function(require,module,exports){
+},{"./index.js":57,"__browserify_process":48,"buffer":49,"events":41,"inherits":47,"setimmediate":58,"string_decoder":63}],61:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15669,7 +15863,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":57,"inherits":47}],63:[function(require,module,exports){
+},{"./duplex.js":56,"inherits":47}],62:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15698,22 +15892,9 @@ function done(stream, er) {
 module.exports = Writable;
 Writable.WritableState = WritableState;
 
-var isUint8Array = typeof Uint8Array !== 'undefined'
-  ? function (x) { return x instanceof Uint8Array }
-  : function (x) {
-    return x && x.constructor && x.constructor.name === 'Uint8Array'
-  }
-;
-var isArrayBuffer = typeof ArrayBuffer !== 'undefined'
-  ? function (x) { return x instanceof ArrayBuffer }
-  : function (x) {
-    return x && x.constructor && x.constructor.name === 'ArrayBuffer'
-  }
-;
-
 var inherits = require('inherits');
 var Stream = require('./index.js');
-var setImmediate = require('process/browser.js').nextTick;
+var setImmediate = require('setimmediate');
 var Buffer = require('buffer').Buffer;
 
 inherits(Writable, Stream);
@@ -15852,11 +16033,6 @@ Writable.prototype.write = function(chunk, encoding, cb) {
     encoding = null;
   }
 
-  if (isUint8Array(chunk))
-    chunk = new Buffer(chunk);
-  if (isArrayBuffer(chunk) && typeof Uint8Array !== 'undefined')
-    chunk = new Buffer(new Uint8Array(chunk));
-  
   if (Buffer.isBuffer(chunk))
     encoding = 'buffer';
   else if (!encoding)
@@ -16057,7 +16233,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":58,"buffer":49,"inherits":47,"process/browser.js":59}],64:[function(require,module,exports){
+},{"./index.js":57,"buffer":49,"inherits":47,"setimmediate":58}],63:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16250,7 +16426,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":49}],65:[function(require,module,exports){
+},{"buffer":49}],64:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -16883,14 +17059,16 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":53,"querystring":56}],66:[function(require,module,exports){
+},{"punycode":52,"querystring":55}],65:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
-    && typeof arg.readUInt8 === 'function';
+    && typeof arg.binarySlice === 'function'
+    ;
 }
-},{}],67:[function(require,module,exports){
+
+},{}],66:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -17130,13 +17308,6 @@ function formatValue(ctx, value, recurseTimes) {
 
   if (ctx.showHidden) {
     keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
   }
 
   // Some type of object without properties can be shortcutted.
@@ -17478,4 +17649,5 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":66,"__browserify_process":48,"inherits":47}]},{},[1,2,3])
+},{"./support/isBuffer":65,"__browserify_process":48,"inherits":47}]},{},[1,3,2])
+;
