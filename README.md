@@ -1,12 +1,12 @@
 # joola.io.sdk [![Build Status][3]][4] [![Coverage Status][1]][2]
 
-| **[Setup Guide] [setup]**     | **[API Docs] [techdocs]**     | **[Issues] [issues]**     | **[Roadmap] [roadmap]**           | **[Contributing] [contributing]**           | **[About] [about]**     |
-|-------------------------------------|-------------------------------|-------------------------------------|-----------------------------------|---------------------------------------------|-------------------------------------|
-| [![i2] [setup-image]] [setup] | [![i1] [techdocs-image]] [techdocs] | [![i6] [issues-image]] [issues] | [![i3] [roadmap-image]] [roadmap] | [![i4] [contributing-image]] [contributing] | [![i5] [about-image]] [about] |
+| **[API Docs] [apidocs]**     | **[joola.io Docs] [techdocs]**     | **[Issues] [issues]**     | **[Contributing] [contributing]**           | **[About] [about]**     |
+|-------------------------------------|-------------------------------|-------------------------------------|---------------------------------------------|-------------------------------------|
+| [![i2] [roadmap-image]] [apidocs] | [![i1] [techdocs-image]] [techdocs] | [![i6] [issues-image]] [issues] | [![i4] [contributing-image]] [contributing] | [![i5] [about-image]] [about] |
 
 <img src="http://i.imgur.com/Kx6l8s3.png" alt="joola.io logo" title="joola.io" align="right" />
 
-**joola.io.sdk** is used to communicate with the joola.io server, mass-scale data analytics and visualization framework. Use the SDK to push, query, analyze and visualize data.
+**joola.io.sdk** is used to communicate with the [**joola.io server**}][21], the mass-scale data analytics and visualization framework. Use the SDK to push, query, analyze and visualize data.
 
 ### Getting the SDK
 
@@ -88,6 +88,7 @@ When creating a server instance, the following options configure the server's be
 [3]: https://travis-ci.org/joola/joola.io.sdk.png?branch=develop
 [4]: https://travis-ci.org/joola/joola.io.sdk?branch=develop
 
+[21]: http://github.com/joola/joola.io/
 [22]: http://joola.io/
 
 [about-image]: https://github.com/joola/joola.io/wiki/images/about.png
@@ -98,7 +99,8 @@ When creating a server instance, the following options configure the server's be
 [issues-image]: https://github.com/joola/joola.io/wiki/images/issues.png
 
 [about]: https://github.com/joola/joola.io/wiki/joola.io-overview
-[techdocs]: #sdk-api
+[techdocs]: https://github.com/joola/joola.io/wiki/Technical-documentation
+[apidocs]: #sdk-api
 [setup]: #getting-the-sdk
 [roadmap]: https://github.com/joola/joola.io/wiki/Product-roadmap
 [contributing]: https://github.com/joola/joola.io/wiki/Contributing
