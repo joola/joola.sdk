@@ -68,25 +68,63 @@ joolaio.init = function (options, callback) {
   }();
 
   function browser3rd(callback) {
+    var expected = 0;
+
+    function done() {
+      expected--;
+      if (expected <= 0)
+        return callback(null);
+    }
+
     if (joolaio.options.isBrowser) {
-      var expected = 0;
-
-      function done() {
-        expected--;
-        if (expected == 0)
-          return callback(null);
-      }
-
       if (typeof (jQuery) === 'undefined') {
         var script = document.createElement('script');
         expected++;
         script.onload = function () {
           //jQuery.noConflict(true);
+
+          script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+
+            var script = document.createElement('script');
+            expected++;
+            script.onload = function () {
+              done();
+            };
+            script.src = 'http://code.highcharts.com/highcharts.js';
+            document.head.appendChild(script);
+            
+            done();
+          };
+          script.src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+          document.head.appendChild(script);
+
           done();
         };
         script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
       }
+      else if (typeof (Highcharts) === 'undefined') {
+        script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+          done();
+        };
+        script.src = 'http://code.highcharts.com/highcharts.js';
+        document.head.appendChild(script);
+      }
+      var elems = document.getElementsByTagName('script');
+      var cssHost = '';
+      Object.keys(elems).forEach(function (key) {
+        var scr = elems[key];
+        if (scr.src) {
+          if (scr.src.indexOf('joola.io.js') > -1) {
+            cssHost = scr.src.replace('/joola.io.js', '');
+          }
+        }
+      });
+
 
       //css
       var css = document.createElement('link');
@@ -96,14 +134,15 @@ joolaio.init = function (options, callback) {
         done();
       };
       css.rel = 'stylesheet';
-      css.href = '/joola.io.css';
+      css.href = cssHost + '/joola.io.css';
       document.head.appendChild(css);
 
       if (expected === 0)
         return done();
     }
-    else
+    else {
       return done();
+    }
   }
 
   browser3rd(function () {
