@@ -212,7 +212,14 @@ joolaio.query.fetch(query, function(err, results) {
 
 ##### Timeframes
 
-Timeframes provide a shorthand for specifying the query from/to dates. There are three main groups of timeframes: `this`, `last` and `previous`:
+Timeframes provide a shorthand for specifying the query from/to dates. The full representation of a timeframe is:
+```js
+{
+	start: new Date(2014, 1, 14),
+	end: new Date(2014, 1, 14, 23, 59, 59, 999)
+}
+```
+We took the more common timeframes and created a shorthand string for them. There are three main groups of timeframes: `this`, `last` and `previous`:
 
 - `this_n_seconds` - creates a timeframe with all of the current second and the previous completed n-1 seconds
 - `this_n_minutes` - creates a timeframe with all of the current minute and the previous completed n-1 minutes
