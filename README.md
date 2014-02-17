@@ -73,6 +73,7 @@ console.log(joolaio.VERSION);
         - [`fetch(options, [callback])`](#joolaio-query-fetchoptions-callback)
         - [`raw(options, [callback])`](#joolaio-query-rawoptions-callback)
     - [`viz`](#joolaioviz)
+        - [`viz` overview](#viz-overview)
         - [`Metric(options, [callback])`](#joolaio-viz-metricoptions-callback)
         - [`MiniTable(options, [callback])`](#joolaio-viz-minitableoptions-callback)
         - [`Pie(options, [callback])`](#joolaio-viz-metricoptions-callback)
@@ -115,7 +116,7 @@ When creating a server instance, the following options configure the server's be
 
 ### `joolaio.beacon`
 
-Used to store, retrieve, update and delete documents within a [collection](http://github.com/joola/joola.io/wiki/Collections).   
+Used to store, retrieve, update and delete documents within a [collection](http://github.com/joola/joola.io/wiki/Collections).
 A valid document is any JSON valid document. 
 
 #### `joolaio.beacon.insert(collection, documents, [callback])`
@@ -128,9 +129,22 @@ Insert a document or an array of documents into the provided `collection`. Upon 
 
 
 ##### Collection processing
+It's not required for a collection to be pre-defined before pushing the first document. 
+In such a case, the meta of the document, or the top document in case of an array is used to build the collection's meta.
 
+When pushing a document with a new meta, the collection meta will get updated accordingly, however, the collection meta can only be expanded, i.e. more attributes added.
+In case that a document with fewer attributes is pushed, no meta change will occur. In order to modify or delete attributes from a collection, please refer to [Collection Management](http://github.com/joola/joola.io/wiki/Collections).
+
+[Learn more about collections](http://github.com/joola/joola.io/wiki/Collections).
 
 ##### Document processing
+Documents are processed in the order they are sent, it is highly recommended that whenever possible documents are batched into an array, rather than sent one-by-one.
+Each document is assigned with a unique key based on its attributes (not metrics) and this key is checked when inserting new documents to prevent duplicates. Duplicate documents are not allowed and an error will be returned if a duplicate is found.
+
+When joola.io returns the saved document collection via the `callback` of the `joolaio.beacon.insert` call, each document in the array has two additional attributes:
+ 
+ - `saved` bool indicating if the save completed.
+ - `error` string containing any error message from the underlying caching database.
 
 
 
