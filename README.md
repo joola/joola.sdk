@@ -68,11 +68,11 @@ console.log(joolaio.VERSION);
             - [Document processing](#document-processing)
         - [`update(collection, key, document, [callback])`](#joolaiobeaconupdatecollection-key-document-callback)
     - [`query`](#joolaioquery)
-        - [`fetch(options, [callback])`](#joolaio-query-fetchoptions-callback)
-            - [Timeframes](#Timeframes)
+        - [`fetch(options, [callback])`](#joolaioqueryfetchoptions-callback)
+            - [Timeframes](#timeframes)
             - [Intervals](#intervals)
-            - [Filters](#intervals)
-            - [Calculated Metrics](#intervals)
+            - [Filters](#filters)
+            - [Calculated Metrics](#calculated-metrics)
             - [Dimension/Metric Transformations](#intervals)
         - [`raw(options, [callback])`](#joolaio-query-rawoptions-callback)
     - [`viz`](#joolaioviz)
@@ -266,6 +266,40 @@ This two can be used when looking to compose visualizations or results based on 
 
 ##### Filters
 
+Filters are used to set a query criteria. The syntax is simple and can is based on an array of the following:
+- `attribute` - the name of the document attribute to test against the `match`. For example, `user.username`.
+- `operator` - the operator to apply between the attribute and the match, here are the supported operators:
+	- `eq` - Matches values that are equal to the value specified in `match`.
+	- `gt` - Matches values that are greater than the value specified in `match`.
+	- `gte` - Matches values that are equal to or greater than the value specified in `match`.
+	- `in` - Matches any of the values that exist in an array specified in `match`.
+	- `lt` - Matches values that are less than the value specified in `match`.
+	- `lte` - Matches values that are less than or equal to the value specified in `match`.
+	- `ne` - Matches all values that are not equal to the value specified in `match`.
+	- `nin` - Matches values that *do not exist* in an array specified in `match`.
+	- `regex` - Selects documents where `attribute` match a specified regular expression.
+- `match` - a string or array containing values to test `attribute` against using the `operator`.
+
+```js
+var query = {
+  timeframe: 'last_hour',
+  interval: 'minute',
+  dimensions: [],
+  metrics: {
+    key: 'visits',
+    name: 'Visit Count'
+  },
+  filter: [
+  	['user.username', 'eq', 'thisisme']
+  ]
+};
+
+joolaio.query.fetch(query, function(err, results) {
+  console.log('We have results, count: ', results.documents.length);
+});
+```
+
+
 ##### Calculated Metrics
 
 Calculated metrics offer you the option to query existing metric(s) and based on their values, perform a calculation that is later returned as part of the results.
@@ -280,7 +314,7 @@ var query = {
   dimensions: [],
   metrics: {
     key: 'visits', 
-    name: 'Visit Count,
+    name: 'Visit Count',
     formula: {
       dependsOn: ['visits', 'clicks'],
       run: 'function(visits, clicks) { return visits * clicks; }'
