@@ -83,6 +83,7 @@ console.log(joolaio.VERSION);
         - [`Sparkline(options, [callback])`](#joolaio-viz-metricoptions-callback)
         - [`Geo(options, [callback])`](#joolaio-viz-geooptions-callback)
         - [`PunchCard(options, [callback])`](#joolaio-viz-punchcardoptions-callback)
+		- [Timezones](#timezones)
         
 ## `joolaio`
 
@@ -347,6 +348,10 @@ joolaio.query.fetch(query, function(err, results) {
 });
 ```
 
+
+## Timezones
+All documents are stored with their timestamp and timezone.
+Pushing a new document via `joolaio.beacon.insert` with `timestamp=null` will result in the server generating a `new Date()` timestamp and allocating it for you.
 
 
 
