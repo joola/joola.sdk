@@ -74,7 +74,6 @@ console.log(joolaio.VERSION);
             - [Filters](#filters)
             - [Calculated Metrics](#calculated-metrics)
             - [Dimension/Metric Transformations](#intervals)
-        - [`raw(options, [callback])`](#joolaio-query-rawoptions-callback)
     - [`viz`](#joolaioviz)
         - [`viz` overview](#viz-overview)
         - [`Metric(options, [callback])`](#joolaio-viz-metricoptions-callback)
@@ -354,16 +353,36 @@ All documents are stored with their timestamp and timezone.
 Pushing a new document via `joolaio.beacon.insert` with `timestamp=null` will result in the server generating a `new Date()` timestamp and allocating it for you.
 
 
+***
 
 
+## Contributing
+We would love to get your help! We have outlined a simple [Contribution Policy][18] to support a transparent and easy merging
+of ideas, code, bug fixes and features.
 
+If you're looking for a place to start, you can always go over the list of [open issues][17], pick one and get started.
+If you're feeling lost or unsure, [just let us know](#Contact).
+
+## Contact
+Contacting us is easy, ping us on one of these:
+
+- [@joolaio][19]
+- [info@joo.la][20]
+- \#joola.io on irc.freenode.net
+- You can even fill out a [form][21].
+
+## License
+Copyright (c) 2012-2013 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24] for details.
 
 
 [1]: https://coveralls.io/repos/joola/joola.io.sdk/badge.png?branch=develop
 [2]: https://coveralls.io/r/joola/joola.io.sdk?branch=develop
 [3]: https://travis-ci.org/joola/joola.io.sdk.png?branch=develop
 [4]: https://travis-ci.org/joola/joola.io.sdk?branch=develop
-
+[17]: http://https://joolatech.atlassian.net/browse/JARVIS
+[18]: https://github.com/joola/joola.io/blob/master/CONTRIBUTING.md
+[19]: http://twitter.com/joolaio
+[20]: mailto://info@joo.la
 [21]: http://github.com/joola/joola.io/
 [22]: http://joola.io/
 
