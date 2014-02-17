@@ -17,6 +17,8 @@ var joolaio = global.joolaio = exports;
 joolaio.options = {
   token: null,
   host: null,
+  cssHost: '',
+  APIToken: null,
   logouturl: null,
   isBrowser: function isBrowser() {
     return typeof(window) !== 'undefined';
@@ -40,6 +42,9 @@ joolaio.logger = require('./lib/common/logger');
 joolaio.dispatch = require('./lib/common/dispatch');
 joolaio.common = require('./lib/common/index');
 joolaio.events = require('./lib/common/events');
+
+joolaio.on = joolaio.events.on;
+
 joolaio.api = require('./lib/common/api');
 joolaio.state = {};
 joolaio.viz = require('./lib/viz/index');
@@ -53,7 +58,7 @@ Object.defineProperty(joolaio, 'TOKEN', {
   },
   set: function (value) {
     joolaio._token = value;
-    joolaio.events.emit('core.ready');
+    joolaio.events.emit('ready');
   }
 });
 
@@ -61,12 +66,35 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 require('./lib/common/globals');
 
+//parse the querystring if browser for default options
+function isBrowser() {
+  return typeof(window) !== 'undefined';
+}
+
+if (isBrowser()) {
+  var elems = document.getElementsByTagName('script');
+
+  Object.keys(elems).forEach(function (key) {
+    var scr = elems[key];
+    if (scr.src) {
+      if (scr.src.indexOf('joola.io.js') > -1) {
+        joolaio.options.host = scr.src.replace('/joola.io.js', '');
+        var parts = require('url').parse(scr.src);
+        if (parts.query) {
+          var qs = require('querystring').parse(parts.query);
+          if (qs && qs.APIToken) {
+            joolaio.options.APIToken = qs.APIToken;
+          }
+        }
+      }
+    }
+  });
+}
+
 //init procedure
 joolaio.init = function (options, callback) {
   joolaio.options = joolaio.common.extend(joolaio.options, options);
-  joolaio.options.isBrowser = function isBrowser() {
-    return typeof(window) !== 'undefined';
-  }();
+  joolaio.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
     var expected = 0;
@@ -95,7 +123,7 @@ joolaio.init = function (options, callback) {
             };
             script.src = 'http://code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
-            
+
             done();
           };
           script.src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
@@ -115,17 +143,6 @@ joolaio.init = function (options, callback) {
         script.src = 'http://code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
       }
-      var elems = document.getElementsByTagName('script');
-      var cssHost = '';
-      Object.keys(elems).forEach(function (key) {
-        var scr = elems[key];
-        if (scr.src) {
-          if (scr.src.indexOf('joola.io.js') > -1) {
-            cssHost = scr.src.replace('/joola.io.js', '');
-          }
-        }
-      });
-
 
       //css
       var css = document.createElement('link');
@@ -135,7 +152,7 @@ joolaio.init = function (options, callback) {
         done();
       };
       css.rel = 'stylesheet';
-      css.href = cssHost + '/joola.io.css';
+      css.href = joolaio.options.host + '/joola.io.css';
       document.head.appendChild(css);
 
       if (expected === 0)
@@ -202,6 +219,7 @@ joolaio.init = function (options, callback) {
           joolaio.USER = user;
 
           joolaio.events.emit('core.init.finish');
+          joolaio.events.emit('ready');
           if (callback)
             return callback(null, joolaio);
 
@@ -209,6 +227,7 @@ joolaio.init = function (options, callback) {
       }
       else {
         joolaio.events.emit('core.init.finish');
+        joolaio.events.emit('ready');
         if (typeof callback === 'function')
           return callback(null, joolaio);
       }
@@ -233,7 +252,10 @@ joolaio.init = function (options, callback) {
   });
 };
 
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":17,"./package.json":32,"__browserify_process":47,"querystring":55,"socket.io-browserify":30}],2:[function(require,module,exports){
+if (joolaio.options.APIToken){
+  joolaio.init({});
+}
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":17,"./package.json":32,"__browserify_process":47,"querystring":55,"socket.io-browserify":30,"url":64}],2:[function(require,module,exports){
 /*
  SortTable
  version 2

@@ -17,6 +17,9 @@
   console.log(joolaio.VERSION);
 </script>
 ```
+
+*Optional:* if you'll include `?APIToken=XXXXXX`, you'll be able to use joola.io.sdk immediately.
+
 **Option 2:** Require the SDK `require('joola.io.sdk');`
 ```bash
 $ npm install joola.io.sdk
@@ -33,20 +36,18 @@ console.log(joolaio.VERSION);
 <head></head>
 <body>
 
-<div id="metric-visits">
+<div id="metric-visits"></div>
 
-<script src="http://localhost:8080/joola.io.js"></script>
+<script src="http://localhost:8080/joola.io.js?APIToken=12345"></script>
 <script>
-  joolaio.init({host:'http://localhost:8080', APIToken:'12345'}, function(err) {
-    if (err)
-      throw err;
-    
+  joolaio.events.on('ready', function () {
     joolaio.beacon.insert('visits', {username: 'thisisme', visits: 1});
     new joolaio.viz.Metric({
       container: '#metric-visits',
       query: {
         timeframe: 'last_hour',
         interval: 'minute',
+        dimensions: [],
         metrics: ['visits']
       }
     });
