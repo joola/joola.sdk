@@ -193,6 +193,7 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
   - `formula` - an object containing the formula defintions:
     - `dependsOn` - an array of metric names/objects
     - `run` - a string containing the javascript function to run on the values. See [calculated metrics](#calculated-metrics) for additional information.
+  - `collection` - a string specifying the collection to take the metric from.
 - `filter` - An array of [filters](#filters).
 - `realtime` - Specify that this is a realtime query and results are expected back from the server every 1 second.
 
@@ -213,26 +214,46 @@ joolaio.query.fetch(query, function(err, results) {
 
 Timeframes provide a shorthand for specifying the query from/to dates. There are three main groups of timeframes: `this`, `last` and `previous`:
 
-- `this_second`
-- `this_n_second`
-- `this_n_minute`
-- `this_n_hour`
-- `this_n_day`
-- `this_n_month`
+- `this_n_seconds` - creates a timeframe with all of the current second and the previous completed n-1 seconds
+- `this_n_minutes` - creates a timeframe with all of the current minute and the previous completed n-1 minutes
+- `this_n_hours` - creates a timeframe with all of the current hour and the previous completed n-1 hours
+- `this_n_days` - creates a timeframe with all of the current day and the previous completed n-1 days
+- `this_n_months` - creates a timeframe with all of the current month and the previous completed n-1 months
+- `this_n_years` - creates a timeframe with all of the current year and the previous completed n-1 years
+- `last_n_second` - creates a timeframe with the start of `n` seconds before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43.555 and we use “last_3_seconds”, this will result in a timeframe of 08:30:40 until 08:30:43.
+- `last_n_minute` - creates a timeframe with the start of `n` minutes before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43 and we use “last_3_minutes”, this will result in a timeframe of 08:27:43 until 08:30:43.
+- `last_n_hour`- creates a timeframe with the start of `n` hours before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43 and we use “last_3_hours”, this will result in a timeframe of 05:30:43 until 08:30:43.
+- `last_n_day` - creates a timeframe with the start of `n` days before the most recent second and an end at the most recent second. Example: if right now it is 2014-02-14 08:30:43 and we use “last_3_days”, this will result in a timeframe of 2014-02-11 08:30:43 until 201-02-14 08:30:43.
+- `last_n_month` - creates a timeframe with the start of `n` months before the most recent second and an end at the most recent second. Example: if right now it is 2014-02-14 08:30:43 and we use “last_3_months”, this will result in a timeframe of 2013-11-14 08:30:43 until 201-02-14 08:30:43.
+- `last_n_years` - creates a timeframe with the start of `n` years before the most recent second and an end at the most recent second. Example: if right now it is 2014-02-14 08:30:43 and we use “last_3_years”, this will result in a timeframe of 2011-02-14 08:30:43 until 201-02-14 08:30:43.
+- `previous_n_second` - creates a timeframe with the start of `n` seconds before the most recent complete second and an end at the most recent complete second. Example: if right now it is 08:30:43.555 and we use “previous_3_seconds”, this will result in a timeframe of 08:30:40 until 08:30:43.
+- `previous_n_minute` - creates a timeframe with the start of `n` minutes before the most recent complete minute and an end at the most recent complete minute. Example: if right now it is 08:30:43 and we use “previous_7_minutes”, this will result in a timeframe of 08:23 until 08:30.
+- `previous_n_hour` - creates a timeframe with the start of `n` hours before the most recent complete hour and an end at the most recent complete hour. Example: if right now it is 08:30:43 and we use “previous_3_hours”, this will result in a timeframe of 05:00 until 08:00.
+- `previous_n_day` - creates a timeframe with the start of `n` days before the most recent complete minute and an end at the most recent complete day. Example: if right now it is 2014-02-14 08:30:43 and we use “previous_7_days”, this will result in a timeframe of 2014-02-07 until 2014-02-14.
+- `previous_n_month` - creates a timeframe with the start of `n` months before the most recent complete month and an end at the most recent complete month. Example: if right now it is 2014-02-14 08:30:43 and we use “previous_4_months”, this will result in a timeframe of 2013-10-01 until 2014-02-01.
+- `previous_n_years` - creates a timeframe with the start of `n` years before the most recent complete year and an end at the most recent complete year. Example: if right now it is 2014-02-14 08:30:43 and we use “previous_3_years”, this will result in a timeframe of 2011-01-01 until 2014-01-01.
 
-- `last_second`
-- `last_n_second`
-- `last_n_minute`
-- `last_n_hour`
-- `last_n_day`
-- `last_n_month`
-
-- `previous_second`
-- `previous_n_second`
-- `previous_n_minute`
-- `previous_n_hour`
-- `previous_n_day`
-- `previous_n_month`
+###### Synonyms
+- `today` - synonym for `this_day`.
+- `yesterday` - synonym for `previous_1_day`.
+- `this_second` - synonym for `this_1_second`.
+- `this_minute` - synonym for `this_1_minute`.
+- `this_hour` - synonym for `this_1_hour`.
+- `this_day` - synonym for `this_1_day`.
+- `this_month` - synonym for `this_1_month`.
+- `this_year` - synonym for `this_1_year`.
+- `last_second` - synonym for `last_1_second`.
+- `last_minute` - synonym for `last_1_minute`.
+- `last_hour` - synonym for `last_1_hour`.
+- `last_day` - synonym for `last_1_day`.
+- `last_month` - synonym for `last_1_month`.
+- `last_year` - synonym for `last_1_year`.
+- `previous_second` - synonym for `previous_1_second`.
+- `previous_minute` - synonym for `previous_1_minute`.
+- `previous_hour` - synonym for `previous_1_hour`.
+- `previous_day` - synonym for `previous_1_day`.
+- `previous_month` - synonym for `previous_1_month`.
+- `previous_year` - synonym for `previous_1_year`.
 
 ##### Intervals
 
