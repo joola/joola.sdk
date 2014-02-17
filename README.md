@@ -179,7 +179,7 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
   - `key` - the dimension name as passed in the document. Nesting is supported, for example: `user.username`.
   - `name` - a display name for the dimension that can be used by visualizations.
   - `datatype` - date type of the dimension, currently supported: `date`, `string` and `ip`.
-  - `transform` - a string containing a javascript function to run on the value before returning results. See [dimension/metric transformations](#dimension-metric-transformations) for more details.
+  - `transform` - a string containing a javascript function to run on the value before returning results. See [Dimension/Metric Transformations](#dimensionmetric-transformations) for more details.
 - `metrics` - an array of string/object containing definitions for metrics requested. You can specify the metric name as `string` literal or use a JSON object with:
   - `key` - the metric name as passed in the document. Nesting is supported, for example: `visits.count`.
   - `name` - a display name for the metric that can be used by visualizations.
@@ -189,13 +189,58 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
   - `decimals` - number of decimal points to return, for example: 4 will yield 1.1234. 
   - `dependsOn` - if this is a calculated metric, then specify here what is the base metric for the calculation. 
   - `filter` - a [filter](#filters) object.
-  - `transform` - a string containing a javascript function to run on the value before returning results. See [dimension/metric transformations](#dimension-metric-transformations) for more details.
+  - `transform` - a string containing a javascript function to run on the value before returning results. See [Dimension/Metric Transformations](#dimensionmetric-transformations) for more details.
   - `formula` - an object containing the formula defintions:
     - `dependsOn` - an array of metric names/objects
     - `run` - a string containing the javascript function to run on the values. See [calculated metrics](#calculated-metrics) for additional information.
   - `collection` - a string specifying the collection to take the metric from.
 - `filter` - An array of [filters](#filters).
 - `realtime` - Specify that this is a realtime query and results are expected back from the server every 1 second.
+
+`callback` returns any `err` if encountered or null if none. `results` holds a JSON object with the following structure:
+```js
+{
+	uid: "XR64MxKg5" //unique identifier for the query
+	resultCount: 123, //count of results returned
+	dimensions: [ //array of dimensions participating
+		{
+			attribute: "ip",
+			datatype: "ip",
+			key: "ip",
+			name: "ip",
+			type: "dimension"
+		}
+	],
+	metrics: [ //array of metrics participating
+		{
+			key: "clicks",
+			aggregation: "sum",
+			attribute: "clicks",
+			datatype: "number",
+			name: "Click Count",
+			type: "metric",
+			suffix: "(# of clicks)"
+		}
+	],
+	documents: [ //array of documents returned
+		{
+    	fvalues: { //object with formatted values
+				clicks: "123 (# of clicks)"
+    	}
+    	values: { //object with non-formatted values
+    		clicks: 123
+    	}
+    }
+	],
+	stats: { //object containing query statistics
+		times: {
+			duration: 147, //run duration in ms.
+			end: "2014-02-14T19:11:07.015Z"
+      start: "2014-02-14T19:11:06.868Z"
+		}
+	}
+}
+```
 
 ```js
 var query = {
@@ -379,7 +424,7 @@ Contacting us is easy, ping us on one of these:
 - You can even fill out a [form][21].
 
 ## License
-Copyright (c) 2012-2013 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24] for details.
+Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24] for details.
 
 
 [1]: https://coveralls.io/repos/joola/joola.io.sdk/badge.png?branch=develop
