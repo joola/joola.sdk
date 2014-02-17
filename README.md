@@ -8,7 +8,7 @@
 
 **joola.io.sdk** is used to communicate with the [**joola.io server**][21], the mass-scale data analytics and visualization framework. Use the SDK to push, query, analyze and visualize data.
 
-## Getting the SDK
+### Getting the SDK
 
 **Option 1:** Include `joola.io.sdk` in your HTML.
 ```html
@@ -29,7 +29,7 @@ var joolaio = require('joola.io.sdk');
 console.log(joolaio.VERSION);
 ```
 
-## Quick Example
+### Quick Example
 ```html
 <!DOCTYPE html>
 <html>
@@ -57,7 +57,7 @@ console.log(joolaio.VERSION);
 </html>
 ```
 
-## SDK API
+### SDK API
 - [`joolaio`](#joolaio)
     - [`joolaio` properties](#joola-properties)
     - [`init(options, [callback])`](#initoptions-callback)
@@ -113,12 +113,12 @@ When creating a server instance, the following options configure the server's be
 - `token` - if using server-side authentication, then the token generated via [`joola.auth.generateToken`](https://github.com/joola/joola.io/wiki/lib%5Cauth%5Cindex%20(jsdoc)).
 - `APIToken` - the API Token to use when exchanging data with the server.
 
-## `joolaio.beacon`
+### `joolaio.beacon`
 
 Used to store, retrieve, update and delete documents within a [collection](http://github.com/joola/joola.io/wiki/Collections).   
 A valid document is any JSON valid document. 
 
-### `joolaio.beacon.insert(collection, documents, [callback])`
+#### `joolaio.beacon.insert(collection, documents, [callback])`
 
 Insert a document or an array of documents into the provided `collection`. Upon completion, `callback(err, documents)` is called.
 
@@ -126,10 +126,11 @@ Insert a document or an array of documents into the provided `collection`. Upon 
 - `documents` - A JSON object, or an array of JSON objects describing the information to store.
 - `callback(err, documents)` - called on completion with `err` containing any errors raised or null. `documents` contain an array of JSON objects, one for every sent document, however they now contain additional flags relating to the save process.
 
-#### Collection processing
+
+##### Collection processing
 
 
-#### Document processing
+##### Document processing
 
 
 

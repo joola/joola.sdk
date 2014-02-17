@@ -37,7 +37,6 @@
     "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "mocha-lcov-reporter": "*",
     "coveralls": "*",
     "istanbul": "*",
     "should": "*",
@@ -45,7 +44,6 @@
     "sinon": "*",
     "chai": "*",
     "sinon-chai": "*",
-    "blanket": "*",
     "jshint": "*",
     "supertest": "*"
   },
