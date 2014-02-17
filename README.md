@@ -1,6 +1,6 @@
 # joola.io.sdk [![Build Status][3]][4] [![Coverage Status][1]][2]
 
-| **[Setup Guide] [setup]**     | **[Technical Docs] [techdocs]**     | **[Issues] [issues]**     | **[Roadmap] [roadmap]**           | **[Contributing] [contributing]**           | **[About joola.io] [about]**     |
+| **[Setup Guide] [setup]**     | **[API Docs] [techdocs]**     | **[Issues] [issues]**     | **[Roadmap] [roadmap]**           | **[Contributing] [contributing]**           | **[About] [about]**     |
 |-------------------------------------|-------------------------------|-------------------------------------|-----------------------------------|---------------------------------------------|-------------------------------------|
 | [![i2] [setup-image]] [setup] | [![i1] [techdocs-image]] [techdocs] | [![i6] [issues-image]] [issues] | [![i3] [roadmap-image]] [roadmap] | [![i4] [contributing-image]] [contributing] | [![i5] [about-image]] [about] |
 
