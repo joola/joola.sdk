@@ -18,7 +18,7 @@
 </script>
 ```
 
-*Optional:* if you'll include `?APIToken=XXXXXX`, you'll be able to use joola.io.sdk immediately.
+*Optional:* if you'll include `?APIToken=XXXXXX`, you'll be able to use joola.io.sdk without calling `init`.
 
 **Option 2:** Require the SDK `require('joola.io.sdk');`
 ```bash

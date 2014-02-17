@@ -251,6 +251,6 @@ joolaio.init = function (options, callback) {
   });
 };
 
-if (joolaio.options.APIToken){
+if (joolaio.options.APIToken) {
   joolaio.init({});
 }
