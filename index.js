@@ -16,6 +16,8 @@ var joolaio = global.joolaio = exports;
 joolaio.options = {
   token: null,
   host: null,
+  cssHost: '',
+  APIToken: null,
   logouturl: null,
   isBrowser: function isBrowser() {
     return typeof(window) !== 'undefined';
@@ -39,6 +41,9 @@ joolaio.logger = require('./lib/common/logger');
 joolaio.dispatch = require('./lib/common/dispatch');
 joolaio.common = require('./lib/common/index');
 joolaio.events = require('./lib/common/events');
+
+joolaio.on = joolaio.events.on;
+
 joolaio.api = require('./lib/common/api');
 joolaio.state = {};
 joolaio.viz = require('./lib/viz/index');
@@ -52,7 +57,7 @@ Object.defineProperty(joolaio, 'TOKEN', {
   },
   set: function (value) {
     joolaio._token = value;
-    joolaio.events.emit('core.ready');
+    joolaio.events.emit('ready');
   }
 });
 
@@ -60,31 +65,81 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 require('./lib/common/globals');
 
+//parse the querystring if browser for default options
+function isBrowser() {
+  return typeof(window) !== 'undefined';
+}
+
+if (isBrowser()) {
+  var elems = document.getElementsByTagName('script');
+
+  Object.keys(elems).forEach(function (key) {
+    var scr = elems[key];
+    if (scr.src) {
+      if (scr.src.indexOf('joola.io.js') > -1) {
+        joolaio.options.host = scr.src.replace('/joola.io.js', '');
+        var parts = require('url').parse(scr.src);
+        if (parts.query) {
+          var qs = require('querystring').parse(parts.query);
+          if (qs && qs.APIToken) {
+            joolaio.options.APIToken = qs.APIToken;
+          }
+        }
+      }
+    }
+  });
+}
+
 //init procedure
 joolaio.init = function (options, callback) {
   joolaio.options = joolaio.common.extend(joolaio.options, options);
-  joolaio.options.isBrowser = function isBrowser() {
-    return typeof(window) !== 'undefined';
-  }();
+  joolaio.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
+    var expected = 0;
+
+    function done() {
+      expected--;
+      if (expected <= 0)
+        return callback(null);
+    }
+
     if (joolaio.options.isBrowser) {
-      var expected = 0;
-
-      function done() {
-        expected--;
-        if (expected == 0)
-          return callback(null);
-      }
-
       if (typeof (jQuery) === 'undefined') {
         var script = document.createElement('script');
         expected++;
         script.onload = function () {
           //jQuery.noConflict(true);
+
+          script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+
+            var script = document.createElement('script');
+            expected++;
+            script.onload = function () {
+              done();
+            };
+            script.src = 'http://code.highcharts.com/highcharts.js';
+            document.head.appendChild(script);
+
+            done();
+          };
+          script.src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+          document.head.appendChild(script);
+
           done();
         };
         script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
+        document.head.appendChild(script);
+      }
+      else if (typeof (Highcharts) === 'undefined') {
+        script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+          done();
+        };
+        script.src = 'http://code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
       }
 
@@ -96,14 +151,15 @@ joolaio.init = function (options, callback) {
         done();
       };
       css.rel = 'stylesheet';
-      css.href = '/joola.io.css';
+      css.href = joolaio.options.host + '/joola.io.css';
       document.head.appendChild(css);
 
       if (expected === 0)
         return done();
     }
-    else
+    else {
       return done();
+    }
   }
 
   browser3rd(function () {
@@ -162,6 +218,7 @@ joolaio.init = function (options, callback) {
           joolaio.USER = user;
 
           joolaio.events.emit('core.init.finish');
+          joolaio.events.emit('ready');
           if (callback)
             return callback(null, joolaio);
 
@@ -169,6 +226,7 @@ joolaio.init = function (options, callback) {
       }
       else {
         joolaio.events.emit('core.init.finish');
+        joolaio.events.emit('ready');
         if (typeof callback === 'function')
           return callback(null, joolaio);
       }
@@ -192,3 +250,7 @@ joolaio.init = function (options, callback) {
       });
   });
 };
+
+if (joolaio.options.APIToken) {
+  joolaio.init({});
+}
