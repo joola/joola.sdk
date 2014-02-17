@@ -66,9 +66,7 @@ console.log(joolaio.VERSION);
         - [`insert(collection, documents, [callback])`](#joolaiobeaconinsertcollection-documents-callback)
             - [Collection processing](#collection-processing)
             - [Document processing](#document-processing)
-        - [`update(collection, key, document, [callback])`](#joolaio-beacon-update-collection-key-document-callback)
-        - [`find(collection, query, [callback])`](#joolaio-beacon-find-collection-query-callback)
-        - [`delete(collection, query, [callback])`](#joolaio-beacon-delete-collection-query-callback)
+        - [`update(collection, key, document, [callback])`](#joolaiobeaconupdatecollection-key-document-callback)
     - [`query`](#joolaioquery)
         - [`fetch(options, [callback])`](#joolaio-query-fetchoptions-callback)
         - [`raw(options, [callback])`](#joolaio-query-rawoptions-callback)
@@ -135,8 +133,6 @@ In such a case, the meta of the document, or the top document in case of an arra
 When pushing a document with a new meta, the collection meta will get updated accordingly, however, the collection meta can only be expanded, i.e. more attributes added.
 In case that a document with fewer attributes is pushed, no meta change will occur. In order to modify or delete attributes from a collection, please refer to [Collection Management](http://github.com/joola/joola.io/wiki/Collections).
 
-[Learn more about collections](http://github.com/joola/joola.io/wiki/Collections).
-
 ##### Document processing
 Documents are processed in the order they are sent, it is highly recommended that whenever possible documents are batched into an array, rather than sent one-by-one.
 Each document is assigned with a unique key based on its attributes (not metrics) and this key is checked when inserting new documents to prevent duplicates. Duplicate documents are not allowed and an error will be returned if a duplicate is found.
@@ -145,6 +141,34 @@ When joola.io returns the saved document collection via the `callback` of the `j
  
  - `saved` bool indicating if the save completed.
  - `error` string containing any error message from the underlying caching database.
+
+#### `joolaio.beacon.update(collection, key, document, [callback])`
+
+Updates a single document matching the provided `key`, the cached document is overwritten with the new `document`. Upon completion, `callback(err, document)` is called.
+
+- `collection` - the name of the collection holding the document for the update.
+- `key` - The unique identifier of the document to update.
+- `document` - A JSON object describing the information to update.
+- `callback(err, document)` - called on completion with `err` containing any errors raised or null. `documents` contain an the updated cached document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
