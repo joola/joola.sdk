@@ -73,12 +73,14 @@ console.log(joolaio.VERSION);
             - [Calculated Metrics](#calculated-metrics)
             - [Dimension/Metric Transformations](#intervals)
     - [`viz`](#joolaioviz)
-        - [`Metric(options, [callback])`](#joolaiovizmetricoptions-callback)
-        - [`MiniTable(options, [callback])`](#joolaiovizminitableoptions-callback)
-        - [`Pie(options, [callback])`](#joolaiovizpieoptions-callback)
-        - [`Sparkline(options, [callback])`](#joolaiovizsparklineoptions-callback)
-        - [`Geo(options, [callback])`](#joolaiovizgeooptions-callback)
-        - [`PunchCard(options, [callback])`](#joolaiovizpunchcardoptions-callback)
+        - [`new Canvas(options, [callback])`](#new-joolaiovizcanvasoptions-callback)
+        - [`new DatePicker(options, [callback])`](#new-joolaiovizdatepickeroptions-callback)
+        - [`new Metric(options, [callback])`](#new-joolaiovizmetricoptions-callback)
+        - [`new MiniTable(options, [callback])`](#new-joolaiovizminitableoptions-callback)
+        - [`new Pie(options, [callback])`](#new-joolaiovizpieoptions-callback)
+        - [`new Sparkline(options, [callback])`](#new-joolaiovizsparklineoptions-callback)
+        - [`new Geo(options, [callback])`](#new-joolaiovizgeooptions-callback)
+        - [`new PunchCard(options, [callback])`](#new-joolaiovizpunchcardoptions-callback)
     - [Timezones](#timezones)
         
 ## `joolaio`
@@ -152,6 +154,7 @@ Used to query and analyze stored documents.
 
 Query joola.io for a set of documents based on criteria passed in `query`. Upon completion, `callback(err, results)` is called.
 
+<a name="query"></a>
 `query` holds the following options:
 
 - `timeframe` - timeframe for the query, can be either a [shorthand timeframe](#timeframes) or an object with:
@@ -196,6 +199,9 @@ joolaio.query.fetch(query, function(err, results) {
 ```
 
 ##### Query Result Structure
+
+Query results have the following structure:  
+
 ```js
 {
 	uid: "XR64MxKg5" //unique identifier for the query
@@ -221,19 +227,19 @@ joolaio.query.fetch(query, function(err, results) {
 		}
 	],
 	documents: [ //array of documents returned
-		{
+    {
     	fvalues: { //object with formatted values
-				clicks: "123 (# of clicks)"
+        clicks: "123 (# of clicks)"
     	}
     	values: { //object with non-formatted values
-    		clicks: 123
+        clicks: 123
     	}
     }
 	],
 	stats: { //object containing query statistics
 		times: {
 			duration: 147, //run duration in ms.
-			end: "2014-02-14T19:11:07.015Z"
+      end: "2014-02-14T19:11:07.015Z",
       start: "2014-02-14T19:11:06.868Z"
 		}
 	}
@@ -251,12 +257,12 @@ Timeframes provide a shorthand for specifying the query from/to dates. The full 
 ```
 We took the more common timeframes and created a shorthand string for them. There are three main groups of timeframes: `this`, `last` and `previous`:
 
-- `this_n_seconds` - creates a timeframe with all of the current second and the previous completed n-1 seconds
-- `this_n_minutes` - creates a timeframe with all of the current minute and the previous completed n-1 minutes
-- `this_n_hours` - creates a timeframe with all of the current hour and the previous completed n-1 hours
-- `this_n_days` - creates a timeframe with all of the current day and the previous completed n-1 days
-- `this_n_months` - creates a timeframe with all of the current month and the previous completed n-1 months
-- `this_n_years` - creates a timeframe with all of the current year and the previous completed n-1 years
+- `this_n_seconds` - creates a timeframe with all of the current second and the previous completed n-1 seconds.
+- `this_n_minutes` - creates a timeframe with all of the current minute and the previous completed n-1 minutes.
+- `this_n_hours` - creates a timeframe with all of the current hour and the previous completed n-1 hours.
+- `this_n_days` - creates a timeframe with all of the current day and the previous completed n-1 days.
+- `this_n_months` - creates a timeframe with all of the current month and the previous completed n-1 months.
+- `this_n_years` - creates a timeframe with all of the current year and the previous completed n-1 years.
 - `last_n_second` - creates a timeframe with the start of `n` seconds before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43.555 and we use “last_3_seconds”, this will result in a timeframe of 08:30:40 until 08:30:43.
 - `last_n_minute` - creates a timeframe with the start of `n` minutes before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43 and we use “last_3_minutes”, this will result in a timeframe of 08:27:43 until 08:30:43.
 - `last_n_hour`- creates a timeframe with the start of `n` hours before the most recent second and an end at the most recent second. Example: if right now it is 08:30:43 and we use “last_3_hours”, this will result in a timeframe of 05:30:43 until 08:30:43.
@@ -425,6 +431,48 @@ new joolaio.viz.Metric({
 });
 ```
 
+#### `new joolaio.viz.Canvas(options, [callback])`
+
+#### `new joolaio.viz.DatePicker(options, [callback])`
+
+#### `new joolaio.viz.Metric(options, [callback])`
+
+Provides a Metric Visualization, a textual value with a caption.
+
+<img src="http://i.imgur.com/K0hWSTk.png"></img>
+
+Options:
+- `container` - HTML container to draw the visualization in.
+- `caption` - caption for the metric box.
+- `query` - same as a [`query.fetch.query`](#query) object.
+
+Example:
+```js
+new joolaio.viz.Metric({
+  container: '#metric',
+  caption: 'CLICK',
+  query: {
+    timeframe: 'last_hour',
+    interval: 'minute',
+    dimensions: [],
+    metrics: ['visits']
+  }
+});
+```
+
+#### `new joolaio.viz.MiniTable(options, [callback])`
+
+#### `new joolaio.viz.Pie(options, [callback])`
+
+#### `new joolaio.viz.Sparkline(options, [callback])`
+
+#### `new joolaio.viz.Geo(options, [callback])`
+
+#### `new joolaio.viz.PunchCard(options, [callback])`
+
+
+
+
 ## Timezones
 All documents are stored with their timestamp and timezone.
 Pushing a new document via `joolaio.beacon.insert` with `timestamp=null` will result in the server generating a `new Date()` timestamp and allocating it for you.
@@ -462,6 +510,7 @@ Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 [20]: mailto://info@joo.la
 [21]: http://github.com/joola/joola.io/
 [22]: http://joola.io/
+[24]: https://github.com/joola/joola.io/blob/master/LICENSE.md
 
 [about-image]: https://github.com/joola/joola.io/wiki/images/about.png
 [techdocs-image]: https://github.com/joola/joola.io/wiki/images/techdocs.png
