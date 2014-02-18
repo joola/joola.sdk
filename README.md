@@ -198,6 +198,7 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
 - `realtime` - Specify that this is a realtime query and results are expected back from the server every 1 second.
 
 `callback` returns any `err` if encountered or null if none. `results` holds a JSON object with the following structure:
+
 ```js
 {
 	uid: "XR64MxKg5" //unique identifier for the query
@@ -241,6 +242,8 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
 	}
 }
 ```
+
+##### Example of Basic Query
 
 ```js
 var query = {
