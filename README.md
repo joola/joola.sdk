@@ -441,16 +441,26 @@ Provides a Metric Visualization, a textual value with a caption.
 
 <img src="http://i.imgur.com/K0hWSTk.png"></img>
 
-Options:
+###### Options
 - `container` - HTML container to draw the visualization in.
 - `caption` - caption for the metric box.
 - `query` - same as a [`query.fetch.query`](#query) object.
 
-Example:
+###### Expanded DOM
+```html
+<div id="metric" jio-domain="joolaio" jio-type="metric" jio-uuid="dPtcAHNEH">
+  <div class="jio metricbox caption">Clicks</div>
+  <div class="jio metricbox value">3</div>
+</div>
+```
+
+Participating CSS tags: `.jio.metricbox.caption`, `.jio.metricbox.value`
+
+###### Example
 ```js
 new joolaio.viz.Metric({
   container: '#metric',
-  caption: 'CLICK',
+  caption: 'Clicks',
   query: {
     timeframe: 'last_hour',
     interval: 'minute',
