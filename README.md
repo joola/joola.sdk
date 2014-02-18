@@ -6,7 +6,12 @@
 
 <img src="http://i.imgur.com/Kx6l8s3.png" alt="joola.io logo" title="joola.io" align="right" />
 
-**joola.io.sdk** is used to communicate with the [**joola.io server**][21], the mass-scale data analytics and visualization framework. Use the SDK to push, query, analyze and visualize data.
+**joola.io.sdk** is a Software Development Kit (SDK) responsible for communication between a client using the SDK and the joola.io server. If you don't have a [joola.io][joola.io] server running yet, [get one up and running in minutes][joola.io] or open a free account with [free.joola.io][free.joola.io].
+
+The SDK can consume ANY endpoint of the joola.io framework, however for brevity purposes, the API manual below includes only the main topics of:
+- [**Pushing data**](joolaiobeacon) is done by sending an array of JSON documents for storage in joola.io cache.
+- When [**Querying**](joolaioquery), you describe the data you wish to consume and shape it to your liking. 
+- Transform your data into insight using [**Data Visualization**](#joolaiooviz).
 
 ### Getting the SDK
 
@@ -65,7 +70,7 @@ console.log(joolaio.VERSION);
             - [Collection processing](#collection-processing)
             - [Document processing](#document-processing)
     - [`query`](#joolaioquery)
-        - [`fetch(options, [callback])`](#joolaioqueryfetchoptions-callback)
+        - [`fetch(query, [callback])`](#joolaioqueryfetchquery-callback)
             - [Query Result Structure](#query-result-structure)
             - [Timeframes](#timeframes)
             - [Intervals](#intervals)
@@ -82,15 +87,9 @@ console.log(joolaio.VERSION);
         - [`new Geo(options, [callback])`](#new-joolaiovizgeooptions-callback)
         - [`new PunchCard(options, [callback])`](#new-joolaiovizpunchcardoptions-callback)
     - [Timezones](#timezones)
+    - [Additional Resources](#additional-resources)
         
 ## `joolaio`
-
-joola.io is an SDK responsible for communication between a client using the SDK and the joola.io server. If you don't have a joola.io server running yet, [get one up and running in minutes][joola.io].
-
-The SDK can consume ANY endpoint of the joola.io framework, however for brevity purposes, the API manual below includes only the main topics of:
-- **Pushing data** is done using [Beacon](#joolaiobeacon) which consumes an array of JSON documents and stores them in joola.io cache.
-- **Querying** data is easy and fun, describe the data you wish to consume and shape it to your liking. 
-- **Data Visualization** is flexible and can be extended quickly and easily, transform your data into insight.   
 
 #### `joolaio` properties
 
@@ -494,6 +493,9 @@ new joolaio.viz.Metric({
 All documents are stored with their timestamp and timezone.
 Pushing a new document via `joolaio.beacon.insert` with `timestamp=null` will result in the server generating a `new Date()` timestamp and allocating it for you.
 
+## Additional Resources
+We are in the process of adding additional documentation, examples and walk-throughs, but in the meantime, if you have any question, make sure you [drop us a line](#contact).
+
 
 ***
 
@@ -545,4 +547,5 @@ Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 [issues]: https://github.com/joola/joola.io.sdk/issues
 
 [joola.io]: http://joola.io/
+[free.joola.io]: http://free.joola.io/
 [highcharts]: http://www.highcharts.com
