@@ -252,10 +252,11 @@ joolaio.init = function (options, callback) {
   });
 };
 
-if (joolaio.options.APIToken){
+if (joolaio.options.APIToken) {
   joolaio.init({});
 }
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":17,"./package.json":32,"__browserify_process":47,"querystring":55,"socket.io-browserify":30,"url":64}],2:[function(require,module,exports){
+
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":19,"./package.json":24,"__browserify_process":39,"querystring":47,"socket.io-browserify":22,"url":56}],2:[function(require,module,exports){
 /*
  SortTable
  version 2
@@ -1000,7 +1001,7 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
-},{"http":41,"https":45,"querystring":55,"url":64}],4:[function(require,module,exports){
+},{"http":33,"https":37,"querystring":47,"url":56}],4:[function(require,module,exports){
 /**
  *  joola.io
  *
@@ -1102,7 +1103,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":20,"url":64}],5:[function(require,module,exports){
+},{"cloneextend":20,"url":56}],5:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1121,7 +1122,7 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"eventemitter2":29}],6:[function(require,module,exports){
+},{"eventemitter2":21}],6:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1226,7 +1227,9 @@ global.nodeState = function () {
 
   return result;
 };
-},{"__browserify_process":47,"cluster":33,"os":51}],7:[function(require,module,exports){
+},{"__browserify_process":39,"cluster":25,"os":43}],7:[function(require,module,exports){
+/*jshint -W083 */
+
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1319,81 +1322,13 @@ common.uuid = function () {
 };
 
 common.stringify = function (obj, callback) {
-  
   return callback(null, JSON.stringify(obj));
-  
-  var errored = false;
-  if (!obj)
-    return callback(null, obj);
-  try {
-    var
-      expected = [],
-      es = require('event-stream');
-
-    expected.push(obj);
-    es.connect(
-        es.readArray(expected),
-        JSONStream.stringify(),
-        es.writeArray(function (err, lines) {
-          lines = lines[0];
-          lines = lines.substring(2);
-          return callback(null, lines);
-        })
-      ).on('error', function (err) {
-        if (!errored) {
-          errored = true;
-          return callback(err, obj);
-        }
-      });
-  }
-  catch (ex) {
-    return callback(ex, obj);
-  }
 };
 
 common.parse = function (string, callback) {
-
   return callback(null, JSON.parse(string));
-  
-  var errored = false;
-  if (!string || string == 'undefined')
-    return callback(null, string);
-  try {
-    var
-      expected = [],
-      es = require('event-stream');
-
-    expected.push(string);
-    es.connect(
-        es.readArray(expected),
-        JSONStream.parse(/./),
-        es.writeArray(function (err, obj) {
-          return callback(err, obj[0]);
-        })
-      ).on('error', function (err) {
-        if (!errored) {
-          errored = true;
-          return callback(err, string);
-        }
-      });
-  }
-  catch (ex) {
-    return callback(ex, string);
-  }
 };
 
-
-/*
- var obj = {test: 123};
- common.stringify(obj, function (err, result) {
- console.log('string', result, JSON.parse(result));
-
- common.parse(result, function (err, obj2) {
- console.log('obj', obj2);
- process.exit();
- })
- });
- */
 common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
@@ -1404,7 +1339,7 @@ common.toType = (function toType(global) {
       return "global";
     }
     return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
-  }
+  };
 })(this);
 
 common.sanitize = function (obj) {
@@ -1424,14 +1359,14 @@ common.sanitize = function (obj) {
 common.typeof = function (obj) {
   if (typeof(obj) == "object") {
     if (obj === null) return "null";
-    if (obj.constructor == (new Array).constructor) return "array";
-    if (obj.constructor == (new Date).constructor) return "date";
-    if (obj.constructor == (new RegExp).constructor) return "regex";
+    if (obj.constructor == ([]).constructor) return "array";
+    if (obj.constructor == (new Date()).constructor) return "date";
+    if (obj.constructor == (new RegExp()).constructor) return "regex";
     return "object";
   }
   return typeof(obj);
 };
-},{"./modifiers":9,"cloneextend":20,"crypto":35,"event-stream":21,"util":66}],8:[function(require,module,exports){
+},{"./modifiers":9,"cloneextend":20,"crypto":27,"util":58}],8:[function(require,module,exports){
 var process=require("__browserify_process");/**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1526,7 +1461,7 @@ else {
     return this._log('error', message, callback);
   };
 }
-},{"__browserify_process":47}],9:[function(require,module,exports){
+},{"__browserify_process":39}],9:[function(require,module,exports){
 /**
  *  @title joola.io/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola.io
@@ -1586,6 +1521,18 @@ Date.prototype.format = function (formatString) {
   return formatString;
 };
 
+Date.dateDiff = function(datepart, fromdate, todate) {
+  datepart = datepart.toLowerCase();
+  var diff = todate - fromdate;
+  var divideBy = { w:604800000,
+    d:86400000,
+    h:3600000,
+    n:60000,
+    s:1000 };
+
+  return Math.floor( diff/divideBy[datepart]);
+}
+
 /**
  * @function Object.defineProperty.toJSON
  * Modifies the built-in `toJSON` property of the `Error` object.
@@ -1644,6 +1591,1071 @@ JSON.stringify = function (obj) {
 };
 */
 },{}],10:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+var _events = new EventEmitter2({wildcard: true, newListener: true});
+
+var Canvas = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('canvas.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
+  for (var x in _events) {
+    this[x] = _events[x];
+    this._super[x] = _events[x];
+  }
+
+  var self = this;
+
+  this._id = '_canvas';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    container: null,
+    $container: null,
+    visualizations: {},
+    state: {}
+  };
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.draw = function (options, callback) {
+    var self = this;
+    if (typeof callback === 'function')
+      return callback(null, self);
+  };
+
+  this.addVisualization = function (viz) {
+    this.options.visualizations[viz.uuid] = viz;
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, [
+        {'type': 'canvas'},
+        {'uuid': self.uuid}
+      ], function (err) {
+        if (err)
+          return callback(err);
+
+        joolaio.viz.onscreen.push(self);
+        joolaio.events.emit('canvas.init.finish', self);
+        if (typeof callback === 'function') {
+          return callback(null, self);
+        }
+      });
+    });
+  }
+  catch (err) {
+    return self.onError(err, callback);
+  }
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Canvas = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.Canvas(options, function (err, canvas) {
+          if (err)
+            throw new Error('Failed to initialize canvas.', err);
+          canvas.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+},{"./_proto":18,"eventemitter2":21}],11:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var _ = require('underscore');
+
+
+var DatePicker = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('datepicker.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
+
+  var self = this;
+
+  this.addDays = function (o, days) {
+// keep in mind, months in javascript are 0-11
+    return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
+  };
+
+  this.fixDate = function (timestamp, zero) {
+    var offset = -1 * (timestamp.getTimezoneOffset() / 60);
+
+    // Multiply by 1000 because JS works in milliseconds instead of the UNIX seconds
+    var date = timestamp;// new Date(timestamp * 1000);
+
+    var year = date.getUTCFullYear();
+    var month = date.getUTCMonth() + 1; // getMonth() is zero-indexed, so we'll increment to get the correct month number
+    var day = date.getUTCDate();
+    var hours = date.getUTCHours();
+    var minutes = date.getUTCMinutes();
+    var seconds = date.getUTCSeconds();
+
+    var bAddDay = false;
+
+
+    hours = hours + offset; //gmt
+
+
+//    month = (month < 10) ? '0' + month : month;
+//    day = (day < 10) ? '0' + day : day;
+//    hours = (hours < 10) ? '0' + hours : hours;
+
+//    if (hours == 24) {
+//        hours = '00';
+//        bAddDay = true;
+//    }
+//    minutes = (minutes < 10) ? '0' + minutes : minutes;
+//    seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+
+    var fixedDate = null;
+    if (!zero)
+      fixedDate = new Date(year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ' GMT');
+    else
+      fixedDate = new Date(year + '-' + month + '-' + day + ' ' + '00' + ':' + '00' + ' GMT');
+    if (fixedDate == 'Invalid Date') {
+      if (!zero) {
+        fixedDate = new Date();
+        fixedDate.setFullYear(year, month - 1, day);
+        fixedDate.setHours(parseInt(hours));
+        fixedDate.setMinutes(parseInt(minutes));
+        fixedDate.setSeconds(parseInt(seconds));
+      }
+      else {
+        fixedDate = new Date();
+        fixedDate.setFullYear(year, month - 1, day);
+        fixedDate.setHours(parseInt(hours));
+        fixedDate.setMinutes(0);
+        fixedDate.setSeconds(0);
+      }
+    }
+
+
+    if (bAddDay)
+      fixedDate.setDate(fixedDate.getDate() + 1);
+
+    var fixedDate_utc = new Date(fixedDate.getUTCFullYear(), fixedDate.getUTCMonth(), fixedDate.getUTCDate(), fixedDate.getUTCHours(), fixedDate.getUTCMinutes(), fixedDate.getUTCSeconds());
+
+
+    return fixedDate;
+  };
+
+  this._id = '_datepicker';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    canvas: null,
+    container: null,
+    $container: null,
+    comparePeriod: false
+  };
+
+  this.currentMode = 'base-from';
+
+  this.original_base_fromdate = null;
+  this.original_base_todate = null;
+  this.original_compare_fromdate = null;
+  this.original_compare_todate = null;
+
+  this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
+  this.min_date.setMonth(this.min_date.getMonth() - 6);
+  this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
+
+  this.base_todate = new Date(this.max_date);
+  this.base_fromdate = self.addDays(this.base_todate, -30);
+
+  if (this.base_fromdate < this.min_date) {
+    this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
+    this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
+    this.disableCompare = true;
+  }
+
+  var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
+  this.compare_todate = self.addDays(this.base_fromdate, -1);
+  this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
+
+  this.original_base_fromdate = this.base_fromdate;
+  this.original_base_todate = this.base_todate;
+  this.original_compare_fromdate = this.compare_fromdate;
+  this.original_compare_todate = this.compare_todate;
+
+  this.applied_base_fromdate = this.base_fromdate;
+  this.applied_base_todate = this.base_todate;
+  this.applied_compare_fromdate = this.compare_fromdate;
+  this.applied_compare_todate = this.compare_todate;
+
+  this.comparePeriod = false;
+  this.isCompareChecked = false;
+
+  //self.getState(self);
+
+  this.offsetX = 0;
+  this.offsetY = 0;
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+
+  this.template = function () {
+    var bindKey = function (btn) {
+      var $btn = $(btn);
+      $btn.on('click', function () {
+        self.options.$container.find('.btn').removeClass('active');
+        $btn.addClass('active');
+      });
+      return $btn;
+    };
+
+    var bindPopUp = function (btn) {
+      var $btn = $(btn);
+      $btn.on('click', function () {
+        self.options.$container.find('.btn').removeClass('active');
+        $btn.addClass('active open');
+      });
+      return $btn;
+    };
+
+    var $group = $('<div class="jio datepicker btn-group"></div>');
+    var $last_day = $('<div class="jio datepicker option btn btn-default last_day">Past Day</div>');
+    var $last_week = $('<div class="jio datepicker option btn btn-default last_week">Past Week</div>');
+    var $last_month = $('<div class="jio datepicker option btn btn-default last_month">Past Month</div>');
+    var $custom = $('<div class="jio datepicker option btn btn-default custom">Custom</div>');
+
+    $group.append(bindKey($last_day));
+    $group.append(bindKey($last_week));
+    $group.append(bindKey($last_month));
+    $group.append(bindPopUp($custom));
+
+    return $group;
+  };
+
+  this.draw = function (options, callback) {
+    var $container = self.options.$container;
+    //self.options.$container.append(self.template());
+    var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
+      '<tr>' +
+      '<td class="dates"></td>' +
+      '<td><div class="dropdownmarker"></div></td>' +
+      '</tr>' +
+      '</table></div></div>');
+
+    $container.append($table);
+
+    var $dates = $table.find('.dates');
+    $dates.append('<span class="datelabel fromdate">' + self.formatDate(self.base_fromdate) + '</span>');
+    $dates.append(' - ');
+    $dates.append('<span class="datelabel todate">' + self.formatDate(self.base_todate) + '</span>');
+    $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + self.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + self.formatDate(self.compare_todate) + '</span></div>');
+
+    if (self.comparePeriod)
+      $container.find('.dates .compare').show();
+    else
+      $container.find('.dates .compare').hide();
+
+    var $item = $('<div class="picker" style="display:none"></div>');
+
+    $item.append('<table class="wrapper"><tr valign=top>' +
+      '<td class="calendars"></td>' +
+      '<td class="control"><div class="optionscontainer"></div></td>' +
+      '</tr></table>');
+
+    $container.append($item);
+    var $optionscontainer = $('.optionscontainer');
+    $optionscontainer.append('<div class="customdate">Date Range:' +
+      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+      '</div>');
+    $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
+
+    $optionscontainer.append('<div class="daterange baserange"">' +
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
+
+    $optionscontainer.append('<div class="compareoption visible"">' +
+      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+      '</div>');
+
+    $optionscontainer.append('<div class="daterange comparerange"">' +
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
+
+    $optionscontainer.append('' +
+      '<hr class="divider">' +
+      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+      '<span class="cancel">Cancel</span></div>');
+
+    var $calendars = $container.find('.calendars');
+    //$item = $('<div class="datepicker"></div>');
+
+    $item = $('<table><tr valign=top>' +
+      '<td class="datetable-prev unselectable"></td>' +
+      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+      '<td class="datetable-next unselectable"></td>' +
+      '</tr></table>');
+    $calendars.append($item);
+
+    $('.datetable-prev').append('<div class="prev">' +
+      '<div class="inline-block prev">' +
+      '</div>' +
+      '</div>');
+    $('.datetable-prev .prev').off('click');
+    $('.datetable-prev .prev').on('click', function (e) {
+      e.stopPropagation();
+
+      var currentLeftCellDate = $($('.datepicker')[0]).datepicker('getDate');
+      if (currentLeftCellDate.setMonth(currentLeftCellDate.getMonth()) < self.min_date)
+        return;
+
+      var currentRightCellDate = $($('.datepicker')[2]).datepicker('getDate');
+      currentRightCellDate = new Date(currentRightCellDate);
+      currentRightCellDate.setMonth(currentRightCellDate.getMonth() - 1);
+      var selectedDate = new Date(currentRightCellDate);
+
+
+      $('.datepicker').each(function (index, item) {
+        var localdate = new Date(selectedDate);
+
+        localdate.setMonth(localdate.getMonth() - (2 - index));
+        $(item).datepicker('setDate', localdate);
+      });
+    });
+
+    $('.datetable-next').append('<div class="next">' +
+      '<div class="inline-block next">' +
+      '</div>' +
+      '</div>');
+    $('.datetable-next .next').off('click');
+    $('.datetable-next .next').on('click', function (e) {
+      e.stopPropagation();
+
+      var currentRightCellDate = $($('.datepicker')[2]).datepicker('getDate');
+      if (currentRightCellDate.setMonth(currentRightCellDate.getMonth() + 1) > self.max_date)
+        return;
+
+      currentRightCellDate = new Date(currentRightCellDate);
+
+      var selectedDate = new Date(currentRightCellDate);
+
+      $('.datepicker').each(function (index, item) {
+
+        var localdate = new Date(selectedDate);
+        localdate.setMonth(localdate.getMonth() - (2 - index));
+        $(item).datepicker('setDate', localdate);
+      });
+    });
+
+    var currentClickIndex = 0;
+    $('.datepicker').datepicker({
+      dayNamesMin: ["S", "M", "T", "W", "T", "F", "S"],
+      firstDay: 0,
+      beforeShowDay: function (date) {
+        return self.drawCell(date);
+      },
+      onSelect: function (dateText, inst) {
+
+
+        $optionscontainer.find('.selector').val('custom');
+
+        switch (self.currentMode) {
+          case 'base-from':
+
+            self.currentMode = 'base-to';
+            self.base_fromdate = new Date(dateText);
+            self.base_todate = new Date(dateText);
+
+
+            var _checkLimit = new Date(self.min_date);
+            _checkLimit.setUTCHours(0, 0, 0, 0);
+            _checkLimit.setDate(_checkLimit.getDate() + 1);
+
+            if (self.base_fromdate.getTime() <= _checkLimit.getTime()) {
+              $('.compareoption .checker').attr('disabled', 'disabled');
+            }
+            else {
+              if ($('.compareoption .checker').is(':disabled')) {
+                $('.compareoption .checker').removeAttr('disabled');
+              }
+            }
+            //$($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $($('.daterange.baserange .dateoption')[0]).removeClass('invalid');
+            $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_fromdate));
+            $($('.daterange.baserange .dateoption')[1]).removeClass('invalid');
+
+            break;
+          case 'base-to':
+            self.base_todate = new Date(dateText);
+            //$($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $($('.daterange.baserange .dateoption')[1]).removeClass('invalid');
+            if (self.isCompareChecked) {
+              self.currentMode = 'compare-from';
+
+            }
+            else {
+
+              self.currentMode = 'base-from';
+            }
+            break;
+          case 'compare-from':
+            self.compare_fromdate = new Date(dateText);
+            self.compare_todate = new Date(dateText);
+            $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+            $($('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
+
+            $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_fromdate));
+            $($('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
+            self.currentMode = 'compare-to';
+            break;
+          case 'compare-to':
+            self.compare_todate = new Date(dateText);
+            $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+            $($('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
+            self.currentMode = 'base-from';
+            break;
+          default:
+            break;
+        }
+        self.handleChange();
+      }
+    });
+
+
+    $('.datepicker').find('a[href="#"]').each(function (index, item) {
+      $(this).on('click', function (event) {
+        event.stopPropagation();
+      });
+    });
+
+    $('.datepicker').each(function (index, item) {
+      var selectedDate = new Date(self.base_todate.getFullYear(), self.base_todate.getMonth(), 1);
+      selectedDate.setMonth(selectedDate.getMonth() - (2 - index));
+      $(item).datepicker('setDate', selectedDate);
+    });
+
+    $($('.daterange.baserange .dateoption')[0]).focus(function (e) {
+      self.currentMode = 'base-from';
+      self.handleChange();
+    });
+
+    $($('.daterange.baserange .dateoption')[0]).blur(function (e) {
+      //if ($($('.daterange.baserange .dateoption')[0]).hasClass('invalid')) {
+      //    $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      //}
+      $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $(this).removeClass('invalid');
+      $('.btn.apply').removeClass('disabled');
+      $('.btn.apply').prop('disabled', false);
+      self.currentMode = 'base-from';
+      self.handleChange();
+    });
+
+    $($('.daterange.baserange .dateoption')[0]).keyup(function (e) {
+      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) > self.base_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
+        $(this).addClass('invalid');
+        $('.btn.apply').addClass('disabled');
+        $('.btn.apply').prop('disabled', true);
+      }
+      else {
+        $(this).removeClass('invalid');
+        $('.btn.apply').removeClass('disabled');
+        $('.btn.apply').prop('disabled', false);
+        self.base_fromdate = new Date($(this).val());
+      }
+    });
+
+
+    $($('.daterange.baserange .dateoption')[1]).focus(function (e) {
+      self.currentMode = 'base-to';
+      self.handleChange();
+    });
+
+    $($('.daterange.baserange .dateoption')[1]).blur(function (e) {
+      $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $(this).removeClass('invalid');
+      $('.btn.apply').removeClass('disabled');
+      $('.btn.apply').prop('disabled', false);
+      self.currentMode = 'base-to';
+      self.handleChange();
+    });
+    $($('.daterange.baserange .dateoption')[1]).keyup(function (e) {
+      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) < self.base_fromdate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
+        $(this).addClass('invalid');
+        $('.btn.apply').addClass('disabled');
+        $('.btn.apply').prop('disabled', true);
+      }
+      else {
+        $(this).removeClass('invalid');
+        $('.btn.apply').removeClass('disabled');
+        $('.btn.apply').prop('disabled', false);
+        self.base_todate = new Date($(this).val());
+      }
+
+    });
+
+    $($('.daterange.comparerange .dateoption')[0]).focus(function (e) {
+      self.currentMode = 'compare-from';
+      self.handleChange();
+    });
+
+    $($('.daterange.comparerange .dateoption')[0]).blur(function (e) {
+      $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $(this).removeClass('invalid');
+      $('.btn.apply').removeClass('disabled');
+      $('.btn.apply').prop('disabled', false);
+      self.currentMode = 'compare-from';
+      self.handleChange();
+    });
+
+    $($('.daterange.comparerange .dateoption')[0]).keyup(function (e) {
+      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) > self.compare_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
+        $(this).addClass('invalid');
+        $('.btn.apply').addClass('disabled');
+        $('.btn.apply').prop('disabled', true);
+      }
+      else {
+        $(this).removeClass('invalid');
+        $('.btn.apply').removeClass('disabled');
+        $('.btn.apply').prop('disabled', false);
+        self.compare_fromdate = new Date($(this).val());
+      }
+    });
+
+    $($('.daterange.comparerange .dateoption')[1]).focus(function (e) {
+      self.currentMode = 'compare-to';
+      self.handleChange();
+    });
+
+    $($('.daterange.comparerange .dateoption')[1]).blur(function (e) {
+      $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $(this).removeClass('invalid');
+      $('.btn.apply').removeClass('disabled');
+      $('.btn.apply').prop('disabled', false);
+      self.currentMode = 'compare-to';
+      self.handleChange();
+    });
+
+    $($('.daterange.comparerange .dateoption')[1]).keyup(function (e) {
+      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) < self.compare_fromdate || new Date($(this).val()) > self.base_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
+        $(this).addClass('invalid');
+        $('.btn.apply').addClass('disabled');
+        $('.btn.apply').prop('disabled', true);
+      }
+      else {
+        $(this).removeClass('invalid');
+        $('.btn.apply').removeClass('disabled');
+        $('.btn.apply').prop('disabled', false);
+        self.compare_todate = new Date($(this).val());
+      }
+    });
+    $optionscontainer.find('.cancel').click(function (e) {
+
+      self.base_fromdate = self.original_base_fromdate;
+      self.base_todate = self.original_base_todate;
+
+      self.compare_fromdate = self.original_compare_fromdate;
+      self.compare_todate = self.original_compare_todate;
+
+      if (!self.comparePeriod) {
+        if ($('.compareoption .checker').is(":checked")) {
+          $('.compareoption .checker').click();
+          $('.compareoption .checker').prop('checked', false);
+        }
+      }
+      else {
+        if (!$('.compareoption .checker').is(":checked")) {
+          $('.compareoption .checker').click();
+          $('.compareoption .checker').prop('checked', true);
+        }
+      }
+      $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+
+      self.handleChange();
+
+      $dateboxcontainer.click();
+    });
+    $optionscontainer.find('.selector').change(function (e) {
+      switch (this.value) {
+        case 'today':
+          self.base_todate = self.fixDate(new Date(), true);
+          self.base_fromdate = self.addDays(self.base_todate, -0);
+          break;
+        case 'yesterday':
+          self.base_todate = self.fixDate(new Date(), true);
+          self.base_todate = self.addDays(self.base_todate, -1);
+          self.base_fromdate = self.addDays(self.base_todate, -0);
+          break;
+        case 'lastweek':
+          self.base_fromdate = self.fixDate(new Date(), true);
+          self.base_fromdate = self.addDays(self.base_fromdate, -1 * (self.base_fromdate.getDay() + 7));
+          self.base_todate = self.addDays(self.base_fromdate, 6);
+          break;
+        case 'lastmonth':
+          var curr = self.fixDate(new Date(), true);
+          var last = self.addDays(curr, -1 * (curr.getDate()));
+          var first = self.addDays(last, -1 * (last.getDate() - 1));
+          self.base_todate = self.fixDate(new Date(), true);
+          self.base_todate = self.addDays(self.base_todate, -1 * (self.base_todate.getDate()))
+          self.base_fromdate = self.addDays(self.base_todate, -1 * (self.base_todate.getDate() - 1));
+
+          break;
+        default:
+          break;
+      }
+      var rangelength = Date.dateDiff('d', self.base_fromdate, self.base_todate);
+      self.compare_todate = self.addDays(self.base_fromdate, -1);
+      self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
+
+      $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+
+      self.handleChange();
+    });
+    $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+    $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+    $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+    $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+
+    var $dateboxcontainer = $container.find('.jcontainer');
+    $dateboxcontainer.off('click');
+    var $picker = $container.find('.picker');
+    $dateboxcontainer.on('click', function (e) {
+      if ($(this).hasClass('expanded')) {
+        $(this).removeClass('expanded');
+        $picker.hide();
+      }
+      else {
+        $(this).addClass('expanded');
+
+        self.base_fromdate = self.applied_base_fromdate;
+        self.base_todate = self.applied_base_todate;
+        self.compare_fromdate = self.applied_compare_fromdate;
+        self.compare_todate = self.applied_compare_todate;
+
+        self.original_base_fromdate = self.applied_base_fromdate;
+        self.original_base_todate = self.applied_base_todate;
+        self.original_compare_fromdate = self.applied_compare_fromdate;
+        self.original_compare_todate = self.applied_compare_todate;
+
+        $picker.show();
+        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+      }
+    });
+    $table.click(function (e) {
+      e.stopPropagation();
+    });
+
+    $picker.click(function (e) {
+      e.stopPropagation();
+    });
+
+    $('body').click(function (e) {
+      $dateboxcontainer.removeClass('expanded');
+      $picker.hide();
+    });
+
+    $optionscontainer.find('.apply').click(function (e) {
+      $dateboxcontainer.removeClass('expanded');
+      $picker.hide();
+      self.comparePeriod = self.isCompareChecked;
+      //self.DateUpdate();
+    });
+
+    if (this.comparePeriod)
+      this.isCompareChecked = true;
+
+    if (this.disableCompare)
+      $('.compareoption .checker').attr('disabled', 'disabled');
+
+    //this.registerDateUpdate(this.updateLabels);
+    this.handleChange();
+  };
+
+  this.formatDate = function (date) {
+    var format = function (date, formatString) {
+      var formatDate = date;
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var yyyy = formatDate.getFullYear();
+      var yy = yyyy.toString().substring(2);
+      var m = formatDate.getMonth() + 1;
+      var mm = m < 10 ? "0" + m : m;
+      var mmm = months[m - 1];
+      var d = formatDate.getDate();
+      var dd = d < 10 ? "0" + d : d;
+      var fff = formatDate.getMilliseconds().toString();
+      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
+      var h = formatDate.getHours();
+      var hh = h < 10 ? "0" + h : h;
+      var n = formatDate.getMinutes();
+      var nn = n < 10 ? "0" + n : n;
+      var s = formatDate.getSeconds();
+      var ss = s < 10 ? "0" + s : s;
+
+      formatString = formatString.replace(/yyyy/i, yyyy);
+      formatString = formatString.replace(/yy/i, yy);
+      formatString = formatString.replace(/mmm/i, mmm);
+      formatString = formatString.replace(/mm/i, mm);
+      formatString = formatString.replace(/m/i, m);
+      formatString = formatString.replace(/dd/i, dd);
+      formatString = formatString.replace(/d/i, d);
+      formatString = formatString.replace(/hh/i, hh);
+      //formatString = formatString.replace(/h/i, h);
+      formatString = formatString.replace(/nn/i, nn);
+      //formatString = formatString.replace(/n/i, n);
+      formatString = formatString.replace(/ss/i, ss);
+      formatString = formatString.replace(/fff/i, fff);
+      //formatString = formatString.replace(/s/i, s);
+
+      return formatString;
+    };
+
+    return format(date, 'mmm dd, yyyy');
+  };
+
+  this.drawCell = function (date) {
+    if (date >= this.max_date)
+      return [false, 'daycell disabled'];
+
+    if (date <= this.min_date)
+      return [false, 'daycell disabled'];
+
+    if (this.currentMode == 'base-to') {
+      if (date < this.base_fromdate)
+        return [false, 'daycell disabled'];
+    }
+
+    if (this.currentMode == 'compare-to') {
+      if (date < this.compare_fromdate)
+        return [false, 'daycell compare disabled'];
+    }
+
+    if (this.isCompareChecked) {
+      if (date == this.compare_fromdate)
+        return [true, 'daycell compare inrange selected fromdate'];
+      if (date == this.compare_todate)
+        return [true, 'daycell compare inrange selected todate'];
+      if ((date >= this.base_fromdate && date <= this.base_todate) && (date >= this.compare_fromdate && date <= this.compare_todate))
+        return [true, 'daycell basencompare inrange'];
+      if (date >= this.compare_fromdate && date <= this.compare_todate)
+        return [true, 'daycell compare inrange'];
+      if (date > this.base_todate && this.currentMode != 'base-to') {
+        return [false, 'daycell compare disabled'];
+      }
+    }
+
+    if (date == this.base_fromdate)
+      return [true, 'daycell inrange selected fromdate'];
+    if (date == this.base_todate)
+      return [true, 'daycell inrange selected todate'];
+    if (date >= this.base_fromdate && date <= this.base_todate)
+      return [true, 'daycell inrange'];
+
+
+    switch (this.currentMode) {
+      case 'base-from':
+        break;
+      case 'base-to':
+        break;
+      case 'compare-from':
+        break;
+      case 'compare-to':
+        break;
+      default:
+        break;
+    }
+
+    return [true, 'daycell'];
+  };
+
+  this.handleChange = function (options) {
+    var self = this;
+
+    var $datebox = $('[jio-type="datepicker"]');
+
+    $('.datepicker').not(this).each(function () {
+      $(this).datepicker('refresh');
+    });
+
+    /*
+     $($('.daterange.baserange .dateoption')[0]).val(formatDate(self.base_fromdate));
+     $($('.daterange.baserange .dateoption')[1]).val(formatDate(self.base_todate));
+     $($('.daterange.comparerange .dateoption')[0]).val(formatDate(self.compare_fromdate));
+     $($('.daterange.comparerange .dateoption')[1]).val(formatDate(self.compare_todate));
+     */
+
+    $($('.daterange.baserange .dateoption')[1]).removeClass('active');
+    $($('.daterange.comparerange .dateoption')[0]).removeClass('active');
+    $($('.daterange.comparerange .dateoption')[1]).removeClass('active');
+
+    switch (this.currentMode) {
+      case 'base-from':
+        if (self.base_fromdate < self.min_date) {
+          self.base_fromdate = self.min_date;
+          $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+        }
+        if (self.base_fromdate > self.max_date) {
+          self.base_fromdate = self.max_date;
+          $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+        }
+        $($('.daterange.baserange .dateoption')[0]).addClass('active');
+        $($('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[1]).removeClass('active');
+
+        break;
+      case 'base-to':
+        if (self.base_todate < self.min_date) {
+          self.base_todate = self.min_date;
+          $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+        }
+        if (self.base_todate > self.max_date) {
+          self.base_todate = self.max_date;
+          $($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+        }
+        $($('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $($('.daterange.baserange .dateoption')[1]).addClass('active');
+        $($('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[1]).removeClass('active');
+
+        break;
+      case 'compare-from':
+        if (self.compare_fromdate < self.min_date) {
+          self.compare_fromdate = self.min_date;
+          $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+        }
+        if (self.compare_fromdate > self.max_date) {
+          self.compare_fromdate = self.max_date;
+          $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+        }
+
+        $($('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $($('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[0]).addClass('active');
+        $($('.daterange.comparerange .dateoption')[1]).removeClass('active');
+
+        break;
+      case 'compare-to':
+        if (self.compare_todate < self.min_date) {
+          self.compare_todate = self.min_date;
+          $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+        }
+        if (self.compare_todate > self.max_date) {
+          self.compare_todate = self.max_date;
+          $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+        }
+
+        $($('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $($('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $($('.daterange.comparerange .dateoption')[1]).addClass('active');
+
+        break;
+      default:
+        break;
+    }
+
+    if ((self.compare_fromdate > self.base_todate || self.compare_todate > self.base_todate) && this.isCompareChecked) {
+      var rangelength = Date.dateDiff('d', self.base_fromdate, self.base_todate);
+      self.compare_todate = self.addDays(self.base_fromdate, -1);
+      self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
+      if (self.compare_fromdate < self.min_date) {
+        self.compare_fromdate = self.min_date;
+      }
+      $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+
+
+      if (this.currentMode == 'compare-to')
+        $($('.daterange.comparerange .dateoption')[1]).focus();
+      else (this.currentMode == 'compare-from')
+      $($('.daterange.comparerange .dateoption')[0]).focus();
+
+    }
+
+    if (this.isCompareChecked) {
+      $datebox.find('.optionscontainer .checker').prop("checked", true);
+      $datebox.find('.optionscontainer .daterange.comparerange').show();
+
+    }
+    else {
+      $datebox.find('.optionscontainer .checker').prop("checked", false);
+      $datebox.find('.optionscontainer .daterange.comparerange').hide();
+    }
+
+    $datebox.find('.optionscontainer .checker').off('click');
+    $datebox.find('.optionscontainer .checker').on('click', function (e) {
+      e.stopPropagation();
+      self.isCompareChecked = !self.isCompareChecked;
+      if (self.isCompareChecked)
+        self.currentMode = 'compare-from';
+      else
+        self.currentMode = 'base-from';
+
+      var rangelength = Date.dateDiff('d', self.base_fromdate, self.base_todate);
+
+      self.compare_todate = self.addDays(self.base_fromdate, -1);
+      self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
+      if (self.compare_fromdate < self.min_date) {
+        self.compare_fromdate = self.min_date;
+      }
+      $($('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $($('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+
+      self.handleChange();
+    });
+
+    if (self.options.canvas)
+      self.options.canvas.emit('datechanging', self);
+    $(self).trigger('datechanging', self);
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, [
+        {'type': 'datepicker'},
+        {'uuid': self.uuid}
+      ], function (err) {
+        if (err)
+          return callback(err);
+
+        joolaio.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+        }
+        joolaio.events.emit('datepicker.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.DatePicker = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+          if (err)
+            throw err;
+          datepicker.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+},{"./_proto":18,"underscore":23}],12:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1782,7 +2794,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":16}],11:[function(require,module,exports){
+},{"./_proto":18}],13:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1812,6 +2824,7 @@ var Metric = module.exports = function (options, callback) {
   this._id = '_metric';
   this.uuid = joolaio.common.uuid();
   this.options = {
+    canvas: null,
     legend: true,
     container: null,
     $container: null,
@@ -1891,6 +2904,20 @@ var Metric = module.exports = function (options, callback) {
 
         joolaio.viz.onscreen.push(self);
 
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+          self.options.canvas.on('datechange', function (e) {
+            console.log('metric', 'datechange', e);
+          });
+        }
+
         joolaio.events.emit('metric.init.finish', self);
 
         if (self.options.query) {
@@ -1900,6 +2927,7 @@ var Metric = module.exports = function (options, callback) {
           return callback(null, self);
       });
     });
+
   }
   catch (err) {
     callback(err);
@@ -1931,7 +2959,6 @@ joolaio.events.on('core.init.finish', function () {
         var found = false;
         joolaio.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
-            console.log('found existing viz');
             found = true;
             result = viz;
           }
@@ -1940,6 +2967,7 @@ joolaio.events.on('core.init.finish', function () {
       return result;
     };
 
+    /*
     joolaio.events.on('core.ready', function () {
       if (typeof (jQuery) != 'undefined') {
         $.find('.jio.metric').forEach(function (container) {
@@ -1958,9 +2986,10 @@ joolaio.events.on('core.init.finish', function () {
         });
       }
     });
+    */
   }
 });
-},{"./_proto":16,"cloneextend":20}],12:[function(require,module,exports){
+},{"./_proto":18,"cloneextend":20}],14:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2033,6 +3062,8 @@ var MiniTable = module.exports = function (options, callback) {
         return;
       }
 
+      var $col, $tr, trs;
+      
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.drawn) {
         self.drawn = true;
@@ -2073,7 +3104,7 @@ var MiniTable = module.exports = function (options, callback) {
               $tr.append($td);
             });
 
-            $tbody.append($tr)
+            $tbody.append($tr);
           });
         });
         $html.append($tbody);
@@ -2089,7 +3120,7 @@ var MiniTable = module.exports = function (options, callback) {
       }
       else if (self.options.query.realtime) {
         //we're dealing with realtime
-        var trs = self.options.$container.find('tbody').find('tr');
+        trs = self.options.$container.find('tbody').find('tr');
         var existingkeys = [];
         series[0].data.forEach(function (point) {
           var index = 0;
@@ -2102,19 +3133,19 @@ var MiniTable = module.exports = function (options, callback) {
           existingkeys.push(key);
 
           for (var i = 0; i < trs.length; i++) {
-            var $tr = $(trs[i]);
+            $tr = $(trs[i]);
             var cols = $tr.find('td');
 
             var _key = '';
             var j;
             for (j = 0; j < message.dimensions.length; j++) {
-              var $col = $(cols[j]);
+              $col = $(cols[j]);
               _key += $col.text();
             }
 
             if (_key == key) {
               for (; j < message.dimensions.length + message.metrics.length; j++) {
-                var $col = $(cols[j]);
+                $col = $(cols[j]);
                 var value = $col.text();
                 if (value != point[j])
                   $col.text(point[j]);
@@ -2125,9 +3156,9 @@ var MiniTable = module.exports = function (options, callback) {
           if (!found) {
             //add
             var $tbody = $(self.options.$container.find('tbody')[0]);
-            var $tr = $('<tr></tr>');
+            $tr = $('<tr></tr>');
 
-            var index = 0;
+            index = 0;
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio minitable value dimension"></td>');
               $td.text(point[index++]);
@@ -2139,17 +3170,17 @@ var MiniTable = module.exports = function (options, callback) {
               $tr.append($td);
             });
 
-            $tbody.append($tr)
+            $tbody.append($tr);
           }
         });
         for (var i = 0; i < trs.length; i++) {
-          var $tr = $(trs[i]);
+          $tr = $(trs[i]);
           var cols = $tr.find('td');
 
           var _key = '';
           var j;
           for (j = 0; j < message.dimensions.length; j++) {
-            var $col = $(cols[j]);
+            $col = $(cols[j]);
             _key += $col.text();
           }
 
@@ -2162,11 +3193,11 @@ var MiniTable = module.exports = function (options, callback) {
         self.tablesort.refresh();
 
         var limit = 5;
-        var trs = self.options.$container.find('tbody tr');
-        for (var i = 0; i < trs.length; i++) {
-          var elem = trs[i];
+        trs = self.options.$container.find('tbody tr');
+        for (var z = 0; z < trs.length; z++) {
+          var elem = trs[z];
           var $elem = $(elem);
-          if (i + 1 > limit)
+          if (z + 1 > limit)
             $elem.remove();
         }
       }
@@ -2206,34 +3237,34 @@ var MiniTable = module.exports = function (options, callback) {
 };
 
 joolaio.events.on('core.init.finish', function () {
-if (typeof (jQuery) != 'undefined') {
-  $.fn.MiniTable = function (options, callback) {
-    var result = null;
-    var uuid = this.attr('jio-uuid');
-    if (!uuid) {
-      //create new
-      if (!options)
-        options = {};
-      options.container = this.get(0);
-      result = new joolaio.viz.MiniTable(options, function (err, minitable) {
-        minitable.draw(options, callback);
-      }).options.$container;
-    }
-    else {
-      //return existing
-      var found = false;
-      joolaio.viz.onscreen.forEach(function (viz) {
-        if (viz.uuid == uuid && !found) {
-          found = true;
-          result = viz;
-        }
-      });
-    }
-    return result;
-  };
-}
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.MiniTable = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.MiniTable(options, function (err, minitable) {
+          minitable.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
 });
-},{"./_proto":16,"underscore":31}],13:[function(require,module,exports){
+},{"./_proto":18,"underscore":23}],15:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2392,34 +3423,36 @@ var Pie = module.exports = function (options, callback) {
 };
 
 joolaio.events.on('core.init.finish', function () {
-if (typeof (jQuery) != 'undefined') {
-  $.fn.Pie = function (options, callback) {
-    var result = null;
-    var uuid = this.attr('jio-uuid');
-    if (!uuid) {
-      //create new
-      if (!options)
-        options = {};
-      options.container = this.get(0);
-      result = new joolaio.viz.Pie(options, function (err, pie) {
-        pie.draw(options, callback);
-      }).options.$container;
-    }
-    else {
-      //return existing
-      var found = false;
-      joolaio.viz.onscreen.forEach(function (viz) {
-        if (viz.uuid == uuid && !found) {
-          found = true;
-          result = viz;
-        }
-      });
-    }
-    return result;
-  };
-}
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Pie = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.Pie(options, function (err, pie) {
+          pie.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
 });
-},{"./_proto":16,"underscore":31}],14:[function(require,module,exports){
+},{"./_proto":18,"underscore":23}],16:[function(require,module,exports){
+/*jshint -W083 */
+
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2477,13 +3510,10 @@ var PunchCard = module.exports = function (options, callback) {
         minValue = value;
     });
 
-    console.log('min', minValue);
-    console.log('max', maxValue);
-
-
     var scaleSize = function (min, max, targetmin, targetmax, x) {
       var result = (((targetmax - targetmin) * (x - min)) / (max - min)) + targetmin;
-      console.log('scaling', x, result);
+      if (isNaN(result))
+        result = x;
       return result;
     };
 
@@ -2510,16 +3540,6 @@ var PunchCard = module.exports = function (options, callback) {
 
               _data.push(point);
             }
-
-            /*documents.forEach(function (document) {
-             var point = {
-             y: document.values[dimensions[0].key],
-             x: 3600000 * document.values[dimensions[1].key],
-
-             marker: { radius: Math.floor(Math.random() * 11) }
-             };
-             _data.push(point);
-             });*/
           }
           return _data;
 
@@ -2527,25 +3547,18 @@ var PunchCard = module.exports = function (options, callback) {
       }
     ];
 
-    console.log(series);
-
     return series;
   };
 
   this.draw = function (options, callback) {
-    console.log('draw');
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
       var series = self.makeSeries(message.dimensions, message.metrics, message.documents);
-      console.log('series', series);
       if (!self.chartDrawn) {
         var chartOptions = joolaio.common.extend({
           title: {
@@ -2595,7 +3608,7 @@ var PunchCard = module.exports = function (options, callback) {
             else
               self.chart.series[serIndex].addPoint({x: ser.data[0].x, y: ser.data[0].y}, true, true);
           }
-        })
+        });
       }
     });
   };
@@ -2662,7 +3675,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":16,"underscore":31}],15:[function(require,module,exports){
+},{"./_proto":18,"underscore":23}],17:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2790,7 +3803,7 @@ var Sparkline = module.exports = function (options, callback) {
             else
               self.chart.series[serIndex].addPoint({x: ser.data[0].x, y: ser.data[0].y}, true, true);
           }
-        })
+        });
       }
     });
   };
@@ -2838,6 +3851,8 @@ joolaio.events.on('core.init.finish', function () {
           options = {};
         options.container = this.get(0);
         result = new joolaio.viz.Sparkline(options, function (err, sparkline) {
+          if (err)
+            throw err;
           sparkline.draw(options, callback);
         }).options.$container;
       }
@@ -2855,7 +3870,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":16}],16:[function(require,module,exports){
+},{"./_proto":18}],18:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2951,7 +3966,8 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
     documents.forEach(function (document) {
       series[index].data.push([
         document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0]
+        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+      ]
       );
     });
   });
@@ -2989,7 +4005,7 @@ proto.makeTableChartSeries = function (dimensions, metrics, documents) {
 
 proto.makeGeoSeries = function (dimensions, metrics, documents) {
   var results = [];
-  results.push(['Country', metrics[0].name])
+  results.push(['Country', metrics[0].name]);
 
   if (dimensions[0].datatype == 'ip') {
     documents.forEach(function (document) {
@@ -3018,7 +4034,7 @@ proto.onError = function (err, callback) {
 proto.find = function (obj) {
 
 };
-},{"cloneextend":20}],17:[function(require,module,exports){
+},{"cloneextend":20}],19:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3034,9 +4050,10 @@ var viz = exports;
 viz._id = 'viz';
 
 //pickers
-viz.pickers = require('./pickers/index');
+viz.DatePicker = require('./DatePicker');
 
 //panels
+viz.Canvas = require('./Canvas');
 
 //charts
 viz.Sparkline = require('./Sparkline');
@@ -3052,44 +4069,8 @@ viz.onscreen = [];
 viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
-},{"./Geo":10,"./Metric":11,"./MiniTable":12,"./Pie":13,"./PunchCard":14,"./Sparkline":15,"./pickers/index":19}],18:[function(require,module,exports){
-/**
- *  @title joola.io
- *  @overview the open-source data analytics framework
- *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
- *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
- *
- *  Licensed under GNU General Public License 3.0 or later.
- *  Some rights reserved. See LICENSE, AUTHORS.
- **/
 
-
-var datepicker = exports;
-
-},{}],19:[function(require,module,exports){
-/**
- *  @title joola.io
- *  @overview the open-source data analytics framework
- *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
- *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
- *
- *  Licensed under GNU General Public License 3.0 or later.
- *  Some rights reserved. See LICENSE, AUTHORS.
- **/
-
-
-var pickers = module.exports = exports;
-pickers._id = 'pickers';
-
-pickers.datepicker = require('./datepicker');
-
-pickers.init = function (callback) {
-  return callback(null);
-  //return pickers.datepicker.init(callback);
-};
-
-
-},{"./datepicker":18}],20:[function(require,module,exports){
+},{"./Canvas":10,"./DatePicker":11,"./Geo":12,"./Metric":13,"./MiniTable":14,"./Pie":15,"./PunchCard":16,"./Sparkline":17}],20:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -3341,833 +4322,6 @@ function foreach(object, block, context)
  }
  */
 },{}],21:[function(require,module,exports){
-var process=require("__browserify_process");//filter will reemit the data if cb(err,pass) pass is truthy
-
-// reduce is more tricky
-// maybe we want to group the reductions or emit progress updates occasionally
-// the most basic reduce just emits one 'data' event after it has recieved 'end'
-
-var Stream = require('stream').Stream
-  , es = exports
-  , through = require('through')
-  , from = require('from')
-  , duplex = require('duplexer')
-  , map = require('map-stream')
-  , pause = require('pause-stream')
-  , split = require('split')
-  , pipeline = require('stream-combiner')
-
-es.Stream = Stream //re-export Stream from core
-es.through = through
-es.from = from
-es.duplex = duplex
-es.map = map
-es.pause = pause
-es.split = split
-es.pipeline = es.connect = es.pipe = pipeline
-// merge / concat
-//
-// combine multiple streams into a single stream.
-// will emit end only once
-
-es.concat = //actually this should be called concat
-es.merge = function (/*streams...*/) {
-  var toMerge = [].slice.call(arguments)
-  var stream = new Stream()
-  var endCount = 0
-  stream.writable = stream.readable = true
-
-  toMerge.forEach(function (e) {
-    e.pipe(stream, {end: false})
-    var ended = false
-    e.on('end', function () {
-      if(ended) return
-      ended = true
-      endCount ++
-      if(endCount == toMerge.length)
-        stream.emit('end') 
-    })
-  })
-  stream.write = function (data) {
-    this.emit('data', data)
-  }
-  stream.destroy = function () {
-    merge.forEach(function (e) {
-      if(e.destroy) e.destroy()
-    })
-  }
-  return stream
-}
-
-
-// writable stream, collects all events into an array 
-// and calls back when 'end' occurs
-// mainly I'm using this to test the other functions
-
-es.writeArray = function (done) {
-  if ('function' !== typeof done)
-    throw new Error('function writeArray (done): done must be function')
-
-  var a = new Stream ()
-    , array = [], isDone = false
-  a.write = function (l) {
-    array.push(l)
-  }
-  a.end = function () {
-    isDone = true
-    done(null, array)
-  }
-  a.writable = true
-  a.readable = false
-  a.destroy = function () {
-    a.writable = a.readable = false
-    if(isDone) return
-    done(new Error('destroyed before end'), array)
-  }
-  return a
-}
-
-//return a Stream that reads the properties of an object
-//respecting pause() and resume()
-
-es.readArray = function (array) {
-  var stream = new Stream()
-    , i = 0
-    , paused = false
-    , ended = false
- 
-  stream.readable = true  
-  stream.writable = false
- 
-  if(!Array.isArray(array))
-    throw new Error('event-stream.read expects an array')
-  
-  stream.resume = function () {
-    if(ended) return
-    paused = false
-    var l = array.length
-    while(i < l && !paused && !ended) {
-      stream.emit('data', array[i++])
-    }
-    if(i == l && !ended)
-      ended = true, stream.readable = false, stream.emit('end')
-  }
-  process.nextTick(stream.resume)
-  stream.pause = function () {
-     paused = true
-  }
-  stream.destroy = function () {
-    ended = true
-    stream.emit('close')
-  }
-  return stream
-}
-
-//
-// readable (asyncFunction)
-// return a stream that calls an async function while the stream is not paused.
-//
-// the function must take: (count, callback) {...
-//
-
-es.readable =
-function (func, continueOnError) {
-  var stream = new Stream()
-    , i = 0
-    , paused = false
-    , ended = false
-    , reading = false
-
-  stream.readable = true  
-  stream.writable = false
- 
-  if('function' !== typeof func)
-    throw new Error('event-stream.readable expects async function')
-  
-  stream.on('end', function () { ended = true })
-  
-  function get (err, data) {
-    
-    if(err) {
-      stream.emit('error', err)
-      if(!continueOnError) stream.emit('end')
-    } else if (arguments.length > 1)
-      stream.emit('data', data)
-
-    process.nextTick(function () {
-      if(ended || paused || reading) return
-      try {
-        reading = true
-        func.call(stream, i++, function () {
-          reading = false
-          get.apply(null, arguments)
-        })
-      } catch (err) {
-        stream.emit('error', err)    
-      }
-    })
-  }
-  stream.resume = function () {
-    paused = false
-    get()
-  }
-  process.nextTick(get)
-  stream.pause = function () {
-     paused = true
-  }
-  stream.destroy = function () {
-    stream.emit('end')
-    stream.emit('close')
-    ended = true
-  }
-  return stream
-}
-
-
-//
-// map sync
-//
-
-es.mapSync = function (sync) { 
-  return es.through(function write(data) {
-    var mappedData = sync(data)
-    if (typeof mappedData !== 'undefined')
-      this.emit('data', mappedData)
-  })
-}
-
-//
-// log just print out what is coming through the stream, for debugging
-//
-
-es.log = function (name) {
-  return es.through(function (data) {
-    var args = [].slice.call(arguments)
-    if(name) console.error(name, data)
-    else     console.error(data)
-    this.emit('data', data)
-  })
-}
-
-
-//
-// child -- pipe through a child process
-//
-
-es.child = function (child) {
-
-  return es.duplex(child.stdin, child.stdout)
-
-}
-
-//
-// parse
-//
-// must be used after es.split() to ensure that each chunk represents a line
-// source.pipe(es.split()).pipe(es.parse())
-
-es.parse = function () { 
-  return es.through(function (data) {
-    var obj
-    try {
-      if(data) //ignore empty lines
-        obj = JSON.parse(data.toString())
-    } catch (err) {
-      return console.error(err, 'attemping to parse:', data)
-    }
-    //ignore lines that where only whitespace.
-    if(obj !== undefined)
-      this.emit('data', obj)
-  })
-}
-//
-// stringify
-//
-
-es.stringify = function () { 
-  var Buffer = require('buffer').Buffer
-  return es.mapSync(function (e){ 
-    return JSON.stringify(Buffer.isBuffer(e) ? e.toString() : e) + '\n'
-  }) 
-}
-
-//
-// replace a string within a stream.
-//
-// warn: just concatenates the string and then does str.split().join(). 
-// probably not optimal.
-// for smallish responses, who cares?
-// I need this for shadow-npm so it's only relatively small json files.
-
-es.replace = function (from, to) {
-  return es.pipeline(es.split(from), es.join(to))
-} 
-
-//
-// join chunks with a joiner. just like Array#join
-// also accepts a callback that is passed the chunks appended together
-// this is still supported for legacy reasons.
-// 
-
-es.join = function (str) {
-  
-  //legacy api
-  if('function' === typeof str)
-    return es.wait(str)
-
-  var first = true
-  return es.through(function (data) {
-    if(!first)
-      this.emit('data', str)
-    first = false
-    this.emit('data', data)
-    return true
-  })
-}
-
-
-//
-// wait. callback when 'end' is emitted, with all chunks appended as string.
-//
-
-es.wait = function (callback) {
-  var body = ''
-  return es.through(function (data) { body += data },
-    function () {
-      this.emit('data', body)
-      this.emit('end')
-      if(callback) callback(null, body)
-    })
-}
-
-es.pipeable = function () {
-  throw new Error('[EVENT-STREAM] es.pipeable is deprecated')
-}
-
-},{"__browserify_process":47,"buffer":48,"duplexer":22,"from":23,"map-stream":24,"pause-stream":25,"split":26,"stream":57,"stream-combiner":27,"through":28}],22:[function(require,module,exports){
-var Stream = require("stream")
-var writeMethods = ["write", "end", "destroy"]
-var readMethods = ["resume", "pause"]
-var readEvents = ["data", "close"]
-var slice = Array.prototype.slice
-
-module.exports = duplex
-
-function forEach (arr, fn) {
-    if (arr.forEach) {
-        return arr.forEach(fn)
-    }
-
-    for (var i = 0; i < arr.length; i++) {
-        fn(arr[i], i)
-    }
-}
-
-function duplex(writer, reader) {
-    var stream = new Stream()
-    var ended = false
-
-    forEach(writeMethods, proxyWriter)
-
-    forEach(readMethods, proxyReader)
-
-    forEach(readEvents, proxyStream)
-
-    reader.on("end", handleEnd)
-
-    writer.on("drain", function() {
-      stream.emit("drain")
-    })
-
-    writer.on("error", reemit)
-    reader.on("error", reemit)
-
-    stream.writable = writer.writable
-    stream.readable = reader.readable
-
-    return stream
-
-    function proxyWriter(methodName) {
-        stream[methodName] = method
-
-        function method() {
-            return writer[methodName].apply(writer, arguments)
-        }
-    }
-
-    function proxyReader(methodName) {
-        stream[methodName] = method
-
-        function method() {
-            stream.emit(methodName)
-            var func = reader[methodName]
-            if (func) {
-                return func.apply(reader, arguments)
-            }
-            reader.emit(methodName)
-        }
-    }
-
-    function proxyStream(methodName) {
-        reader.on(methodName, reemit)
-
-        function reemit() {
-            var args = slice.call(arguments)
-            args.unshift(methodName)
-            stream.emit.apply(stream, args)
-        }
-    }
-
-    function handleEnd() {
-        if (ended) {
-            return
-        }
-        ended = true
-        var args = slice.call(arguments)
-        args.unshift("end")
-        stream.emit.apply(stream, args)
-    }
-
-    function reemit(err) {
-        stream.emit("error", err)
-    }
-}
-
-},{"stream":57}],23:[function(require,module,exports){
-var process=require("__browserify_process");
-'use strict';
-
-var Stream = require('stream')
-
-// from
-//
-// a stream that reads from an source.
-// source may be an array, or a function.
-// from handles pause behaviour for you.
-
-module.exports =
-function from (source) {
-  if(Array.isArray(source)) {
-    source = source.slice()
-    return from (function (i) {
-      if(source.length)
-        this.emit('data', source.shift())
-      else
-        this.emit('end')
-      return true
-    })
-  }
-  var s = new Stream(), i = 0
-  s.ended = false
-  s.started = false
-  s.readable = true
-  s.writable = false
-  s.paused = false
-  s.ended = false
-  s.pause = function () {
-    s.started = true
-    s.paused = true
-  }
-  function next () {
-    s.started = true
-    if(s.ended) return
-    while(!s.ended && !s.paused && source.call(s, i++, function () {
-      if(!s.ended && !s.paused)
-          next()
-    }))
-      ;
-  }
-  s.resume = function () {
-    s.started = true
-    s.paused = false
-    next()
-  }
-  s.on('end', function () {
-    s.ended = true
-    s.readable = false
-    process.nextTick(s.destroy)
-  })
-  s.destroy = function () {
-    s.ended = true
-    s.emit('close') 
-  }
-  /*
-    by default, the stream will start emitting at nextTick
-    if you want, you can pause it, after pipeing.
-    you can also resume before next tick, and that will also
-    work.
-  */
-  process.nextTick(function () {
-    if(!s.started) s.resume()
-  })
-  return s
-}
-
-},{"__browserify_process":47,"stream":57}],24:[function(require,module,exports){
-var process=require("__browserify_process");//filter will reemit the data if cb(err,pass) pass is truthy
-
-// reduce is more tricky
-// maybe we want to group the reductions or emit progress updates occasionally
-// the most basic reduce just emits one 'data' event after it has recieved 'end'
-
-
-var Stream = require('stream').Stream
-
-
-//create an event stream and apply function to each .write
-//emitting each response as data
-//unless it's an empty callback
-
-module.exports = function (mapper, opts) {
-
-  var stream = new Stream()
-    , self = this
-    , inputs = 0
-    , outputs = 0
-    , ended = false
-    , paused = false
-    , destroyed = false
-    , lastWritten = 0
-    , inNext = false
-
-  this.opts = opts || {};
-  var errorEventName = this.opts.failures ? 'failure' : 'error';
-
-  // Items that are not ready to be written yet (because they would come out of
-  // order) get stuck in a queue for later.
-  var writeQueue = {}
-
-  stream.writable = true
-  stream.readable = true
-
-  function queueData (data, number) {
-    var nextToWrite = lastWritten + 1
-
-    if (number === nextToWrite) {
-      // If it's next, and its not undefined write it
-      if (data !== undefined) {
-        stream.emit.apply(stream, ['data', data])
-      }
-      lastWritten ++
-      nextToWrite ++
-    } else {
-      // Otherwise queue it for later.
-      writeQueue[number] = data
-    }
-
-    // If the next value is in the queue, write it
-    if (writeQueue.hasOwnProperty(nextToWrite)) {
-      var dataToWrite = writeQueue[nextToWrite]
-      delete writeQueue[nextToWrite]
-      return queueData(dataToWrite, nextToWrite)
-    }
-
-    outputs ++
-    if(inputs === outputs) {
-      if(paused) paused = false, stream.emit('drain') //written all the incoming events
-      if(ended) end()
-    }
-  }
-
-  function next (err, data, number) {
-    if(destroyed) return
-    inNext = true
-
-    if (!err || self.opts.failures) {
-      queueData(data, number)
-    }
-
-    if (err) {
-      stream.emit.apply(stream, [ errorEventName, err ]);
-    }
-
-    inNext = false;
-  }
-
-  // Wrap the mapper function by calling its callback with the order number of
-  // the item in the stream.
-  function wrappedMapper (input, number, callback) {
-    return mapper.call(null, input, function(err, data){
-      callback(err, data, number)
-    })
-  }
-
-  stream.write = function (data) {
-    if(ended) throw new Error('map stream is not writable')
-    inNext = false
-    inputs ++
-
-    try {
-      //catch sync errors and handle them like async errors
-      var written = wrappedMapper(data, inputs, next)
-      paused = (written === false)
-      return !paused
-    } catch (err) {
-      //if the callback has been called syncronously, and the error
-      //has occured in an listener, throw it again.
-      if(inNext)
-        throw err
-      next(err)
-      return !paused
-    }
-  }
-
-  function end (data) {
-    //if end was called with args, write it, 
-    ended = true //write will emit 'end' if ended is true
-    stream.writable = false
-    if(data !== undefined) {
-      return queueData(data, inputs)
-    } else if (inputs == outputs) { //wait for processing 
-      stream.readable = false, stream.emit('end'), stream.destroy() 
-    }
-  }
-
-  stream.end = function (data) {
-    if(ended) return
-    end()
-  }
-
-  stream.destroy = function () {
-    ended = destroyed = true
-    stream.writable = stream.readable = paused = false
-    process.nextTick(function () {
-      stream.emit('close')
-    })
-  }
-  stream.pause = function () {
-    paused = true
-  }
-
-  stream.resume = function () {
-    paused = false
-  }
-
-  return stream
-}
-
-
-
-
-
-},{"__browserify_process":47,"stream":57}],25:[function(require,module,exports){
-//through@2 handles this by default!
-module.exports = require('through')
-
-
-},{"through":28}],26:[function(require,module,exports){
-//filter will reemit the data if cb(err,pass) pass is truthy
-
-// reduce is more tricky
-// maybe we want to group the reductions or emit progress updates occasionally
-// the most basic reduce just emits one 'data' event after it has recieved 'end'
-
-
-var through = require('through')
-var Decoder = require('string_decoder').StringDecoder
-
-module.exports = split
-
-//TODO pass in a function to map across the lines.
-
-function split (matcher, mapper) {
-  var decoder = new Decoder()
-  var soFar = ''
-  if('function' === typeof matcher)
-    mapper = matcher, matcher = null
-  if (!matcher)
-    matcher = /\r?\n/
-
-  function emit(stream, piece) {
-    if(mapper) {
-      try {
-        piece = mapper(piece)
-      }
-      catch (err) {
-        return stream.emit('error', err)
-      }
-      if('undefined' !== typeof piece)
-        stream.queue(piece)
-    }
-    else
-      stream.queue(piece)
-  }
-
-  function next (stream, buffer) { 
-    var pieces = (soFar + buffer).split(matcher)
-    soFar = pieces.pop()
-
-    for (var i = 0; i < pieces.length; i++) {
-      var piece = pieces[i]
-      emit(stream, piece)
-    }
-  }
-
-  return through(function (b) {
-    next(this, decoder.write(b))
-  },
-  function () {
-    if(decoder.end) 
-      next(this, decoder.end())
-    if(soFar != null)
-      emit(this, soFar)
-    this.queue(null)
-  })
-}
-
-
-},{"string_decoder":63,"through":28}],27:[function(require,module,exports){
-var duplexer = require('duplexer')
-
-module.exports = function () {
-
-  var streams = [].slice.call(arguments)
-    , first = streams[0]
-    , last = streams[streams.length - 1]
-    , thepipe = duplexer(first, last)
-
-  if(streams.length == 1)
-    return streams[0]
-  else if (!streams.length)
-    throw new Error('connect called with empty args')
-
-  //pipe all the streams together
-
-  function recurse (streams) {
-    if(streams.length < 2)
-      return
-    streams[0].pipe(streams[1])
-    recurse(streams.slice(1))  
-  }
-  
-  recurse(streams)
- 
-  function onerror () {
-    var args = [].slice.call(arguments)
-    args.unshift('error')
-    thepipe.emit.apply(thepipe, args)
-  }
-  
-  //es.duplex already reemits the error from the first and last stream.
-  //add a listener for the inner streams in the pipeline.
-  for(var i = 1; i < streams.length - 1; i ++)
-    streams[i].on('error', onerror)
-
-  return thepipe
-}
-
-
-},{"duplexer":22}],28:[function(require,module,exports){
-var process=require("__browserify_process");var Stream = require('stream')
-
-// through
-//
-// a stream that does nothing but re-emit the input.
-// useful for aggregating a series of changing but not ending streams into one stream)
-
-exports = module.exports = through
-through.through = through
-
-//create a readable writable stream.
-
-function through (write, end, opts) {
-  write = write || function (data) { this.queue(data) }
-  end = end || function () { this.queue(null) }
-
-  var ended = false, destroyed = false, buffer = [], _ended = false
-  var stream = new Stream()
-  stream.readable = stream.writable = true
-  stream.paused = false
-
-//  stream.autoPause   = !(opts && opts.autoPause   === false)
-  stream.autoDestroy = !(opts && opts.autoDestroy === false)
-
-  stream.write = function (data) {
-    write.call(this, data)
-    return !stream.paused
-  }
-
-  function drain() {
-    while(buffer.length && !stream.paused) {
-      var data = buffer.shift()
-      if(null === data)
-        return stream.emit('end')
-      else
-        stream.emit('data', data)
-    }
-  }
-
-  stream.queue = stream.push = function (data) {
-//    console.error(ended)
-    if(_ended) return stream
-    if(data == null) _ended = true
-    buffer.push(data)
-    drain()
-    return stream
-  }
-
-  //this will be registered as the first 'end' listener
-  //must call destroy next tick, to make sure we're after any
-  //stream piped from here.
-  //this is only a problem if end is not emitted synchronously.
-  //a nicer way to do this is to make sure this is the last listener for 'end'
-
-  stream.on('end', function () {
-    stream.readable = false
-    if(!stream.writable && stream.autoDestroy)
-      process.nextTick(function () {
-        stream.destroy()
-      })
-  })
-
-  function _end () {
-    stream.writable = false
-    end.call(stream)
-    if(!stream.readable && stream.autoDestroy)
-      stream.destroy()
-  }
-
-  stream.end = function (data) {
-    if(ended) return
-    ended = true
-    if(arguments.length) stream.write(data)
-    _end() // will emit or queue
-    return stream
-  }
-
-  stream.destroy = function () {
-    if(destroyed) return
-    destroyed = true
-    ended = true
-    buffer.length = 0
-    stream.writable = stream.readable = false
-    stream.emit('close')
-    return stream
-  }
-
-  stream.pause = function () {
-    if(stream.paused) return
-    stream.paused = true
-    return stream
-  }
-
-  stream.resume = function () {
-    if(stream.paused) {
-      stream.paused = false
-      stream.emit('resume')
-    }
-    drain()
-    //may have become paused again,
-    //as drain emits 'data'.
-    if(!stream.paused)
-      stream.emit('drain')
-    return stream
-  }
-  return stream
-}
-
-
-},{"__browserify_process":47,"stream":57}],29:[function(require,module,exports){
 var process=require("__browserify_process");;!function(exports, undefined) {
 
   var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
@@ -4730,7 +4884,7 @@ var process=require("__browserify_process");;!function(exports, undefined) {
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-},{"__browserify_process":47}],30:[function(require,module,exports){
+},{"__browserify_process":39}],22:[function(require,module,exports){
 (function () {var io = module.exports;/*! Socket.IO.js build:0.8.6, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 /**
@@ -8482,7 +8636,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   , this
 );
 }).call(window)
-},{}],31:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -9760,7 +9914,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 
 }).call(this);
 
-},{}],32:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
@@ -9800,23 +9954,22 @@ module.exports={
     "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "mocha-lcov-reporter": "0.x",
-    "coveralls": "2.x",
-    "should": "1.x",
-    "mocha": "1.x",
-    "sinon": "1.x",
-    "chai": "1.x",
-    "sinon-chai": "2.x",
-    "blanket": "1.x",
-    "jshint": "2.x",
-    "supertest": "0.x"
+    "coveralls": "*",
+    "istanbul": "*",
+    "should": "*",
+    "mocha": "*",
+    "sinon": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "jshint": "*",
+    "supertest": "*"
   },
   "license": "GPL-3.0"
 }
 
-},{}],33:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 
-},{}],34:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -9853,7 +10006,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":48}],35:[function(require,module,exports){
+},{"buffer":40}],27:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -9952,7 +10105,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":36,"./rng":37,"./sha":38,"./sha256":39,"buffer":48}],36:[function(require,module,exports){
+},{"./md5":28,"./rng":29,"./sha":30,"./sha256":31,"buffer":40}],28:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -10117,7 +10270,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":34}],37:[function(require,module,exports){
+},{"./helpers":26}],29:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -10150,7 +10303,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],38:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -10253,7 +10406,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":34}],39:[function(require,module,exports){
+},{"./helpers":26}],31:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -10334,7 +10487,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":34}],40:[function(require,module,exports){
+},{"./helpers":26}],32:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10636,7 +10789,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],41:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -10717,7 +10870,7 @@ var xhrHttp = (function () {
     }
 })();
 
-},{"./lib/request":42,"events":40,"url":64}],42:[function(require,module,exports){
+},{"./lib/request":34,"events":32,"url":56}],34:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -10888,7 +11041,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":43,"Base64":44,"inherits":46,"stream":57}],43:[function(require,module,exports){
+},{"./response":35,"Base64":36,"inherits":38,"stream":49}],35:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -11010,7 +11163,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":57,"util":66}],44:[function(require,module,exports){
+},{"stream":49,"util":58}],36:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -11072,7 +11225,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],45:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -11087,7 +11240,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":41}],46:[function(require,module,exports){
+},{"http":33}],38:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -11112,7 +11265,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],47:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -11167,7 +11320,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],48:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
 
@@ -12200,7 +12353,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":49,"ieee754":50}],49:[function(require,module,exports){
+},{"base64-js":41,"ieee754":42}],41:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -12323,7 +12476,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],50:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -12409,7 +12562,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],51:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -12456,7 +12609,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],52:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/punycode v1.2.3 by @mathias */
 ;(function(root) {
 
@@ -12966,7 +13119,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 }(this));
 
-},{}],53:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13052,7 +13205,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],54:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13139,13 +13292,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":53,"./encode":54}],56:[function(require,module,exports){
+},{"./decode":45,"./encode":46}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13219,7 +13372,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":60,"./writable.js":62,"inherits":46,"process/browser.js":58}],57:[function(require,module,exports){
+},{"./readable.js":52,"./writable.js":54,"inherits":38,"process/browser.js":50}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13348,9 +13501,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":56,"./passthrough.js":59,"./readable.js":60,"./transform.js":61,"./writable.js":62,"events":40,"inherits":46}],58:[function(require,module,exports){
-module.exports=require(47)
-},{}],59:[function(require,module,exports){
+},{"./duplex.js":48,"./passthrough.js":51,"./readable.js":52,"./transform.js":53,"./writable.js":54,"events":32,"inherits":38}],50:[function(require,module,exports){
+module.exports=require(39)
+},{}],51:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13393,7 +13546,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":61,"inherits":46}],60:[function(require,module,exports){
+},{"./transform.js":53,"inherits":38}],52:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14328,7 +14481,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":57,"__browserify_process":47,"buffer":48,"events":40,"inherits":46,"process/browser.js":58,"string_decoder":63}],61:[function(require,module,exports){
+},{"./index.js":49,"__browserify_process":39,"buffer":40,"events":32,"inherits":38,"process/browser.js":50,"string_decoder":55}],53:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14534,7 +14687,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":56,"inherits":46}],62:[function(require,module,exports){
+},{"./duplex.js":48,"inherits":38}],54:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14922,7 +15075,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":57,"buffer":48,"inherits":46,"process/browser.js":58}],63:[function(require,module,exports){
+},{"./index.js":49,"buffer":40,"inherits":38,"process/browser.js":50}],55:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15115,7 +15268,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":48}],64:[function(require,module,exports){
+},{"buffer":40}],56:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -15748,14 +15901,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":52,"querystring":55}],65:[function(require,module,exports){
+},{"punycode":44,"querystring":47}],57:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],66:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16343,4 +16496,4 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":65,"__browserify_process":47,"inherits":46}]},{},[1,2])
+},{"./support/isBuffer":57,"__browserify_process":39,"inherits":38}]},{},[2,1])
