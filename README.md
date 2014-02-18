@@ -60,7 +60,6 @@ console.log(joolaio.VERSION);
 - [`joolaio`](#joolaio)
     - [`joolaio` properties](#joola-properties)
     - [`init(options, [callback])`](#initoptions-callback)
-    - [Init options](#init-options)
     - [`beacon`](#joolaiobeacon)
         - [`insert(collection, documents, [callback])`](#joolaiobeaconinsertcollection-documents-callback)
             - [Collection processing](#collection-processing)
@@ -74,7 +73,6 @@ console.log(joolaio.VERSION);
             - [Calculated Metrics](#calculated-metrics)
             - [Dimension/Metric Transformations](#intervals)
     - [`viz`](#joolaioviz)
-        - [`viz` overview](#viz-overview)
         - [`Metric(options, [callback])`](#joolaiovizmetricoptions-callback)
         - [`MiniTable(options, [callback])`](#joolaiovizminitableoptions-callback)
         - [`Pie(options, [callback])`](#joolaiovizpieoptions-callback)
@@ -92,11 +90,14 @@ joola.io has the following properties:
 - `VERSION` holds the current SDK version.
 - `USER` holds the currently connected `user` object.
 
-### `init(options, [callback])`
+#### `init(options, [callback])`
 
 Connects to a joola.io server with the following arguments:
 
-- `options` - An object with the host configuration as described in [init options](#init-options).
+- `options` - An object with the host configuration:
+  - `host` - the hostname or IP address of the joola.io server. Set to `127.0.0.1` or `localhost` if you're running on the same host as your joola.io server.
+  - `token` - if using server-side authentication, then the token generated via [`joola.auth.generateToken`](https://github.com/joola/joola.io/wiki/lib%5Cauth%5Cindex%20(jsdoc)).
+  - `APIToken` - the API Token to use when exchanging data with the server.
 - `callback` - If provided, `callback(err)` is called once the SDK is ready. If an error as occurred then `err` will contain the details.
 
 ```js
@@ -107,14 +108,6 @@ joolaio.init({host: 'http://localhost:8080', APIToken: '12345'}, function(err) {
   console.log('joola.io initialized', joolaio.VERSION);
 });
 ```
-
-### Init options
-
-When creating a server instance, the following options configure the server's behavior:
-
-- `host` - the hostname or IP address of the joola.io server. Set to `127.0.0.1` or `localhost` if you're running on the same host as your joola.io server.
-- `token` - if using server-side authentication, then the token generated via [`joola.auth.generateToken`](https://github.com/joola/joola.io/wiki/lib%5Cauth%5Cindex%20(jsdoc)).
-- `APIToken` - the API Token to use when exchanging data with the server.
 
 ### `joolaio.beacon`
 
