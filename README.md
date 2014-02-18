@@ -83,7 +83,7 @@ console.log(joolaio.VERSION);
         
 ## `joolaio`
 
-### `joolaio` properties
+#### `joolaio` properties
 
 joola.io has the following properties:
 - `options` object containing all options used by the SDK for its operation.
@@ -96,7 +96,7 @@ Connects to a joola.io server with the following arguments:
 
 - `options` - An object with the host configuration:
   - `host` - the hostname or IP address of the joola.io server. Set to `127.0.0.1` or `localhost` if you're running on the same host as your joola.io server.
-  - `token` - if using server-side authentication, then the token generated via [`joola.auth.generateToken`](https://github.com/joola/joola.io/wiki/lib%5Cauth%5Cindex%20(jsdoc)).
+  - `token` - A token generated via [`joola.auth.generateToken`](https://github.com/joola/joola.io/wiki/lib%5Cauth%5Cindex%20(jsdoc)).
   - `APIToken` - the API Token to use when exchanging data with the server.
 - `callback` - If provided, `callback(err)` is called once the SDK is ready. If an error as occurred then `err` will contain the details.
 

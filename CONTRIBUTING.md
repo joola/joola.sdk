@@ -69,3 +69,4 @@ please contact project admins to ensure you have been granted with an editor rol
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
 * #joola.io IRC channel on freenode.org
+
