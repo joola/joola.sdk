@@ -1,4 +1,4 @@
-# joola.io.sdk [![Build Status][3]][4] [![Coverage Status][1]][2]
+# joola.io.sdk [![Build Status][3]][4]
 
 | **[API Docs] [apidocs]**     | **[joola.io Docs] [techdocs]**     | **[Issues] [issues]**     | **[Contributing] [contributing]**           | **[About] [about]**     |
 |-------------------------------------|-------------------------------|-------------------------------------|---------------------------------------------|-------------------------------------|
@@ -17,7 +17,6 @@
   console.log(joolaio.VERSION);
 </script>
 ```
-
 *Optional:* if you'll include `?APIToken=XXXXXX`, you'll be able to use joola.io.sdk without calling `init`.
 
 **Option 2:** Require the SDK `require('joola.io.sdk');`
@@ -66,9 +65,9 @@ console.log(joolaio.VERSION);
         - [`insert(collection, documents, [callback])`](#joolaiobeaconinsertcollection-documents-callback)
             - [Collection processing](#collection-processing)
             - [Document processing](#document-processing)
-        - [`update(collection, key, document, [callback])`](#joolaiobeaconupdatecollection-key-document-callback)
     - [`query`](#joolaioquery)
         - [`fetch(options, [callback])`](#joolaioqueryfetchoptions-callback)
+            - [Query Result Structure](#query-result-structure)
             - [Timeframes](#timeframes)
             - [Intervals](#intervals)
             - [Filters](#filters)
@@ -76,13 +75,13 @@ console.log(joolaio.VERSION);
             - [Dimension/Metric Transformations](#intervals)
     - [`viz`](#joolaioviz)
         - [`viz` overview](#viz-overview)
-        - [`Metric(options, [callback])`](#joolaio-viz-metricoptions-callback)
-        - [`MiniTable(options, [callback])`](#joolaio-viz-minitableoptions-callback)
-        - [`Pie(options, [callback])`](#joolaio-viz-metricoptions-callback)
-        - [`Sparkline(options, [callback])`](#joolaio-viz-metricoptions-callback)
-        - [`Geo(options, [callback])`](#joolaio-viz-geooptions-callback)
-        - [`PunchCard(options, [callback])`](#joolaio-viz-punchcardoptions-callback)
-		- [Timezones](#timezones)
+        - [`Metric(options, [callback])`](#joolaiovizmetricoptions-callback)
+        - [`MiniTable(options, [callback])`](#joolaiovizminitableoptions-callback)
+        - [`Pie(options, [callback])`](#joolaiovizpieoptions-callback)
+        - [`Sparkline(options, [callback])`](#joolaiovizsparklineoptions-callback)
+        - [`Geo(options, [callback])`](#joolaiovizgeooptions-callback)
+        - [`PunchCard(options, [callback])`](#joolaiovizpunchcardoptions-callback)
+    - [Timezones](#timezones)
         
 ## `joolaio`
 
@@ -152,15 +151,6 @@ When joola.io returns the saved document collection via the `callback` of the `j
  - `saved` bool indicating if the save completed.
  - `error` string containing any error message from the underlying caching database.
 
-#### `joolaio.beacon.update(collection, key, document, [callback])`
-
-Updates a single document matching the provided `key`, the cached document is overwritten with the new `document`. Upon completion, `callback(err, document)` is called.
-
-- `collection` - the name of the collection holding the document for the update.
-- `key` - The unique identifier of the document to update.
-- `document` - A JSON object describing the information to update.
-- `callback(err, document)` - called on completion with `err` containing any errors raised or null. `documents` contain an the updated cached document.
-
 ### `joolaio.query`
 
 Used to query and analyze stored documents.
@@ -197,8 +187,22 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
 - `filter` - An array of [filters](#filters).
 - `realtime` - Specify that this is a realtime query and results are expected back from the server every 1 second.
 
-`callback` returns any `err` if encountered or null if none. `results` holds a JSON object with the following structure:
+`callback` returns any `err` if encountered or null if none. `results` holds a JSON object with the structure detailed under [Query Response Structure](#query-response-structure). 
 
+```js
+var query = {
+  timeframe: 'last_hour',
+  interval: 'minute',
+  dimensions: [],
+  metrics: 'visits'
+};
+
+joolaio.query.fetch(query, function(err, results) {
+  console.log('We have results, count: ', results.documents.length);
+});
+```
+
+##### Query Result Structure
 ```js
 {
 	uid: "XR64MxKg5" //unique identifier for the query
@@ -241,21 +245,6 @@ Query joola.io for a set of documents based on criteria passed in `query`. Upon 
 		}
 	}
 }
-```
-
-##### Example of Basic Query
-
-```js
-var query = {
-  timeframe: 'last_hour',
-  interval: 'minute',
-  dimensions: [],
-  metrics: 'visits'
-};
-
-joolaio.query.fetch(query, function(err, results) {
-  console.log('We have results, count: ', results.documents.length);
-});
 ```
 
 ##### Timeframes
@@ -402,6 +391,46 @@ joolaio.query.fetch(query, function(err, results) {
 });
 ```
 
+### `joolaio.viz`
+
+Used to transform queries into meaningful insights and visualizations.
+
+All visualizations follow the same usage in an attempt to simply usage, however, all also include detailed options for controlling the visualization's specific attributes.
+Charting is provided by [HighCharts][highcharts], but the extensible nature of the visualizations support developers wishing to use an alternative charting engine. 
+The chart object is available directly for developers via `[viz].chart`, more about this in the visualization's docs below.
+ 
+Dropping visualizations on a page is very easy, but most usage cases will require a blend of visualizations working together and responding commonly to certain events, for this purpose we have `Canvas`. 
+Example: on a web page we have a couple of sparklines and metric boxes. We would like to be able to add a date box to the page and once the date range is updated, that all 
+ visualizations react together to the change and update their contents to display results for the new range.  
+To address this issue we'll add a `Canvas` to batch the visualizations on page and allow them to interact, more about this topic below.
+
+There are a few methods for drawing visualizations:
+
+Using jQuery:
+```js
+var options = {
+  query: {
+    timeframe: 'last_hour',
+    interval: 'minute',
+    dimensions: [],
+    metrics: ['visits']
+  }
+};
+$('#metric').Metric(options);
+```
+
+Using Pure Javascript:
+```js
+new joolaio.viz.Metric({
+  container: '#metric',
+  query: {
+    timeframe: 'last_hour',
+    interval: 'minute',
+    dimensions: [],
+    metrics: ['visits']
+  }
+});
+```
 
 ## Timezones
 All documents are stored with their timestamp and timezone.
@@ -455,3 +484,5 @@ Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 [roadmap]: https://github.com/joola/joola.io/wiki/Product-roadmap
 [contributing]: https://github.com/joola/joola.io/wiki/Contributing
 [issues]: https://github.com/joola/joola.io.sdk/issues
+
+[highcharts]: http://www.highcharts.com
