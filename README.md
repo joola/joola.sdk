@@ -12,7 +12,7 @@
 
 **Option 1:** Include `joola.io.sdk` in your HTML.
 ```html
-<script src="http://localhost:8080"></script>
+<script src="http://localhost:8080/joola.io.js"></script>
 <script>
   console.log(joolaio.VERSION);
 </script>
@@ -21,7 +21,7 @@
 
 **Option 2:** Require the SDK `require('joola.io.sdk');`
 ```bash
-$ npm install joola.io.sdk
+$ npm install http://github.com/joola/joola.io.sdk/tarball/develop
 ```
 ```js
 var joolaio = require('joola.io.sdk');
@@ -84,6 +84,13 @@ console.log(joolaio.VERSION);
     - [Timezones](#timezones)
         
 ## `joolaio`
+
+joola.io is an SDK responsible for communication between a client using the SDK and the joola.io server. If you don't have a joola.io server running yet, [get one up and running in minutes][joola.io].
+
+The SDK can consume ANY endpoint of the joola.io framework, however for brevity purposes, the API manual below includes only the main topics of:
+- **Pushing data** is done using [Beacon](#joolaiobeacon) which consumes an array of JSON documents and stores them in joola.io cache.
+- **Querying** data is easy and fun, describe the data you wish to consume and shape it to your liking. 
+- **Data Visualization** is flexible and can be extended quickly and easily, transform your data into insight.   
 
 #### `joolaio` properties
 
@@ -537,4 +544,5 @@ Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 [contributing]: https://github.com/joola/joola.io/wiki/Contributing
 [issues]: https://github.com/joola/joola.io.sdk/issues
 
+[joola.io]: http://joola.io/
 [highcharts]: http://www.highcharts.com
