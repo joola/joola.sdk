@@ -32,7 +32,8 @@ joolaio.options = {
     functions: {
       enabled: false
     }
-  }
+  },
+  timezoneOffset: null
 };
 
 //libraries
