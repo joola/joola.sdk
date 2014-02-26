@@ -943,9 +943,9 @@ api.getJSON = function (options, objOptions, callback) {
 
             return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
-          else
+          else {
             return callback(new Error('Failed to execute request: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
-
+          }
         });
       });
 
@@ -1651,9 +1651,9 @@ var Canvas = module.exports = function (options, callback) {
   };
 
   this.prepareQuery = function (query) {
-    var _query = ce.clone(query);
+    var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = ce.extend(self.options.query, _query)
+      _query = joolaio.common.extend(self.options.query, _query)
     }
     if (self.options.datepicker) {
       var _datepicker = $(self.options.datepicker).DatePicker();
@@ -1661,6 +1661,7 @@ var Canvas = module.exports = function (options, callback) {
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
     }
+
     return _query;
   };
 
@@ -1671,7 +1672,6 @@ var Canvas = module.exports = function (options, callback) {
       $(self.options.datepicker).DatePicker({});
 
     if (self.options.viz && self.options.viz.length > 0) {
-      var fn = null;
       self.options.viz.forEach(function (viz) {
         viz.query = self.prepareQuery(viz.query);
         switch (viz.type) {
@@ -1731,6 +1731,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
+
         result = new joolaio.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
@@ -3972,7 +3973,6 @@ proto.verify = function (options, callback) {
 
 proto.fetch = function (query, callback) {
   var _query = ce.clone(query);
-
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
     _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
