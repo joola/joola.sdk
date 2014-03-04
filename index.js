@@ -254,3 +254,21 @@ joolaio.init = function (options, callback) {
 if (joolaio.options.APIToken) {
   joolaio.init({});
 }
+
+joolaio.set = function (key, value, callback) {
+  joolaio.options[key] = value;
+
+  if (key === 'APIToken') {
+    joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
+      if (err)
+        return callback(err);
+
+      joolaio.USER = user;
+      return callback(null);
+    });
+  }
+};
+
+joolaio.get = function (key) {
+  return joolaio.options[key];
+};
