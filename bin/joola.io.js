@@ -257,15 +257,16 @@ if (joolaio.options.APIToken) {
   joolaio.init({});
 }
 
-joolaio.set = function (key, value) {
+joolaio.set = function (key, value, callback) {
   joolaio.options[key] = value;
 
   if (key === 'APIToken') {
     joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
       if (err)
-        throw err;
+        return callback(err);
 
       joolaio.USER = user;
+      return callback(null);
     });
   }
 };
@@ -3873,7 +3874,7 @@ joolaio.events.on('core.init.finish', function () {
     $.fn.Sparkline = function (options, callback) {
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid) {
+      if (!uuid || options.force) {
         //create new
         if (!options)
           options = {};
