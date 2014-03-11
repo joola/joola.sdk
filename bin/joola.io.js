@@ -975,7 +975,7 @@ api.getJSON = function (options, objOptions, callback) {
           req.xhr.abort();
         else
           req.abort();
-      }, options.timeout || 15000);
+      }, options.timeout || joolaio.options.timeout || 15000);
 
       req.on('error', function (err) {
         return callback(err);
