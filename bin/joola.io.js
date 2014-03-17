@@ -3735,6 +3735,7 @@ var Sparkline = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
+  this.realtimeQueries = [];
 
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
@@ -3751,6 +3752,10 @@ var Sparkline = module.exports = function (options, callback) {
 
         return;
       }
+
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
         var chartOptions = joolaio.common.extend({
@@ -3818,6 +3823,26 @@ var Sparkline = module.exports = function (options, callback) {
       else if (self.options.query.realtime) {
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
+          console.log(ser.data);
+
+          ser.data.forEach(function (datapoint) {
+            var found = false;
+            self.chart.series[serIndex].points.forEach(function (point) {
+              if (point) {
+                if (point.x.getTime() == datapoint.x.getTime()) {
+                  console.log('found a point to update', point.x, datapoint.y);
+                  found = true;
+                  self.chart.series[serIndex].data[self.chart.series[serIndex].data.length - 1].update(datapoint.y);
+                }
+              }
+            });
+            if (!found) {
+              console.log('pushing new point', datapoint.x, datapoint.y);
+              self.chart.series[serIndex].addPoint({x: datapoint.x, y: datapoint.y}, true, true);
+            }
+          });
+
+          return;
           ser.data.splice(0, ser.data.length - 1);
 
           var point = self.chart.series[serIndex].points[self.chart.series[serIndex].points.length - 1];
@@ -3870,6 +3895,20 @@ joolaio.events.on('core.init.finish', function () {
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
+        if (options.force && uuid) {
+          var existing = null;
+          var found = false;
+          joolaio.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
         //create new
         if (!options)
           options = {};
@@ -3911,6 +3950,16 @@ var ce = require('cloneextend');
 var proto = exports;
 proto._id = '_proto';
 
+proto.destroy = function (container, obj) {
+  console.log('destroy', this);
+
+  this.realtimeQueries.forEach(function (q) {
+    console.log('Stopping query', q);
+    joolaio.query.stop(q);
+  });
+  this.options.$container.empty();
+};
+
 proto.markContainer = function (container, attr, callback) {
   if (!callback)
     callback = function () {
@@ -3943,12 +3992,13 @@ proto.verify = function (options, callback) {
 };
 
 proto.fetch = function (query, callback) {
+  var self = this;
   joolaio.dispatch.query.fetch(ce.clone(query), function (err, message) {
     if (err)
       return callback(err);
 
-    if (message && message.stats && message.stats.times)
-      joolaio.logger.debug('fetch took: ' + message.stats.times.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+    if (message && message.query && message.query.ts && message.query.ts.duration)
+      joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });
@@ -3989,9 +4039,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });
