@@ -77,8 +77,8 @@ if (isBrowser()) {
     var scr = elems[key];
     if (scr.src) {
       if (scr.src.indexOf('joola.io.js') > -1) {
-        joolaio.options.host = scr.src.replace('/joola.io.js', '');
         var parts = require('url').parse(scr.src);
+        joolaio.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
