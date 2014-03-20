@@ -78,8 +78,8 @@ if (isBrowser()) {
     var scr = elems[key];
     if (scr.src) {
       if (scr.src.indexOf('joola.io.js') > -1) {
-        joolaio.options.host = scr.src.replace('/joola.io.js', '');
         var parts = require('url').parse(scr.src);
+        joolaio.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
@@ -255,3 +255,21 @@ joolaio.init = function (options, callback) {
 if (joolaio.options.APIToken) {
   joolaio.init({});
 }
+
+joolaio.set = function (key, value, callback) {
+  joolaio.options[key] = value;
+
+  if (key === 'APIToken') {
+    joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
+      if (err)
+        return callback(err);
+
+      joolaio.USER = user;
+      return callback(null);
+    });
+  }
+};
+
+joolaio.get = function (key) {
+  return joolaio.options[key];
+};
