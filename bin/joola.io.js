@@ -34,7 +34,8 @@ joolaio.options = {
     functions: {
       enabled: false
     }
-  }
+  },
+  timezoneOffset: null
 };
 
 //libraries
@@ -962,9 +963,9 @@ api.getJSON = function (options, objOptions, callback) {
 
             return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
-          else
+          else {
             return callback(new Error('Failed to execute request: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
-
+          }
         });
       });
 
@@ -1173,9 +1174,7 @@ global.shutdown = function (code, callback) {
   stopped = true;
   joola.logger.info('Gracefully shutting down, code: ' + code);
   joola.state.set('core', 'stop', 'received code [' + code + ']+');
-  
-  console.log('global shutdown');
-  
+
   joola.dispatch.emit('nodes:state:change', [joola.UID, joola.state.get()]);
 
   var node = nodeState();
@@ -1253,6 +1252,17 @@ global.nodeState = function () {
   };
 
   return result;
+};
+
+joolaio.timezone = function (tz) {
+  if (tz)
+    joolaio.options.timezoneOffset = tz;
+
+  var offset = 0;
+  if (joolaio.options.timezoneOffset)
+    offset = joolaio.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
+
+  return offset;
 };
 }).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42,"cluster":25,"os":43}],7:[function(require,module,exports){
@@ -1634,7 +1644,9 @@ JSON.stringify = function (obj) {
 var
   EventEmitter2 = require('eventemitter2').EventEmitter2;
 
-var _events = new EventEmitter2({wildcard: true, newListener: true});
+var
+  ce = require('cloneextend'),
+  _events = new EventEmitter2({wildcard: true, newListener: true});
 
 var Canvas = module.exports = function (options, callback) {
   if (!callback)
@@ -1668,8 +1680,40 @@ var Canvas = module.exports = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
+  this.prepareQuery = function (query) {
+    var _query = ce.extend({}, query);
+    if (self.options.query) {
+      _query = joolaio.common.extend(self.options.query, _query)
+    }
+    if (self.options.datepicker) {
+      var _datepicker = $(self.options.datepicker).DatePicker();
+      _query.timeframe = {};
+      _query.timeframe.start = _datepicker.base_fromdate;
+      _query.timeframe.end = _datepicker.base_todate;
+    }
+
+    return _query;
+  };
+
   this.draw = function (options, callback) {
     var self = this;
+
+    if (self.options.datepicker)
+      $(self.options.datepicker).DatePicker({});
+
+    if (self.options.viz && self.options.viz.length > 0) {
+      self.options.viz.forEach(function (viz) {
+        viz.query = self.prepareQuery(viz.query);
+        switch (viz.type) {
+          case 'Metric':
+            $(viz.container).Metric(viz);
+            break;
+          default:
+            break;
+        }
+      });
+    }
+
     if (typeof callback === 'function')
       return callback(null, self);
   };
@@ -1717,6 +1761,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
+
         result = new joolaio.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
@@ -1737,7 +1782,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18,"eventemitter2":21}],11:[function(require,module,exports){
+},{"./_proto":18,"cloneextend":20,"eventemitter2":21}],11:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2362,6 +2407,10 @@ var DatePicker = module.exports = function (options, callback) {
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
+
+      if (self.options.canvas)
+        self.options.canvas.emit('datechange', self);
+
       self.DateUpdate();
     });
 
@@ -2924,13 +2973,12 @@ var Metric = module.exports = function (options, callback) {
         self.drawn = true;
 
         self.options.$container.find('.value').text(value);
-
-
         if (typeof callback === 'function')
-          return callback(null);
+          return callback(null, self);
       }
       else if (self.options.query.realtime) {
         //we're dealing with realtime
+
         self.options.$container.find('.value').text(value);
       }
     });
@@ -2969,10 +3017,10 @@ var Metric = module.exports = function (options, callback) {
 
         joolaio.events.emit('metric.init.finish', self);
 
-        if (self.options.query) {
-          return self.draw(options, callback);
-        }
-        else if (typeof callback === 'function')
+        //if (self.options.query) {
+        //  return self.draw(options, callback);
+        //}
+        if (typeof callback === 'function')
           return callback(null, self);
       });
     });
@@ -3017,25 +3065,25 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-    joolaio.events.on('core.ready', function () {
-      if (typeof (jQuery) != 'undefined') {
-        $.find('.jio.metric').forEach(function (container) {
-          var $container = $(container);
+     joolaio.events.on('core.ready', function () {
+     if (typeof (jQuery) != 'undefined') {
+     $.find('.jio.metric').forEach(function (container) {
+     var $container = $(container);
 
-          var caption = $container.attr('data-caption') || '';
-          var timeframe = $container.attr('data-timeframe');
-          var metrics = $container.attr('data-metrics');
-          metrics = eval("(" + metrics + ')');
+     var caption = $container.attr('data-caption') || '';
+     var timeframe = $container.attr('data-timeframe');
+     var metrics = $container.attr('data-metrics');
+     metrics = eval("(" + metrics + ')');
 
-          var query = {
-            timeframe: timeframe,
-            metrics: [metrics]
-          };
-          $container.Metric({caption: caption, query: query});
-        });
-      }
-    });
-    */
+     var query = {
+     timeframe: timeframe,
+     metrics: [metrics]
+     };
+     $container.Metric({caption: caption, query: query});
+     });
+     }
+     });
+     */
   }
 });
 },{"./_proto":18,"cloneextend":20}],14:[function(require,module,exports){
@@ -3769,7 +3817,7 @@ var Sparkline = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     self.stop();
-    return this._super.fetch(this.options.query, function (err, message) {
+    return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
         console.log('err', err);
         if (typeof callback === 'function')
@@ -3915,7 +3963,7 @@ var Sparkline = module.exports = function (options, callback) {
 
             //let's change our query and fetch again
             self.options.query.timeframe = {}
-            self.options.query.timeframe.start =new Date(dates.base_fromdate);
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
             console.log(self.options);
@@ -4000,7 +4048,7 @@ var ce = require('cloneextend');
 var proto = exports;
 proto._id = '_proto';
 
-proto.stop = function(){
+proto.stop = function () {
   this.realtimeQueries.forEach(function (q) {
     console.log('Stopping query', q);
     joolaio.query.stop(q);
@@ -4037,6 +4085,14 @@ proto.markContainer = function (container, attr, callback) {
   return callback(null);
 };
 
+proto.get = function (key) {
+  return this.options[key];
+};
+
+proto.set = function (key, value) {
+  return this.options[key] = value;
+};
+
 proto.verify = function (options, callback) {
   if (!options.container)
     return callback(new Error('no container specified for timeline.'));
@@ -4048,9 +4104,27 @@ proto.verify = function (options, callback) {
   return callback(null);
 };
 
-proto.fetch = function (query, callback) {
-  var self = this;
-  joolaio.dispatch.query.fetch(ce.clone(query), function (err, message) {
+proto.fetch = function (context, query, callback) {
+  if (!callback && context && query) {
+    callback = query;
+    query = context;
+  }
+  var _query = ce.clone(query);
+
+  console.log(context);
+  
+  if (context && context.options && context.options.canvas) {
+    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+  }
+
+  //adjust offset
+  if (_query.timeframe && typeof _query.timeframe === 'object') {
+    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
+    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
+  }
+
+  joolaio.dispatch.query.fetch(_query, function (err, message) {
     if (err)
       return callback(err);
 
