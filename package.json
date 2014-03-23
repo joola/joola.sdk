@@ -34,7 +34,8 @@
     "socket.io-browserify": "~0.9.6",
     "cloneextend": "0.0.3",
     "event-stream": "~3.1.0",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "moment": "~2.5.1"
   },
   "devDependencies": {
     "coveralls": "*",
