@@ -4335,6 +4335,8 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var moment = require('moment');
+var _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
   if (!callback)
@@ -4384,8 +4386,7 @@ var Timeline = module.exports = function (options, callback) {
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      console.log(series);
-      if (!self.chartDrawn) {
+       if (!self.chartDrawn) {
         var chartOptions = joolaio.common.extend({
           title: {
             text: null
@@ -4583,7 +4584,7 @@ joolaio.events.on('core.init.finish', function () {
 
 
 
-},{"./_proto":20}],20:[function(require,module,exports){
+},{"./_proto":20,"moment":24,"underscore":26}],20:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4718,6 +4719,8 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
         console.log(_date, _date, fixOffset(_date));
         x = fixOffset(_date);
       }*/
+
+      console.log(x,document.values[metrics[index].key])
 
       series[index].data.push({
         x: x,
