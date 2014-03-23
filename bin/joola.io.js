@@ -276,8 +276,8 @@ joolaio.get = function (key) {
   return joolaio.options[key];
 };
 
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":19,"./package.json":24,"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42,"querystring":47,"socket.io-browserify":22,"url":56}],2:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":26,"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44,"querystring":49,"socket.io-browserify":24,"url":58}],2:[function(require,module,exports){
 /*
  SortTable
  version 2
@@ -1022,7 +1022,7 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
-},{"http":36,"https":40,"querystring":47,"url":56}],4:[function(require,module,exports){
+},{"http":38,"https":42,"querystring":49,"url":58}],4:[function(require,module,exports){
 /**
  *  joola.io
  *
@@ -1130,7 +1130,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":20,"url":56}],5:[function(require,module,exports){
+},{"cloneextend":22,"url":58}],5:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1149,7 +1149,7 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"eventemitter2":21}],6:[function(require,module,exports){
+},{"eventemitter2":23}],6:[function(require,module,exports){
 (function (process,global){
 /**
  *  @title joola.io
@@ -1264,8 +1264,8 @@ joolaio.timezone = function (tz) {
 
   return offset;
 };
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42,"cluster":25,"os":43}],7:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44,"cluster":27,"os":45}],7:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -1404,7 +1404,7 @@ common.typeof = function (obj) {
   }
   return typeof(obj);
 };
-},{"./modifiers":9,"cloneextend":20,"crypto":30,"util":58}],8:[function(require,module,exports){
+},{"./modifiers":9,"cloneextend":22,"crypto":32,"util":60}],8:[function(require,module,exports){
 (function (process){
 /**
  *  @title joola.io
@@ -1500,8 +1500,8 @@ else {
     return this._log('error', message, callback);
   };
 }
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42}],9:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44}],9:[function(require,module,exports){
 /**
  *  @title joola.io/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola.io
@@ -1782,7 +1782,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18,"cloneextend":20,"eventemitter2":21}],11:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":22,"eventemitter2":23}],11:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2753,7 +2753,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18,"underscore":23}],12:[function(require,module,exports){
+},{"./_proto":20,"underscore":25}],12:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2892,7 +2892,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18}],13:[function(require,module,exports){
+},{"./_proto":20}],13:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3040,7 +3040,22 @@ joolaio.events.on('core.init.finish', function () {
     $.fn.Metric = function (options, callback) {
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid) {
+      if (!uuid || (options && options.force)) {
+        if (options && options.force && uuid) {
+          var existing = null;
+          var found = false;
+          joolaio.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+
         //create new
         if (!options)
           options = {};
@@ -3086,7 +3101,7 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
-},{"./_proto":18,"cloneextend":20}],14:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":22}],14:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3361,7 +3376,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18,"underscore":23}],15:[function(require,module,exports){
+},{"./_proto":20,"underscore":25}],15:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3547,7 +3562,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18,"underscore":23}],16:[function(require,module,exports){
+},{"./_proto":20,"underscore":25}],16:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -3772,7 +3787,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":18,"underscore":23}],17:[function(require,module,exports){
+},{"./_proto":20,"underscore":25}],17:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4031,7 +4046,544 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":18}],18:[function(require,module,exports){
+},{"./_proto":20}],18:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var _ = require('underscore');
+
+
+var Table = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('table.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
+
+  var self = this;
+
+  this._id = '_table';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    legend: true,
+    container: null,
+    $container: null,
+    query: null
+  };
+  this.chartDrawn = false;
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.template = function () {
+    var $html = $('<table class="jio table">' +
+      '<thead>' +
+      '</thead>' +
+      '<tbody>' +
+      '</tbody>' +
+      '</table>');
+    return $html;
+  };
+
+  this.sort = function (key, callback) {
+    if (typeof callback === 'function')
+      return callback(null);
+  };
+
+  this._draw = function (callback) {
+    if (typeof callback === 'function')
+      return callback(null);
+  };
+
+  this.draw = function (options, callback) {
+    return this._super.fetch(this.options.query, function (err, message) {
+      if (err) {
+        if (typeof callback === 'function')
+          return callback(err);
+        else
+          throw err;
+        return;
+      }
+
+      var $col, $tr, trs;
+
+      var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
+      if (!self.drawn) {
+        self.drawn = true;
+
+        var $html = self.template();
+
+        var $thead = $($html.find('thead'));
+        var $head_tr = $('<tr class="jio tbl captions"></tr>');
+
+        message.dimensions.forEach(function (d) {
+          var $th = $('<th class="jio tbl caption dimension"></th>');
+          $th.text(d.name);
+          $head_tr.append($th);
+        });
+        message.metrics.forEach(function (m) {
+          var $th = $('<th class="jio tbl caption metric"></th>');
+          $th.text(m.name);
+          $head_tr.append($th);
+        });
+
+        $thead.append($head_tr);
+        $html.append($thead);
+
+        var $tbody = $($html.find('tbody'));
+        series.forEach(function (ser, serIndex) {
+          ser.data.forEach(function (point) {
+            var $tr = $('<tr></tr>');
+
+            var index = 0;
+            message.dimensions.forEach(function (d) {
+              var $td = $('<td class="jio tbl value dimension"></td>');
+              $td.text(point[index++]);
+              $tr.append($td);
+            });
+            message.metrics.forEach(function (m) {
+              var $td = $('<td class="jio tbl value metric"></td>');
+              $td.text(point[index++]);
+              $tr.append($td);
+            });
+
+            $tbody.append($tr);
+          });
+        });
+        $html.append($tbody);
+        self.options.$container.append($html);
+
+        self.tablesort = new Tablesort($html.get(0), {
+          descending: true,
+          current: $html.find('th')[1]
+        });
+
+        if (typeof callback === 'function')
+          return callback(null);
+      }
+      else if (self.options.query.realtime) {
+        //we're dealing with realtime
+        trs = self.options.$container.find('tbody').find('tr');
+        var existingkeys = [];
+        series[0].data.forEach(function (point) {
+          var index = 0;
+          var key = '';
+          var found = false;
+          message.dimensions.forEach(function (d) {
+            key += point[index++];
+          });
+
+          existingkeys.push(key);
+
+          for (var i = 0; i < trs.length; i++) {
+            $tr = $(trs[i]);
+            var cols = $tr.find('td');
+
+            var _key = '';
+            var j;
+            for (j = 0; j < message.dimensions.length; j++) {
+              $col = $(cols[j]);
+              _key += $col.text();
+            }
+
+            if (_key == key) {
+              for (; j < message.dimensions.length + message.metrics.length; j++) {
+                $col = $(cols[j]);
+                var value = $col.text();
+                if (value != point[j])
+                  $col.text(point[j]);
+              }
+              found = true;
+            }
+          }
+          if (!found) {
+            //add
+            var $tbody = $(self.options.$container.find('tbody')[0]);
+            $tr = $('<tr></tr>');
+
+            index = 0;
+            message.dimensions.forEach(function (d) {
+              var $td = $('<td class="jio tbl value dimension"></td>');
+              $td.text(point[index++]);
+              $tr.append($td);
+            });
+            message.metrics.forEach(function (m) {
+              var $td = $('<td class="jio tbl value metric"></td>');
+              $td.text(point[index++]);
+              $tr.append($td);
+            });
+
+            $tbody.append($tr);
+          }
+        });
+        for (var i = 0; i < trs.length; i++) {
+          $tr = $(trs[i]);
+          var cols = $tr.find('td');
+
+          var _key = '';
+          var j;
+          for (j = 0; j < message.dimensions.length; j++) {
+            $col = $(cols[j]);
+            _key += $col.text();
+          }
+
+          if (existingkeys.indexOf(_key) == -1)
+            $tr.remove();
+        }
+      }
+
+      if (series[0].data.length > 0) {
+        self.tablesort.refresh();
+
+        var limit = 5;
+        trs = self.options.$container.find('tbody tr');
+        for (var z = 0; z < trs.length; z++) {
+          var elem = trs[z];
+          var $elem = $(elem);
+          if (z + 1 > limit)
+            $elem.remove();
+        }
+      }
+    });
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, [
+        {'type': 'table'},
+        {'uuid': self.uuid}
+      ], function (err) {
+        if (err)
+          return callback(err);
+
+        joolaio.viz.onscreen.push(self);
+
+        joolaio.events.emit('table.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Table = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid) {
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.Table(options, function (err, table) {
+          if (err)
+            console.error(err);
+          table.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+},{"./_proto":20,"underscore":25}],19:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+
+var Timeline = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('timeline.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
+
+  var self = this;
+
+  this._id = '_timeline';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    legend: true,
+    canvas: null,
+    container: null,
+    $container: null,
+    query: null
+  };
+  this.chartDrawn = false;
+  this.realtimeQueries = [];
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.draw = function (options, callback) {
+    self.stop();
+    return this._super.fetch(self, this.options.query, function (err, message) {
+      if (err) {
+        console.log('err', err);
+        if (typeof callback === 'function')
+          return callback(err);
+        //else
+        //throw err;
+
+        return;
+      }
+
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+
+      var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
+      console.log(series);
+      if (!self.chartDrawn) {
+        var chartOptions = joolaio.common.extend({
+          title: {
+            text: null
+          },
+          chart: {
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            spacingTop: 0,
+            spacingBottom: 0,
+            spacingLeft: 0,
+            spacingRight: 0,
+            borderWidth: 0,
+            plotBorderWidth: 0,
+            type: 'area'
+          },
+          series: series,
+          xAxis: {
+            type: 'datetime',
+            endOnTick: true,
+            tickWidth: 0,
+            dateTimeLabelFormats: {
+              day: '%B %e'
+            },
+            labels: {
+              enabled: true,
+              style: {
+                color: '#b3b3b1'
+              }
+            }
+          },
+          yAxis: {
+            endOnTick: false,
+            title: {
+              text: null
+            },
+            labels: {
+              enabled: true,
+              style: {
+                color: '#b3b3b1'
+              }
+            },
+            gridLineDashStyle: 'Dot'
+          },
+          legend: {enabled: false},
+          credits: {enabled: false},
+          exporting: {enabled: true},
+          plotOptions: {
+            column: {allowPointSelect: true},
+            series: {
+              turboThreshold: message.documents.length + 1000,
+              color: '#333333',
+              fillOpacity: 0.1,
+              lineWidth: 3,
+              connectNulls: true,
+              marker: {
+                enabled: false,
+                symbol: 'circle',
+                states: {
+                  hover: {
+                    enabled: true
+                  }
+                }
+              }
+            }
+          }
+        }, self.options.chart);
+        self.chart = self.options.$container.highcharts(chartOptions);
+
+        self.chart = self.chart.highcharts();
+        self.chartDrawn = true;
+        if (typeof callback === 'function')
+          return callback(null);
+      }
+      else if (self.options.query.realtime) {
+        //we're dealing with realtime
+        series.forEach(function (ser, serIndex) {
+          ser.data.forEach(function (datapoint) {
+            var found = false;
+            self.chart.series[serIndex].points.forEach(function (point) {
+              if (point) {
+                if (point.x.getTime() == datapoint.x.getTime()) {
+                  var y = self.chart.series[serIndex].data[self.chart.series[serIndex].data.length - 1].y;
+                  found = true;
+                  if (y != datapoint.y)
+                    self.chart.series[serIndex].data[self.chart.series[serIndex].data.length - 1].update(datapoint.y);
+                }
+              }
+            });
+            if (!found) {
+              self.chart.series[serIndex].addPoint({x: datapoint.x, y: datapoint.y}, true, true);
+            }
+          });
+        });
+      }
+    });
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, [
+        {'type': 'timeline'},
+        {'uuid': self.uuid}
+      ], function (err) {
+        if (err)
+          return callback(err);
+
+        joolaio.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {}
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.draw(self.options);
+          });
+        }
+
+        joolaio.events.emit('timeline.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Timeline = function (options, callback) {
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || options.force) {
+        if (options.force && uuid) {
+          var existing = null;
+          var found = false;
+          joolaio.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.Timeline(options, function (err, timeline) {
+          if (err)
+            throw err;
+          timeline.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        var found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+
+
+},{"./_proto":20}],20:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4049,19 +4601,21 @@ var proto = exports;
 proto._id = '_proto';
 
 proto.stop = function () {
-  this.realtimeQueries.forEach(function (q) {
-    console.log('Stopping query', q);
-    joolaio.query.stop(q);
-  });
+  if (this.realtimeQueries) {
+    this.realtimeQueries.forEach(function (q) {
+      console.log('Stopping query', q);
+      joolaio.query.stop(q);
+    });
+  }
 };
 
 proto.destroy = function (container, obj) {
-  console.log('destroy', this);
-
-  this.realtimeQueries.forEach(function (q) {
-    console.log('Stopping query', q);
-    joolaio.query.stop(q);
-  });
+  if (this.realtimeQueries) {
+    this.realtimeQueries.forEach(function (q) {
+      console.log('Stopping query', q);
+      joolaio.query.stop(q);
+    });
+  }
   this.options.$container.empty();
 };
 
@@ -4111,8 +4665,6 @@ proto.fetch = function (context, query, callback) {
   }
   var _query = ce.clone(query);
 
-  console.log(context);
-  
   if (context && context.options && context.options.canvas) {
     context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
     context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
@@ -4170,9 +4722,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-          document.fvalues[dimensions[0].key],
-          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-        ]
+        document.fvalues[dimensions[0].key],
+        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+      ]
       );
     });
   });
@@ -4239,7 +4791,9 @@ proto.onError = function (err, callback) {
 proto.find = function (obj) {
 
 };
-},{"cloneextend":20}],19:[function(require,module,exports){
+
+
+},{"cloneextend":22}],21:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4267,6 +4821,8 @@ viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
 viz.PunchCard = require('./PunchCard');
+viz.Table = require('./Table');
+viz.Timeline = require('./Timeline');
 
 //onscreen
 viz.onscreen = [];
@@ -4275,7 +4831,7 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"./Canvas":10,"./DatePicker":11,"./Geo":12,"./Metric":13,"./MiniTable":14,"./Pie":15,"./PunchCard":16,"./Sparkline":17}],20:[function(require,module,exports){
+},{"./Canvas":10,"./DatePicker":11,"./Geo":12,"./Metric":13,"./MiniTable":14,"./Pie":15,"./PunchCard":16,"./Sparkline":17,"./Table":18,"./Timeline":19}],22:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -4526,7 +5082,7 @@ function foreach(object, block, context)
       return value;
  }
  */
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 ;!function(exports, undefined) {
 
@@ -5090,8 +5646,8 @@ function foreach(object, block, context)
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42}],22:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44}],24:[function(require,module,exports){
 (function () {var io = module.exports;/*! Socket.IO.js build:0.8.6, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 /**
@@ -8843,7 +9399,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   , this
 );
 }).call(window)
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -10121,7 +10677,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 
 }).call(this);
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
@@ -10174,9 +10730,9 @@ module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * The buffer module from node.js, for the browser.
  *
@@ -10202,13 +10758,13 @@ Buffer.poolSize = 8192
 Buffer._useTypedArrays = (function () {
    // Detect if browser supports Typed Arrays. Supported browsers are IE 10+,
    // Firefox 4+, Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+.
-  if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined')
+  if (typeof Uint8Array !== 'function' || typeof ArrayBuffer !== 'function')
     return false
 
   // Does the browser support adding properties to `Uint8Array` instances? If
   // not, then that's the same as no `Uint8Array` support. We need to be able to
   // add all the node Buffer API methods.
-  // Relevant Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
+  // Bug in Firefox 4-29, now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
   try {
     var arr = new Uint8Array(0)
     arr.foo = function () { return 42 }
@@ -11266,8 +11822,7 @@ function decodeUtf8Char (str) {
  */
 function verifuint (value, max) {
   assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0,
-      'specified a negative value for writing an unsigned value')
+  assert(value >= 0, 'specified a negative value for writing an unsigned value')
   assert(value <= max, 'value is larger than maximum value for type')
   assert(Math.floor(value) === value, 'value has a fractional component')
 }
@@ -11289,7 +11844,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":27,"ieee754":28}],27:[function(require,module,exports){
+},{"base64-js":29,"ieee754":30}],29:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -11412,7 +11967,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -11498,7 +12053,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -11535,7 +12090,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":26}],30:[function(require,module,exports){
+},{"buffer":28}],32:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -11634,7 +12189,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":31,"./rng":32,"./sha":33,"./sha256":34,"buffer":26}],31:[function(require,module,exports){
+},{"./md5":33,"./rng":34,"./sha":35,"./sha256":36,"buffer":28}],33:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -11799,7 +12354,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":29}],32:[function(require,module,exports){
+},{"./helpers":31}],34:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -11832,7 +12387,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -11935,7 +12490,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":29}],34:[function(require,module,exports){
+},{"./helpers":31}],36:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -12016,7 +12571,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":29}],35:[function(require,module,exports){
+},{"./helpers":31}],37:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12318,7 +12873,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -12457,7 +13012,7 @@ http.STATUS_CODES = {
     510 : 'Not Extended',               // RFC 2774
     511 : 'Network Authentication Required' // RFC 6585
 };
-},{"./lib/request":37,"events":35,"url":56}],37:[function(require,module,exports){
+},{"./lib/request":39,"events":37,"url":58}],39:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -12648,7 +13203,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":38,"Base64":39,"inherits":41,"stream":49}],38:[function(require,module,exports){
+},{"./response":40,"Base64":41,"inherits":43,"stream":51}],40:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -12770,7 +13325,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":49,"util":58}],39:[function(require,module,exports){
+},{"stream":51,"util":60}],41:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -12832,7 +13387,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -12847,7 +13402,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":36}],41:[function(require,module,exports){
+},{"http":38}],43:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -12872,7 +13427,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -12927,7 +13482,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -12974,7 +13529,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -13485,7 +14040,7 @@ exports.EOL = '\n';
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13571,7 +14126,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13658,13 +14213,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":45,"./encode":46}],48:[function(require,module,exports){
+},{"./decode":47,"./encode":48}],50:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13738,7 +14293,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":52,"./writable.js":54,"inherits":41,"process/browser.js":50}],49:[function(require,module,exports){
+},{"./readable.js":54,"./writable.js":56,"inherits":43,"process/browser.js":52}],51:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13867,9 +14422,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":48,"./passthrough.js":51,"./readable.js":52,"./transform.js":53,"./writable.js":54,"events":35,"inherits":41}],50:[function(require,module,exports){
-module.exports=require(42)
-},{}],51:[function(require,module,exports){
+},{"./duplex.js":50,"./passthrough.js":53,"./readable.js":54,"./transform.js":55,"./writable.js":56,"events":37,"inherits":43}],52:[function(require,module,exports){
+module.exports=require(44)
+},{}],53:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13912,7 +14467,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":53,"inherits":41}],52:[function(require,module,exports){
+},{"./transform.js":55,"inherits":43}],54:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14848,8 +15403,8 @@ function indexOf (xs, x) {
   return -1;
 }
 
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./index.js":49,"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42,"buffer":26,"events":35,"inherits":41,"process/browser.js":50,"string_decoder":55}],53:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"./index.js":51,"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44,"buffer":28,"events":37,"inherits":43,"process/browser.js":52,"string_decoder":57}],55:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15055,7 +15610,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":48,"inherits":41}],54:[function(require,module,exports){
+},{"./duplex.js":50,"inherits":43}],56:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15443,7 +15998,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":49,"buffer":26,"inherits":41,"process/browser.js":50}],55:[function(require,module,exports){
+},{"./index.js":51,"buffer":28,"inherits":43,"process/browser.js":52}],57:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15636,7 +16191,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":26}],56:[function(require,module,exports){
+},{"buffer":28}],58:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -16269,14 +16824,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":44,"querystring":47}],57:[function(require,module,exports){
+},{"punycode":46,"querystring":49}],59:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16865,5 +17420,5 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":57,"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":42,"inherits":41}]},{},[2,1])
+}).call(this,require("/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":59,"/usr/lib/node_modules/watchify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":44,"inherits":43}]},{},[2,1])
