@@ -38,7 +38,8 @@
     "underscore": "~1.5.2",
     "moment": "~2.5.1",
     "browserify": "^3.38.0",
-    "watchify": "^0.6.3"
+    "watchify": "^0.6.3",
+    "uglifyjs": "^2.3.6"
   },
   "devDependencies": {
     "coveralls": "*",
