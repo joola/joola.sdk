@@ -58,7 +58,24 @@ Object.defineProperty(joolaio, 'TOKEN', {
   },
   set: function (value) {
     joolaio._token = value;
+    joolaio.events.emit('core.init.finish');
     joolaio.events.emit('ready');
+  }
+});
+
+Object.defineProperty(joolaio, 'APITOKEN', {
+  get: function () {
+    return joolaio.APIToken;
+  },
+  set: function (value) {
+    joolaio.APIToken = value;
+    joolaio.USER = null;
+    joolaio._token = null;
+
+    joolaio.dispatch.users.verifyAPIToken(joolaio.APIToken, function (err, user) {
+      joolaio.USER = user;
+      joolaio.TOKEN = user.token._;
+    });
   }
 });
 
@@ -212,18 +229,9 @@ joolaio.init = function (options, callback) {
         });
       }
       else if (joolaio.options.APIToken) {
-        joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
-          if (err)
-            return callback(err);
-
-          joolaio.USER = user;
-
-          joolaio.events.emit('core.init.finish');
-          joolaio.events.emit('ready');
-          if (callback)
-            return callback(null, joolaio);
-
-        });
+        joolaio.APITOKEN = joolaio.options.APIToken;
+        if (typeof callback === 'function')
+          return callback(null, joolaio);
       }
       else {
         joolaio.events.emit('core.init.finish');
@@ -263,8 +271,9 @@ joolaio.set = function (key, value, callback) {
     joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
       if (err)
         return callback(err);
-
+      joolaio.options.APIToken = value;
       joolaio.USER = user;
+      joolaio._token = user.token._;
       return callback(null);
     });
   }
