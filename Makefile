@@ -16,7 +16,12 @@ authors:
 compile:
 		@NODE_ENV=test
 		browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
-    
+		browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js | uglifyjs > ./bin/joola.io.min.js
+
+watch:
+		@NODE_ENV=test
+		watchify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
+
 lint:
 		@./node_modules/.bin/jshint ./lib
 

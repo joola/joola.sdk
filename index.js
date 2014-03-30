@@ -24,7 +24,7 @@ joolaio.options = {
   }(),
   maxRequests: 1000,
   debug: {
-    enabled: true,
+    enabled: false,
     events: {
       enabled: false,
       trace: false
@@ -32,7 +32,8 @@ joolaio.options = {
     functions: {
       enabled: false
     }
-  }
+  },
+  timezoneOffset: null
 };
 
 //libraries
@@ -57,7 +58,24 @@ Object.defineProperty(joolaio, 'TOKEN', {
   },
   set: function (value) {
     joolaio._token = value;
+    joolaio.events.emit('core.init.finish');
     joolaio.events.emit('ready');
+  }
+});
+
+Object.defineProperty(joolaio, 'APITOKEN', {
+  get: function () {
+    return joolaio.APIToken;
+  },
+  set: function (value) {
+    joolaio.APIToken = value;
+    joolaio.USER = null;
+    joolaio._token = null;
+
+    joolaio.dispatch.users.verifyAPIToken(joolaio.APIToken, function (err, user) {
+      joolaio.USER = user;
+      joolaio.TOKEN = user.token._;
+    });
   }
 });
 
@@ -76,7 +94,7 @@ if (isBrowser()) {
   Object.keys(elems).forEach(function (key) {
     var scr = elems[key];
     if (scr.src) {
-      if (scr.src.indexOf('joola.io.js') > -1) {
+      if (scr.src.indexOf('joola.io.js') > -1 || scr.src.indexOf('joola.io.min.js') > -1) {
         var parts = require('url').parse(scr.src);
         joolaio.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
@@ -211,18 +229,9 @@ joolaio.init = function (options, callback) {
         });
       }
       else if (joolaio.options.APIToken) {
-        joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
-          if (err)
-            return callback(err);
-
-          joolaio.USER = user;
-
-          joolaio.events.emit('core.init.finish');
-          joolaio.events.emit('ready');
-          if (callback)
-            return callback(null, joolaio);
-
-        });
+        joolaio.APITOKEN = joolaio.options.APIToken;
+        if (typeof callback === 'function')
+          return callback(null, joolaio);
       }
       else {
         joolaio.events.emit('core.init.finish');
@@ -262,8 +271,9 @@ joolaio.set = function (key, value, callback) {
     joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
       if (err)
         return callback(err);
-
+      joolaio.options.APIToken = value;
       joolaio.USER = user;
+      joolaio._token = user.token._;
       return callback(null);
     });
   }
