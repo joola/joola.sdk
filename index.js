@@ -24,7 +24,7 @@ joolaio.options = {
   }(),
   maxRequests: 1000,
   debug: {
-    enabled: true,
+    enabled: false,
     events: {
       enabled: false,
       trace: false
