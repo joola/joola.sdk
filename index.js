@@ -138,17 +138,17 @@ joolaio.init = function (options, callback) {
             script.onload = function () {
               done();
             };
-            script.src = 'http://code.highcharts.com/highcharts.js';
+            script.src = '/js/highcharts.js';
             document.head.appendChild(script);
 
             done();
           };
-          script.src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+          script.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
           document.head.appendChild(script);
 
           done();
         };
-        script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
+        script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
       }
       else if (typeof (Highcharts) === 'undefined') {
@@ -157,7 +157,7 @@ joolaio.init = function (options, callback) {
         script.onload = function () {
           done();
         };
-        script.src = 'http://code.highcharts.com/highcharts.js';
+        script.src = '//code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
       }
 
