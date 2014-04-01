@@ -51,6 +51,7 @@ joolaio.viz = require('./lib/viz/index');
 
 joolaio.VERSION = require('./package.json').version;
 joolaio._token = null;
+joolaio._apitoken = null;
 
 Object.defineProperty(joolaio, 'TOKEN', {
   get: function () {
@@ -65,14 +66,14 @@ Object.defineProperty(joolaio, 'TOKEN', {
 
 Object.defineProperty(joolaio, 'APITOKEN', {
   get: function () {
-    return joolaio.APIToken;
+    return joolaio._apitoken;
   },
   set: function (value) {
-    joolaio.APIToken = value;
+    joolaio._apitoken = value;
     joolaio.USER = null;
     joolaio._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio.APIToken, function (err, user) {
+    joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
     });
@@ -229,9 +230,18 @@ joolaio.init = function (options, callback) {
         });
       }
       else if (joolaio.options.APIToken) {
-        joolaio.APITOKEN = joolaio.options.APIToken;
-        if (typeof callback === 'function')
-          return callback(null, joolaio);
+        joolaio._apitoken = joolaio.options.APIToken;
+        joolaio.USER = null;
+        joolaio._token = null;
+
+        joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+          joolaio.USER = user;
+          joolaio.TOKEN = user.token._;
+
+          joolaio.events.emit('core.init.finish');
+          if (typeof callback === 'function')
+            return callback(null, joolaio);
+        });
       }
       else {
         joolaio.events.emit('core.init.finish');
@@ -268,12 +278,13 @@ joolaio.set = function (key, value, callback) {
   joolaio.options[key] = value;
 
   if (key === 'APIToken') {
-    joolaio.dispatch.users.verifyAPIToken(joolaio.options.APIToken, function (err, user) {
-      if (err)
-        return callback(err);
-      joolaio.options.APIToken = value;
+    joolaio._apitoken = joolaio.options.APIToken;
+    joolaio.USER = null;
+    joolaio._token = null;
+
+    joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
       joolaio.USER = user;
-      joolaio._token = user.token._;
+      joolaio.TOKEN = user.token._;
       return callback(null);
     });
   }
