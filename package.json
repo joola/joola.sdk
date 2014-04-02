@@ -1,7 +1,7 @@
 {
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "3.2.8",
+  "version": "0.4.0",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -23,48 +23,34 @@
       "url": "http://joo.la"
     }
   ],
+  "main": "./index.js",
   "scripts": {
     "test": "make test",
-    "start": "node joola.io.sdk.js",
-    "debug": "npm-inspector && npm start && open \"http://http://127.0.0.1:8080/debug?port=5858\"",
-    "monitor": "mocha --reporter min --watch",
-    "debugtest": "mocha --debug-brk --reporter spec",
-    "blanket": {
-      "pattern": "lib",
-      "data-cover-never": "node_modules"
-    },
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
-    "citest": "mocha --reporter xunit > test-reports.xml"
+    "postinstall": "make compile"
   },
   "dependencies": {
-    "joola.io.config": "3.x",
-    "joola.io.logger": "3.x",
-    "express": "3.x",
-    "node-controlport": "0.x",
-    "jade": "0.x",
-    "path": "*",
-    "ncp": "*",
-    "async": "*",
-    "underscore": "*",
-    "winston": "*",
-    "request": "*",
-    "process": "*",
-    "nconf": "*",
-    "nconf-http": "*"
+    "eventemitter2": "~0.4.13",
+    "async": "~0.2.10",
+    "socket.io-browserify": "~0.9.6",
+    "cloneextend": "0.0.3",
+    "event-stream": "~3.1.0",
+    "underscore": "~1.5.2",
+    "moment": "~2.5.1",
+    "browserify": "^3.38.0",
+    "watchify": "^0.6.3",
+    "uglifyjs": "^2.3.6"
   },
   "devDependencies": {
-    "closurecompiler": "*",
-    "underscore": "1.x",
-    "mocha-lcov-reporter": "0.x",
-    "coveralls": "2.x",
-    "should": "1.x",
-    "mocha": "1.x",
-    "sinon": "1.x",
-    "chai": "1.x",
-    "sinon-chai": "2.x",
-    "blanket": "1.x",
-    "jshint": "2.x",
-    "supertest": "0.x"
+    "coveralls": "*",
+    "istanbul": "*",
+    "should": "*",
+    "mocha": "*",
+    "sinon": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "jshint": "*",
+    "supertest": "*"
   },
   "license": "GPL-3.0"
 }
