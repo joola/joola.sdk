@@ -196,7 +196,7 @@ var query = {
   timeframe: 'last_hour',
   interval: 'minute',
   dimensions: [],
-  metrics: 'visits'
+  metrics: ['visits']
 };
 
 joolaio.query.fetch(query, function(err, results) {
@@ -334,10 +334,10 @@ var query = {
   timeframe: 'last_hour',
   interval: 'minute',
   dimensions: [],
-  metrics: {
+  metrics: [{
     key: 'visits',
     name: 'Visit Count'
-  },
+  }],
   filter: [
   	['user.username', 'eq', 'thisisme']
   ]
@@ -361,13 +361,14 @@ var query = {
   timeframe: 'last_hour',
   interval: 'minute',
   dimensions: [],
-  metrics: {
+  metrics: [{
     key: 'visits', 
     name: 'Visit Count',
     formula: {
       dependsOn: ['visits', 'clicks'],
       run: 'function(visits, clicks) { return visits * clicks; }'
     }
+  }]
 };
 
 joolaio.query.fetch(query, function(err, results) {
@@ -384,11 +385,11 @@ var query = {
   timeframe: 'last_hour',
   interval: 'minute',
   dimensions: [],
-  metrics: {
+  metrics: [{
     key: 'bandwidth',
     name: 'Bandwidth (KB)', 
     transform: 'function(value) { return value / 1024 ; }'
-    }
+    }]
 };
 
 joolaio.query.fetch(query, function(err, results) {
