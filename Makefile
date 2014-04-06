@@ -23,13 +23,14 @@ watch:
 		./node_modules/.bin/watchify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
 
 lint:
-		@./node_modules/.bin/jshint ./lib
+		@./node_modules/.bin/jshint ./lib ./test
 
 doc:
 		find ./wiki/* ! -iregex '(.git|.npm)' | xargs rm -fr
 		node build/docs.js
 
 test-cov:	
+		$(MAKE) lint
 		$(MAKE) istanbul
 
 istanbul:

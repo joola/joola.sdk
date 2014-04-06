@@ -1,209 +1,93 @@
-describe("collections", function () {
+describe("dispatch", function () {
   before(function (done) {
-    this.collection = 'test-collection-dispatch-' + global.uid;
-    return done();
+    this.uid = joola.common.uuid();
+    done();
   });
 
-  it("should return a valid list of collections", function (done) {
-    joola.collections.list(function (err, collections) {
+  it("should get the version", function (done) {
+    joola.system.version(function (err, version) {
       if (err)
         return done(err);
 
-      expect(collections).to.be.ok;
-      return done();
-    });
-  });
-
-  it("should add a collection", function (done) {
-    var collection = {
-      key: this.collection,
-      name: this.collection
-    };
-    joola.collections.add(collection, function (err, collection) {
-      if (err)
-        return done(err);
-
-      expect(collection).to.be.ok;
-      return done();
-    });
-  });
-
-  it("should fail adding an existing collection", function (done) {
-    var collection = {
-      key: this.collection,
-      name: this.collection
-    };
-    joola.collections.add(collection, function (err) {
-      if (err)
-        return done();
-
-      return done(new Error('This should fail'));
-    });
-  });
-
-  it("should fail adding collection with incomplete details", function (done) {
-    var collection = {
-      key: this.collection + '1'
-    };
-    joola.collections.add(collection, function (err) {
-      if (err)
-        return done();
-
-      return done(new Error('This should fail'));
-    });
-  });
-
-  it("should update a collection", function (done) {
-    var collection = {
-      key: this.collection,
-      name: this.collection,
-      test: 1
-    };
-    joola.collections.update(collection, function (err, _collection) {
-      if (err)
-        return done(err);
-
-      expect(_collection.test).to.equal(1);
-      return done();
-    });
-  });
-
-  it("should fail updating a collection with incomplete details", function (done) {
-    var collection = {
-      key: this.collection
-    };
-    joola.collections.update(collection, function (err, _collection) {
-      if (err)
-        return done();
-
-      return done(new Error('This should fail'));
-    });
-  });
-
-  it("should fail updating non existing collection", function (done) {
-    var collection = {
-      key: this.collection + '1',
-      name: this.collection
-    };
-    joola.collections.update(collection, function (err, _collection) {
-      if (err)
-        return done();
-
-      return done(new Error('This should fail'));
-    });
-  });
-
-  it("should get a collection", function (done) {
-    var self = this;
-    joola.collections.get(this.collection, function (err, collection) {
-      if (err)
-        return done(err);
-
-      expect(collection).to.be.ok;
-      expect(collection.key).to.equal(self.collection);
-      return done();
-    });
-  });
-
-  it("should get collection stats", function (done) {
-    joola.collections.stats(this.collection, function (err, stats) {
-      if (err)
-        return done(err);
-      expect(stats).to.be.ok;
+      expect(version).to.be.ok;
       done();
     });
   });
 
-  it("should fail getting stats for non-existing collection", function (done) {
-    joola.collections.stats(this.collection + '1', function (err) {
-      if (err)
-        return done();
-
-      done(new Error('This should fail'));
-    });
-  });
-
-  it("should get collection min date", function (done) {
-    var self = this;
-    joola.beacon.insert(this.collection, {timestamp: null}, function (err) {
-      if (err)
-        return done(err);
-      joola.collections.mindate( self.collection, null, function (err, mindate) {
-        if (err)
-          return done(err);
-
-        expect(joola.common.typeof(new Date(mindate))).to.equal('date');
-        done();
-      });
-    });
-  });
-
-  it("should fail getting non-existing collection min date", function (done) {
-    joola.collections.mindate(this.collection + '3', null, function (err) {
-      if (err)
-        return done();
-
-      done(new Error('This should fail'));
-    });
-  });
-
-  it("should get collection max date", function (done) {
-    var self = this;
-    joola.beacon.insert(this.collection, {timestamp: null}, function (err) {
-      if (err)
-        return done(err);
-      joola.collections.maxdate(self.collection, null, function (err, maxdate) {
-        if (err)
-          return done(err);
-
-        expect(joola.common.typeof(new Date(maxdate))).to.equal('date');
-        done();
-      });
-    });
-  });
-
-  it("should fail getting non-existing collection max date", function (done) {
-    joola.collections.maxdate(this.collection + '3', null, function (err) {
-      if (err)
-        return done();
-
-      done(new Error('This should fail'));
-    });
-  });
-
-  it("should get a collection meta data", function (done) {
-    var self = this;
-    var document = require('../../fixtures/basic.json')[0];
-    joola.collections.metadata( document, self.collection, function (err, meta) {
+  it("should get the node UID", function (done) {
+    joola.system.nodeUID(function (err, uid) {
       if (err)
         return done(err);
 
-      expect(meta).to.be.ok;
+      expect(uid).to.be.ok;
       done();
     });
   });
 
-  it("should delete a collection", function (done) {
-    var self = this;
-    joola.collections.delete(this.collection, function (err) {
+  it("should get the node list", function (done) {
+    joola.system.nodeList(function (err, list) {
       if (err)
         return done(err);
 
-      joola.collections.get( self.collection, function (err, collections) {
-        if (err)
-          return done();
-
-        done(new Error('This should fail'));
-      });
+      expect(list).to.be.ok;
+      done();
     });
   });
 
-  it("should fail deleting a non-existing collection", function (done) {
-    joola.collections.delete(this.collection, function (err) {
+  it("should get the node details", function (done) {
+    joola.system.nodeDetails(function (err, details) {
       if (err)
-        return done();
+        return done(err);
 
-      done(new Error('This should fail'));
+      expect(details).to.be.ok;
+      done();
     });
   });
-}); 
+
+  it("should list the connected clients", function (done) {
+    joola.system.connectedClients(function (err, clients) {
+      if (err)
+        return done(err);
+
+      expect(clients).to.be.ok;
+      done();
+    });
+  });
+
+  it("should blacklist an ip", function (done) {
+    joola.system.blacklist('255.255.255.255', true, 0, function (err) {
+      if (err)
+        return done(err);
+
+      done();
+    });
+  });
+
+  it("should remove blacklisted ip", function (done) {
+    joola.system.blacklist('255.255.255.255', false, 0, function (err) {
+      if (err)
+        return done(err);
+
+      done();
+    });
+  });
+
+  it("should blacklist an ip with ttl", function (done) {
+    joola.system.blacklist('255.255.255.255', true, 1000, function (err) {
+      if (err)
+        return done(err);
+
+      //TODO: Check expired
+      done();
+    });
+  });
+
+  it("should purge the cache", function (done) {
+    joola.system.purgeCache(function (err) {
+      if (err)
+        return done(err);
+
+      done();
+    });
+  });
+});
