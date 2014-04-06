@@ -1,9 +1,7 @@
+atlassian-ide-plugin.xml
 node_modules
-build
-test
-.idea
-.git
+coverage.html
+lib-cov
+coverage
 
 .*
-
-coverage
