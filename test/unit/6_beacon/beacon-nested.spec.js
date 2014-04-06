@@ -9,7 +9,7 @@ describe("beacon-nested", function () {
   it("should load a single document", function (done) {
     var self = this;
     var documents = ce.clone(this.documents)[0];
-    joola.beacon.insert(this.collection, documents, function (err, doc) {
+    joolaio.beacon.insert(this.collection, documents, function (err, doc) {
       self.dup = new Date(doc[0].timestamp).toISOString();
       doc = doc[0];
       expect(doc.saved).to.equal(true);
@@ -20,7 +20,7 @@ describe("beacon-nested", function () {
   it("should fail loading a duplicate single document", function (done) {
     var documents = ce.clone(this.documents)[0];
     documents.timestamp = this.dup;
-    joola.beacon.insert(this.collection, documents, function (err, doc) {
+    joolaio.beacon.insert(this.collection, documents, function (err, doc) {
       doc = doc[0];
       expect(doc.saved).to.equal(false);
       done();
@@ -29,7 +29,7 @@ describe("beacon-nested", function () {
 
   it("should load array of documents", function (done) {
     var documents = ce.clone(this.documents);
-    joola.beacon.insert(this.collection, documents, function (err, docs) {
+    joolaio.beacon.insert(this.collection, documents, function (err, docs) {
       if (err)
         return done(err);
       docs.forEach(function (doc) {

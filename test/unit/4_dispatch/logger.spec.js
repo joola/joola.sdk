@@ -4,7 +4,7 @@ describe("logger", function () {
   });
 
   it("should return an array of logged items", function (done) {
-    joola.logger.fetch(function (err, logs) {
+    joolaio.logger.fetch(function (err, logs) {
       if (err)
         return done(err);
 
@@ -16,7 +16,7 @@ describe("logger", function () {
   it("should return an array of logged items from timestamp", function (done) {
     var start_ts = new Date();
     start_ts.setMinutes(start_ts.getMinutes() - 1);
-    joola.logger.fetchSince(start_ts, function (err, logs) {
+    joolaio.logger.fetchSince(start_ts, function (err, logs) {
       if (err)
         return done(err);
 
@@ -27,7 +27,7 @@ describe("logger", function () {
 
   it("should return an array of logged items until timestamp", function (done) {
     var end_ts = new Date();
-    joola.logger.fetchUntil(end_ts, function (err, logs) {
+    joolaio.logger.fetchUntil(end_ts, function (err, logs) {
       if (err)
         return done(err);
 

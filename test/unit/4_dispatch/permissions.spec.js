@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joolaio.io
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -12,8 +12,8 @@ var async = require('async');
 
 describe("permissions", function () {
   before(function (done) {
-    this.uid = joola.common.uuid();
-    this.workspace= 'test-org-' + joola.common.uuid();
+    this.uid = joolaio.common.uuid();
+    this.workspace= 'test-org-' + joolaio.common.uuid();
     done();
   });
 
@@ -21,7 +21,7 @@ describe("permissions", function () {
     var permission = {
       name: 'test-permission-' + this.uid
     };
-    joola.permissions.add(permission, function (err, _permission) {
+    joolaio.permissions.add(permission, function (err, _permission) {
       if (err)
         return done(err);
 
@@ -31,7 +31,7 @@ describe("permissions", function () {
   });
 
   it("should return a valid list of permissions", function (done) {
-    joola.permissions.list(function (err, permissions) {
+    joolaio.permissions.list(function (err, permissions) {
       return done(err);
     });
   });
@@ -40,7 +40,7 @@ describe("permissions", function () {
     var permission = {
       name: 'test-permission-' + this.uid
     };
-    joola.permissions.add(permission, function (err, _permission) {
+    joolaio.permissions.add(permission, function (err, _permission) {
       if (err)
         return done();
 
@@ -54,7 +54,7 @@ describe("permissions", function () {
       name: 'test-permission-' + this.uid,
       test: 1
     };
-    joola.permissions.update(permission, function (err, _permission) {
+    joolaio.permissions.update(permission, function (err, _permission) {
       if (err)
         return done(err);
       expect(_permission.test).to.equal(1);
@@ -67,7 +67,7 @@ describe("permissions", function () {
       name: 'test-permission1-' + this.uid,
       test: 1
     };
-    joola.permissions.update(permission, function (err) {
+    joolaio.permissions.update(permission, function (err) {
       if (err)
         return done();
 
@@ -79,7 +79,7 @@ describe("permissions", function () {
     var permission = {
 
     };
-    joola.permissions.update(permission, function (err) {
+    joolaio.permissions.update(permission, function (err) {
       if (err)
         return done();
 
@@ -92,11 +92,11 @@ describe("permissions", function () {
     var permission = {
       name: 'test-permission-' + this.uid
     };
-    joola.permissions.delete(permission, function (err) {
+    joolaio.permissions.delete(permission, function (err) {
       if (err)
         return done(err);
 
-      joola.permissions.list(function (err, permissions) {
+      joolaio.permissions.list(function (err, permissions) {
         if (err)
           return done(err);
 
@@ -118,7 +118,7 @@ describe("permissions", function () {
     var permission = {
       name: 'test-permission-notexist'
     };
-    joola.permissions.delete(permission, function (err) {
+    joolaio.permissions.delete(permission, function (err) {
       if (err)
         return done();
 

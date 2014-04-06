@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joolaio.io
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -11,18 +11,18 @@ var async = require('async');
 
 describe("users", function () {
   before(function (done) {
-    this.uid = joola.common.uuid();
+    this.uid = joolaio.common.uuid();
     this.workspace = 'root';
     return done();
   });
 
   it("should have a valid users dispatch", function (done) {
-    expect(joola.dispatch.users).to.be.ok;
+    expect(joolaio.dispatch.users).to.be.ok;
     return done();
   });
 
   it("should list all available users", function (done) {
-    joola.users.list(function (err, users) {
+    joolaio.users.list(function (err, users) {
       return done(err);
     });
   });
@@ -36,7 +36,7 @@ describe("users", function () {
       _filter: '',
       workspace: this.workspace
     };
-    joola.users.add(user, function (err, user) {
+    joolaio.users.add(user, function (err, user) {
       return done(err);
     });
   });
@@ -45,7 +45,7 @@ describe("users", function () {
     var user = {
       username: 'tester2'
     };
-    joola.users.add(user, function (err, user) {
+    joolaio.users.add(user, function (err, user) {
       if (err)
         return done();
 
@@ -56,7 +56,7 @@ describe("users", function () {
   it("should get a user by username", function (done) {
     var username = 'tester-' + this.uid;
     var self = this;
-    joola.users.get(username, function (err, user) {
+    joolaio.users.get(username, function (err, user) {
       if (err)
         return done(err);
       expect(user).to.be.ok;
@@ -74,7 +74,7 @@ describe("users", function () {
       _filter: '',
       workspace: this.workspace
     };
-    joola.users.add(user, function (err, user) {
+    joolaio.users.add(user, function (err, user) {
       if (err)
         return done();
       return done(new Error('This should fail.'));
@@ -92,11 +92,11 @@ describe("users", function () {
       workspace: this.workspace
     };
     user.displayName = 'testing user with change';
-    joola.users.update(user, function (err) {
+    joolaio.users.update(user, function (err) {
       if (err)
         return done(err);
 
-      joola.users.get(user.username, function (err, _user) {
+      joolaio.users.get(user.username, function (err, _user) {
         if (err)
           return done(err);
         expect(_user).to.be.ok;
@@ -116,7 +116,7 @@ describe("users", function () {
       _filter: 'test1=test2',
       workspace: this.workspace
     };
-    joola.users.update(user, function (err, user) {
+    joolaio.users.update(user, function (err, user) {
       if (err)
         return done(err);
       expect(user._filter).to.equal('test1=test2');
@@ -126,14 +126,14 @@ describe("users", function () {
 
   it("should fail updating a non existing user", function (done) {
     var user = {
-      username: 'tester-' + joola.common.uuid(),
+      username: 'tester-' + joolaio.common.uuid(),
       displayName: 'tester user',
       _password: '1234',
       _roles: ['user'],
       _filter: '',
       workspace: 'test-org'
     };
-    joola.users.update(user, function (err, user) {
+    joolaio.users.update(user, function (err, user) {
       if (err)
         return done();
 
@@ -151,9 +151,9 @@ describe("users", function () {
       _filter: '',
       workspace: this.workspace
     };
-    joola.users.add(user, function (err, user) {
+    joolaio.users.add(user, function (err, user) {
 
-      joola.users.authenticate('tester-password-' + self.uid, 'password', function (err, user) {
+      joolaio.users.authenticate('tester-password-' + self.uid, 'password', function (err, user) {
         if (err)
           return done(err);
         if (!user)
@@ -164,7 +164,7 @@ describe("users", function () {
   });
 
   it("should not authenticate users with incorrect credentials", function (done) {
-    joola.users.authenticate('test', 'incorrect.password', function (err, user) {
+    joolaio.users.authenticate('test', 'incorrect.password', function (err, user) {
       if (err)
         return done();
       if (!user)

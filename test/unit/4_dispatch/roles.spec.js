@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joolaio.io
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -12,8 +12,8 @@ var async = require('async');
 
 describe("roles", function () {
   before(function (done) {
-    this.uid = joola.common.uuid();
-    this.workspace = 'test-org-' + joola.common.uuid();
+    this.uid = joolaio.common.uuid();
+    this.workspace = 'test-org-' + joolaio.common.uuid();
     done();
   });
 
@@ -22,7 +22,7 @@ describe("roles", function () {
       key: 'test-role-' + this.uid,
       _permissions: []
     };
-    joola.roles.add(role, function (err, _role) {
+    joolaio.roles.add(role, function (err, _role) {
       if (err)
         return done(err);
 
@@ -32,7 +32,7 @@ describe("roles", function () {
   });
 
   it("should return a valid list of roles", function (done) {
-    joola.roles.list(function (err, roles) {
+    joolaio.roles.list(function (err, roles) {
       return done(err);
     });
   });
@@ -42,7 +42,7 @@ describe("roles", function () {
       key: 'test-role-' + this.uid,
       _permissions: []
     };
-    joola.roles.add(role, function (err, _role) {
+    joolaio.roles.add(role, function (err, _role) {
       if (err)
         return done();
 
@@ -54,7 +54,7 @@ describe("roles", function () {
     var role = {
       key: 'test-role-missing-details'
     };
-    joola.roles.add(role, function (err, _role) {
+    joolaio.roles.add(role, function (err, _role) {
       if (err)
         return done();
 
@@ -67,7 +67,7 @@ describe("roles", function () {
       key: 'test-role-' + this.uid,
       _permissions: ['access_system']
     };
-    joola.roles.update(role, function (err, _role) {
+    joolaio.roles.update(role, function (err, _role) {
       if (err)
         return done(err);
       expect(_role.permissions.length).to.equal(1);
@@ -80,7 +80,7 @@ describe("roles", function () {
       key: 'test-role1-' + this.uid,
       _permissions: ['access_system']
     };
-    joola.roles.update(role, function (err, _role) {
+    joolaio.roles.update(role, function (err, _role) {
       if (err)
         return done();
 
@@ -92,7 +92,7 @@ describe("roles", function () {
     var role = {
       key: 'test-role-' + this.uid
     };
-    joola.roles.update(role, function (err, _role) {
+    joolaio.roles.update(role, function (err, _role) {
       if (err)
         return done();
 
@@ -105,11 +105,11 @@ describe("roles", function () {
     var role = {
       key: 'test-role-' + this.uid
     };
-    joola.roles.delete(role, function (err) {
+    joolaio.roles.delete(role, function (err) {
       if (err)
         return done(err);
 
-      joola.roles.get(role.key, function (err, role) {
+      joolaio.roles.get(role.key, function (err, role) {
         if (err)
           return done();
 
@@ -122,7 +122,7 @@ describe("roles", function () {
     var role = {
       key: 'test-role-notexist'
     };
-    joola.roles.delete(role, function (err) {
+    joolaio.roles.delete(role, function (err) {
       if (err)
         return done();
 
