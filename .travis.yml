@@ -14,7 +14,7 @@ before_script:
   - sudo service rabbitmq-server restart
   - sudo rabbitmqctl status
   - sudo rabbitmq-plugins list
-  - npm install joola.io
+  - npm install http://github.com/joola/joola.io/tarball/develop
   
 script: 'make test-cov'
 after_success: 'make coveralls'
