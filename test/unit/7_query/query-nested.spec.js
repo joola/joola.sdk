@@ -10,13 +10,13 @@ describe("query-nested", function () {
   after(function (done) {
     var self = this;
     joola.collections.delete(this.collection, function () {
-      joola.collections.delete(self.context, self.workspace, self.collection + '-nots', function () {
+      joola.collections.delete( self.collection + '-nots', function () {
         done();
       });
     });
   });
 
-  xit("should perform a nested query", function (done) {
+  it("should perform a nested query", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -36,7 +36,7 @@ describe("query-nested", function () {
     });
   });
 
-  xit("should perform a freestyle query [avg]", function (done) {
+  it("should perform a freestyle query [avg]", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -58,7 +58,7 @@ describe("query-nested", function () {
     });
   });
 
-  xit("should perform a freestyle query [dimension]", function (done) {
+  it("should perform a freestyle query [dimension]", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -79,7 +79,7 @@ describe("query-nested", function () {
     });
   });
 
-  xit("should perform a freestyle query [dimension+adhoc]", function (done) {
+  it("should perform a freestyle query [dimension+adhoc]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -100,7 +100,7 @@ describe("query-nested", function () {
     });
   });
 
-  xit("should perform a freestyle query [adhoc+adhoc]", function (done) {
+  it("should perform a freestyle query [adhoc+adhoc]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -124,7 +124,7 @@ describe("query-nested", function () {
     });
   });
 
-  xit("should perform a freestyle query [adhoc w/ collection]", function (done) {
+  it("should perform a freestyle query [adhoc w/ collection]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',

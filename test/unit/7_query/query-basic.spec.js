@@ -12,7 +12,7 @@ describe("query-basic", function () {
     done();
   });
 
-  xit("should not fail performing a query with no arguments", function (done) {
+  it("should not fail performing a query with no arguments", function (done) {
     var query = {};
     var expected = 0;
 
@@ -27,7 +27,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a basic query with minimal arguments", function (done) {
+  it("should perform a basic query with minimal arguments", function (done) {
     var query = {
       metrics: ['value', 'another'],
       collection: this.collection
@@ -44,7 +44,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a basic query with minimal arguments [no timestamp]", function (done) {
+  it("should perform a basic query with minimal arguments [no timestamp]", function (done) {
     var query = {
       timeframe: 'last_minute',
       interval: 'raw',
@@ -63,7 +63,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a basic query", function (done) {
+  it("should perform a basic query", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -82,7 +82,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a basic timeline query", function (done) {
+  it("should perform a basic timeline query", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -101,7 +101,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [without dependsOn]", function (done) {
+  it("should perform a freestyle query [without dependsOn]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -122,7 +122,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [avg]", function (done) {
+  it("should perform a freestyle query [avg]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -143,7 +143,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query with specific collection [avg]", function (done) {
+  it("should perform a freestyle query with specific collection [avg]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -164,7 +164,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [min]", function (done) {
+  it("should perform a freestyle query [min]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -185,7 +185,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [max]", function (done) {
+  it("should perform a freestyle query [max]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -206,7 +206,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [name]", function (done) {
+  it("should perform a freestyle query [name]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -227,7 +227,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [prefix]", function (done) {
+  it("should perform a freestyle query [prefix]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -248,7 +248,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [suffix]", function (done) {
+  it("should perform a freestyle query [suffix]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -269,7 +269,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [prefix+suffix]", function (done) {
+  it("should perform a freestyle query [prefix+suffix]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -290,7 +290,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [decmials=4]", function (done) {
+  it("should perform a freestyle query [decmials=4]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -311,7 +311,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [decmials=2]", function (done) {
+  it("should perform a freestyle query [decmials=2]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -332,7 +332,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [decmials=0]", function (done) {
+  it("should perform a freestyle query [decmials=0]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -353,7 +353,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle query [timestamp]", function (done) {
+  it("should perform a freestyle query [timestamp]", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
@@ -376,7 +376,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle formula query [two metrics]", function (done) {
+  it("should perform a freestyle formula query [two metrics]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -405,7 +405,7 @@ describe("query-basic", function () {
   });
 
 
-  xit("should perform a freestyle formula query [three metrics]", function (done) {
+  it("should perform a freestyle formula query [three metrics]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -433,7 +433,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle formula query [metric and fixed]", function (done) {
+  it("should perform a freestyle formula query [metric and fixed]", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -461,7 +461,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle unique count", function (done) {
+  it("should perform a freestyle unique count", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -488,7 +488,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle metric transform", function (done) {
+  it("should perform a freestyle metric transform", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -516,7 +516,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle dimension transform", function (done) {
+  it("should perform a freestyle dimension transform", function (done) {
     var query = {
       timeframe: 'this_day',
       interval: 'minute',
@@ -542,7 +542,7 @@ describe("query-basic", function () {
     });
   });
 
-  xit("should perform a freestyle avg. per second", function (done) {
+  it("should perform a freestyle avg. per second", function (done) {
     var query = {
       timeframe: 'last_day',
       interval: 'minute',
