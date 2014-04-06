@@ -9,9 +9,9 @@
 **joola.io.sdk** is a Software Development Kit (SDK) responsible for communication between a client using the SDK and the joola.io server. If you don't have a [joola.io][joola.io] server running yet, [get one up and running in minutes][joola.io] or open a free account with [free.joola.io][free.joola.io].
 
 The SDK can consume ANY endpoint of the joola.io framework, however for brevity purposes, the API manual below includes only the main topics of:
-- [**Pushing data**](joolaiobeacon) is done by sending an array of JSON documents for storage in joola.io cache.
-- When [**Querying**](joolaioquery), you describe the data you wish to consume and shape it to your liking. 
-- Transform your data into insight using [**Data Visualization**](#joolaiooviz).
+- [**Pushing data**](http://github.com/joola/joola.io/wiki/pushing-data) is done by sending an array of JSON documents for storage in joola.io cache.
+- When [**Querying**](http://github.com/joola/joola.io/wiki/analytics-and-visualization), you describe the data you wish to consume and shape it to your liking. 
+- Transform your data into insight using [**Data Visualization**](http://github.com/joola/joola.io/wiki/analytics-and-visualization).
 
 ### Getting the SDK
 
@@ -62,9 +62,6 @@ console.log(joolaio.VERSION);
 ```
 
 [**Learn more about using the SDK**](http://github.com/joola/joola.io/wiki/sdk-api-documentation)
-
-***
-
 
 ## Contributing
 We would love to get your help! We have outlined a simple [Contribution Policy][18] to support a transparent and easy merging
