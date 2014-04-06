@@ -15,11 +15,14 @@ before_script:
   - sudo rabbitmqctl status
   - sudo rabbitmq-plugins list
   - npm install joola.io
-  - node ./node_modules/joola.io/joola.io.js
+  - node ./node_modules/joola.io/joola.io.js &
   
 script: 'make test-cov'
 after_success: 'make coveralls'
 
+after_script:
+  - killall -9 node
+  
 notifications:
   email:
     - 'updates@joo.la'
