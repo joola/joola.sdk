@@ -296,8 +296,8 @@ joolaio.get = function (key) {
   return joolaio.options[key];
 };
 
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":61,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58,"querystring":43,"socket.io-browserify":59,"url":52}],2:[function(require,module,exports){
+}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":59,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38,"querystring":42,"socket.io-browserify":57,"url":51}],2:[function(require,module,exports){
 /*
  SortTable
  version 2
@@ -1043,7 +1043,7 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
-},{"http":33,"https":37,"querystring":43,"url":52}],4:[function(require,module,exports){
+},{"http":32,"https":36,"querystring":42,"url":51}],4:[function(require,module,exports){
 /**
  *  joola.io
  *
@@ -1154,7 +1154,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":55,"url":52}],5:[function(require,module,exports){
+},{"cloneextend":54,"url":51}],5:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1173,8 +1173,8 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"eventemitter2":56}],6:[function(require,module,exports){
-(function (process,global){
+},{"eventemitter2":55}],6:[function(require,module,exports){
+(function (global){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1185,97 +1185,8 @@ module.exports = exports = _events;
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
-var
-  os = require('os'),
-  cluster = require('cluster');
-
-global.stopped = false;
-global.shutdown = function (code, callback) {
-  if (stopped)
-    return;
-
-  stopped = true;
-  joola.logger.info('Gracefully shutting down, code: ' + code);
-  joola.state.set('core', 'stop', 'received code [' + code + ']+');
-
-  joola.dispatch.emit('nodes:state:change', [joola.UID, joola.state.get()]);
-
-  var node = nodeState();
-  if (node.http) {
-    //We're running an http node, let's try to start another one.
-    joola.logger.info('Trying to start Web Services on another node');
-    joola.dispatch.request(0, 'startWebServer', [node], function () {
-      //do we care?
-    });
-  }
-  joola.redis.del('nodes:' + joola.UID, function () {
-    //do we care?
-  });
-
-  setTimeout(function () {
-    process.exit(code || 0);
-  }, 10);
-
-  if (typeof callback === 'function')
-    return callback(null);
-};
-
 global.emptyfunc = function () {
 
-};
-
-global.rt = function () {
-  joola.dispatch.roundtrip(function (err, delta) {
-    if (err)
-      return console.log('Roundtrip: ' + err);
-    return console.log('Roundtrip: ' + delta + 'ms');
-  });
-};
-
-global.nodeState = function () {
-
-  var hostname = joola.hostname = os.hostname();
-  var isCluster = false; //Object.keys(cluster.workers).length > 0;
-  var clusterID = null;// = cluster.worker ? cluster.worker.id : null;
-  var isMaster = null;// = Object.keys(cluster.workers).length > 0 ? cluster.isMaster : null;
-  var isWorker = null;// = Object.keys(cluster.workers).length > 0 ? cluster.isWorker : null;
-
-  try {
-    if (typeof cluster.workers === 'object') {
-      if (cluster.workers === null) {
-        isCluster = true;
-        clusterID = cluster.worker ? cluster.worker.id : null;
-        isMaster = cluster.isMaster;
-        isWorker = cluster.isWorker;
-      }
-    }
-  }
-  catch (ex) {
-    //ignore errors
-  }
-
-  var state = joola.state.get();
-  var status = state.status;
-
-  var result = {
-    uid: joola.UID,
-    state: status,
-    uptime: process.uptime(),
-    'last-seen': new Date().getTime(),
-    'last-seen-nice': new Date(),
-    hostname: hostname,
-    'usage-cpu': null,
-    'usage-mem': null,
-    http: joola.webserver.http._handle ? true : false,
-    https: joola.webserver.https._handle ? true : false,
-    cluster: isCluster,
-    'cluster-id': clusterID,
-    'cluster-master': isMaster,
-    'cluster-slave': isWorker
-  };
-
-  return result;
 };
 
 joolaio.timezone = function (tz) {
@@ -1288,8 +1199,8 @@ joolaio.timezone = function (tz) {
 
   return offset;
 };
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58,"cluster":22,"os":39}],7:[function(require,module,exports){
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],7:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -1428,8 +1339,7 @@ common.typeof = function (obj) {
   }
   return typeof(obj);
 };
-},{"./modifiers":9,"cloneextend":55,"crypto":27,"util":54}],8:[function(require,module,exports){
-(function (process){
+},{"./modifiers":9,"cloneextend":54,"crypto":26,"util":53}],8:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1444,88 +1354,62 @@ common.typeof = function (obj) {
 var logger = exports;
 logger._id = 'logger';
 
-if (process.env.NODE_ENV == 'test') {
-  logger = module.exports = {
-    log: function () {
-    },
-    silly: function () {
+logger._log = function (level, message, callback) {
+  switch (level) {
+    case 'debug':
+    case 'info':
+    case 'warn':
+    case 'error':
+      break;
+    case 'silly':
+      level = 'debug';
+      break;
+    default:
+      break;
+  }
 
-    },
-    debug: function () {
+  if (!joolaio.options.debug.enabled)
+    return;
 
-    },
-    info: function () {
+  if (typeof message === 'object')
+    message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + JSON.stringify(message);
+  else
+    message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
-    },
-    error: function () {
+  if (joolaio.options.isBrowser && console.debug) {
+    if (['silly', 'debug'].indexOf(level) == -1)
+      console[level](message);
+    else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
+      console[level](message);
+  }
+  else
+    console.log(message);
 
-    },
-    notice: function () {
+  if (callback)
+    return callback(null);
+};
 
-    },
-    setLevel: function () {
+logger.silly = function (message, callback) {
+  return this._log('silly', message, callback);
+};
 
-    }
-  };
-}
-else {
-  logger._log = function (level, message, callback) {
-    switch (level) {
-      case 'debug':
-      case 'info':
-      case 'warn':
-      case 'error':
-        break;
-      case 'silly':
-        level = 'debug';
-        break;
-      default:
-        break;
-    }
+logger.info = function (message, callback) {
+  return this._log('info', message, callback);
+};
 
-    if (!joolaio.options.debug.enabled)
-      return;
+logger.debug = function (message, callback) {
+  return this._log('debug', message, callback);
+};
 
-    if (typeof message === 'object')
-      message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + JSON.stringify(message);
-    else
-      message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
+logger.warn = function (message, callback) {
+  return this._log('warn', message, callback);
+};
 
-    if (joolaio.options.isBrowser && console.debug) {
-      if (['silly', 'debug'].indexOf(level) == -1)
-        console[level](message);
-      else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
-        console[level](message);
-    }
-    else
-      console.log(message);
+logger.error = function (message, callback) {
+  return this._log('error', message, callback);
+};
 
-    if (callback)
-      return callback(null);
-  };
-
-  logger.silly = function (message, callback) {
-    return this._log('silly', message, callback);
-  };
-
-  logger.info = function (message, callback) {
-    return this._log('info', message, callback);
-  };
-
-  logger.debug = function (message, callback) {
-    return this._log('debug', message, callback);
-  };
-
-  logger.warn = function (message, callback) {
-    return this._log('warn', message, callback);
-  };
-
-  logger.error = function (message, callback) {
-    return this._log('error', message, callback);
-  };
-}
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"))
-},{"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58}],9:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  *  @title joola.io/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola.io
@@ -1806,7 +1690,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":20,"cloneextend":55,"eventemitter2":56}],11:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":54,"eventemitter2":55}],11:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -2777,7 +2661,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":20,"underscore":60}],12:[function(require,module,exports){
+},{"./_proto":20,"underscore":58}],12:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3126,7 +3010,7 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
-},{"./_proto":20,"cloneextend":55}],14:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":54}],14:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3401,7 +3285,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":20,"underscore":60}],15:[function(require,module,exports){
+},{"./_proto":20,"underscore":58}],15:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3602,7 +3486,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":20,"underscore":60}],16:[function(require,module,exports){
+},{"./_proto":20,"underscore":58}],16:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -3827,7 +3711,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":20,"underscore":60}],17:[function(require,module,exports){
+},{"./_proto":20,"underscore":58}],17:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4384,7 +4268,7 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
-},{"./_proto":20,"underscore":60}],19:[function(require,module,exports){
+},{"./_proto":20,"underscore":58}],19:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4645,7 +4529,7 @@ joolaio.events.on('core.init.finish', function () {
 
 
 
-},{"./_proto":20,"moment":57,"underscore":60}],20:[function(require,module,exports){
+},{"./_proto":20,"moment":56,"underscore":58}],20:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4888,7 +4772,7 @@ proto.find = function (obj) {
 };
 
 
-},{"cloneextend":55,"moment":57,"underscore":60}],21:[function(require,module,exports){
+},{"cloneextend":54,"moment":56,"underscore":58}],21:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4927,8 +4811,6 @@ viz.stam = function (callback) {
 };
 
 },{"./Canvas":10,"./DatePicker":11,"./Geo":12,"./Metric":13,"./MiniTable":14,"./Pie":15,"./PunchCard":16,"./Sparkline":17,"./Table":18,"./Timeline":19}],22:[function(require,module,exports){
-
-},{}],23:[function(require,module,exports){
 /**
  * The buffer module from node.js, for the browser.
  *
@@ -6040,7 +5922,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":24,"ieee754":25}],24:[function(require,module,exports){
+},{"base64-js":23,"ieee754":24}],23:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -6163,7 +6045,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -6249,7 +6131,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -6286,7 +6168,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":23}],27:[function(require,module,exports){
+},{"buffer":22}],26:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -6385,7 +6267,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":28,"./rng":29,"./sha":30,"./sha256":31,"buffer":23}],28:[function(require,module,exports){
+},{"./md5":27,"./rng":28,"./sha":29,"./sha256":30,"buffer":22}],27:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -6550,7 +6432,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":26}],29:[function(require,module,exports){
+},{"./helpers":25}],28:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -6583,7 +6465,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -6686,7 +6568,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":26}],31:[function(require,module,exports){
+},{"./helpers":25}],30:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -6767,7 +6649,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":26}],32:[function(require,module,exports){
+},{"./helpers":25}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7069,7 +6951,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -7208,7 +7090,7 @@ http.STATUS_CODES = {
     510 : 'Not Extended',               // RFC 2774
     511 : 'Network Authentication Required' // RFC 6585
 };
-},{"./lib/request":34,"events":32,"url":52}],34:[function(require,module,exports){
+},{"./lib/request":33,"events":31,"url":51}],33:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -7399,7 +7281,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":35,"Base64":36,"inherits":38,"stream":45}],35:[function(require,module,exports){
+},{"./response":34,"Base64":35,"inherits":37,"stream":44}],34:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -7521,7 +7403,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":45,"util":54}],36:[function(require,module,exports){
+},{"stream":44,"util":53}],35:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -7583,7 +7465,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -7598,7 +7480,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":33}],38:[function(require,module,exports){
+},{"http":32}],37:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7623,54 +7505,69 @@ if (typeof Object.create === 'function') {
   }
 }
 
+},{}],38:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.once = noop;
+process.off = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
 },{}],39:[function(require,module,exports){
-exports.endianness = function () { return 'LE' };
-
-exports.hostname = function () {
-    if (typeof location !== 'undefined') {
-        return location.hostname
-    }
-    else return '';
-};
-
-exports.loadavg = function () { return [] };
-
-exports.uptime = function () { return 0 };
-
-exports.freemem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.totalmem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.cpus = function () { return [] };
-
-exports.type = function () { return 'Browser' };
-
-exports.release = function () {
-    if (typeof navigator !== 'undefined') {
-        return navigator.appVersion;
-    }
-    return '';
-};
-
-exports.networkInterfaces
-= exports.getNetworkInterfaces
-= function () { return {} };
-
-exports.arch = function () { return 'javascript' };
-
-exports.platform = function () { return 'browser' };
-
-exports.tmpdir = exports.tmpDir = function () {
-    return '/tmp';
-};
-
-exports.EOL = '\n';
-
-},{}],40:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -8181,7 +8078,7 @@ exports.EOL = '\n';
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8267,7 +8164,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8354,13 +8251,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],43:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":41,"./encode":42}],44:[function(require,module,exports){
+},{"./decode":40,"./encode":41}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8434,7 +8331,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":48,"./writable.js":50,"inherits":38,"process/browser.js":46}],45:[function(require,module,exports){
+},{"./readable.js":47,"./writable.js":49,"inherits":37,"process/browser.js":45}],44:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8563,7 +8460,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":44,"./passthrough.js":47,"./readable.js":48,"./transform.js":49,"./writable.js":50,"events":32,"inherits":38}],46:[function(require,module,exports){
+},{"./duplex.js":43,"./passthrough.js":46,"./readable.js":47,"./transform.js":48,"./writable.js":49,"events":31,"inherits":37}],45:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -8618,7 +8515,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8661,7 +8558,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":49,"inherits":38}],48:[function(require,module,exports){
+},{"./transform.js":48,"inherits":37}],47:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9597,8 +9494,8 @@ function indexOf (xs, x) {
   return -1;
 }
 
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"))
-},{"./index.js":45,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58,"buffer":23,"events":32,"inherits":38,"process/browser.js":46,"string_decoder":51}],49:[function(require,module,exports){
+}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"./index.js":44,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38,"buffer":22,"events":31,"inherits":37,"process/browser.js":45,"string_decoder":50}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9804,7 +9701,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":44,"inherits":38}],50:[function(require,module,exports){
+},{"./duplex.js":43,"inherits":37}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10192,7 +10089,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":45,"buffer":23,"inherits":38,"process/browser.js":46}],51:[function(require,module,exports){
+},{"./index.js":44,"buffer":22,"inherits":37,"process/browser.js":45}],50:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10385,7 +10282,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":23}],52:[function(require,module,exports){
+},{"buffer":22}],51:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -11018,14 +10915,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":40,"querystring":43}],53:[function(require,module,exports){
+},{"punycode":39,"querystring":42}],52:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],54:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11614,8 +11511,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":53,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58,"inherits":38}],55:[function(require,module,exports){
+}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":52,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38,"inherits":37}],54:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -11866,7 +11763,7 @@ function foreach(object, block, context)
       return value;
  }
  */
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (process){
 ;!function(exports, undefined) {
 
@@ -12430,8 +12327,8 @@ function foreach(object, block, context)
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"))
-},{"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":58}],57:[function(require,module,exports){
+}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38}],56:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -14833,69 +14730,7 @@ function foreach(object, block, context)
     }
 }).call(this);
 
-},{}],58:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.once = noop;
-process.off = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],59:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function () {var io = module.exports;/*! Socket.IO.js build:0.8.6, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 /**
@@ -18647,7 +18482,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
   , this
 );
 }).call(window)
-},{}],60:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -19925,7 +19760,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 
 }).call(this);
 
-},{}],61:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
@@ -19955,7 +19790,7 @@ module.exports={
   "scripts": {
     "test": "make test",
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js",
-    "postinstall": "make compile"
+    "prepublish": "make compile"
   },
   "dependencies": {
     "eventemitter2": "~0.4.13",
