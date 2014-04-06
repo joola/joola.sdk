@@ -15,6 +15,7 @@ authors:
 
 compile:
 		@NODE_ENV=test
+		echo Current Directory: $(CURDIR)
 		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
 		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js | node ./node_modules/uglifyjs > ./bin/joola.io.min.js
 
