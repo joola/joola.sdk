@@ -9,20 +9,31 @@
  **/
 
 before(function (done) {
-  require('../../index.js').init(
-    {
-      host: 'http://localhost:8080',
-      APIToken: 'apitoken-root',
-      debug: {
-        enabled: true
-      }
-    },
-    function (err, joola) {
-      if (err)
-        throw err;
+  require('joola.io').init({}, function (err, joola) {
+    if (err)
+      return done(err);
+    joola.state.on('state:change', function (state) {
+      if (state !== 'online')
+        return done(new Error('Failed to initialize engine, check logs.'));
 
-      global.joola = joola;
+      global.joola = require('../../index.js');
       global.uid = joola.common.uuid();
-      done();
+      joolaio.init({host: 'http://127.0.0.1:8080', APIToken: 'apitoken-root'}, function (err) {
+        if (err)
+          return done(err);
+        
+        done();
+      });
     });
+  });
+});
+
+after(function (done) {
+  if (shutdown) {
+    shutdown(0, function () {
+      return done();
+    });
+  }
+  else
+    return done();
 });
