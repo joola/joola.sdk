@@ -11,5 +11,5 @@ global._ = require("underscore");
 var chai = require('chai');
 chai.use(require('sinon-chai'));
 global.expect = chai.expect;
-
+global.ce = require('cloneextend');
 global.common = exports;
