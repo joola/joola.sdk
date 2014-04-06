@@ -42,7 +42,6 @@
     "uglifyjs": "^2.3.6"
   },
   "devDependencies": {
-    "joola.io": "*",
     "coveralls": "*",
     "istanbul": "*",
     "should": "*",
