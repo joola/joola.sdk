@@ -103,7 +103,7 @@ Copyright (c) 2012-2014 Joola Smart Solutions. GPLv3 Licensed, see [LICENSE][24]
 
 [about]: https://github.com/joola/joola.io/wiki/joola.io-overview
 [techdocs]: https://github.com/joola/joola.io/wiki/Technical-documentation
-[apidocs]: #sdk-api
+[apidocs]: http://github.com/joola/joola.io/wiki/sdk
 [setup]: #getting-the-sdk
 [roadmap]: https://github.com/joola/joola.io/wiki/Product-roadmap
 [contributing]: https://github.com/joola/joola.io/wiki/Contributing
