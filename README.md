@@ -1,4 +1,4 @@
-# joola.io.sdk [![Build Status][3]][4] [![Coverage Status][1]][2] [![Gitter chat](https://badges.gitter.im/joola/joola.io.png)](https://gitter.im/joola/joola.io)
+# joola.io.sdk [![Build Status][3]][4] [![Gitter chat](https://badges.gitter.im/joola/joola.io.png)](https://gitter.im/joola/joola.io)
 
 | **[API Docs] [apidocs]**     | **[joola.io Docs] [techdocs]**     | **[Issues] [issues]**     | **[Contributing] [contributing]**           | **[About] [about]**     |
 |-------------------------------------|-------------------------------|-------------------------------------|---------------------------------------------|-------------------------------------|
