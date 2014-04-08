@@ -99,4 +99,40 @@ describe("beacon-basic", function () {
       done();
     });
   });
+
+  it("should allow inserting documents without options and callback", function (done) {
+    joola.collections.stats('poInvBackorderTest', function (err, stats) {
+      var count;
+      if (err)
+        count = 0;
+      else
+        count = stats.count;
+      joolaio.dispatch.beacon.insert('poInvBackorderTest', {
+        Company: 'xxxxxx',
+        VendorID: 'xxxxxxx',
+        Name: 'xxxxxxxx',
+        PONUM: '8103',
+        POLine: '2',
+        OpenLine: '1',
+        PartNum: 'STxx-xx-xx',
+        LineDesc: 'xxxxxxxxx xxx',
+        WarehouseCode: 'xxxxxx',
+        RelQty: 15,
+        ReceivedQty: 0,
+        BackOrderQty: 15
+      });
+      setTimeout(function () {
+        joola.collections.stats('poInvBackorderTest', function (err, secondStats) {
+          var secondCount;
+          if (err)
+            secondCount = 0;
+          else
+            secondCount = secondStats.count;
+
+          expect(secondCount).to.equal(count + 1);
+          done();
+        });
+      }, 1000);
+    });
+  });
 });
