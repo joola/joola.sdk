@@ -285,7 +285,8 @@ joolaio.set = function (key, value, callback) {
     joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
-      return callback(null);
+      if (typeof callback === 'function')
+        return callback(null);
     });
   }
 };
