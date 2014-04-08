@@ -287,7 +287,8 @@ joolaio.set = function (key, value, callback) {
     joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
-      return callback(null);
+      if (typeof callback === 'function')
+        return callback(null);
     });
   }
 };
@@ -935,7 +936,7 @@ api.fetch = function (endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path);
+  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + joolaio.APITOKEN);
 
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
@@ -1103,18 +1104,21 @@ dispatch.buildstub = function (callback) {
             }
             var argCounter = 0;
             var _args = {};
-            var addedOrg = 0;
             if (_fn.inputs.required)
               _fn.inputs = _fn.inputs.required.concat(_fn.inputs.optional);
 
-            if ((args.length - 1 == _fn.inputs.length - 1 || (args.length - 1 == _fn.inputs.length - 2 && _fn.inputs[_fn.inputs.length - 1] == 'options')) && _fn.inputs[0] && (_fn.inputs[0] === 'workspace')) {
-              _args[_fn.inputs[0]] = joolaio.USER.workspace;
-              addedOrg = 1;
+            var shouldAppendWorkspace = 0;
+
+            //if ((args.length - 1 == _fn.inputs.length - 1 || (args.length - 1 == _fn.inputs.length - 2 && _fn.inputs[_fn.inputs.length - 1] == 'options')) && _fn.inputs[0] && (_fn.inputs[0] === 'workspace')) {
+            if (_fn.inputs[0] === 'workspace' && args.length - 1 < _fn.inputs.length) {
+              shouldAppendWorkspace = 1;
             }
+            if (shouldAppendWorkspace > 0)
+              _args[_fn.inputs[0]] = joolaio.USER.workspace;
             Object.keys(args).forEach(function (arg) {
-              if (argCounter < _fn.inputs.length - addedOrg) {
-                args[_fn.inputs[argCounter + addedOrg]] = args[arg];
-                _args[_fn.inputs[argCounter + addedOrg]] = args[arg];
+              if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
+                args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
+                _args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
               }
 
               delete args[arg];
@@ -4887,14 +4891,14 @@ function Buffer (subject, encoding, noZero) {
   else if (type === 'string')
     length = Buffer.byteLength(subject, encoding)
   else if (type === 'object')
-    length = coerce(subject.length) // Assume object is an array
+    length = coerce(subject.length) // assume that object is array-like
   else
     throw new Error('First argument needs to be a number, array or string.')
 
   var buf
   if (Buffer._useTypedArrays) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = augment(new Uint8Array(length))
+    buf = Buffer._augment(new Uint8Array(length))
   } else {
     // Fallback: Return THIS instance of Buffer (created by `new`)
     buf = this
@@ -4903,9 +4907,8 @@ function Buffer (subject, encoding, noZero) {
   }
 
   var i
-  if (Buffer._useTypedArrays && typeof Uint8Array === 'function' &&
-      subject instanceof Uint8Array) {
-    // Speed optimization -- use set if we're copying from a Uint8Array
+  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
     buf._set(subject)
   } else if (isArrayish(subject)) {
     // Treat array-ish objects as a byte array
@@ -5202,9 +5205,14 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   if (target.length - target_start < end - start)
     end = target.length - target_start + start
 
-  // copy!
-  for (var i = 0; i < end - start; i++)
-    target[i + target_start] = this[i + start]
+  var len = end - start
+
+  if (len < 100 || !Buffer._useTypedArrays) {
+    for (var i = 0; i < len; i++)
+      target[i + target_start] = this[i + start]
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
 }
 
 function _base64Slice (buf, start, end) {
@@ -5273,7 +5281,7 @@ Buffer.prototype.slice = function (start, end) {
   end = clamp(end, len, len)
 
   if (Buffer._useTypedArrays) {
-    return augment(this.subarray(start, end))
+    return Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
     var newBuf = new Buffer(sliceLen, undefined, true)
@@ -5741,9 +5749,9 @@ function stringtrim (str) {
 var BP = Buffer.prototype
 
 /**
- * Augment the Uint8Array *instance* (not the class!) with Buffer methods
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
-function augment (arr) {
+Buffer._augment = function (arr) {
   arr._isBuffer = true
 
   // save reference to original Uint8Array get/set methods before overwriting
