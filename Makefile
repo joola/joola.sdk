@@ -15,21 +15,23 @@ authors:
 
 compile:
 		@NODE_ENV=test
+		echo Current Directory: $(CURDIR)
 		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
-		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js | node ./node_modules/uglifyjs > ./bin/joola.io.min.js
+		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js | node ./node_modules/.bin/uglifyjs > ./bin/joola.io.min.js
 
 watch:
 		@NODE_ENV=test
 		./node_modules/.bin/watchify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
 
 lint:
-		@./node_modules/.bin/jshint ./lib
+		@./node_modules/.bin/jshint ./lib ./test
 
 doc:
 		find ./wiki/* ! -iregex '(.git|.npm)' | xargs rm -fr
 		node build/docs.js
 
 test-cov:	
+		$(MAKE) lint
 		$(MAKE) istanbul
 
 istanbul:
