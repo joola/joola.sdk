@@ -822,16 +822,13 @@ var stringifyPrimitive = function (v) {
   switch (typeof v) {
     case 'string':
       return v;
-
     case 'boolean':
       return v ? 'true' : 'false';
-
     case 'number':
       return isFinite(v) ? v : '';
-
     case 'object':
       return JSON.stringify(v);
-
+    /* istanbul ignore next */
     default:
       return '';
   }
@@ -867,8 +864,8 @@ querystring.stringify = querystring.encode = function (obj, sep, eq, name) {
     }
   }
   catch (ex) {
+    /* istanbul ignore next */
     console.log(ex);
-    console.log(ex.stack);
   }
 };
 /* END OF Add support for JSON parsing of query string */
@@ -924,6 +921,7 @@ api.fetch = function (endpoint, objOptions, callback) {
     }
   }
   else {
+    /* istanbul ignore next */
     api.waitingRequests.push(arguments);
   }
 };
@@ -941,8 +939,12 @@ api.getJSON = function (options, objOptions, callback) {
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
     options.path += '?' + qs;
-    options.headers['joolaio-token'] = joolaio.TOKEN;
-    options.headers['joolaio-apitoken'] = joolaio.APITOKEN;
+    if (options && options.headers) {
+      options.headers['joolaio-token'] = joolaio.TOKEN;
+      options.headers['joolaio-apitoken'] = joolaio.APITOKEN;
+    }
+    else
+      return callback(new Error('Failed to set request headers'));
     // options.headers['Content-Length'] = qs.length;
     var timerID, aborted;
     try {
@@ -1253,6 +1255,7 @@ common.mixin = function (origin, add, overwrite) {
 };
 
 //hook functions for timings
+/* istanbul ignore next */
 common.hookEvents = function (obj) {
   if (!obj)
     return;
@@ -1310,39 +1313,6 @@ common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
 
-common.toType = (function toType(global) {
-  return function (obj) {
-    if (obj === global) {
-      return "global";
-    }
-    return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
-  };
-})(this);
-
-common.sanitize = function (obj) {
-  if (obj instanceof Object) {
-    for (var k in obj) {
-      if (obj.hasOwnProperty(k)) {
-        //recursive call to scan property
-        if (k.substring(0, 1) === '_' && k !== '_')
-          delete obj[k];
-        else
-          common.sanitize(obj[k]);
-      }
-    }
-  }
-};
-
-common.typeof = function (obj) {
-  if (typeof(obj) == "object") {
-    if (obj === null) return "null";
-    if (obj.constructor == ([]).constructor) return "array";
-    if (obj.constructor == (new Date()).constructor) return "date";
-    if (obj.constructor == (new RegExp()).constructor) return "regex";
-    return "object";
-  }
-  return typeof(obj);
-};
 },{"./modifiers":9,"cloneextend":53,"crypto":26,"util":52}],8:[function(require,module,exports){
 /**
  *  @title joola.io
@@ -3775,7 +3745,6 @@ var Sparkline = module.exports = function (options, callback) {
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      console.log(series);
       if (!self.chartDrawn) {
         var chartOptions = joolaio.common.extend({
           title: {
@@ -3912,8 +3881,6 @@ var Sparkline = module.exports = function (options, callback) {
             self.options.query.timeframe = {};
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            console.log(self.options);
 
             self.draw(self.options);
           });
@@ -19772,7 +19739,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -19810,7 +19777,7 @@ module.exports={
     "moment": "~2.5.1",
     "browserify": "^3.38.0",
     "watchify": "^0.6.3",
-    "uglifyjs": "^2.3.6"
+    "uglify-js": "^2.3.6"
   },
   "devDependencies": {
     "coveralls": "*",
