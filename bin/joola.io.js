@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (process,global){
+(function (global){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -82,8 +82,6 @@ Object.defineProperty(joolaio, 'APITOKEN', {
   }
 });
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 require('./lib/common/globals');
 
 //parse the querystring if browser for default options
@@ -113,6 +111,7 @@ if (isBrowser()) {
 
 //init procedure
 joolaio.init = function (options, callback) {
+  callback = callback || emptyfunc;
   joolaio.options = joolaio.common.extend(joolaio.options, options);
   joolaio.options.isBrowser = isBrowser();
 
@@ -272,13 +271,12 @@ joolaio.init = function (options, callback) {
   });
 };
 
-if (joolaio.options.APIToken) {
+if (joolaio.options.APIToken || joolaio.options.token) {
   joolaio.init({});
 }
 
 joolaio.set = function (key, value, callback) {
   joolaio.options[key] = value;
-
   if (key === 'APIToken') {
     joolaio._apitoken = joolaio.options.APIToken;
     joolaio.USER = null;
@@ -291,14 +289,26 @@ joolaio.set = function (key, value, callback) {
         return callback(null);
     });
   }
+  else if (key === 'token') {
+    joolaio._token = joolaio.options._token;
+    joolaio.USER = null;
+    joolaio.APIToken = null;
+
+    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
+      joolaio.USER = user;
+      joolaio.TOKEN = user.token._;
+      if (typeof callback === 'function')
+        return callback(null);
+    });
+  }
 };
 
 joolaio.get = function (key) {
   return joolaio.options[key];
 };
 
-}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":59,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":56,"querystring":41,"socket.io-browserify":57,"url":50}],2:[function(require,module,exports){
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":59,"querystring":41,"socket.io-browserify":57,"url":50}],2:[function(require,module,exports){
 /*
  SortTable
  version 2
@@ -934,7 +944,7 @@ api.fetch = function (endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + joolaio.APITOKEN);
+  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN));
 
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
