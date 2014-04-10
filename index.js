@@ -80,8 +80,6 @@ Object.defineProperty(joolaio, 'APITOKEN', {
   }
 });
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 require('./lib/common/globals');
 
 //parse the querystring if browser for default options
@@ -111,6 +109,7 @@ if (isBrowser()) {
 
 //init procedure
 joolaio.init = function (options, callback) {
+  callback = callback || emptyfunc;
   joolaio.options = joolaio.common.extend(joolaio.options, options);
   joolaio.options.isBrowser = isBrowser();
 
@@ -270,19 +269,30 @@ joolaio.init = function (options, callback) {
   });
 };
 
-if (joolaio.options.APIToken) {
+if (joolaio.options.APIToken || joolaio.options.token) {
   joolaio.init({});
 }
 
 joolaio.set = function (key, value, callback) {
   joolaio.options[key] = value;
-
   if (key === 'APIToken') {
     joolaio._apitoken = joolaio.options.APIToken;
     joolaio.USER = null;
     joolaio._token = null;
 
     joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+      joolaio.USER = user;
+      joolaio.TOKEN = user.token._;
+      if (typeof callback === 'function')
+        return callback(null);
+    });
+  }
+  else if (key === 'token') {
+    joolaio._token = joolaio.options._token;
+    joolaio.USER = null;
+    joolaio.APIToken = null;
+
+    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
       if (typeof callback === 'function')
