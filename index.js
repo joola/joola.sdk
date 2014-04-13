@@ -281,6 +281,11 @@ joolaio.set = function (key, value, callback) {
     joolaio._token = null;
 
     joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      if (!user)
+        return callback(new Error('Failed to verify API Token'));
+
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
       if (typeof callback === 'function')
