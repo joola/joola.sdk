@@ -1034,14 +1034,14 @@ api.getJSON = function (options, objOptions, callback) {
       var headers = data.headers;
       var message = data.message;
 
-      if (headers.StatusCode && headers.StatusCode == 401) {
+      if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
         if (joolaio.options.logouturl)
           location.href = joolaio.options.logouturl;
 
         return callback(new Error('Failed to execute request: ' + data.message));
       }
-      else if (headers.StatusCode && headers.StatusCode == 500)
+      else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
 
       return callback(null, message);
@@ -1094,7 +1094,7 @@ dispatch.buildstub = function (callback) {
       host: parts.hostname,
       port: port,
       secure: parts.protocol !== 'http:',
-      path: '/api.js',
+      path: '/meta',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -1150,8 +1150,8 @@ dispatch.buildstub = function (callback) {
             var _callback = ce.clone(callback);//.clone();
             try {
               joolaio.api.fetch(_fn.name, args, function (err, result) {
-                if (result && result.result) {
-                  return _callback(err, result.result);
+                if (result ) {
+                  return _callback(err, result);
                 }
                 else {
                   return _callback(err);
