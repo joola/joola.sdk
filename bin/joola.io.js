@@ -77,7 +77,7 @@ Object.defineProperty(joolaio, 'APITOKEN', {
 
     joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
       joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
+      //joolaio.TOKEN = user.token._;
     });
   }
 });
@@ -237,9 +237,8 @@ joolaio.init = function (options, callback) {
 
         joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
           joolaio.USER = user;
-          joolaio.TOKEN = user.token._;
-
           joolaio.events.emit('core.init.finish');
+          joolaio.events.emit('ready');
           if (typeof callback === 'function')
             return callback(null, joolaio);
         });
@@ -289,9 +288,9 @@ joolaio.set = function (key, value, callback) {
         return callback(new Error('Failed to verify API Token'));
 
       joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
-      if (typeof callback === 'function')
+      if (typeof callback === 'function'){
         return callback(null);
+      }
     });
   }
   else if (key === 'token') {
@@ -1050,7 +1049,8 @@ api.getJSON = function (options, objOptions, callback) {
 
     var routeID = options.path + '-' + joolaio.common.uuid();
 
-    objOptions._token = joolaio.TOKEN;
+    if (joolaio.TOKEN)
+      objOptions._token = joolaio.TOKEN;
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
     objOptions._path = options.path;
