@@ -75,12 +75,10 @@ Object.defineProperty(joolaio, 'APITOKEN', {
 
     joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
       joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
+      //joolaio.TOKEN = user.token._;
     });
   }
 });
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 require('./lib/common/globals');
 
@@ -111,6 +109,7 @@ if (isBrowser()) {
 
 //init procedure
 joolaio.init = function (options, callback) {
+  callback = callback || emptyfunc;
   joolaio.options = joolaio.common.extend(joolaio.options, options);
   joolaio.options.isBrowser = isBrowser();
 
@@ -236,9 +235,8 @@ joolaio.init = function (options, callback) {
 
         joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
           joolaio.USER = user;
-          joolaio.TOKEN = user.token._;
-
           joolaio.events.emit('core.init.finish');
+          joolaio.events.emit('ready');
           if (typeof callback === 'function')
             return callback(null, joolaio);
         });
@@ -270,19 +268,35 @@ joolaio.init = function (options, callback) {
   });
 };
 
-if (joolaio.options.APIToken) {
+if (joolaio.options.APIToken || joolaio.options.token) {
   joolaio.init({});
 }
 
 joolaio.set = function (key, value, callback) {
   joolaio.options[key] = value;
-
   if (key === 'APIToken') {
     joolaio._apitoken = joolaio.options.APIToken;
     joolaio.USER = null;
     joolaio._token = null;
 
     joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      if (!user)
+        return callback(new Error('Failed to verify API Token'));
+
+      joolaio.USER = user;
+      if (typeof callback === 'function'){
+        return callback(null);
+      }
+    });
+  }
+  else if (key === 'token') {
+    joolaio._token = joolaio.options._token;
+    joolaio.USER = null;
+    joolaio.APIToken = null;
+
+    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
       joolaio.USER = user;
       joolaio.TOKEN = user.token._;
       if (typeof callback === 'function')
