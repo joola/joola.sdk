@@ -231,6 +231,7 @@ joolaio.init = function (options, callback) {
         });
       }
       else if (joolaio.options.APIToken) {
+        console.log('test');
         joolaio._apitoken = joolaio.options.APIToken;
         joolaio.USER = null;
         joolaio._token = null;
@@ -312,7 +313,7 @@ joolaio.get = function (key) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":59,"querystring":42,"socket.io-browserify":57,"url":51}],2:[function(require,module,exports){
+},{"./lib/common/api":3,"./lib/common/dispatch":4,"./lib/common/events":5,"./lib/common/globals":6,"./lib/common/index":7,"./lib/common/logger":8,"./lib/viz/index":21,"./package.json":59,"querystring":41,"socket.io-browserify":57,"url":50}],2:[function(require,module,exports){
 /*
  SortTable
  version 2
@@ -1063,7 +1064,7 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
-},{"http":32,"https":36,"querystring":42,"url":51}],4:[function(require,module,exports){
+},{"http":32,"https":36,"querystring":41,"url":50}],4:[function(require,module,exports){
 /**
  *  joola.io
  *
@@ -1177,7 +1178,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":54,"url":51}],5:[function(require,module,exports){
+},{"cloneextend":53,"url":50}],5:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1196,7 +1197,7 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"eventemitter2":55}],6:[function(require,module,exports){
+},{"eventemitter2":54}],6:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola.io
@@ -1330,7 +1331,7 @@ common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
 
-},{"./modifiers":9,"cloneextend":54,"crypto":26,"util":53}],8:[function(require,module,exports){
+},{"./modifiers":9,"cloneextend":53,"crypto":26,"util":52}],8:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -1681,7 +1682,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":20,"cloneextend":54,"eventemitter2":55}],11:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":53,"eventemitter2":54}],11:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -3001,7 +3002,7 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
-},{"./_proto":20,"cloneextend":54}],14:[function(require,module,exports){
+},{"./_proto":20,"cloneextend":53}],14:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4534,7 +4535,7 @@ joolaio.events.on('core.init.finish', function () {
 
 
 
-},{"./_proto":20,"moment":56,"underscore":58}],20:[function(require,module,exports){
+},{"./_proto":20,"moment":55,"underscore":58}],20:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4772,7 +4773,7 @@ proto.find = function (obj) {
 };
 
 
-},{"cloneextend":54,"moment":56,"underscore":58}],21:[function(require,module,exports){
+},{"cloneextend":53,"moment":55,"underscore":58}],21:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -4887,14 +4888,14 @@ function Buffer (subject, encoding, noZero) {
   else if (type === 'string')
     length = Buffer.byteLength(subject, encoding)
   else if (type === 'object')
-    length = coerce(subject.length) // Assume object is an array
+    length = coerce(subject.length) // assume that object is array-like
   else
     throw new Error('First argument needs to be a number, array or string.')
 
   var buf
   if (Buffer._useTypedArrays) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = augment(new Uint8Array(length))
+    buf = Buffer._augment(new Uint8Array(length))
   } else {
     // Fallback: Return THIS instance of Buffer (created by `new`)
     buf = this
@@ -4903,9 +4904,8 @@ function Buffer (subject, encoding, noZero) {
   }
 
   var i
-  if (Buffer._useTypedArrays && typeof Uint8Array === 'function' &&
-      subject instanceof Uint8Array) {
-    // Speed optimization -- use set if we're copying from a Uint8Array
+  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
     buf._set(subject)
   } else if (isArrayish(subject)) {
     // Treat array-ish objects as a byte array
@@ -5202,9 +5202,14 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   if (target.length - target_start < end - start)
     end = target.length - target_start + start
 
-  // copy!
-  for (var i = 0; i < end - start; i++)
-    target[i + target_start] = this[i + start]
+  var len = end - start
+
+  if (len < 100 || !Buffer._useTypedArrays) {
+    for (var i = 0; i < len; i++)
+      target[i + target_start] = this[i + start]
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
 }
 
 function _base64Slice (buf, start, end) {
@@ -5273,7 +5278,7 @@ Buffer.prototype.slice = function (start, end) {
   end = clamp(end, len, len)
 
   if (Buffer._useTypedArrays) {
-    return augment(this.subarray(start, end))
+    return Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
     var newBuf = new Buffer(sliceLen, undefined, true)
@@ -5741,9 +5746,9 @@ function stringtrim (str) {
 var BP = Buffer.prototype
 
 /**
- * Augment the Uint8Array *instance* (not the class!) with Buffer methods
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
-function augment (arr) {
+Buffer._augment = function (arr) {
   arr._isBuffer = true
 
   // save reference to original Uint8Array get/set methods before overwriting
@@ -7090,7 +7095,7 @@ http.STATUS_CODES = {
     510 : 'Not Extended',               // RFC 2774
     511 : 'Network Authentication Required' // RFC 6585
 };
-},{"./lib/request":33,"events":31,"url":51}],33:[function(require,module,exports){
+},{"./lib/request":33,"events":31,"url":50}],33:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -7281,7 +7286,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":34,"Base64":35,"inherits":37,"stream":44}],34:[function(require,module,exports){
+},{"./response":34,"Base64":35,"inherits":37,"stream":43}],34:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -7403,7 +7408,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":44,"util":53}],35:[function(require,module,exports){
+},{"stream":43,"util":52}],35:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -7506,68 +7511,6 @@ if (typeof Object.create === 'function') {
 }
 
 },{}],38:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.once = noop;
-process.off = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],39:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -8078,7 +8021,7 @@ process.chdir = function (dir) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8164,7 +8107,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8251,13 +8194,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":40,"./encode":41}],43:[function(require,module,exports){
+},{"./decode":39,"./encode":40}],42:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8331,7 +8274,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":47,"./writable.js":49,"inherits":37,"process/browser.js":45}],44:[function(require,module,exports){
+},{"./readable.js":46,"./writable.js":48,"inherits":37,"process/browser.js":44}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8460,7 +8403,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":43,"./passthrough.js":46,"./readable.js":47,"./transform.js":48,"./writable.js":49,"events":31,"inherits":37}],45:[function(require,module,exports){
+},{"./duplex.js":42,"./passthrough.js":45,"./readable.js":46,"./transform.js":47,"./writable.js":48,"events":31,"inherits":37}],44:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -8515,7 +8458,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8558,7 +8501,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":48,"inherits":37}],47:[function(require,module,exports){
+},{"./transform.js":47,"inherits":37}],46:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9494,8 +9437,8 @@ function indexOf (xs, x) {
   return -1;
 }
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./index.js":44,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38,"buffer":22,"events":31,"inherits":37,"process/browser.js":45,"string_decoder":50}],48:[function(require,module,exports){
+}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"))
+},{"./index.js":43,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":56,"buffer":22,"events":31,"inherits":37,"process/browser.js":44,"string_decoder":49}],47:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9701,7 +9644,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":43,"inherits":37}],49:[function(require,module,exports){
+},{"./duplex.js":42,"inherits":37}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10089,7 +10032,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":44,"buffer":22,"inherits":37,"process/browser.js":45}],50:[function(require,module,exports){
+},{"./index.js":43,"buffer":22,"inherits":37,"process/browser.js":44}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10282,7 +10225,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":22}],51:[function(require,module,exports){
+},{"buffer":22}],50:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -10915,14 +10858,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":39,"querystring":42}],52:[function(require,module,exports){
+},{"punycode":38,"querystring":41}],51:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11511,8 +11454,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":52,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38,"inherits":37}],54:[function(require,module,exports){
+}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":51,"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":56,"inherits":37}],53:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -11763,7 +11706,7 @@ function foreach(object, block, context)
       return value;
  }
  */
-},{}],55:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (process){
 ;!function(exports, undefined) {
 
@@ -12327,8 +12270,8 @@ function foreach(object, block, context)
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":38}],56:[function(require,module,exports){
+}).call(this,require("/home/itay/dev/joola.io.sdk/node_modules/process/browser.js"))
+},{"/home/itay/dev/joola.io.sdk/node_modules/process/browser.js":56}],55:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -14729,6 +14672,71 @@ function foreach(object, block, context)
         makeGlobal();
     }
 }).call(this);
+
+},{}],56:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
 
 },{}],57:[function(require,module,exports){
 (function () {var io = module.exports;/*! Socket.IO.js build:0.8.6, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
@@ -19764,7 +19772,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.4.1",
+  "version": "0.5.0",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -19797,12 +19805,8 @@ module.exports={
     "async": "~0.2.10",
     "socket.io-browserify": "~0.9.6",
     "cloneextend": "0.0.3",
-    "event-stream": "~3.1.0",
     "underscore": "~1.5.2",
-    "moment": "~2.5.1",
-    "browserify": "^3.38.0",
-    "watchify": "^0.6.3",
-    "uglify-js": "^2.3.6"
+    "moment": "~2.5.1"
   },
   "devDependencies": {
     "coveralls": "*",
@@ -19813,7 +19817,10 @@ module.exports={
     "chai": "*",
     "sinon-chai": "*",
     "jshint": "*",
-    "supertest": "*"
+    "supertest": "*",
+    "browserify": "^3.38.0",
+    "watchify": "^0.6.3",
+    "uglify-js": "^2.3.6"
   },
   "license": "GPL-3.0"
 }
