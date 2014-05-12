@@ -231,7 +231,6 @@ joolaio.init = function (options, callback) {
         });
       }
       else if (joolaio.options.APIToken) {
-        console.log('test');
         joolaio._apitoken = joolaio.options.APIToken;
         joolaio.USER = null;
         joolaio._token = null;
@@ -954,13 +953,6 @@ api.getJSON = function (options, objOptions, callback) {
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
     options.path += '?' + qs;
-    if (options && options.headers) {
-      options.headers['joolaio-token'] = joolaio.TOKEN;
-      options.headers['joolaio-apitoken'] = joolaio.APITOKEN;
-    }
-    else
-      return callback(new Error('Failed to set request headers'));
-    // options.headers['Content-Length'] = qs.length;
     var timerID, aborted;
     try {
       var req = prot.request(options, function (res) {
