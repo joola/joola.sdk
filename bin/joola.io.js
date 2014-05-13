@@ -1031,7 +1031,7 @@ api.getJSON = function (options, objOptions, callback) {
         if (joolaio.options.logouturl)
           location.href = joolaio.options.logouturl;
 
-        return callback(new Error('Failed to execute request: ' + data.message));
+        return callback(new Error('Failed to execute request: ' + data.message.message));
       }
       else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
