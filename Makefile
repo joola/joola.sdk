@@ -40,5 +40,9 @@ istanbul:
 coveralls:
 		cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 
+publish:
+		npm shrinkwrap
+		npm publish
+		
 .PHONY: test
 
