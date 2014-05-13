@@ -122,9 +122,10 @@ joolaio.init = function (options, callback) {
         return callback(null);
     }
 
+    var script;
     if (joolaio.options.isBrowser) {
       if (typeof (jQuery) === 'undefined') {
-        var script = document.createElement('script');
+        script = document.createElement('script');
         expected++;
         script.onload = function () {
           //jQuery.noConflict(true);
