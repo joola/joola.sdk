@@ -3,4 +3,4 @@
 --reporter spec
 --recursive
 
---timeout 5000
+--timeout 30000

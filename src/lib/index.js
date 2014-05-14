@@ -139,7 +139,7 @@ joolaio.init = function (options, callback) {
             script.onload = function () {
               done();
             };
-            script.src = '/js/highcharts.js';
+            script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
             done();
