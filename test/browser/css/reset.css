@@ -1,0 +1,9 @@
+.progress {
+  background-color: inherit;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  margin-bottom: auto;
+  height: auto;
+  overflow: auto;
+}
