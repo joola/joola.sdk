@@ -65,7 +65,6 @@
   <script>
     joolaio.events.on('ready', function () {
       $('#version').text(joolaio.VERSION);
-      run();
     });
   </script>
   <!-- END OF JOOLA.IO CODE GO HERE -->
@@ -74,7 +73,7 @@
 </div>
 
 <script>
-  var run = function () {
+  onload = function () {
     //mocha.checkLeaks();
     //mocha.globals(['foo']);
     var runner = mocha.run();

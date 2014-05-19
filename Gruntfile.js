@@ -1,12 +1,22 @@
 module.exports = function (grunt) {
   var browsers = [
     {
-      browserName: "chrome",
+      browserName: "firefox",
+      version: "19",
+      platform: "XP"
+    },
+    {
+      browserName: "googlechrome",
+      platform: "XP"
+    },
+    {
+      browserName: "googlechrome",
       platform: "linux"
     },
     {
-      browserName: "firefox",
-      platform: "linux"
+      browserName: "internet explorer",
+      platform: "WIN8",
+      version: "10"
     }
   ];
 
@@ -100,14 +110,11 @@ module.exports = function (grunt) {
     watch: {},
 
     mocha: {
-      test: {
+      all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html',
-            'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
-          ],
-          timeout: 10000,
-          run: true
+            'http://127.0.0.1:9999/test/browser/common.spec.html'
+          ]
         }
       }
     },
@@ -116,8 +123,7 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html',
-            'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
+            'http://127.0.0.1:9999/test/browser/common.spec.html'
           ],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
@@ -139,6 +145,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['default', 'connect', 'mocha']);
-  grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
+  grunt.registerTask('test', ['connect', 'mocha']);
+  grunt.registerTask('test:sauce', ['connect', 'mocha', 'saucelabs-mocha']);
 };
