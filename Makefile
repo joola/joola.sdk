@@ -15,9 +15,10 @@ authors:
 
 compile:
 		@NODE_ENV=test
-		echo Current Directory: $(CURDIR)
-		./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
-		node ./node_modules/.bin/uglifyjs $(CURDIR)/bin/joola.io.js --source-map $(CURDIR)/bin/joola.io.min.js.map --source-map-url /joola.io.min.js.map -p $$(grep -o "/" <<<"$(CURDIR)/" | wc -l) -c -m > ./bin/joola.io.min.js
+		grunt
+		#echo Current Directory: $(CURDIR)
+		#./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
+		#node ./node_modules/.bin/uglifyjs $(CURDIR)/bin/joola.io.js --source-map $(CURDIR)/bin/joola.io.min.js.map --source-map-url /joola.io.min.js.map -p $$(grep -o "/" <<<"$(CURDIR)/" | wc -l) -c -m > ./bin/joola.io.min.js
     
 watch:
 		@NODE_ENV=test
