@@ -106,11 +106,8 @@ module.exports = function (grunt) {
             'http://127.0.0.1:9999/test/browser/common.spec.html',
             'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
           ],
-          files: [
-            'test/unit/starthere.js'
-          ],
           timeout: 10000,
-          run: true
+          run: false
         }
       }
     },
