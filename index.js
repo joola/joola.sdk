@@ -101,6 +101,12 @@ if (isBrowser()) {
           if (qs && qs.APIToken) {
             joolaio.options.APIToken = qs.APIToken;
           }
+          if (qs && qs.token) {
+            joolaio.options.token = qs.token;
+          }
+          if (qs && qs.host) {
+            joolaio.options.host = qs.host;
+          }
         }
       }
     }
@@ -287,7 +293,7 @@ joolaio.set = function (key, value, callback) {
         return callback(new Error('Failed to verify API Token'));
 
       joolaio.USER = user;
-      if (typeof callback === 'function'){
+      if (typeof callback === 'function') {
         return callback(null);
       }
     });
