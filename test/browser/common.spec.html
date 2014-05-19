@@ -65,11 +65,7 @@
   <script>
     joolaio.events.on('ready', function () {
       $('#version').text(joolaio.VERSION);
-      if (navigator.userAgent.indexOf('PhantomJS') >= 0) {
-        mocha.run();
-      }
-      else
-        run();
+      run();
     });
   </script>
   <!-- END OF JOOLA.IO CODE GO HERE -->

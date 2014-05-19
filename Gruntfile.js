@@ -107,7 +107,7 @@ module.exports = function (grunt) {
             'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
           ],
           timeout: 10000,
-          run: false
+          run: true
         }
       }
     },
