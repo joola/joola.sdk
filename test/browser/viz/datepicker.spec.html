@@ -35,26 +35,28 @@
 
   <!-- TEST SPEC GO HERE -->
   <script>
-    describe('DatePicker', function (done) {
-      it('should draw the date picker', function () {
-        //$('#datepicker').DatePicker();
-        var options = {};
-        options.container = $('#datepicker').get(0);
-        var result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
-          if (err)
-            throw err;
-          datepicker.draw(options, done);
-        }).options.$container;
-      });
-
-      it('should raise event when clicking apply', function (done) {
-        var $picker = $('#datepicker');
-        $(joolaio).on('datechange', function () {
-          done();
+    joolaio.events.on('ready', function () {
+      describe('DatePicker', function (done) {
+        it('should draw the date picker', function () {
+          //$('#datepicker').DatePicker();
+          var options = {};
+          options.container = $('#datepicker').get(0);
+          var result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+            if (err)
+              throw err;
+            datepicker.draw(options, done);
+          }).options.$container;
         });
 
-        var $btn = $($picker.find('.btn.apply'));
-        $btn.click();
+        it('should raise event when clicking apply', function (done) {
+          var $picker = $('#datepicker');
+          $(joolaio).on('datechange', function () {
+            done();
+          });
+
+          var $btn = $($picker.find('.btn.apply'));
+          $btn.click();
+        });
       });
     });
   </script>
