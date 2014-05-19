@@ -207,3 +207,28 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
+
+Metric.meta = {
+  key: 'metricbox',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'The Metric Box allows you to create category based visualizations.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;width:250px',
+    query: {
+      timeframe:'last_month',
+      interval:'day',
+      dimensions: [],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
+
+    },
+    draw: '$("#example").Metric({query: query})'
+  }
+};

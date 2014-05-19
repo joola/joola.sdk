@@ -3,21 +3,8 @@ language: node_js
 node_js:
   - "0.10"
   
-services:
-  - redis-server
-  - mongodb
-  - rabbitmq
-
-
-before_script:
-  - sudo rabbitmq-plugins enable rabbitmq_stomp
-  - sudo service rabbitmq-server restart
-  - sudo rabbitmqctl status
-  - sudo rabbitmq-plugins list
-  - npm install http://github.com/joola/joola.io/tarball/develop
-  
-script: 'make test-cov'
-after_success: 'make coveralls'
+script: 'grunt test:sauce'
+#after_success: 'make coveralls'
 
 notifications:
   email:

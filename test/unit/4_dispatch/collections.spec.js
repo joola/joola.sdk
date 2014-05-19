@@ -61,7 +61,8 @@ describe("collections", function () {
       name: this.collection,
       test: 1
     };
-    joolaio.dispatch.collections.update(this.workspace, collection, function (err, _collection) {
+
+    joolaio.dispatch.collections.patch(this.workspace, collection.key, collection, function (err, _collection) {
       if (err)
         return done(err);
 
@@ -70,24 +71,12 @@ describe("collections", function () {
     });
   });
 
-  it("should fail updating a collection with incomplete details", function (done) {
-    var collection = {
-      key: this.collection
-    };
-    joolaio.dispatch.collections.update(this.workspace, collection, function (err, _collection) {
-      if (err)
-        return done();
-
-      return done(new Error('This should fail'));
-    });
-  });
-
   it("should fail updating non existing collection", function (done) {
     var collection = {
       key: this.collection + '1',
       name: this.collection
     };
-    joolaio.dispatch.collections.update(this.workspace, collection, function (err, _collection) {
+    joolaio.dispatch.collections.patch(this.workspace, collection.key, collection, function (err, _collection) {
       if (err)
         return done();
 
@@ -100,6 +89,8 @@ describe("collections", function () {
     joolaio.dispatch.collections.get(this.workspace, this.collection, function (err, collection) {
       if (err)
         return done(err);
+
+      console.log(collection);
 
       expect(collection).to.be.ok;
       expect(collection.key).to.equal(self.collection);
@@ -170,18 +161,6 @@ describe("collections", function () {
         return done();
 
       done(new Error('This should fail'));
-    });
-  });
-
-  it("should get a collection meta data", function (done) {
-    var self = this;
-    var document = require('../../fixtures/basic.json')[0];
-    joolaio.dispatch.collections.metadata(self.workspace, document, self.collection, function (err, meta) {
-      if (err)
-        return done(err);
-
-      expect(meta).to.be.ok;
-      done();
     });
   });
 

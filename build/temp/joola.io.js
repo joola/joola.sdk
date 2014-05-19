@@ -15917,6 +15917,12 @@ if (isBrowser()) {
           if (qs && qs.APIToken) {
             joolaio.options.APIToken = qs.APIToken;
           }
+          if (qs && qs.token) {
+            joolaio.options.token = qs.token;
+          }
+          if (qs && qs.host) {
+            joolaio.options.host = qs.host;
+          }
         }
       }
     }
@@ -16103,7 +16109,7 @@ joolaio.set = function (key, value, callback) {
         return callback(new Error('Failed to verify API Token'));
 
       joolaio.USER = user;
-      if (typeof callback === 'function'){
+      if (typeof callback === 'function') {
         return callback(null);
       }
     });
@@ -17599,6 +17605,31 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
+
+Metric.meta = {
+  key: 'metricbox',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'The Metric Box allows you to create category based visualizations.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;width:250px',
+    query: {
+      timeframe:'last_month',
+      interval:'day',
+      dimensions: [],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
+
+    },
+    draw: '$("#example").Metric({query: query})'
+  }
+};
 },{"./_proto":57,"cloneextend":33}],51:[function(require,module,exports){
 /**
  *  @title joola.io
@@ -18075,6 +18106,31 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
+
+Pie.meta = {
+  key: 'pie-chart',
+  title: 'Pie Chart',
+  tagline: 'category based visualization',
+  description: '' +
+    'The Pie Chart allows you to create category based visualizations.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;width:250px',
+    query: {
+      timeframe:'last_month',
+      interval:'day',
+      dimensions: ['browser'],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
+
+    },
+    draw: '$("#example").Pie({query: query})'
+  }
+};
 },{"./_proto":57,"underscore":37}],53:[function(require,module,exports){
 /*jshint -W083 */
 
@@ -19130,8 +19186,56 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.meta = {
+  key: 'timeline',
+  title: 'Timeline',
+  tagline: 'time series charting',
+  description: '' +
+    'Timeline description.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;',
+    query: {
+      timeframe: 'last_month',
+      interval: 'day',
+      dimensions: ['timestamp'],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
 
+    },
+    draw: '$("#example").Timeline({options: options, query: query})',
+    more: [
+      'http://jsfiddle.com/'
+    ]
+  },
+  events: {
+    load: {
 
+    },
+    destroy: {
+
+    },
+    update: {
+
+    },
+    click: {
+
+    }
+  },
+  html: '',
+  css: {
+
+  },
+  options: {
+
+  },
+  chartProvider: 'highcharts',
+  license: 'MIT'
+};
 },{"./_proto":57,"moment":35,"underscore":37}],57:[function(require,module,exports){
 /**
  *  @title joola.io

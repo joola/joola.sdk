@@ -3,6 +3,10 @@ module.exports = function (grunt) {
     {
       browserName: "chrome",
       platform: "linux"
+    },
+    {
+      browserName: "firefox",
+      platform: "linux"
     }
   ];
 
@@ -101,6 +105,9 @@ module.exports = function (grunt) {
           urls: [
             'http://127.0.0.1:9999/test/browser/common.spec.html',
             'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
+          ],
+          files:[
+            'test/unit/starthere.js'
           ],
           timeout: 10000,
           run: true
