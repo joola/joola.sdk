@@ -1,0 +1,110 @@
+<!-- GENERIC HEADER -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>joola.io.sdk Tests</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+  <script src="/node_modules/mocha/mocha.js"></script>
+  <script src="/node_modules/chai/chai.js"></script>
+  <script src="/node_modules/sinon/lib/sinon.js"></script>
+  <script src="/node_modules/underscore/underscore.js"></script>
+  <script src="/build/release/joola.io.js"></script>
+  <script>joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'});</script>
+  <script>
+    mocha.setup('bdd');
+    var expect = chai.expect;
+  </script>
+</head>
+<body>
+<div class="container">
+  <div id="mocha"><p><a href=".">Index</a></p></div>
+  <div id="messages"></div>
+  <div id="fixtures"></div>
+
+  <!-- END OF GENERIC HEADER -->
+
+  <!-- TEST HTML GO HERE -->
+
+  <div id="version"></div>
+
+  <!-- END OF TEST HTML GO HERE -->
+
+  <!-- TEST SPEC GO HERE -->
+  <script src="/test/unit/1_globals/globals.spec.js"></script>
+  <script src="/test/unit/2_common/api.spec.js"></script>
+  <script src="/test/unit/2_common/dateformat.spec.js"></script>
+  <script src="/test/unit/2_common/index.spec.js"></script>
+  <script src="/test/unit/2_common/logger.spec.js"></script>
+  <script src="/test/unit/2_common/modifiers.spec.js"></script>
+
+  <script src="/test/unit/4_dispatch/collections.spec.js"></script>
+
+  <script>
+    describe('joola.io common', function () {
+      it('should have a valid jQuery', function () {
+        expect($).to.be.ok;
+      });
+      
+      it('should display the correct version', function () {
+        var elem = $('#version');
+        expect(elem.text()).to.equal('0.5.2-develop');
+      });
+    });
+  </script>
+  <!-- END OF TEST SPEC GO HERE -->
+
+  <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
+  <script>
+    $('#version').text(joolaio.VERSION);
+    joolaio.events.on('ready', function () {
+      if (navigator.userAgent.indexOf('PhantomJS') >= 0) {
+        //mocha.run();
+      }
+      else
+        run();
+    });
+  </script>
+
+  <!-- END OF JOOLA.IO CODE GO HERE -->
+
+  <!-- GENERIC FOOTER -->
+</div>
+
+<script>
+  var run = function () {
+    //mocha.checkLeaks();
+    //mocha.globals(['foo']);
+    var runner = mocha.run();
+    var failedTests = [];
+    runner.on('end', function () {
+      window.mochaResults = runner.stats;
+      window.mochaResults.reports = failedTests;
+    });
+
+    runner.on('fail', logFailure);
+
+    function logFailure(test, err) {
+      var flattenTitles = function (test) {
+        var titles = [];
+        while (test.parent.title) {
+          titles.push(test.parent.title);
+          test = test.parent;
+        }
+        return titles.reverse();
+      };
+
+      failedTests.push({
+        name: test.title,
+        result: false,
+        message: err.message,
+        stack: err.stack,
+        titles: flattenTitles(test)
+      });
+    }
+  };
+</script>
+</body>
+</html>
+<!-- END OF GENERIC FOOTER -->

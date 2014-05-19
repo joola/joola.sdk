@@ -37,19 +37,19 @@ joolaio.options = {
 };
 
 //libraries
-joolaio.globals = require('./lib/common/globals');
-joolaio.logger = require('./lib/common/logger');
-joolaio.dispatch = require('./lib/common/dispatch');
-joolaio.common = require('./lib/common/index');
-joolaio.events = require('./lib/common/events');
+joolaio.globals = require('./common/globals');
+joolaio.logger = require('./common/logger');
+joolaio.dispatch = require('./common/dispatch');
+joolaio.common = require('./common/index');
+joolaio.events = require('./common/events');
 
 joolaio.on = joolaio.events.on;
 
-joolaio.api = require('./lib/common/api');
+joolaio.api = require('./common/api');
 joolaio.state = {};
-joolaio.viz = require('./lib/viz/index');
+joolaio.viz = require('./viz/index');
 
-joolaio.VERSION = require('./package.json').version;
+joolaio.VERSION = require('./../../package.json').version;
 joolaio._token = null;
 joolaio._apitoken = null;
 
@@ -80,7 +80,7 @@ Object.defineProperty(joolaio, 'APITOKEN', {
   }
 });
 
-require('./lib/common/globals');
+require('./common/globals');
 
 //parse the querystring if browser for default options
 function isBrowser() {
@@ -100,6 +100,12 @@ if (isBrowser()) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
             joolaio.options.APIToken = qs.APIToken;
+          }
+          if (qs && qs.token) {
+            joolaio.options.token = qs.token;
+          }
+          if (qs && qs.host) {
+            joolaio.options.host = qs.host;
           }
         }
       }
@@ -139,7 +145,7 @@ joolaio.init = function (options, callback) {
             script.onload = function () {
               done();
             };
-            script.src = '/js/highcharts.js';
+            script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
             done();
@@ -287,7 +293,7 @@ joolaio.set = function (key, value, callback) {
         return callback(new Error('Failed to verify API Token'));
 
       joolaio.USER = user;
-      if (typeof callback === 'function'){
+      if (typeof callback === 'function') {
         return callback(null);
       }
     });

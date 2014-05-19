@@ -25,7 +25,7 @@ watch:
 		./node_modules/.bin/watchify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
 
 lint:
-		@./node_modules/.bin/jshint ./lib ./test
+		@./node_modules/.bin/jshint ./src/lib ./test
 
 doc:
 		find ./wiki/* ! -iregex '(.git|.npm)' | xargs rm -fr

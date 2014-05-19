@@ -939,7 +939,7 @@ var DatePicker = module.exports = function (options, callback) {
 };
 
 joolaio.events.on('core.init.finish', function () {
-  if (typeof (jQuery) != 'undefined') {
+  if (typeof (jQuery) !== 'undefined' || typeof ($) !== 'undefined') {
     $.fn.DatePicker = function (options, callback) {
       var result = null;
       var uuid = this.attr('jio-uuid');

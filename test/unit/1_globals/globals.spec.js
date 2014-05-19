@@ -1,3 +1,4 @@
+
 describe("globals", function () {
   it("should have sinon defined", function () {
     expect(sinon).to.be.ok;
