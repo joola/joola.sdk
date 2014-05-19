@@ -15033,7 +15033,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.5.1",
+  "version": "0.5.2-develop",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
