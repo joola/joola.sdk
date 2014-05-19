@@ -35,7 +35,7 @@
 
   <!-- TEST SPEC GO HERE -->
   <script>
-    joolaio.events.on('ready', function () {
+    //joolaio.events.on('ready', function () {
       describe('DatePicker', function (done) {
         it('should draw the date picker', function () {
           //$('#datepicker').DatePicker();
@@ -58,7 +58,7 @@
           $btn.click();
         });
       });
-    });
+    //});
   </script>
   <!-- END OF TEST SPEC GO HERE -->
 
@@ -66,7 +66,7 @@
   <script>
     joolaio.events.on('ready', function () {
       if (navigator.userAgent.indexOf('PhantomJS') >= 0) {
-        //mocha.run();
+        mocha.run();
       }
       else
         run();
