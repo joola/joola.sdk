@@ -1,5 +1,4 @@
 module.exports = function (grunt) {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   var browsers = [
     {
       browserName: "googlechrome",
@@ -124,6 +123,7 @@ module.exports = function (grunt) {
           concurrency: 2,
           throttled: 2,
           browsers: browsers,
+          'tunnel-identifier': process.env.TRAVIS_JOB_ID,
           testname: "joola.io.sdk tests",
           tags: ["develop"]
         }
