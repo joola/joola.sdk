@@ -102,7 +102,8 @@ module.exports = function (grunt) {
     connect: {
       server: {
         options: {
-          base: "",
+          protocol: 'http',
+          base: '',
           port: 9999
         }
       }
@@ -148,6 +149,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['connect', 'mocha']);
-  grunt.registerTask('test:sauce', ['connect', 'mocha', 'saucelabs-mocha']);
+  grunt.registerTask('test', ['default', 'connect', 'mocha']);
+  grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
 };

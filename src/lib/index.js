@@ -241,7 +241,6 @@ joolaio.init = function (options, callback) {
         joolaio.USER = null;
         joolaio._token = null;
 
-        console.log('token',joolaio._apitoken);
         joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
           joolaio.USER = user;
           joolaio.events.emit('core.init.finish');

@@ -50,7 +50,7 @@ dispatch.buildstub = function (callback) {
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
-            var args = arguments;
+            var args = Array.prototype.slice.call(arguments);//arguments;
             callback = emptyfunc;
             if (typeof args[Object.keys(args).length - 1] === 'function') {
               callback = args[Object.keys(args).length - 1];

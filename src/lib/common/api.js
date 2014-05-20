@@ -235,6 +235,7 @@ api.getJSON = function (options, objOptions, callback) {
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
     objOptions._path = options.path;
+    
     joolaio.io.socket.emit(routeID, objOptions);
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))
