@@ -1,6 +1,11 @@
 module.exports = function (grunt) {
   var browsers = [
     {
+      browserName: 'chrome',
+      platform: 'Linux'
+    }
+    /*    
+    {
       browserName: 'android',
       platform: 'Linux',
       version: '4.0'
@@ -40,15 +45,12 @@ module.exports = function (grunt) {
       platform: 'Windows XP',
       version: '7'
     },
-    {
-      browserName: 'chrome',
-      platform: 'Windows 7'
-    },
-    {
-      browserName: 'firefox',
-      platform: 'Windows 7',
-      version: '21'
-    }
+     {
+     browserName: 'firefox',
+     platform: 'Windows 7',
+     version: '21'
+     }
+    */
   ];
 
   grunt.initConfig({
@@ -185,6 +187,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watch']);
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
-  grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
+  grunt.registerTask('sauce', ['default', 'connect', 'saucelabs-mocha']);
 }
 ;
