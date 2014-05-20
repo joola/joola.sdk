@@ -169,11 +169,12 @@ module.exports = function (grunt) {
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           concurrency: 2,
-          throttled: 2,
           browsers: browsers,
           'tunnel-identifier': process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
-          tags: [process.env.TRAVIS_BRANCH || 'local']
+          tags: [process.env.TRAVIS_BRANCH || 'local'],
+          public: "public"
+          
         }
       }
     }
