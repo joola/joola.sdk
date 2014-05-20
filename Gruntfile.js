@@ -1,8 +1,53 @@
 module.exports = function (grunt) {
   var browsers = [
     {
-      browserName: "googlechrome",
-      platform: "linux"
+      browserName: 'android',
+      platform: 'Linux',
+      version: '4.0'
+    },
+    {
+      browserName: 'iphone',
+      platform: 'OS X 10.8',
+      version: '6'
+    },
+    {
+      browserName: 'safari',
+      platform: 'OS X 10.8',
+      version: '6'
+    },
+    {
+      browserName: 'safari',
+      platform: 'OS X 10.6',
+      version: '5'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 8',
+      version: '10'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 7',
+      version: '9'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 7',
+      version: '8'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows XP',
+      version: '7'
+    },
+    {
+      browserName: 'chrome',
+      platform: 'Windows 7',
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Windows 7',
+      version: '21'
     }
   ];
 
@@ -119,25 +164,29 @@ module.exports = function (grunt) {
             'http://127.0.0.1:9999/test/browser/common.spec.html'
           ],
           tunnelTimeout: 5,
-          build: process.env.TRAVIS_JOB_ID,
-          concurrency: 2,
-          throttled: 2,
-          browsers: browsers,
-          'tunnel-identifier': process.env.TRAVIS_JOB_ID,
-          testname: ('joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT) || "joola.io.sdk tests",
-          tags: [process.env.TRAVIS_BRANCH || 'local']
-        }
+          identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),,
+        concurrency: 2,
+        throttled: 2,
+        browsers: browsers,
+        'tunnel-identifier': process.env.TRAVIS_JOB_ID,
+        testname: ('joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT) || "joola.io.sdk tests",
+        tags: [process.env.TRAVIS_BRANCH || 'local']
       }
     }
-  });
-
-  for (var key in grunt.file.readJSON("package.json").devDependencies) {
-    if (key !== "grunt" && key.indexOf("grunt") === 0)
-      grunt.loadNpmTasks(key);
   }
+}
+)
+;
 
-  grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
-  grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['default', 'connect', 'mocha']);
-  grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
-};
+for (var key in grunt.file.readJSON("package.json").devDependencies) {
+  if (key !== "grunt" && key.indexOf("grunt") === 0)
+    grunt.loadNpmTasks(key);
+}
+
+grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
+grunt.registerTask('dev', ['connect', 'watch']);
+grunt.registerTask('test', ['default', 'connect', 'mocha']);
+grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
+}
+;
