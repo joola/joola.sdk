@@ -8,8 +8,10 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+global.joola = require('../../src/lib/index.js');
+
 before(function (done) {
-  global.joola = require('../../src/lib/index.js');
+  
   global.uid = joola.common.uuid();
   joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'}, function (err) {
     if (err)
@@ -17,14 +19,4 @@ before(function (done) {
 
     done();
   });
-});
-
-after(function (done) {
-  if (shutdown) {
-    shutdown(0, function () {
-      return done();
-    });
-  }
-  else
-    return done();
 });

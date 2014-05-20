@@ -2,22 +2,17 @@ language: node_js
 
 node_js:
   - "0.10"
+
+addons:
+  sauce_connect: 
+    username: joola-io
+    access_key: 8ac80e3d-093f-4292-aa48-95f5656b0785 
   
-services:
-  - redis-server
-  - mongodb
-  - rabbitmq
-
-
 before_script:
-  - sudo rabbitmq-plugins enable rabbitmq_stomp
-  - sudo service rabbitmq-server restart
-  - sudo rabbitmqctl status
-  - sudo rabbitmq-plugins list
-  - npm install http://github.com/joola/joola.io/tarball/develop
-  
-script: 'make test-cov'
-after_success: 'make coveralls'
+  - npm install -g grunt-cli
+
+script: 'grunt test'
+after_success: 'grunt sauce'
 
 notifications:
   email:

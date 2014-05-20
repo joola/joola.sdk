@@ -136,7 +136,7 @@ api.fetch = function (endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN));
+  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
 
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
@@ -235,6 +235,7 @@ api.getJSON = function (options, objOptions, callback) {
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
     objOptions._path = options.path;
+    
     joolaio.io.socket.emit(routeID, objOptions);
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))

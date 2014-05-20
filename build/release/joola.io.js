@@ -15042,7 +15042,7 @@ module.exports={
     "type": "git",
     "url": "https://github.com/joola/joola.io.sdk.git"
   },
-  "bugs": "https://joolatech.atlassian.net/browse/JARVIS",
+  "bugs": "https://github.com/joola/joola.io.sdk/issues",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -15064,25 +15064,12 @@ module.exports={
     "eventemitter2": "~0.4.13",
     "async": "~0.2.10",
     "socket.io-browserify": "~0.9.6",
-    "cloneextend": "0.0.3",
+    "cloneextend": "^0.0.3",
     "underscore": "~1.5.2",
-    "moment": "~2.5.1"
+    "moment": "~2.5.1",
+    "socket.io-client": "~0.9.16"
   },
   "devDependencies": {
-    "coveralls": "*",
-    "istanbul": "*",
-    "should": "*",
-    "mocha": "*",
-    "sinon": "*",
-    "chai": "*",
-    "expect": "~0.1.1",
-    "sinon-chai": "*",
-    "jshint": "*",
-    "supertest": "*",
-    "jquery": "~2.1.1",
-    "browserify": "^3.38.0",
-    "watchify": "^0.6.3",
-    "uglify-js": "^2.3.6",
     "grunt": "~0.4.5",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-css": "~0.5.4",
@@ -15094,7 +15081,10 @@ module.exports={
     "grunt-contrib-connect": "~0.7.1",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-saucelabs": "~5.1.3",
-    "grunt-mocha": "~0.4.10"
+    "grunt-mocha": "~0.4.10",
+    "mocha": "~1.19.0",
+    "chai": "~1.9.1",
+    "sinon": "~1.10.0"
   },
   "license": "GPL-3.0"
 }
@@ -15238,7 +15228,7 @@ api.fetch = function (endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN));
+  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
 
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
@@ -15337,6 +15327,7 @@ api.getJSON = function (options, objOptions, callback) {
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
     objOptions._path = options.path;
+    
     joolaio.io.socket.emit(routeID, objOptions);
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))
@@ -15399,7 +15390,7 @@ dispatch.buildstub = function (callback) {
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
-            var args = arguments;
+            var args = Array.prototype.slice.call(arguments);//arguments;
             callback = emptyfunc;
             if (typeof args[Object.keys(args).length - 1] === 'function') {
               callback = args[Object.keys(args).length - 1];
@@ -15917,6 +15908,12 @@ if (isBrowser()) {
           if (qs && qs.APIToken) {
             joolaio.options.APIToken = qs.APIToken;
           }
+          if (qs && qs.token) {
+            joolaio.options.token = qs.token;
+          }
+          if (qs && qs.host) {
+            joolaio.options.host = qs.host;
+          }
         }
       }
     }
@@ -15932,10 +15929,11 @@ joolaio.init = function (options, callback) {
   function browser3rd(callback) {
     var expected = 0;
 
-    function done() {
+    function done(which) {
       expected--;
-      if (expected <= 0)
+      if (expected <= 0) {
         return callback(null);
+      }
     }
 
     var script;
@@ -15953,17 +15951,17 @@ joolaio.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
-              done();
+              done('highcharts');
             };
             script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
-            done();
+            done('jquery-ui');
           };
           script.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
           document.head.appendChild(script);
 
-          done();
+          done('jquery');
         };
         script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
@@ -15972,7 +15970,7 @@ joolaio.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
-          done();
+          done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
@@ -15983,17 +15981,17 @@ joolaio.init = function (options, callback) {
       expected++;
       css.onload = function () {
         //jQuery.noConflict(true);
-        done();
+        //done('css');
       };
       css.rel = 'stylesheet';
       css.href = joolaio.options.host + '/joola.io.css';
       document.head.appendChild(css);
-
+      done('css');
       if (expected === 0)
-        return done();
+        return done('none');
     }
     else {
-      return done();
+      return done('not browser');
     }
   }
 
@@ -16103,7 +16101,7 @@ joolaio.set = function (key, value, callback) {
         return callback(new Error('Failed to verify API Token'));
 
       joolaio.USER = user;
-      if (typeof callback === 'function'){
+      if (typeof callback === 'function') {
         return callback(null);
       }
     });
@@ -17599,6 +17597,31 @@ joolaio.events.on('core.init.finish', function () {
      */
   }
 });
+
+Metric.meta = {
+  key: 'metricbox',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'The Metric Box allows you to create category based visualizations.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;width:250px',
+    query: {
+      timeframe:'last_month',
+      interval:'day',
+      dimensions: [],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
+
+    },
+    draw: '$("#example").Metric({query: query})'
+  }
+};
 },{"./_proto":57,"cloneextend":33}],51:[function(require,module,exports){
 /**
  *  @title joola.io
@@ -18075,6 +18098,31 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
+
+Pie.meta = {
+  key: 'pie-chart',
+  title: 'Pie Chart',
+  tagline: 'category based visualization',
+  description: '' +
+    'The Pie Chart allows you to create category based visualizations.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;width:250px',
+    query: {
+      timeframe:'last_month',
+      interval:'day',
+      dimensions: ['browser'],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
+
+    },
+    draw: '$("#example").Pie({query: query})'
+  }
+};
 },{"./_proto":57,"underscore":37}],53:[function(require,module,exports){
 /*jshint -W083 */
 
@@ -19130,8 +19178,56 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.meta = {
+  key: 'timeline',
+  title: 'Timeline',
+  tagline: 'time series charting',
+  description: '' +
+    'Timeline description.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;',
+    query: {
+      timeframe: 'last_month',
+      interval: 'day',
+      dimensions: ['timestamp'],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
 
+    },
+    draw: '$("#example").Timeline({options: options, query: query})',
+    more: [
+      'http://jsfiddle.com/'
+    ]
+  },
+  events: {
+    load: {
 
+    },
+    destroy: {
+
+    },
+    update: {
+
+    },
+    click: {
+
+    }
+  },
+  html: '',
+  css: {
+
+  },
+  options: {
+
+  },
+  chartProvider: 'highcharts',
+  license: 'MIT'
+};
 },{"./_proto":57,"moment":35,"underscore":37}],57:[function(require,module,exports){
 /**
  *  @title joola.io

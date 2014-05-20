@@ -273,4 +273,53 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.meta = {
+  key: 'timeline',
+  title: 'Timeline',
+  tagline: 'time series charting',
+  description: '' +
+    'Timeline description.' +
+    '<br/>Another line' +
+    '<br/>Another line' +
+    '',
+  example: {
+    css: 'height:250px;',
+    query: {
+      timeframe: 'last_month',
+      interval: 'day',
+      dimensions: ['timestamp'],
+      metrics: ['mousemoves'],
+      collection: 'demo-mousemoves'
+    },
+    options: {
 
+    },
+    draw: '$("#example").Timeline({options: options, query: query})',
+    more: [
+      'http://jsfiddle.com/'
+    ]
+  },
+  events: {
+    load: {
+
+    },
+    destroy: {
+
+    },
+    update: {
+
+    },
+    click: {
+
+    }
+  },
+  html: '',
+  css: {
+
+  },
+  options: {
+
+  },
+  chartProvider: 'highcharts',
+  license: 'MIT'
+};

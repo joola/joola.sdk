@@ -1,9 +1,76 @@
 module.exports = function (grunt) {
   var browsers = [
     {
-      browserName: "chrome",
-      platform: "linux"
+      browserName: 'chrome',
+      platform: 'Linux'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Linux'
+    },
+    {
+      browserName: 'chrome',
+      platform: 'Windows 7'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Windows 7'
+    },
+    {
+      browserName: 'chrome',
+      platform: 'Windows 8'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Windows 8'
     }
+    /*    
+    {
+      browserName: 'android',
+      platform: 'Linux',
+      version: '4.0'
+    },
+    {
+      browserName: 'iphone',
+      platform: 'OS X 10.8',
+      version: '6'
+    },
+    {
+      browserName: 'safari',
+      platform: 'OS X 10.8',
+      version: '6'
+    },
+    {
+      browserName: 'safari',
+      platform: 'OS X 10.6',
+      version: '5'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 8',
+      version: '10'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 7',
+      version: '9'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows 7',
+      version: '8'
+    },
+    {
+      browserName: 'internet explorer',
+      platform: 'Windows XP',
+      version: '7'
+    },
+     {
+     browserName: 'firefox',
+     platform: 'Windows 7',
+     version: '21'
+     }
+    */
   ];
 
   grunt.initConfig({
@@ -88,22 +155,26 @@ module.exports = function (grunt) {
     connect: {
       server: {
         options: {
-          base: "",
-          port: 9999
+          protocol: 'http',
+          base: '',
+          port: 9999,
+          debug: true,
+          log: true
         }
       }
     },
     watch: {},
 
     mocha: {
-      test: {
+      all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html',
-            'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
+            'http://localhost:9999/test/browser/common.spec.html'
           ],
-          timeout: 10000,
-          run: true
+          run: false,
+          log: true,
+          debug: true,
+          timeout: 5000
         }
       }
     },
@@ -112,20 +183,20 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html',
-            'http://127.0.0.1:9999/test/browser/viz/datepicker.spec.html'
+            'http://127.0.0.1:9999/test/browser/common.spec.html'
           ],
           tunnelTimeout: 5,
-          build: process.env.TRAVIS_JOB_ID,
-          concurrency: 2,
-          throttled: 2,
+          identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          concurrency: 3,
           browsers: browsers,
-          testname: "joola.io.sdk tests",
-          tags: ["develop"]
+          'tunnel-identifier': process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
+          tags: [process.env.TRAVIS_BRANCH || 'local'],
+          public: "public"
         }
       }
     }
-
   });
 
   for (var key in grunt.file.readJSON("package.json").devDependencies) {
@@ -135,6 +206,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['connect', 'mocha']);
-  grunt.registerTask('test:sauce', ['connect', 'mocha', 'saucelabs-mocha']);
-};
+  grunt.registerTask('test', ['default', 'connect', 'mocha']);
+  grunt.registerTask('sauce', ['default', 'connect', 'saucelabs-mocha']);
+}
+;
