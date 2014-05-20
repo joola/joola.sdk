@@ -11,10 +11,11 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
+  <script src="/node_modules/cloneextend/index.js"></script>
 
   <script src="/build/release/joola.io.js"></script>
   <script>
-    joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo', debug: {enabled: true}});
+    joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});
   </script>
   <script>
     mocha.setup('bdd');
@@ -57,6 +58,15 @@
       });
 
       $('\x3Cscript src="/test/unit/4_dispatch/collections.spec.js">\x3C/script>').appendTo(document.body);
+      $('\x3Cscript src="/test/unit/4_dispatch/config.spec.js">\x3C/script>').appendTo(document.body);
+      $('\x3Cscript src="/test/unit/4_dispatch/roles.spec.js">\x3C/script>').appendTo(document.body);
+      $('\x3Cscript src="/test/unit/4_dispatch/system.spec.js">\x3C/script>').appendTo(document.body);
+      $('\x3Cscript src="/test/unit/4_dispatch/workspaces.spec.js">\x3C/script>').appendTo(document.body);
+
+      /*
+       $('\x3Cscript src="/test/unit/6_beacon/beacon-basic.spec.js">\x3C/script>').appendTo(document.body);
+       $('\x3Cscript src="/test/unit/7_query/query-basic.spec.js">\x3C/script>').appendTo(document.body);
+       */
     });
   </script>
 
@@ -65,7 +75,6 @@
   <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
   <script>
     joolaio.events.on('ready', function () {
-      console.log('ready');
       $('#version').text(joolaio.VERSION);
       run();
     });

@@ -8,8 +8,6 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var async = require('async');
-
 describe("roles", function () {
   before(function (done) {
     this.uid = joolaio.common.uuid();
@@ -20,7 +18,7 @@ describe("roles", function () {
   it("should add a role", function (done) {
     var role = {
       key: 'test-role-' + this.uid,
-      _permissions: []
+      permissions: []
     };
     joolaio.roles.add(role, function (err, _role) {
       if (err)
@@ -40,7 +38,7 @@ describe("roles", function () {
   it("should fail adding an existing role", function (done) {
     var role = {
       key: 'test-role-' + this.uid,
-      _permissions: []
+      permissions: []
     };
     joolaio.roles.add(role, function (err, _role) {
       if (err)
@@ -65,9 +63,9 @@ describe("roles", function () {
   xit("should update a role", function (done) {
     var role = {
       key: 'test-role-' + this.uid,
-      _permissions: ['access_system']
+      permissions: ['access_system']
     };
-    joolaio.roles.update(role, function (err, _role) {
+    joolaio.roles.patch(role.key,role, function (err, _role) {
       if (err)
         return done(err);
       expect(_role.permissions.length).to.equal(1);
@@ -78,21 +76,9 @@ describe("roles", function () {
   it("should fail updating unknown role", function (done) {
     var role = {
       key: 'test-role1-' + this.uid,
-      _permissions: ['access_system']
+      permissions: ['access_system']
     };
-    joolaio.roles.update(role, function (err, _role) {
-      if (err)
-        return done();
-
-      done(new Error('This should have failed'));
-    });
-  });
-
-  it("should fail updating role with incomplete details", function (done) {
-    var role = {
-      key: 'test-role-' + this.uid
-    };
-    joolaio.roles.update(role, function (err, _role) {
+    joolaio.roles.patch(role.key,role, function (err, _role) {
       if (err)
         return done();
 
@@ -105,7 +91,7 @@ describe("roles", function () {
     var role = {
       key: 'test-role-' + this.uid
     };
-    joolaio.roles.delete(role, function (err) {
+    joolaio.roles.delete(role.key, function (err) {
       if (err)
         return done(err);
 

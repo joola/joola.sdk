@@ -24,7 +24,7 @@ describe("system", function () {
     });
   });
 
-  it("should get the node list", function (done) {
+  xit("should get the node list", function (done) {
     joolaio.system.nodeList(function (err, list) {
       if (err)
         return done(err);
@@ -44,7 +44,7 @@ describe("system", function () {
     });
   });
 
-  it("should list the connected clients", function (done) {
+  xit("should list the connected clients", function (done) {
     joolaio.system.connectedClients(function (err, clients) {
       if (err)
         return done(err);
@@ -54,7 +54,7 @@ describe("system", function () {
     });
   });
 
-  it("should blacklist an ip", function (done) {
+  xit("should blacklist an ip", function (done) {
     joolaio.system.blacklist('255.255.255.255', true, 0, function (err) {
       if (err)
         return done(err);
@@ -72,7 +72,7 @@ describe("system", function () {
     });
   });
 
-  it("should blacklist an ip with ttl", function (done) {
+  xit("should blacklist an ip with ttl", function (done) {
     joolaio.system.blacklist('255.255.255.255', true, 1000, function (err) {
       if (err)
         return done(err);

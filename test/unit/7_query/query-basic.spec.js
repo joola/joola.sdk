@@ -4,11 +4,6 @@ describe("query-basic", function () {
     this.uid = global.uid;
     this.collection = 'test-collection-basic-' + this.uid;
 
-    if (joolaio.USER)
-      console.log('SDK');
-    else
-      console.log('Core');
-
     done();
   });
 

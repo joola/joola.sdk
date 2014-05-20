@@ -23,8 +23,7 @@ module.exports = function (grunt) {
     {
       browserName: 'firefox',
       platform: 'Windows 8'
-    }
-    /*    
+    },
     {
       browserName: 'android',
       platform: 'Linux',
@@ -54,23 +53,7 @@ module.exports = function (grunt) {
       browserName: 'internet explorer',
       platform: 'Windows 7',
       version: '9'
-    },
-    {
-      browserName: 'internet explorer',
-      platform: 'Windows 7',
-      version: '8'
-    },
-    {
-      browserName: 'internet explorer',
-      platform: 'Windows XP',
-      version: '7'
-    },
-     {
-     browserName: 'firefox',
-     platform: 'Windows 7',
-     version: '21'
-     }
-    */
+    }
   ];
 
   grunt.initConfig({
@@ -169,7 +152,8 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://localhost:9999/test/browser/common.spec.html'
+            'http://localhost:9999/test/browser/common.spec.html',
+            'http://localhost:9999/test/browser/viz/datepicker.spec.html'
           ],
           run: false,
           log: true,
@@ -183,7 +167,8 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html'
+            'http://127.0.0.1:9999/test/browser/common.spec.html',
+            'http://localhost:9999/test/browser/viz/datepicker.spec.html'
           ],
           tunnelTimeout: 5,
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
@@ -207,6 +192,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watch']);
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
+  grunt.registerTask('test:bare', ['connect', 'mocha']);
   grunt.registerTask('sauce', ['default', 'connect', 'saucelabs-mocha']);
 }
 ;

@@ -2,7 +2,6 @@ describe("api", function () {
   before(function () {
     this._enabled = joolaio.options.debug.enabled;
     this.joolaioHost = 'http://joola-io-example.herokuapp.com:80';
-    joolaio.options.debug.enabled = true;
   });
 
   it("should fetch api", function (done) {

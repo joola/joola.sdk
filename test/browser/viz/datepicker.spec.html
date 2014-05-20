@@ -13,7 +13,7 @@
   <script src="/node_modules/underscore/underscore.js"></script>
 
   <script src="/build/release/joola.io.js"></script>
-  <script>joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'});</script>
+  <script>joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});</script>
   <script>
     mocha.setup('bdd');
     var expect = chai.expect;
@@ -28,7 +28,7 @@
   <!-- END OF GENERIC HEADER -->
 
   <!-- TEST HTML GO HERE -->
-
+  <div id="version" style="display:none"></div>
   <div id="datepicker"></div>
 
   <!-- END OF TEST HTML GO HERE -->
@@ -65,11 +65,8 @@
   <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
   <script>
     joolaio.events.on('ready', function () {
-      if (navigator.userAgent.indexOf('PhantomJS') >= 0) {
-        mocha.run();
-      }
-      else
-        run();
+      $('#version').text(joolaio.VERSION);
+      run();
     });
   </script>
 
@@ -77,8 +74,9 @@
 
   <!-- GENERIC FOOTER -->
 </div>
+
 <script>
-  var run = function () {
+  run = function () {
     //mocha.checkLeaks();
     //mocha.globals(['foo']);
     var runner = mocha.run();
