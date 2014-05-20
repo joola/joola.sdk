@@ -1,57 +1,26 @@
 module.exports = function (grunt) {
   var browsers = [
     {
-      browserName: 'chrome',
-      platform: 'Linux'
-    },
-    {
       browserName: 'firefox',
-      platform: 'Linux'
+      version: '19',
+      platform: 'XP'
     },
     {
-      browserName: 'chrome',
-      platform: 'Windows 7'
+      browserName: 'googlechrome',
+      platform: 'XP'
     },
     {
-      browserName: 'firefox',
-      platform: 'Windows 7'
-    },
-    {
-      browserName: 'chrome',
-      platform: 'Windows 8'
-    },
-    {
-      browserName: 'firefox',
-      platform: 'Windows 8'
-    },
-    {
-      browserName: 'android',
-      platform: 'Linux',
-      version: '4.0'
-    },
-    {
-      browserName: 'iphone',
-      platform: 'OS X 10.8',
-      version: '6'
-    },
-    {
-      browserName: 'safari',
-      platform: 'OS X 10.8',
-      version: '6'
-    },
-    {
-      browserName: 'safari',
-      platform: 'OS X 10.6',
-      version: '5'
+      browserName: 'googlechrome',
+      platform: 'linux'
     },
     {
       browserName: 'internet explorer',
-      platform: 'Windows 8',
+      platform: 'WIN8',
       version: '10'
     },
     {
       browserName: 'internet explorer',
-      platform: 'Windows 7',
+      platform: 'VISTA',
       version: '9'
     }
   ];
@@ -173,12 +142,10 @@ module.exports = function (grunt) {
           tunnelTimeout: 5,
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
-          concurrency: 3,
           browsers: browsers,
           'tunnel-identifier': process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
-          tags: [process.env.TRAVIS_BRANCH || 'local'],
-          public: "public"
+          tags: [process.env.TRAVIS_BRANCH || 'local']
         }
       }
     }
