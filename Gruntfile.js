@@ -124,12 +124,11 @@ module.exports = function (grunt) {
           throttled: 2,
           browsers: browsers,
           'tunnel-identifier': process.env.TRAVIS_JOB_ID,
-          testname: "joola.io.sdk tests",
-          tags: ["develop"]
+          testname: ('joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT) || "joola.io.sdk tests",
+          tags: [process.env.TRAVIS_BRANCH || 'local']
         }
       }
     }
-
   });
 
   for (var key in grunt.file.readJSON("package.json").devDependencies) {

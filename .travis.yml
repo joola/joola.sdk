@@ -6,7 +6,8 @@ node_js:
 addons:
   sauce_connect: 
     username: joola
-    access_key: c73e0d23-e441-4d44-80b6-b50da1e54b24
+    access_key: 
+      secure: "LNThabrSexSJ2aC9rXghzBBUxVT4GLqmOp3ss+x3Y5nZWqVhDk84uzVycC0tAbdJUgdYGtHtusYBRaJHaqZKpFLqWNsnL0xynWrctc0Hv/9xJGfo4vKjdIPlDkQ9iyIdw9/63sjIbkKy+KHqT5yyoLgy7meUFkPzzcKiNb3ySn4="
   
 before_script:
   - npm install -g grunt-cli
