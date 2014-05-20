@@ -15081,7 +15081,8 @@ module.exports={
     "grunt-contrib-connect": "~0.7.1",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-saucelabs": "~5.1.3",
-    "grunt-mocha": "~0.4.10"
+    "grunt-mocha": "~0.4.10",
+    "grunt-mocha-phantomjs": "~0.5.0"
   },
   "license": "GPL-3.0"
 }

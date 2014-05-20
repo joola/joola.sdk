@@ -1,7 +1,7 @@
 describe("collections", function () {
   before(function (done) {
     this.workspace = 'root';
-    this.collection = 'test-collection-dispatch-' + global.uid;
+    this.collection = 'test-collection-dispatch-' + joolaio.common.uuid();
 
     return done();
   });

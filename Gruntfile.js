@@ -1,4 +1,5 @@
 module.exports = function (grunt) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   var browsers = [
     {
       browserName: "firefox",
@@ -104,7 +105,9 @@ module.exports = function (grunt) {
         options: {
           protocol: 'http',
           base: '',
-          port: 9999
+          port: 9999,
+          debug: true,
+          log: true
         }
       }
     },
@@ -114,10 +117,11 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html'
+            'http://localhost:9999/test/browser/common.spec.html'
           ],
           run: false,
           log: true,
+          debug: true,
           timeout: 5000
         }
       }
@@ -127,7 +131,7 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'http://127.0.0.1:9999/test/browser/common.spec.html'
+            'https://127.0.0.1:9999/test/browser/common.spec.html'
           ],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
