@@ -276,48 +276,58 @@ joolaio.events.on('core.init.finish', function () {
 Timeline.meta = {
   key: 'timeline',
   title: 'Timeline',
-  tagline: 'time series charting',
+  tagline: '',
+  jQueryTag: 'Timeline',
   description: '' +
     'Timeline description.' +
-    '<br/>Another line' +
-    '<br/>Another line' +
     '',
   example: {
     css: 'height:250px;',
-    query: {
-      timeframe: 'last_month',
-      interval: 'day',
-      dimensions: ['timestamp'],
-      metrics: ['mousemoves'],
-      collection: 'demo-mousemoves'
-    },
     options: {
-
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        dimensions: ['timestamp'],
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves'
+      }
     },
-    draw: '$("#example").Timeline({options: options, query: query})',
+    draw: '$("#example").Timeline(options)',
     more: [
       'http://jsfiddle.com/'
     ]
   },
-  events: {
+  metaOptions: {
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the `query` object.'
+    },
+    chart: {
+      datatype: 'object',
+      defaultValue: null,
+      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
+    }
+  },
+  metaEvents: {
     load: {
-
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
     },
     destroy: {
-
+      description: 'Visualization destroyed.'
     },
     update: {
-
+      description: 'The underlying data has changed.'
     },
-    click: {
-
+    select: {
+      description: 'Selection changed, pie chart slice clicked.'
     }
   },
   html: '',
   css: {
-
-  },
-  options: {
 
   },
   chartProvider: 'highcharts',

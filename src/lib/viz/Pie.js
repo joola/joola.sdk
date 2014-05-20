@@ -202,6 +202,7 @@ joolaio.events.on('core.init.finish', function () {
 
 Pie.meta = {
   key: 'pie-chart',
+  jQueryTag: 'Pie',
   title: 'Pie Chart',
   tagline: '',
   description: '' +
@@ -227,31 +228,36 @@ Pie.meta = {
       defaultValue: null,
       description: '`required` contains the `query` object.'
     },
-    limit:{
-      datatype:'number',
-      defaultValue:'5',
-      description:'The number of items to show.'
+    chart: {
+      datatype: 'object',
+      defaultValue: null,
+      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
     },
-    legend:{
-      datatype:'bool',
-      defaultValue:'true',
-      description:'Show the Pie Chart legend.'
+    limit: {
+      datatype: 'number',
+      defaultValue: '5',
+      description: 'The number of items to show.'
+    },
+    legend: {
+      datatype: 'bool',
+      defaultValue: 'true',
+      description: 'Show the Pie Chart legend.'
     }
   },
   metaEvents: {
-    load:{
+    load: {
       description: 'Visualization loaded.'
     },
-    draw:{
+    draw: {
       description: 'The visualization HTML frame has been drawn on screen.'
     },
-    destroy:{
+    destroy: {
       description: 'Visualization destroyed.'
     },
-    update:{
+    update: {
       description: 'The underlying data has changed.'
     },
-    select:{
+    select: {
       description: 'Selection changed, pie chart slice clicked.'
     }
   }

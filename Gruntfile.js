@@ -165,7 +165,7 @@ module.exports = function (grunt) {
       grunt.loadNpmTasks(key);
   }
 
-  grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
+  grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy', 'clean']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watchify']);
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);
