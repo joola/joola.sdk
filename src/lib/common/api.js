@@ -143,7 +143,6 @@ api.getJSON = function (options, objOptions, callback) {
     options.path += '?' + qs;
     var timerID, aborted;
     try {
-      console.log(options);
       var req = prot.request(options, function (res) {
         var output = '';
         res.on('data', function (chunk) {

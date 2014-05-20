@@ -114,7 +114,10 @@ module.exports = function (grunt) {
         options: {
           urls: [
             'http://127.0.0.1:9999/test/browser/common.spec.html'
-          ]
+          ],
+          run: false,
+          log: true,
+          timeout: 5000
         }
       }
     },

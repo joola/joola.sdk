@@ -122,10 +122,11 @@ joolaio.init = function (options, callback) {
   function browser3rd(callback) {
     var expected = 0;
 
-    function done() {
+    function done(which) {
       expected--;
-      if (expected <= 0)
+      if (expected <= 0) {
         return callback(null);
+      }
     }
 
     var script;
@@ -143,17 +144,17 @@ joolaio.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
-              done();
+              done('highcharts');
             };
             script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
-            done();
+            done('jquery-ui');
           };
           script.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
           document.head.appendChild(script);
 
-          done();
+          done('jquery');
         };
         script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
@@ -162,7 +163,7 @@ joolaio.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
-          done();
+          done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
@@ -173,17 +174,17 @@ joolaio.init = function (options, callback) {
       expected++;
       css.onload = function () {
         //jQuery.noConflict(true);
-        done();
+        //done('css');
       };
       css.rel = 'stylesheet';
       css.href = joolaio.options.host + '/joola.io.css';
       document.head.appendChild(css);
-
+      done('css');
       if (expected === 0)
-        return done();
+        return done('none');
     }
     else {
-      return done();
+      return done('not browser');
     }
   }
 
@@ -240,6 +241,7 @@ joolaio.init = function (options, callback) {
         joolaio.USER = null;
         joolaio._token = null;
 
+        console.log('token',joolaio._apitoken);
         joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
           joolaio.USER = user;
           joolaio.events.emit('core.init.finish');

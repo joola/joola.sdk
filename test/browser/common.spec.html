@@ -6,14 +6,15 @@
   <title>joola.io.sdk Tests</title>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+
   <script src="/node_modules/mocha/mocha.js"></script>
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
-  <script src="/build/release/joola.io.js"></script>
-  <script>joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'}, function (err, c) {
 
-  });
+  <script src="/build/release/joola.io.js"></script>
+  <script>
+    joolaio.init({host: 'http://localhost:8080', APIToken: 'apitoken-demo', debug: {enabled: true}});
   </script>
   <script>
     mocha.setup('bdd');
@@ -64,7 +65,9 @@
   <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
   <script>
     joolaio.events.on('ready', function () {
+      console.log('ready');
       $('#version').text(joolaio.VERSION);
+      run();
     });
   </script>
   <!-- END OF JOOLA.IO CODE GO HERE -->
@@ -73,7 +76,7 @@
 </div>
 
 <script>
-  onload = function () {
+  run = function () {
     //mocha.checkLeaks();
     //mocha.globals(['foo']);
     var runner = mocha.run();
