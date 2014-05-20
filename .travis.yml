@@ -11,8 +11,8 @@ addons:
 before_script:
   - npm install -g grunt-cli
 
-script: 'grunt test:sauce'
-#after_success: 'make coveralls'
+script: 'grunt test'
+after_success: 'grunt test:sauce'
 
 notifications:
   email:
