@@ -323,7 +323,7 @@ Timeline.meta = {
       description: 'The underlying data has changed.'
     },
     select: {
-      description: 'Selection changed, pie chart slice clicked.'
+      description: 'Selection changed, data point clicked.'
     }
   },
   html: '',
