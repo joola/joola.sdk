@@ -42,7 +42,7 @@ module.exports = function (grunt) {
     },
     {
       browserName: 'chrome',
-      platform: 'Windows 7',
+      platform: 'Windows 7'
     },
     {
       browserName: 'firefox',
@@ -165,28 +165,26 @@ module.exports = function (grunt) {
           ],
           tunnelTimeout: 5,
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
-          build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),,
-        concurrency: 2,
-        throttled: 2,
-        browsers: browsers,
-        'tunnel-identifier': process.env.TRAVIS_JOB_ID,
-        testname: ('joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT) || "joola.io.sdk tests",
-        tags: [process.env.TRAVIS_BRANCH || 'local']
+          build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          concurrency: 2,
+          throttled: 2,
+          browsers: browsers,
+          'tunnel-identifier': process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
+          testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
+          tags: [process.env.TRAVIS_BRANCH || 'local']
+        }
       }
     }
+  });
+
+  for (var key in grunt.file.readJSON("package.json").devDependencies) {
+    if (key !== "grunt" && key.indexOf("grunt") === 0)
+      grunt.loadNpmTasks(key);
   }
-}
-)
-;
 
-for (var key in grunt.file.readJSON("package.json").devDependencies) {
-  if (key !== "grunt" && key.indexOf("grunt") === 0)
-    grunt.loadNpmTasks(key);
-}
-
-grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
-grunt.registerTask('dev', ['connect', 'watch']);
-grunt.registerTask('test', ['default', 'connect', 'mocha']);
-grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
+  grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
+  grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('test', ['default', 'connect', 'mocha']);
+  grunt.registerTask('test:sauce', ['default', 'connect', 'mocha', 'saucelabs-mocha']);
 }
 ;
