@@ -1,6 +1,6 @@
 # joola.io.sdk [![Build Status][3]][4] [![Gitter chat](https://badges.gitter.im/joola/joola.io.png)](https://gitter.im/joola/joola.io)
 
-[![Selenium Test Status](https://saucelabs.com/browser-matrix/joola.svg)](https://saucelabs.com/u/joola)
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/joola-io.svg)](https://saucelabs.com/u/joola-io)
 
 | **[API Docs] [apidocs]**     | **[joola.io Docs] [techdocs]**     | **[Issues] [issues]**     | **[Contributing] [contributing]**           | **[About] [about]**     |
 |-------------------------------------|-------------------------------|-------------------------------------|---------------------------------------------|-------------------------------------|
