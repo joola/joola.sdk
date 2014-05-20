@@ -8,9 +8,15 @@ env:
     - secure: 'jnPXvigS2cHUv7hQRM/K1tuGvpOabVU+8ziB9kdC5vsm7Q30drnomNW0dMT3nxj8CdS/H49l3XBmRMXFYrB8+XA2Fa99CsIGwCg8QKFI7H7znwPV71l0JlCWOXQ6rweJMEQfusqDIXJ4EoD/u+Dq2yYFFSygF9V9uDn9yAeZIXQ='
     - secure: 'XUt6SSn4WbbQFw7IpYVpfhX1AeRjsGnsRkUqyqtkwFg8ABh8KWxQy/yZ6A6vxLe3in1f/AS9InVGBCnb4F9D64HDuQ1nhNRtUaBaaJquk5uIV7Rt2ecHEnyvmDsjUOjqfbYCjHLL3kOFIE680F49p4cJE5G6aUbO+FQoVHzMBn4='
 
+addons:
+  sauce_connect: 
+    username:
+      secure: 'jnPXvigS2cHUv7hQRM/K1tuGvpOabVU+8ziB9kdC5vsm7Q30drnomNW0dMT3nxj8CdS/H49l3XBmRMXFYrB8+XA2Fa99CsIGwCg8QKFI7H7znwPV71l0JlCWOXQ6rweJMEQfusqDIXJ4EoD/u+Dq2yYFFSygF9V9uDn9yAeZIXQ='
+    access_key:
+      secure: 'XUt6SSn4WbbQFw7IpYVpfhX1AeRjsGnsRkUqyqtkwFg8ABh8KWxQy/yZ6A6vxLe3in1f/AS9InVGBCnb4F9D64HDuQ1nhNRtUaBaaJquk5uIV7Rt2ecHEnyvmDsjUOjqfbYCjHLL3kOFIE680F49p4cJE5G6aUbO+FQoVHzMBn4='
+  
 before_script:
   - npm install -g grunt-cli
-  - curl https://gist.github.com/santiycr/5139565/raw/sauce_connect_setup.sh | bash
 
 script: 'grunt test:sauce'
 #after_success: 'make coveralls'
