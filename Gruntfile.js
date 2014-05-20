@@ -2,22 +2,8 @@ module.exports = function (grunt) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   var browsers = [
     {
-      browserName: "firefox",
-      version: "19",
-      platform: "XP"
-    },
-    {
-      browserName: "googlechrome",
-      platform: "XP"
-    },
-    {
       browserName: "googlechrome",
       platform: "linux"
-    },
-    {
-      browserName: "internet explorer",
-      platform: "WIN8",
-      version: "10"
     }
   ];
 
@@ -131,7 +117,7 @@ module.exports = function (grunt) {
       all: {
         options: {
           urls: [
-            'https://127.0.0.1:9999/test/browser/common.spec.html'
+            'http://127.0.0.1:9999/test/browser/common.spec.html'
           ],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
