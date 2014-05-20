@@ -2,7 +2,8 @@ module.exports = function (grunt) {
   var browsers = [
     {
       browserName: 'chrome',
-      platform: 'Linux'
+      platform: 'Linux',
+      public: "public"
     }
     /*    
     {
@@ -174,7 +175,6 @@ module.exports = function (grunt) {
           testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
           tags: [process.env.TRAVIS_BRANCH || 'local'],
           public: "public"
-          
         }
       }
     }
