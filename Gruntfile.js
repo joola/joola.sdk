@@ -2,8 +2,27 @@ module.exports = function (grunt) {
   var browsers = [
     {
       browserName: 'chrome',
-      platform: 'Linux',
-      public: "public"
+      platform: 'Linux'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Linux'
+    },
+    {
+      browserName: 'chrome',
+      platform: 'Windows 7'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Windows 7'
+    },
+    {
+      browserName: 'chrome',
+      platform: 'Windows 8'
+    },
+    {
+      browserName: 'firefox',
+      platform: 'Windows 8'
     }
     /*    
     {
@@ -169,7 +188,7 @@ module.exports = function (grunt) {
           tunnelTimeout: 5,
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           build: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
-          concurrency: 2,
+          concurrency: 3,
           browsers: browsers,
           'tunnel-identifier': process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),
           testname: process.env.TRAVIS_COMMIT ? 'joola.io.sdk, commit: ' + process.env.TRAVIS_COMMIT : "joola.io.sdk tests",
