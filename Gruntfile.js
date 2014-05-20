@@ -48,6 +48,16 @@ module.exports = function (grunt) {
       }
     },
 
+    watchify: {
+      options: {
+        keepalive: true
+      },
+      all: {
+        src: ['./src/lib/index.js'],
+        dest: 'build/temp/joola.io.js'
+      }
+    },
+
     jshint: {
       all: ['src/lib/**/*.js']
     },
@@ -115,7 +125,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    watch: {},
 
     mocha: {
       all: {
@@ -157,7 +166,7 @@ module.exports = function (grunt) {
   }
 
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'uglify', 'concat', 'cssmin', 'copy']); //'csslint',
-  grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('dev', ['connect', 'watchify']);
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);
   grunt.registerTask('sauce', ['default', 'connect', 'saucelabs-mocha']);

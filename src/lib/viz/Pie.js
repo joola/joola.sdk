@@ -30,6 +30,7 @@ var Pie = module.exports = function (options, callback) {
   this.uuid = joolaio.common.uuid();
   this.options = {
     legend: true,
+    limit: 5,
     container: null,
     $container: null,
     query: null
@@ -202,24 +203,56 @@ joolaio.events.on('core.init.finish', function () {
 Pie.meta = {
   key: 'pie-chart',
   title: 'Pie Chart',
-  tagline: 'category based visualization',
+  tagline: '',
   description: '' +
-    'The Pie Chart allows you to create category based visualizations.' +
-    '<br/>Another line' +
-    '<br/>Another line' +
-    '',
+    'Pie Charts are mainly used to provide a high-level overview of metrics based on categories. ' +
+    'For example, how many visitors a site had based on their browser.',
+  longDescription: '',
   example: {
-    css: 'height:250px;width:250px',
-    query: {
-      timeframe:'last_month',
-      interval:'day',
-      dimensions: ['browser'],
-      metrics: ['mousemoves'],
-      collection: 'demo-mousemoves'
-    },
+    css: 'height:250px;width:100%',
     options: {
-
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        dimensions: ['browser'],
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves'
+      },
     },
-    draw: '$("#example").Pie({query: query})'
+    draw: '$("#example").Pie(options);'
+  },
+  metaOptions: {
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the `query` object.'
+    },
+    limit:{
+      datatype:'number',
+      defaultValue:'5',
+      description:'The number of items to show.'
+    },
+    legend:{
+      datatype:'bool',
+      defaultValue:'true',
+      description:'Show the Pie Chart legend.'
+    }
+  },
+  metaEvents: {
+    load:{
+      description: 'Visualization loaded.'
+    },
+    draw:{
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy:{
+      description: 'Visualization destroyed.'
+    },
+    update:{
+      description: 'The underlying data has changed.'
+    },
+    select:{
+      description: 'Selection changed, pie chart slice clicked.'
+    }
   }
 };
