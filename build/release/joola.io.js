@@ -18037,7 +18037,7 @@ Pie.meta = {
         dimensions: ['browser'],
         metrics: ['mousemoves'],
         collection: 'demo-mousemoves'
-      },
+      }
     },
     draw: '$("#example").Pie(options);'
   },
@@ -19186,7 +19186,7 @@ Timeline.meta = {
       description: 'The underlying data has changed.'
     },
     select: {
-      description: 'Selection changed, pie chart slice clicked.'
+      description: 'Selection changed, data point clicked.'
     }
   },
   html: '',

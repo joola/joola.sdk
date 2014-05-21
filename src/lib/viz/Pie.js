@@ -218,7 +218,7 @@ Pie.meta = {
         dimensions: ['browser'],
         metrics: ['mousemoves'],
         collection: 'demo-mousemoves'
-      },
+      }
     },
     draw: '$("#example").Pie(options);'
   },
