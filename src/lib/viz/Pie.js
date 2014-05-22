@@ -220,7 +220,21 @@ Pie.meta = {
         collection: 'demo-mousemoves'
       }
     },
-    draw: '$("#example").Pie(options);'
+    draw: '$("#example").Pie(options);',
+    external: [
+      {
+        title: 'Change Pie Limits',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'Another example',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'And yet another',
+        src: 'http://jsfiddle.com'
+      }
+    ]
   },
   metaOptions: {
     query: {
@@ -242,6 +256,23 @@ Pie.meta = {
       datatype: 'bool',
       defaultValue: 'true',
       description: 'Show the Pie Chart legend.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
     }
   },
   metaEvents: {
