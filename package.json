@@ -52,7 +52,8 @@
     "mocha": "~1.19.0",
     "chai": "~1.9.1",
     "sinon": "~1.10.0",
-    "grunt-watchify": "~0.1.0"
+    "grunt-watchify": "~0.1.0",
+    "mocha-phantom-coverage-reporter": "~0.1.0"
   },
   "license": "GPL-3.0"
 }

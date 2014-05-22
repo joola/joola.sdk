@@ -160,6 +160,8 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Pie = function (options, callback) {
+      if (!options)
+        options = {};
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
