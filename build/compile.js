@@ -19,6 +19,7 @@ fileList.push(libDir + '/3rd/xregexp-min.js');
 fileList.push(libDir + '/3rd/bootstrap-tooltip.js');
 fileList.push(libDir + '/3rd/bootstrap-popover.js');
 fileList.push(libDir + '/3rd/bootstrapx-clickover.js');
+fileList.push(libDir + '/3rd/tooltipsy.min.js');
 
 
 fileList.push(libDir + '/joolaio.js');
