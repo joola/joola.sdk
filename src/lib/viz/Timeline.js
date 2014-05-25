@@ -231,6 +231,10 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Timeline = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
@@ -249,8 +253,6 @@ joolaio.events.on('core.init.finish', function () {
           }
         }
         //create new
-        if (!options)
-          options = {};
         options.container = this.get(0);
         result = new joolaio.viz.Timeline(options, function (err, timeline) {
           if (err)
