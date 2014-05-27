@@ -82,14 +82,21 @@ api.waitingRequests = [];
  * @param {object} objOptions options for the actual endpoint parameters
  * @param {function} callback called when the result arrives/error
  */
-api.fetch = function (endpoint, objOptions, callback) {
+api.fetch = function (tokens, endpoint, objOptions, callback) {
   var self = api;
+  if (!callback) {
+    callback = objOptions;
+    objOptions = endpoint;
+    endpoint = tokens;
+    tokens = {_: null, __: null};
+  }
 
   if (api.requestCount < (joolaio.options.maxRequests || 100)) {
     api.requestCount++;
     try {
       var parts = require('url').parse(joolaio.options.host);
       var options = {
+        tokens: tokens,
         host: parts.hostname,
         port: parts.port,
         secure: parts.protocol !== 'http:',
@@ -234,8 +241,18 @@ api.getJSON = function (options, objOptions, callback) {
       objOptions._token = joolaio.TOKEN;
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
+
+    if (options.tokens && (options.tokens._ || options.tokens.__)) {
+      objOptions._token = null;
+      objOptions.APIToken = null;
+      if (options.tokens._)
+        objOptions._token = options.tokens._;
+      if (options.tokens.__)
+        objOptions.APIToken = options.tokens.__;
+    }
+
     objOptions._path = options.path;
-    
+
     joolaio.io.socket.emit(routeID, objOptions);
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))

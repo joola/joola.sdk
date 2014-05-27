@@ -54,7 +54,7 @@ module.exports = function (grunt) {
       },
       all: {
         src: ['./src/lib/index.js'],
-        dest: 'build/temp/joola.io.js'
+        dest: 'build/release/joola.io.js'
       }
     },
 
