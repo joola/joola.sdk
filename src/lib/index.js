@@ -211,7 +211,8 @@ joolaio.init = function (options, callback) {
     if (!joolaio.options.host)
       throw new Error('joola.io host not specified');
 
-    var io = require('socket.io-browserify');
+    //var io = require('socket.io-browserify');
+    var io = require('socket.io-client');
     joolaio.io = io;
     joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
     //}
