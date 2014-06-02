@@ -5,19 +5,21 @@
   <meta charset="utf-8">
   <title>joola.io.sdk Tests</title>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+
   <script src="/node_modules/mocha/mocha.js"></script>
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
-
   <script src="/build/release/joola.io.js"></script>
-  <script>joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});</script>
+  <script>
+    joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo', ajax: true});
+  </script>
   <script>
     mocha.setup('bdd');
     var expect = chai.expect;
   </script>
+  <script src="/node_modules/grunt-mocha/phantomjs/bridge.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 <div class="container">
@@ -36,28 +38,28 @@
   <!-- TEST SPEC GO HERE -->
   <script>
     //joolaio.events.on('ready', function () {
-      describe('DatePicker', function (done) {
-        it('should draw the date picker', function () {
-          //$('#datepicker').DatePicker();
-          var options = {};
-          options.container = $('#datepicker').get(0);
-          var result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
-            if (err)
-              throw err;
-            datepicker.draw(options, done);
-          }).options.$container;
-        });
-
-        it('should raise event when clicking apply', function (done) {
-          var $picker = $('#datepicker');
-          $(joolaio).on('datechange', function () {
-            done();
-          });
-
-          var $btn = $($picker.find('.btn.apply'));
-          $btn.click();
-        });
+    describe('DatePicker', function (done) {
+      it('should draw the date picker', function () {
+        //$('#datepicker').DatePicker();
+        var options = {};
+        options.container = $('#datepicker').get(0);
+        var result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+          if (err)
+            throw err;
+          datepicker.draw(options, done);
+        }).options.$container;
       });
+
+      it('should raise event when clicking apply', function (done) {
+        var $picker = $('#datepicker');
+        $(joolaio).on('datechange', function () {
+          done();
+        });
+
+        var $btn = $($picker.find('.btn.apply'));
+        $btn.click();
+      });
+    });
     //});
   </script>
   <!-- END OF TEST SPEC GO HERE -->

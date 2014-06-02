@@ -4,18 +4,22 @@
 <head>
   <meta charset="utf-8">
   <title>joola.io.sdk Tests</title>
-  <link rel="stylesheet" media="all" href="/node_modules/mocha/mocha.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+
   <script src="/node_modules/mocha/mocha.js"></script>
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
-  <script src="/node_modules/jquery/dist/jquery.js"></script>
   <script src="/build/release/joola.io.js"></script>
-  <script>joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'});</script>
+  <script>
+    joolaio.init({host: 'http://localhost:8080', APIToken: 'apitoken-demo'});
+  </script>
   <script>
     mocha.setup('bdd');
     var expect = chai.expect;
   </script>
+  <script src="/node_modules/grunt-mocha/phantomjs/bridge.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 <!-- END OF GENERIC HEADER -->
@@ -37,11 +41,7 @@
 <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
 <script>
   joolaio.events.on('ready', function () {
-    if (navigator.userAgent.indexOf('PhantomJS') >= 0) {
-      //mocha.run();
-    }
-    else
-      run();
+    run();
   });
 </script>
 
