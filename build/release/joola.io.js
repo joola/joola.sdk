@@ -19995,7 +19995,7 @@ function toArray(list, index) {
 module.exports=module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.5.2-develop-11",
+  "version": "0.5.2-develop-13",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -20166,7 +20166,7 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
         }
       };
 
-      self.getJSON(options, objOptions, function (err, result) {
+      self.getJSON(options, objOptions, function (err, result, headers) {
         if (result) {
           if (!result.realtime)
             api.requestCount--;
@@ -20180,7 +20180,7 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
         if (api.waitingRequests.length)
           api.fetch.apply(null, api.waitingRequests.shift());
 
-        return callback(err, result);
+        return callback(err, result, headers);
       });
     }
     catch (ex) {
@@ -20282,7 +20282,7 @@ api.getJSON = function (options, objOptions, callback) {
 
       if (message && !message.hasOwnProperty('realtime')) {
         joolaio.events.emit('rpc:done', 1);
-        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
         if (headers && headers['X-JoolaIO-Duration'])
           joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
         if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
@@ -20290,7 +20290,7 @@ api.getJSON = function (options, objOptions, callback) {
       }
       else if (!message) {
         joolaio.events.emit('rpc:done', 1);
-        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
         if (headers && headers['X-JoolaIO-Duration'])
           joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
         if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
@@ -20307,7 +20307,7 @@ api.getJSON = function (options, objOptions, callback) {
       else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
 
-      return callback(null, message);
+      return callback(null, message, headers);
     };
 
 
@@ -20342,6 +20342,17 @@ api.getJSON = function (options, objOptions, callback) {
   }
 };
 
+joolaio.events.on('rpc:start', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls++;
+});
+
+joolaio.events.on('rpc:done', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls--;
+});
 },{"http":27,"https":11,"querystring":12,"url":16}],93:[function(require,module,exports){
 /**
  *  joola.io
@@ -20438,9 +20449,9 @@ dispatch.buildstub = function (callback) {
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(tokens, _fn.name, args, function (err, result) {
+              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
                 if (result) {
-                  return _callback(err, result);
+                  return _callback(err, result, headers);
                 }
                 else {
                   return _callback(err);

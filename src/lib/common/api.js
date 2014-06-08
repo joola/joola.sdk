@@ -113,7 +113,7 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
         }
       };
 
-      self.getJSON(options, objOptions, function (err, result) {
+      self.getJSON(options, objOptions, function (err, result, headers) {
         if (result) {
           if (!result.realtime)
             api.requestCount--;
@@ -127,7 +127,7 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
         if (api.waitingRequests.length)
           api.fetch.apply(null, api.waitingRequests.shift());
 
-        return callback(err, result);
+        return callback(err, result, headers);
       });
     }
     catch (ex) {
@@ -229,7 +229,7 @@ api.getJSON = function (options, objOptions, callback) {
 
       if (message && !message.hasOwnProperty('realtime')) {
         joolaio.events.emit('rpc:done', 1);
-        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
         if (headers && headers['X-JoolaIO-Duration'])
           joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
         if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
@@ -237,7 +237,7 @@ api.getJSON = function (options, objOptions, callback) {
       }
       else if (!message) {
         joolaio.events.emit('rpc:done', 1);
-        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
         if (headers && headers['X-JoolaIO-Duration'])
           joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
         if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
@@ -254,7 +254,7 @@ api.getJSON = function (options, objOptions, callback) {
       else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
 
-      return callback(null, message);
+      return callback(null, message, headers);
     };
 
 
@@ -288,3 +288,15 @@ api.getJSON = function (options, objOptions, callback) {
     }
   }
 };
+
+joolaio.events.on('rpc:start', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls++;
+});
+
+joolaio.events.on('rpc:done', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls--;
+});
