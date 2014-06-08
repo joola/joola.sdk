@@ -227,10 +227,22 @@ api.getJSON = function (options, objOptions, callback) {
       var headers = data.headers;
       var message = data.message;
 
-      if (message && !message.hasOwnProperty('realtime'))
+      if (message && !message.hasOwnProperty('realtime')) {
         joolaio.events.emit('rpc:done', 1);
-      else if (!message)
+        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
+        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+      }
+      else if (!message) {
         joolaio.events.emit('rpc:done', 1);
+        joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
+        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+      }
 
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
