@@ -70,6 +70,12 @@ querystring.stringify = querystring.encode = function (obj, sep, eq, name) {
     console.log(ex);
   }
 };
+
+function lengthInUtf8Bytes(str) {
+  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+  var m = encodeURIComponent(str).match(/%[89ABab]/g);
+  return str.length + (m ? m.length : 0);
+}
 /* END OF Add support for JSON parsing of query string */
 
 
@@ -221,6 +227,11 @@ api.getJSON = function (options, objOptions, callback) {
       var headers = data.headers;
       var message = data.message;
 
+      if (message && !message.hasOwnProperty('realtime'))
+        joolaio.events.emit('rpc:done', 1);
+      else if (!message)
+        joolaio.events.emit('rpc:done', 1);
+
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
         if (joolaio.options.logouturl)
@@ -254,10 +265,14 @@ api.getJSON = function (options, objOptions, callback) {
     objOptions._path = options.path;
 
     joolaio.io.socket.emit(routeID, objOptions);
+    joolaio.events.emit('rpc:start', 1);
+    joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
 
-    if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))
+    if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
       joolaio.io.socket.on(routeID + ':done', processResponse);
-    else
+    }
+    else {
       joolaio.io.socket.once(routeID + ':done', processResponse);
+    }
   }
 };
