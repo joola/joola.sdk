@@ -50,7 +50,17 @@ dispatch.buildstub = function (callback) {
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
-            var args = arguments;
+            var tokens = {
+              _: null,
+              __: null
+            };
+            var args = Array.prototype.slice.call(arguments);
+            if (args && args.length > 0 && args[0] && (args[0]._ || args[0].__)) {
+              tokens._ = args[0]._;
+              tokens.__ = args[0].__;
+              args.splice(0, 1);
+            }
+
             callback = emptyfunc;
             if (typeof args[Object.keys(args).length - 1] === 'function') {
               callback = args[Object.keys(args).length - 1];
@@ -83,9 +93,9 @@ dispatch.buildstub = function (callback) {
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(_fn.name, args, function (err, result) {
-                if (result ) {
-                  return _callback(err, result);
+              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
+                if (result) {
+                  return _callback(err, result, headers);
                 }
                 else {
                   return _callback(err);

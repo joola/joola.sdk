@@ -1,7 +1,7 @@
 {
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.5.2",
+  "version": "0.6.0",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/joola/joola.io.sdk.git"
   },
-  "bugs": "https://joolatech.atlassian.net/browse/JARVIS",
+  "bugs": "https://github.com/joola/joola.io.sdk/issues",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -23,34 +23,35 @@
       "url": "http://joo.la"
     }
   ],
-  "main": "./index.js",
+  "main": "./src/lib/index.js",
   "scripts": {
     "test": "make test",
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "eventemitter2": "~0.4.13",
     "async": "~0.2.10",
-    "socket.io-browserify": "~0.9.6",
-    "cloneextend": "0.0.3",
-    "underscore": "~1.5.2",
-    "moment": "~2.5.1"
+    "cloneextend": "^0.0.3",
+    "eventemitter2": "~0.4.13",
+    "moment": "~2.5.1",
+    "socket.io-client": "^1.0.2",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "coveralls": "*",
-    "istanbul": "*",
-    "should": "*",
-    "mocha": "*",
-    "sinon": "*",
-    "chai": "*",
-    "sinon-chai": "*",
-    "jshint": "*",
-    "supertest": "*",
-    "browserify": "^3.38.0",
-    "watchify": "^0.6.3",
-    "uglify-js": "^2.3.6",
     "grunt": "~0.4.5",
-    "grunt-contrib-jshint": "~0.10.0"
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-css": "~0.5.4",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-browserify": "~2.0.8",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-saucelabs": "~5.1.3",
+    "grunt-mocha": "~0.4.10",
+    "mocha": "~1.19.0",
+    "chai": "~1.9.1",
+    "sinon": "~1.10.0",
+    "grunt-watchify": "~0.1.0"
   },
   "license": "GPL-3.0"
 }

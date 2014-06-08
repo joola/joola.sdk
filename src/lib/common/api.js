@@ -70,6 +70,12 @@ querystring.stringify = querystring.encode = function (obj, sep, eq, name) {
     console.log(ex);
   }
 };
+
+function lengthInUtf8Bytes(str) {
+  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+  var m = encodeURIComponent(str).match(/%[89ABab]/g);
+  return str.length + (m ? m.length : 0);
+}
 /* END OF Add support for JSON parsing of query string */
 
 
@@ -82,14 +88,21 @@ api.waitingRequests = [];
  * @param {object} objOptions options for the actual endpoint parameters
  * @param {function} callback called when the result arrives/error
  */
-api.fetch = function (endpoint, objOptions, callback) {
+api.fetch = function (tokens, endpoint, objOptions, callback) {
   var self = api;
+  if (!callback) {
+    callback = objOptions;
+    objOptions = endpoint;
+    endpoint = tokens;
+    tokens = {_: null, __: null};
+  }
 
   if (api.requestCount < (joolaio.options.maxRequests || 100)) {
     api.requestCount++;
     try {
       var parts = require('url').parse(joolaio.options.host);
       var options = {
+        tokens: tokens,
         host: parts.hostname,
         port: parts.port,
         secure: parts.protocol !== 'http:',
@@ -100,7 +113,7 @@ api.fetch = function (endpoint, objOptions, callback) {
         }
       };
 
-      self.getJSON(options, objOptions, function (err, result) {
+      self.getJSON(options, objOptions, function (err, result, headers) {
         if (result) {
           if (!result.realtime)
             api.requestCount--;
@@ -114,7 +127,7 @@ api.fetch = function (endpoint, objOptions, callback) {
         if (api.waitingRequests.length)
           api.fetch.apply(null, api.waitingRequests.shift());
 
-        return callback(err, result);
+        return callback(err, result, headers);
       });
     }
     catch (ex) {
@@ -136,7 +149,7 @@ api.fetch = function (endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN));
+  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
 
   if (!joolaio.io || joolaio.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
@@ -214,6 +227,23 @@ api.getJSON = function (options, objOptions, callback) {
       var headers = data.headers;
       var message = data.message;
 
+      if (message && !message.hasOwnProperty('realtime')) {
+        joolaio.events.emit('rpc:done', 1);
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
+        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+      }
+      else if (!message) {
+        joolaio.events.emit('rpc:done', 1);
+        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
+        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
+          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+      }
+
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
         if (joolaio.options.logouturl)
@@ -224,7 +254,7 @@ api.getJSON = function (options, objOptions, callback) {
       else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
 
-      return callback(null, message);
+      return callback(null, message, headers);
     };
 
 
@@ -234,12 +264,39 @@ api.getJSON = function (options, objOptions, callback) {
       objOptions._token = joolaio.TOKEN;
     if (!objOptions._token)
       objOptions.APIToken = joolaio.APITOKEN;
-    objOptions._path = options.path;
-    joolaio.io.socket.emit(routeID, objOptions);
 
-    if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime)))
+    if (options.tokens && (options.tokens._ || options.tokens.__)) {
+      objOptions._token = null;
+      objOptions.APIToken = null;
+      if (options.tokens._)
+        objOptions._token = options.tokens._;
+      if (options.tokens.__)
+        objOptions.APIToken = options.tokens.__;
+    }
+
+    objOptions._path = options.path;
+
+    joolaio.io.socket.emit(routeID, objOptions);
+    joolaio.events.emit('rpc:start', 1);
+    joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+
+    if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
       joolaio.io.socket.on(routeID + ':done', processResponse);
-    else
+    }
+    else {
       joolaio.io.socket.once(routeID + ':done', processResponse);
+    }
   }
 };
+
+joolaio.events.on('rpc:start', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls++;
+});
+
+joolaio.events.on('rpc:done', function () {
+  if (!joolaio.usage)
+    joolaio.usage = {currentCalls: 0};
+  joolaio.usage.currentCalls--;
+});

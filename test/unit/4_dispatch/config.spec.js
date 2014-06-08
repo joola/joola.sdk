@@ -1,6 +1,6 @@
 describe("config", function () {
   before(function (done) {
-    this.uid = joola.common.uuid();
+    this.uid = joolaio.common.uuid();
     return done();
   });
 
@@ -17,7 +17,7 @@ describe("config", function () {
       if (err)
         return done(err);
 
-      expect(value).to.equal('test');
+      expect(value.value).to.equal('test');
       return done();
     });
   });

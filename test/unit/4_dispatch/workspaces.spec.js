@@ -8,9 +8,6 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var async = require('async');
-
-
 describe("workspaces", function () {
   before(function (done) {
     this.uid = joolaio.common.uuid();
@@ -21,7 +18,7 @@ describe("workspaces", function () {
     var workspace = {
       key: 'test-workspace-' + this.uid,
       name: 'test-workspace-' + this.uid,
-      _filter: ''
+      filter: ''
     };
     joolaio.workspaces.add(workspace, function (err, _workspace) {
       if (err)
@@ -42,7 +39,7 @@ describe("workspaces", function () {
     var workspace = {
       key: 'test-workspace-' + this.uid,
       name: 'test-workspace-' + this.uid,
-      _filter: ''
+      filter: ''
     };
     joolaio.workspaces.add(workspace, function (err, _workspace) {
       if (err)
@@ -64,16 +61,16 @@ describe("workspaces", function () {
     });
   });
 
-  it("should update an workspace", function (done) {
+  it("should update a workspace", function (done) {
     var workspace = {
       key: 'test-workspace-' + this.uid,
       name: 'test-workspace-' + this.uid,
-      _filter: 'test=test'
+      filter: 'test=test'
     };
-    joolaio.workspaces.update(workspace, function (err, _workspace) {
+    joolaio.workspaces.patch(workspace.key, workspace, function (err, _workspace) {
       if (err)
         return done(err);
-      expect(_workspace._filter).to.equal('test=test');
+      expect(_workspace.filter).to.equal('test=test');
       done();
     });
   });
@@ -82,9 +79,9 @@ describe("workspaces", function () {
     var workspace = {
       key: 'test-workspace1-' + this.uid,
       name: 'test-workspace-' + this.uid,
-      _filter: 'test=test'
+      filter: 'test=test'
     };
-    joolaio.workspaces.update(workspace, function (err, _workspace) {
+    joolaio.workspaces.patch(workspace.key, workspace, function (err, _workspace) {
       if (err)
         return done();
 
@@ -92,25 +89,13 @@ describe("workspaces", function () {
     });
   });
 
-  it("should fail updating workspace with incomplete details", function (done) {
-    var workspace = {
-      key: 'test-workspace1-' + this.uid
-    };
-    joolaio.workspaces.update(workspace, function (err, _workspace) {
-      if (err)
-        return done();
-
-      done(new Error('This should have failed'));
-    });
-  });
-
-  it("should apply filter on workspace members", function (done) {
+  xit("should apply filter on workspace members", function (done) {
     var user = {
       username: 'tester-workspace-filter',
       displayName: 'tester user',
-      _password: '1234',
-      _roles: ['user'],
-      _filter: '',
+      password: '1234',
+      roles: ['user'],
+      filter: '',
       workspace: 'test-workspace-' + this.uid
     };
     joolaio.dispatch.users.add('test-workspace-' + this.uid, user, function (err, user) {
@@ -127,7 +112,7 @@ describe("workspaces", function () {
       key: 'test-workspace-' + this.uid,
       name: 'test-workspace-' + this.uid
     };
-    joolaio.workspaces.delete(workspace, function (err) {
+    joolaio.workspaces.delete(workspace.key, function (err) {
       if (err)
         return done(err);
 
@@ -153,7 +138,7 @@ describe("workspaces", function () {
     var workspace = {
       key: 'test-workspace-' + this.uid
     };
-    joolaio.workspaces.delete(workspace, function (err) {
+    joolaio.workspaces.delete(workspace.key, function (err) {
       if (err)
         return done();
 

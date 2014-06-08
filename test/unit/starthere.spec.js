@@ -8,32 +8,15 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+global.joola = require('../../src/lib/index.js');
+
 before(function (done) {
-  require('joola.io').init({}, function (err, joola) {
+  
+  global.uid = joola.common.uuid();
+  joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'}, function (err) {
     if (err)
       return done(err);
-    joola.state.on('state:change', function (state) {
-      if (state !== 'online')
-        return done(new Error('Failed to initialize engine, check logs.'));
 
-      global.joola = require('../../index.js');
-      global.uid = joola.common.uuid();
-      joolaio.init({host: 'http://127.0.0.1:8080', APIToken: 'apitoken-root'}, function (err) {
-        if (err)
-          return done(err);
-        
-        done();
-      });
-    });
+    done();
   });
-});
-
-after(function (done) {
-  if (shutdown) {
-    shutdown(0, function () {
-      return done();
-    });
-  }
-  else
-    return done();
 });

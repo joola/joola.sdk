@@ -273,4 +273,63 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.meta = {
+  key: 'timeline',
+  title: 'Timeline',
+  tagline: '',
+  jQueryTag: 'Timeline',
+  description: '' +
+    'Timeline description.' +
+    '',
+  example: {
+    css: 'height:250px;',
+    options: {
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        dimensions: ['timestamp'],
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves'
+      }
+    },
+    draw: '$("#example").Timeline(options)',
+    more: [
+      'http://jsfiddle.com/'
+    ]
+  },
+  metaOptions: {
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the `query` object.'
+    },
+    chart: {
+      datatype: 'object',
+      defaultValue: null,
+      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, data point clicked.'
+    }
+  },
+  html: '',
+  css: {
 
+  },
+  chartProvider: 'highcharts',
+  license: 'MIT'
+};

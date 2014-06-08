@@ -37,19 +37,19 @@ joolaio.options = {
 };
 
 //libraries
-joolaio.globals = require('./lib/common/globals');
-joolaio.logger = require('./lib/common/logger');
-joolaio.dispatch = require('./lib/common/dispatch');
-joolaio.common = require('./lib/common/index');
-joolaio.events = require('./lib/common/events');
+joolaio.globals = require('./common/globals');
+joolaio.logger = require('./common/logger');
+joolaio.dispatch = require('./common/dispatch');
+joolaio.common = require('./common/index');
+joolaio.events = require('./common/events');
 
 joolaio.on = joolaio.events.on;
 
-joolaio.api = require('./lib/common/api');
+joolaio.api = require('./common/api');
 joolaio.state = {};
-joolaio.viz = require('./lib/viz/index');
+joolaio.viz = require('./viz/index');
 
-joolaio.VERSION = require('./package.json').version;
+joolaio.VERSION = require('./../../package.json').version;
 joolaio._token = null;
 joolaio._apitoken = null;
 
@@ -80,7 +80,7 @@ Object.defineProperty(joolaio, 'APITOKEN', {
   }
 });
 
-require('./lib/common/globals');
+require('./common/globals');
 
 //parse the querystring if browser for default options
 function isBrowser() {
@@ -122,10 +122,11 @@ joolaio.init = function (options, callback) {
   function browser3rd(callback) {
     var expected = 0;
 
-    function done() {
+    function done(which) {
       expected--;
-      if (expected <= 0)
+      if (expected <= 0) {
         return callback(null);
+      }
     }
 
     var script;
@@ -143,17 +144,17 @@ joolaio.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
-              done();
+              done('highcharts');
             };
-            script.src = '/js/highcharts.js';
+            script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
-            done();
+            done('jquery-ui');
           };
           script.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
           document.head.appendChild(script);
 
-          done();
+          done('jquery');
         };
         script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
@@ -162,7 +163,7 @@ joolaio.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
-          done();
+          done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
@@ -173,17 +174,17 @@ joolaio.init = function (options, callback) {
       expected++;
       css.onload = function () {
         //jQuery.noConflict(true);
-        done();
+        //done('css');
       };
       css.rel = 'stylesheet';
       css.href = joolaio.options.host + '/joola.io.css';
       document.head.appendChild(css);
-
+      done('css');
       if (expected === 0)
-        return done();
+        return done('none');
     }
     else {
-      return done();
+      return done('not browser');
     }
   }
 
@@ -210,7 +211,8 @@ joolaio.init = function (options, callback) {
     if (!joolaio.options.host)
       throw new Error('joola.io host not specified');
 
-    var io = require('socket.io-browserify');
+    //var io = require('socket.io-browserify');
+    var io = require('socket.io-client');
     joolaio.io = io;
     joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
     //}
