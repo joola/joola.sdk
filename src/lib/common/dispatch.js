@@ -93,9 +93,9 @@ dispatch.buildstub = function (callback) {
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(tokens, _fn.name, args, function (err, result) {
+              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
                 if (result) {
-                  return _callback(err, result);
+                  return _callback(err, result, headers);
                 }
                 else {
                   return _callback(err);
