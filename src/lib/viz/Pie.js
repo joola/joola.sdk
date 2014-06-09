@@ -204,6 +204,14 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Pie.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio-pie-caption"></div>\n' +
+    '  <div class="jio-pie-chart"></div>\n' +
+    '</div>';
+  return html;
+};
+
 Pie.meta = {
   key: 'pie-chart',
   jQueryTag: 'Pie',
@@ -240,11 +248,17 @@ Pie.meta = {
       }
     ]
   },
+  template: Pie.template(),
   metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
     query: {
       datatype: 'object',
       defaultValue: null,
-      description: '`required` contains the `query` object.'
+      description: '`required` contains the <a href="/data/query">query</a> object.'
     },
     chart: {
       datatype: 'object',

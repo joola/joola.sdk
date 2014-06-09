@@ -11,13 +11,15 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
-  <script src="/test/browser/vendor/blanket.min.js"></script>
-  <script src="/build/release/joola.io.js" data-cover></script>
-  <script>joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});</script>
+  <script src="/build/release/joola.io.js"></script>
+  <script>
+    joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});
+  </script>
   <script>
     mocha.setup('bdd');
     var expect = chai.expect;
   </script>
+  <script src="/node_modules/grunt-mocha/phantomjs/bridge.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 <div class="container">
@@ -35,7 +37,7 @@
 
   <!-- TEST SPEC GO HERE -->
   <script>
-    describe('DatePicker', function () {
+    describe('Pie Chart', function () {
       it('should draw a pie chart', function (done) {
         //$('#datepicker').DatePicker();
         var options = {
