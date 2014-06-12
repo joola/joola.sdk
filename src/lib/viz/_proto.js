@@ -93,7 +93,11 @@ proto.fetch = function (context, query, callback) {
     _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
   }
 
-  joolaio.dispatch.query.fetch(_query, function (err, message) {
+  var args = [];
+  if (_query.authContext)
+    args.push(_query.authContext);
+  args.push(_query);
+  args.push(function (err, message) {
     if (err)
       return callback(err);
 
@@ -102,6 +106,8 @@ proto.fetch = function (context, query, callback) {
 
     return callback(null, message);
   });
+
+  joolaio.query.fetch.apply(this, args);
 };
 
 proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
@@ -164,9 +170,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });
