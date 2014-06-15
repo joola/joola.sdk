@@ -186,6 +186,8 @@ joolaio.events.on('core.init.finish', function () {
           options = {};
         options.container = this.get(0);
         result = new joolaio.viz.Pie(options, function (err, pie) {
+          if (err)
+            throw err;
           pie.draw(options, callback);
         }).options.$container;
       }

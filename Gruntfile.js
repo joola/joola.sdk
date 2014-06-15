@@ -28,17 +28,17 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    clean: ['build/temp/*.js', 'build/temp/*.css'],
+    clean: [ 'build/temp/*.css'],
 
     browserify: {
-      vendor: {
+      /*vendor: {
         src: [],
         dest: 'build/temp/vendor.js',
         options: {
           require: [],
-          alias: ['src/vendor/sorttable.js:sorttableWrapper']
+          alias: []
         }
-      },
+      },*/
       client: {
         src: ['src/lib/index.js'],
         dest: 'build/temp/joola.io.js',
@@ -73,7 +73,7 @@ module.exports = function (grunt) {
     },
 
     concat: {
-      'build/release/joola.io.js': [ 'build/temp/joola.io.js', 'build/temp/vendor.js'],
+      'build/release/joola.io.js': ['build/temp/joola.io.js'],
       'build/temp/joola.io.css': ['src/css/**/*.css']
     },
 

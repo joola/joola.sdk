@@ -248,6 +248,10 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Table = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
@@ -271,7 +275,7 @@ joolaio.events.on('core.init.finish', function () {
         options.container = this.get(0);
         result = new joolaio.viz.Table(options, function (err, table) {
           if (err)
-            console.error(err);
+            throw err;
           table.draw(options, callback);
         }).options.$container;
       }
@@ -289,3 +293,109 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
+
+Table.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <table class="jio table">\n' +
+    '    <thead>\n' +
+    '    </thead>\n' +
+    '    <tbody>\n' +
+    '    </tbody>\n' +
+    '  </table>\n' +
+    '</div>';
+  return html;
+};
+
+Table.meta = {
+  key: 'table',
+  jQueryTag: 'Table',
+  title: 'Table',
+  tagline: '',
+  description: '' +
+    'The Table visualization allows you to plot powerful and customizable data tables.',
+  longDescription: '',
+  example: {
+    //css: 'height:250px;width:100%',
+    options: {
+      limit: 5,
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        dimensions: ['browser'],
+        metrics: [
+          {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
+          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
+          {key: 'visits', collection: 'demo-visits'}
+        ],
+        collection: 'demo-mousemoves'
+      }
+    },
+    draw: '$("#example").Table(options);'/*,
+     external: [
+     {
+     title: 'Change Pie Limits',
+     src: 'http://jsfiddle.com'
+     },
+     {
+     title: 'Another example',
+     src: 'http://jsfiddle.com'
+     },
+     {
+     title: 'And yet another',
+     src: 'http://jsfiddle.com'
+     }
+     ]*/
+  },
+  template: Table.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    },
+    limit: {
+      datatype: 'number',
+      defaultValue: '5',
+      description: 'The number of items to show.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, table row clicked.'
+    }
+  }
+};
