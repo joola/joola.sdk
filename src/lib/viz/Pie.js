@@ -261,7 +261,7 @@ Pie.meta = {
     template: {
       datatype: 'string',
       defaultValue: null,
-      description: 'Specify the HTML template to use instead of the default one.'
+      description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {
       datatype: 'object',
@@ -271,17 +271,17 @@ Pie.meta = {
     chart: {
       datatype: 'object',
       defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
+      description: '`optional` Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
     },
     limit: {
       datatype: 'number',
       defaultValue: '5',
-      description: 'The number of items to show.'
+      description: '`optional` The number of items to show.'
     },
     legend: {
       datatype: 'bool',
       defaultValue: 'true',
-      description: 'Show the Pie Chart legend.'
+      description: '`optional` Show the Pie Chart legend.'
     }
   },
   metaMethods: {

@@ -253,7 +253,7 @@ Metric.meta = {
     template:{
       datatype:'string',
       defaultValue:null,
-      description: 'Specify the HTML template to use instead of the default one.'
+      description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {
       datatype: 'string',
