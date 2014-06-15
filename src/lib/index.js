@@ -10,7 +10,7 @@
 
 
 //THE OBJECT
-var joolaio = global.joolaio = exports;
+var joolaio = global.joolaio = global.joola = exports;
 
 //base options
 joolaio.options = {
@@ -332,3 +332,4 @@ joolaio.set = function (key, value, callback) {
 joolaio.get = function (key) {
   return joolaio.options[key];
 };
+
