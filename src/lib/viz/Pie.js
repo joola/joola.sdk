@@ -231,7 +231,8 @@ Pie.meta = {
         interval: 'day',
         dimensions: ['browser'],
         metrics: ['mousemoves'],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        "realtime": true
       }
     },
     draw: '$("#example").Pie(options);',
@@ -256,6 +257,11 @@ Pie.meta = {
       datatype: 'string',
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    }, 
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: 'Specify the HTML template to use instead of the default one.'
     },
     query: {
       datatype: 'object',

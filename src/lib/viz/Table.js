@@ -312,7 +312,7 @@ Table.meta = {
   title: 'Table',
   tagline: '',
   description: '' +
-    'The Table visualization allows you to plot powerful and customizable data tables.',
+    'Plot powerful and customizable data tables.',
   longDescription: '',
   example: {
     //css: 'height:250px;width:100%',
@@ -327,7 +327,8 @@ Table.meta = {
           {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        "realtime": true
       }
     },
     draw: '$("#example").Table(options);'/*,
@@ -352,6 +353,11 @@ Table.meta = {
       datatype: 'string',
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template:{
+      datatype:'string',
+      defaultValue:null,
+      description: 'Specify the HTML template to use instead of the default one.'
     },
     query: {
       datatype: 'object',
