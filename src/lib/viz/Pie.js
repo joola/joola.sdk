@@ -160,6 +160,10 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Pie = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
@@ -182,6 +186,8 @@ joolaio.events.on('core.init.finish', function () {
           options = {};
         options.container = this.get(0);
         result = new joolaio.viz.Pie(options, function (err, pie) {
+          if (err)
+            throw err;
           pie.draw(options, callback);
         }).options.$container;
       }
@@ -200,6 +206,14 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Pie.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio-pie-caption"></div>\n' +
+    '  <div class="jio-pie-chart"></div>\n' +
+    '</div>';
+  return html;
+};
+
 Pie.meta = {
   key: 'pie-chart',
   jQueryTag: 'Pie',
@@ -217,31 +231,74 @@ Pie.meta = {
         interval: 'day',
         dimensions: ['browser'],
         metrics: ['mousemoves'],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        "realtime": true
       }
     },
-    draw: '$("#example").Pie(options);'
+    draw: '$("#example").Pie(options);',
+    external: [
+      {
+        title: 'Change Pie Limits',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'Another example',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'And yet another',
+        src: 'http://jsfiddle.com'
+      }
+    ]
   },
+  template: Pie.template(),
   metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    }, 
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
     query: {
       datatype: 'object',
       defaultValue: null,
-      description: '`required` contains the `query` object.'
+      description: '`required` contains the <a href="/data/query">query</a> object.'
     },
     chart: {
       datatype: 'object',
       defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
+      description: '`optional` Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
     },
     limit: {
       datatype: 'number',
       defaultValue: '5',
-      description: 'The number of items to show.'
+      description: '`optional` The number of items to show.'
     },
     legend: {
       datatype: 'bool',
       defaultValue: 'true',
-      description: 'Show the Pie Chart legend.'
+      description: '`optional` Show the Pie Chart legend.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
     }
   },
   metaEvents: {

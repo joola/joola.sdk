@@ -10,7 +10,7 @@
 
 
 //THE OBJECT
-var joolaio = global.joolaio = exports;
+var joolaio = global.joolaio = global.joola = exports;
 
 //base options
 joolaio.options = {
@@ -169,6 +169,16 @@ joolaio.init = function (options, callback) {
         document.head.appendChild(script);
       }
 
+      if (typeof (Tablesort) === 'undefined') {
+        script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+          done('tablesort');
+        };
+        script.src = '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
+        document.head.appendChild(script);
+      }
+
       //css
       var css = document.createElement('link');
       expected++;
@@ -215,6 +225,11 @@ joolaio.init = function (options, callback) {
     var io = require('socket.io-client');
     joolaio.io = io;
     joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+
+    joolaio.io.socket.on('SIG_HUP', function () {
+      console.log('SIG_HUP');
+    });
+
     //}
     //joolaio.config.init(function (err) {
     // if (err)
@@ -317,3 +332,4 @@ joolaio.set = function (key, value, callback) {
 joolaio.get = function (key) {
   return joolaio.options[key];
 };
+

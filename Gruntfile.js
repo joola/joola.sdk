@@ -28,17 +28,17 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    clean: ['build/temp/*.js', 'build/temp/*.css'],
+    clean: [ 'build/temp/*.css'],
 
     browserify: {
-      vendor: {
+      /*vendor: {
         src: [],
         dest: 'build/temp/vendor.js',
         options: {
           require: [],
-          alias: ['src/vendor/sorttable.js:sorttableWrapper']
+          alias: []
         }
-      },
+      },*/
       client: {
         src: ['src/lib/index.js'],
         dest: 'build/temp/joola.io.js',
@@ -73,7 +73,7 @@ module.exports = function (grunt) {
     },
 
     concat: {
-      'build/release/joola.io.js': [ 'build/temp/joola.io.js', 'build/temp/vendor.js'],
+      'build/release/joola.io.js': ['build/temp/joola.io.js'],
       'build/temp/joola.io.css': ['src/css/**/*.css']
     },
 
@@ -120,8 +120,8 @@ module.exports = function (grunt) {
           protocol: 'http',
           base: '',
           port: 9999,
-          debug: true,
-          log: true
+          debug: false,
+          log: false
         }
       }
     },
@@ -131,12 +131,14 @@ module.exports = function (grunt) {
         options: {
           urls: [
             'http://localhost:9999/test/browser/common.spec.html',
-            'http://localhost:9999/test/browser/viz/datepicker.spec.html'
+            'http://localhost:9999/test/browser/viz/datepicker.spec.html',
+            'http://localhost:9999/test/browser/viz/pie.spec.html'
           ],
           run: false,
-          log: true,
-          debug: true,
-          timeout: 5000
+          log: false,
+          debug: false,
+          timeout: 5000,
+          reporter: 'mocha-phantom-coverage-reporter'
         }
       }
     },
@@ -146,7 +148,8 @@ module.exports = function (grunt) {
         options: {
           urls: [
             'http://127.0.0.1:9999/test/browser/common.spec.html',
-            'http://localhost:9999/test/browser/viz/datepicker.spec.html'
+            'http://localhost:9999/test/browser/viz/datepicker.spec.html',
+            'http://localhost:9999/test/browser/viz/pie.spec.html'
           ],
           tunnelTimeout: 5,
           identifier: process.env.TRAVIS_JOB_ID || Math.floor((new Date).getTime() / 1000 - 1230768000).toString(),

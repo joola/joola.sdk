@@ -42,6 +42,12 @@ var Timeline = module.exports = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
+  this.template = function () {
+    var $html = $('<div class="jio timeline caption"></div>' +
+      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    return $html;
+  };
+
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
@@ -66,6 +72,7 @@ var Timeline = module.exports = function (options, callback) {
             text: null
           },
           chart: {
+            backgroundColor: 'transparent',
             marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
@@ -129,7 +136,10 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }, self.options.chart);
-        self.chart = self.options.$container.highcharts(chartOptions);
+
+        self.options.$container.append(self.options.template || self.template());
+        self.options.$container.find('.caption').text(self.options.caption || '');
+        self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
@@ -231,6 +241,10 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Timeline = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
@@ -249,8 +263,6 @@ joolaio.events.on('core.init.finish', function () {
           }
         }
         //create new
-        if (!options)
-          options = {};
         options.container = this.get(0);
         result = new joolaio.viz.Timeline(options, function (err, timeline) {
           if (err)
@@ -273,23 +285,47 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio timeline caption"></div>\n' +
+    '  <div class="jio timeline chartwrapper">\n' +
+    '    <div class="jio timeline thechart"></div>\n' +
+    '  </div>\n' +
+    '</div>';
+  return html;
+};
+
 Timeline.meta = {
   key: 'timeline',
   title: 'Timeline',
   tagline: '',
   jQueryTag: 'Timeline',
   description: '' +
-    'Timeline description.' +
+    'Timelines are a great way to show metrics over time.' +
     '',
   example: {
     css: 'height:250px;',
     options: {
+      caption: 'Mouse moves (last 30 seconds)',
+      chart: {
+        chart: {
+          spacing: 0,
+          backgroundColor: 'transparent',
+          type: 'column'
+        },
+        plotOptions: {
+          column: {
+            color: 'rgba(240,95,104,1)'
+          }
+        }
+      },
       query: {
-        timeframe: 'last_month',
-        interval: 'day',
+        timeframe: 'last_30_seconds',
+        interval: 'second',
         dimensions: ['timestamp'],
         metrics: ['mousemoves'],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        realtime: true
       }
     },
     draw: '$("#example").Timeline(options)',
@@ -297,7 +333,23 @@ Timeline.meta = {
       'http://jsfiddle.com/'
     ]
   },
+  template: Timeline.template(),
   metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
     query: {
       datatype: 'object',
       defaultValue: null,

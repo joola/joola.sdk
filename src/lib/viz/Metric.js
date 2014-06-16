@@ -73,7 +73,7 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
-        self.options.$container.append(self.template());
+        self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
 
@@ -144,6 +144,10 @@ joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || (options && options.force)) {
@@ -208,27 +212,92 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Metric.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio metricbox caption"></div>\n' +
+    '  <div class="jio metricbox value"></div>\n' +
+    '</div>';
+  return html;
+};
+
 Metric.meta = {
   key: 'metricbox',
+  jQueryTag: 'Metric',
   title: 'Metric Box',
   tagline: '',
   description: '' +
-    'The Metric Box allows you to create category based visualizations.' +
-    '<br/>Another line' +
-    '<br/>Another line' +
-    '',
+    'Metric Boxes...',
+  longDescription: '',
   example: {
-    css: 'height:250px;width:250px',
-    query: {
-      timeframe:'last_month',
-      interval:'day',
-      dimensions: [],
-      metrics: ['mousemoves'],
-      collection: 'demo-mousemoves'
-    },
+    css: 'width:100%',
     options: {
-
+      caption: 'Mouse moves (last month)',
+      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves',
+        "realtime": true
+      }
     },
-    draw: '$("#example").Metric({query: query})'
+    draw: '$("#example").Metric(options);'
+  },
+  template: Metric.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template:{
+      datatype:'string',
+      defaultValue:null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, metric box clicked.'
+    }
   }
 };
