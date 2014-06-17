@@ -10,7 +10,9 @@
 
 
 //THE OBJECT
-var joolaio = global.joolaio = global.joola = exports;
+var joolaio = global.joolaio = exports;
+if (!global.hasOwnProperty('joola'))
+  global.joola = global.joolaio;
 
 //base options
 joolaio.options = {
