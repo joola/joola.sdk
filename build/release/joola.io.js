@@ -13507,6 +13507,10 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
+    case parser.BINARY_ACK:
+      this.onack(packet);
+      break;
+
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -13555,8 +13559,10 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
+
+    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: parser.ACK,
+      type: type,
       id: id,
       data: args
     });
@@ -17473,6 +17479,7 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
+  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -17524,6 +17531,14 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
+/**
+ * Packet type `binary ack`. For acks with binary arguments.
+ *
+ * @api public
+ */
+
+exports.BINARY_ACK = 6;
+
 exports.Encoder = Encoder
 
 /**
@@ -17546,7 +17561,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -17571,7 +17586,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -17657,7 +17672,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -17703,7 +17718,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -19977,7 +19992,7 @@ function toArray(list, index) {
 }).call(this);
 
 },{}],91:[function(require,module,exports){
-module.exports={
+module.exports=module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
   "version": "0.6.1-develop",
@@ -20636,6 +20651,7 @@ logger._log = function (level, message, callback) {
     case 'warn':
     case 'error':
       break;
+    case 'trace':
     case 'silly':
       level = 'debug';
       break;
@@ -20826,7 +20842,9 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 
 //THE OBJECT
-var joolaio = global.joolaio = global.joola = exports;
+var joolaio = global.joolaio = exports;
+if (!global.hasOwnProperty('joola'))
+  global.joola = global.joolaio;
 
 //base options
 joolaio.options = {
@@ -21205,11 +21223,12 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.query) {
       _query = joolaio.common.extend(self.options.query, _query);
     }
-    if (self.options.datepicker) {
-      var _datepicker = $(self.options.datepicker).DatePicker();
+    if (self.options.datepicker && self.options.datepicker.container) {
+      var _datepicker = $(self.options.datepicker.container).DatePicker();
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
+      _query.interval = 'day';
     }
 
     return _query;
@@ -21218,18 +21237,26 @@ var Canvas = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker)
-      $(self.options.datepicker).DatePicker({});
+    console.log('draw canvas', options);
 
-    if (self.options.viz && self.options.viz.length > 0) {
-      self.options.viz.forEach(function (viz) {
-        viz.query = self.prepareQuery(viz.query);
-        switch (viz.type) {
-          case 'Metric':
-            $(viz.container).Metric(viz);
-            break;
-          default:
-            break;
+    if (self.options.datepicker && self.options.datepicker.container)
+      $(self.options.datepicker.container).DatePicker({});
+
+    if (self.options.visualizations && self.options.visualizations) {
+      Object.keys(self.options.visualizations).forEach(function (key) {
+        var viz = self.options.visualizations[key];
+        if (viz.container) {
+          viz.query = self.prepareQuery(viz.query);
+          switch (viz.type.toLowerCase()) {
+            case 'timeline':
+              $(viz.container).Timeline(viz);
+              break;
+            case 'metric':
+              $(viz.container).Metric(viz);
+              break;
+            default:
+              break;
+          }
         }
       });
     }
@@ -24664,11 +24691,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified for timeline.'));
+    return callback(new Error('no container specified..'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container for the timeline.'));
+    return callback(new Error('cannot find container.'));
 
   return callback(null);
 };

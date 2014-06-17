@@ -19,6 +19,7 @@ logger._log = function (level, message, callback) {
     case 'warn':
     case 'error':
       break;
+    case 'trace':
     case 'silly':
       level = 'debug';
       break;

@@ -52,11 +52,12 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.query) {
       _query = joolaio.common.extend(self.options.query, _query);
     }
-    if (self.options.datepicker) {
-      var _datepicker = $(self.options.datepicker).DatePicker();
+    if (self.options.datepicker && self.options.datepicker.container) {
+      var _datepicker = $(self.options.datepicker.container).DatePicker();
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
+      _query.interval = 'day';
     }
 
     return _query;
@@ -65,18 +66,26 @@ var Canvas = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker)
-      $(self.options.datepicker).DatePicker({});
+    console.log('draw canvas', options);
 
-    if (self.options.viz && self.options.viz.length > 0) {
-      self.options.viz.forEach(function (viz) {
-        viz.query = self.prepareQuery(viz.query);
-        switch (viz.type) {
-          case 'Metric':
-            $(viz.container).Metric(viz);
-            break;
-          default:
-            break;
+    if (self.options.datepicker && self.options.datepicker.container)
+      $(self.options.datepicker.container).DatePicker({});
+
+    if (self.options.visualizations && self.options.visualizations) {
+      Object.keys(self.options.visualizations).forEach(function (key) {
+        var viz = self.options.visualizations[key];
+        if (viz.container) {
+          viz.query = self.prepareQuery(viz.query);
+          switch (viz.type.toLowerCase()) {
+            case 'timeline':
+              $(viz.container).Timeline(viz);
+              break;
+            case 'metric':
+              $(viz.container).Metric(viz);
+              break;
+            default:
+              break;
+          }
         }
       });
     }
