@@ -182,18 +182,20 @@ joolaio.init = function (options, callback) {
       }
 
       //css
-      var css = document.createElement('link');
-      expected++;
-      css.onload = function () {
-        //jQuery.noConflict(true);
-        //done('css');
-      };
-      css.rel = 'stylesheet';
-      css.href = joolaio.options.host + '/joola.io.css';
-      document.head.appendChild(css);
-      done('css');
-      if (expected === 0)
-        return done('none');
+      if (!joolaio.options.skipcss) {
+        var css = document.createElement('link');
+        expected++;
+        css.onload = function () {
+          //jQuery.noConflict(true);
+          //done('css');
+        };
+        css.rel = 'stylesheet';
+        css.href = joolaio.options.host + '/joola.io.css';
+        document.head.appendChild(css);
+        done('css');
+        if (expected === 0)
+          return done('none');
+      }
     }
     else {
       return done('not browser');

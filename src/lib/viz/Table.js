@@ -41,12 +41,14 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<table class="jio table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
+    var $caption = $('<div class="jio-table-caption"></div>');
+    var $table = $('<table class="jio table">' +
+      '<thead></thead>' +
+      '<tbody></tbody>' +
       '</table>');
+    var $html = $('<div></div>');
+    $html.append($caption);
+    $html.append($table);
     return $html;
   };
 
@@ -79,9 +81,18 @@ var Table = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        var $thead = $($html.find('thead'));
-        var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        var $caption = $html.find('.jio-table-caption');
+        var $table = $html.find('.table');
+        if ($caption)
+          $caption.html(self.options.caption);
 
+        var $thead = $html.find('thead');
+        var $tbody = $table.find('tbody');
+
+        $thead.empty();
+        $tbody.empty();
+
+        var $head_tr = $('<tr class="jio tbl captions"></tr>');
         message.dimensions.forEach(function (d) {
           var $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
@@ -92,15 +103,11 @@ var Table = module.exports = function (options, callback) {
           $th.text(m.name);
           $head_tr.append($th);
         });
-
         $thead.append($head_tr);
-        $html.append($thead);
 
-        var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (point) {
             var $tr = $('<tr></tr>');
-
             var index = 0;
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
@@ -112,17 +119,21 @@ var Table = module.exports = function (options, callback) {
               $td.text(point[index++]);
               $tr.append($td);
             });
-
             $tbody.append($tr);
           });
         });
-        $html.append($tbody);
-        self.options.$container.append($html);
 
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
-        });
+        self.options.$container.append($html);
+        if ($table.length > 0) {
+          self.tablesort = new Tablesort($table.get(0), {
+            descending: true,
+            current: $table.find('th')[1]
+          });
+        }
+        if (self.options.onDraw) {
+          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+          window[self.options.onDraw](self.options.$container, self);
+        }
 
         if (typeof callback === 'function')
           return callback(null);
@@ -196,10 +207,16 @@ var Table = module.exports = function (options, callback) {
           if (existingkeys.indexOf(_key) == -1)
             $tr.remove();
         }
+
+        if (self.options.onUpdate) {
+          joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
+          window[self.options.onUpdate](self.options.$container, self);
+        }
       }
 
       if (series[0].data.length > 0) {
-        self.tablesort.refresh();
+        if ($table.length)
+          self.tablesort.refresh();
 
         var limit = self.options.limit || 5;
         trs = self.options.$container.find('tbody tr');

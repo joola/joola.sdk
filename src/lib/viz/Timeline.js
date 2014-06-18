@@ -84,7 +84,9 @@ var Timeline = module.exports = function (options, callback) {
             spacingRight: 0,
             borderWidth: 0,
             plotBorderWidth: 0,
-            type: 'area'
+            type: 'area',
+            alignTicks: true,
+            animation: false
           },
           series: series,
           xAxis: {
