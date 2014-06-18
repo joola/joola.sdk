@@ -36,9 +36,9 @@ logger._log = function (level, message, callback) {
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
   if (joolaio.options.isBrowser && console.debug) {
-    if (['silly', 'debug'].indexOf(level) == -1)
+    if (['trace', 'silly', 'debug'].indexOf(level) == -1)
       console[level](message);
-    else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
+    else if (joolaio.options.debug.enabled && ['trace', 'silly', 'debug'].indexOf(level) > -1)
       console[level](message);
   }
   else
@@ -46,6 +46,10 @@ logger._log = function (level, message, callback) {
 
   if (callback)
     return callback(null);
+};
+
+logger.trace = function (message, callback) {
+  return this._log('silly', message, callback);
 };
 
 logger.silly = function (message, callback) {
