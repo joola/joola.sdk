@@ -70,6 +70,7 @@ var Table = module.exports = function (options, callback) {
         return;
       }
 
+      message = message[0];
       var $col, $tr, trs;
 
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
@@ -220,10 +221,12 @@ var Table = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'table'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'table'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -324,7 +327,7 @@ Table.meta = {
         dimensions: ['browser'],
         metrics: [
           {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
+          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
         collection: 'demo-mousemoves',
@@ -354,9 +357,9 @@ Table.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {

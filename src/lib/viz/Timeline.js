@@ -60,7 +60,8 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
-
+      message = message[0];
+      console.log(message);
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
@@ -194,10 +195,12 @@ var Timeline = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'timeline'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'timeline'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 

@@ -130,12 +130,14 @@ var Pie = module.exports = function (options, callback) {
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
-
+ 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'pie'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'pie'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -257,7 +259,7 @@ Pie.meta = {
       datatype: 'string',
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    }, 
+    },
     template: {
       datatype: 'string',
       defaultValue: null,
@@ -319,3 +321,5 @@ Pie.meta = {
     }
   }
 };
+
+console.log('test5');

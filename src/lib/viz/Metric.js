@@ -57,6 +57,7 @@ var Metric = module.exports = function (options, callback) {
 
         return;
       }
+      message = message[0];
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -83,7 +84,6 @@ var Metric = module.exports = function (options, callback) {
       }
       else if (self.options.query.realtime) {
         //we're dealing with realtime
-
         self.options.$container.find('.value').text(value);
       }
     });
@@ -97,13 +97,15 @@ var Metric = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'metric'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'metric'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css
+      }, function (err) {
         if (err)
           return callback(err);
-
         joolaio.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
@@ -250,9 +252,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {
