@@ -33,13 +33,20 @@ proto.destroy = function (container, obj) {
       joolaio.query.stop(q);
     });
   }
+  this.drawn = false;
   this.options.$container.empty();
 };
 
-proto.markContainer = function (container, attr, callback) {
+proto.markContainer = function (container, options, callback) {
   if (!callback)
     callback = function () {
     };
+
+  var attr;
+  if (options.attr)
+    attr = options.attr;
+  else
+    attr = options;
 
   try {
     container.attr('jio-domain', 'joolaio');
@@ -49,11 +56,19 @@ proto.markContainer = function (container, attr, callback) {
         container.attr('jio-' + key, a[key]);
       });
     });
+
+    if (options.css) {
+      container.addClass(options.css);
+    }
+
+    container.data('this', this);
+
+    return callback(null);
   }
   catch (ex) {
+    console.log(ex);
     return callback(ex);
   }
-  return callback(null);
 };
 
 proto.get = function (key) {
@@ -101,8 +116,8 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    //if (message && message.query && message.query.ts && message.query.ts.duration)
-      //joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+    if (message && message[0] && message[0].query && message[0].query.ts && message[0].query.ts.duration)
+      joolaio.logger.debug('fetch took: ' + message[0].query.ts.duration.toString() + 'ms, results: ' + (message[0] && message[0].documents ? message[0].documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });
