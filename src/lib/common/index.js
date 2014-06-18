@@ -12,15 +12,14 @@
 
 
 var
-  util = require('util'),
-  ce = require('cloneextend');//,
-//JSONStream = require('JSONStream');
+  util = require('util');
 
 var common = util;
 common._id = 'common';
 
 module.exports = exports = common;
 common.extend = common._extend;
+common.moment = require('moment');
 
 require('./modifiers');
 
