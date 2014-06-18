@@ -66,10 +66,8 @@ var Canvas = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     var self = this;
 
-    console.log('draw canvas', options);
-
     if (self.options.datepicker && self.options.datepicker.container)
-      $(self.options.datepicker.container).DatePicker({});
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
 
     if (self.options.visualizations && self.options.visualizations) {
       Object.keys(self.options.visualizations).forEach(function (key) {
@@ -83,6 +81,12 @@ var Canvas = module.exports = function (options, callback) {
               break;
             case 'metric':
               $(viz.container).Metric(viz);
+              break;
+            case 'table':
+              $(viz.container).Table(viz);
+              break;
+            case 'bartable':
+              $(viz.container).Table(viz);
               break;
             default:
               break;
@@ -107,10 +111,11 @@ var Canvas = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
+      self.markContainer(self.options.$container, {attr: [
         {'type': 'canvas'},
         {'uuid': self.uuid}
-      ], function (err) {
+      ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 

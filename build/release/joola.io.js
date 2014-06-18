@@ -13507,6 +13507,10 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
+    case parser.BINARY_ACK:
+      this.onack(packet);
+      break;
+
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -13555,8 +13559,10 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
+
+    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: parser.ACK,
+      type: type,
       id: id,
       data: args
     });
@@ -17473,6 +17479,7 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
+  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -17524,6 +17531,14 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
+/**
+ * Packet type `binary ack`. For acks with binary arguments.
+ *
+ * @api public
+ */
+
+exports.BINARY_ACK = 6;
+
 exports.Encoder = Encoder
 
 /**
@@ -17546,7 +17561,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -17571,7 +17586,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -17657,7 +17672,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -17703,7 +17718,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -19977,7 +19992,7 @@ function toArray(list, index) {
 }).call(this);
 
 },{}],91:[function(require,module,exports){
-module.exports=module.exports={
+module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
   "version": "0.6.2-develop-oo",
@@ -20522,15 +20537,14 @@ joolaio.timezone = function (tz) {
 
 
 var
-  util = require('util'),
-  ce = require('cloneextend');//,
-//JSONStream = require('JSONStream');
+  util = require('util');
 
 var common = util;
 common._id = 'common';
 
 module.exports = exports = common;
 common.extend = common._extend;
+common.moment = require('moment');
 
 require('./modifiers');
 
@@ -20624,7 +20638,7 @@ common.parseQueryString = function (qs, key) {
   }
   return key;
 };
-},{"./modifiers":98,"cloneextend":1,"crypto":22,"util":17}],97:[function(require,module,exports){
+},{"./modifiers":98,"crypto":22,"moment":47,"util":17}],97:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -20663,9 +20677,9 @@ logger._log = function (level, message, callback) {
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
   if (joolaio.options.isBrowser && console.debug) {
-    if (['silly', 'debug'].indexOf(level) == -1)
+    if (['trace', 'silly', 'debug'].indexOf(level) == -1)
       console[level](message);
-    else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
+    else if (joolaio.options.debug.enabled && ['trace', 'silly', 'debug'].indexOf(level) > -1)
       console[level](message);
   }
   else
@@ -20673,6 +20687,10 @@ logger._log = function (level, message, callback) {
 
   if (callback)
     return callback(null);
+};
+
+logger.trace = function (message, callback) {
+  return this._log('silly', message, callback);
 };
 
 logger.silly = function (message, callback) {
@@ -21232,10 +21250,8 @@ var Canvas = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     var self = this;
 
-    console.log('draw canvas', options);
-
     if (self.options.datepicker && self.options.datepicker.container)
-      $(self.options.datepicker.container).DatePicker({});
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
 
     if (self.options.visualizations && self.options.visualizations) {
       Object.keys(self.options.visualizations).forEach(function (key) {
@@ -21249,6 +21265,12 @@ var Canvas = module.exports = function (options, callback) {
               break;
             case 'metric':
               $(viz.container).Metric(viz);
+              break;
+            case 'table':
+              $(viz.container).Table(viz);
+              break;
+            case 'bartable':
+              $(viz.container).Table(viz);
               break;
             default:
               break;
@@ -21273,10 +21295,11 @@ var Canvas = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
+      self.markContainer(self.options.$container, {attr: [
         {'type': 'canvas'},
         {'uuid': self.uuid}
-      ], function (err) {
+      ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -21434,7 +21457,6 @@ var DatePicker = module.exports = function (options, callback) {
     $container: null,
     comparePeriod: false
   };
-
   this.currentMode = 'base-from';
 
   this.original_base_fromdate = null;
@@ -21446,14 +21468,24 @@ var DatePicker = module.exports = function (options, callback) {
   this.min_date.setMonth(this.min_date.getMonth() - 6);
   this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
 
-  this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -30);
+  if (options.endDate)
+    this.base_todate = new Date(options.endDate);
+  else
+    this.base_todate = new Date(this.max_date);
+
+  if (options.startDate)
+    this.base_fromdate = new Date(options.startDate);
+  else
+    this.base_fromdate = self.addDays(this.base_todate, -30);
+
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
     this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
     this.disableCompare = true;
   }
+
+  console.log(this.base_fromdate);
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
@@ -21991,44 +22023,7 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this.formatDate = function (date) {
-    var format = function (date, formatString) {
-      var formatDate = date;
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      var yyyy = formatDate.getFullYear();
-      var yy = yyyy.toString().substring(2);
-      var m = formatDate.getMonth() + 1;
-      var mm = m < 10 ? "0" + m : m;
-      var mmm = months[m - 1];
-      var d = formatDate.getDate();
-      var dd = d < 10 ? "0" + d : d;
-      var fff = formatDate.getMilliseconds().toString();
-      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
-      var h = formatDate.getHours();
-      var hh = h < 10 ? "0" + h : h;
-      var n = formatDate.getMinutes();
-      var nn = n < 10 ? "0" + n : n;
-      var s = formatDate.getSeconds();
-      var ss = s < 10 ? "0" + s : s;
-
-      formatString = formatString.replace(/yyyy/i, yyyy);
-      formatString = formatString.replace(/yy/i, yy);
-      formatString = formatString.replace(/mmm/i, mmm);
-      formatString = formatString.replace(/mm/i, mm);
-      formatString = formatString.replace(/m/i, m);
-      formatString = formatString.replace(/dd/i, dd);
-      formatString = formatString.replace(/d/i, d);
-      formatString = formatString.replace(/hh/i, hh);
-      //formatString = formatString.replace(/h/i, h);
-      formatString = formatString.replace(/nn/i, nn);
-      //formatString = formatString.replace(/n/i, n);
-      formatString = formatString.replace(/ss/i, ss);
-      formatString = formatString.replace(/fff/i, fff);
-      //formatString = formatString.replace(/s/i, s);
-
-      return formatString;
-    };
-
-    return format(date, 'mmm dd, yyyy');
+    return joola.common.moment(date).format(self.options.dateformat, 'MMM DD, YYYY');
   };
 
   this.drawCell = function (date) {
@@ -22236,10 +22231,12 @@ var DatePicker = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'datepicker'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'datepicker'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -22499,6 +22496,7 @@ var Metric = module.exports = function (options, callback) {
 
         return;
       }
+      message = message[0];
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -22525,7 +22523,6 @@ var Metric = module.exports = function (options, callback) {
       }
       else if (self.options.query.realtime) {
         //we're dealing with realtime
-
         self.options.$container.find('.value').text(value);
       }
     });
@@ -22539,13 +22536,15 @@ var Metric = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'metric'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'metric'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css
+      }, function (err) {
         if (err)
           return callback(err);
-
         joolaio.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
@@ -22692,9 +22691,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {
@@ -23151,12 +23150,14 @@ var Pie = module.exports = function (options, callback) {
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
-
+ 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'pie'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'pie'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -23278,7 +23279,7 @@ Pie.meta = {
       datatype: 'string',
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    }, 
+    },
     template: {
       datatype: 'string',
       defaultValue: null,
@@ -23340,6 +23341,8 @@ Pie.meta = {
     }
   }
 };
+
+console.log('test5');
 },{"./_proto":110,"underscore":90}],106:[function(require,module,exports){
 /*jshint -W083 */
 
@@ -23899,6 +23902,7 @@ var Table = module.exports = function (options, callback) {
         return;
       }
 
+      message = message[0];
       var $col, $tr, trs;
 
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
@@ -24049,10 +24053,12 @@ var Table = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'table'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'table'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -24153,7 +24159,7 @@ Table.meta = {
         dimensions: ['browser'],
         metrics: [
           {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
+          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
         collection: 'demo-mousemoves',
@@ -24183,9 +24189,9 @@ Table.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {
@@ -24297,7 +24303,8 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
-
+      message = message[0];
+      console.log(message);
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
@@ -24431,10 +24438,12 @@ var Timeline = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'timeline'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'timeline'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -24658,13 +24667,20 @@ proto.destroy = function (container, obj) {
       joolaio.query.stop(q);
     });
   }
+  this.drawn = false;
   this.options.$container.empty();
 };
 
-proto.markContainer = function (container, attr, callback) {
+proto.markContainer = function (container, options, callback) {
   if (!callback)
     callback = function () {
     };
+
+  var attr;
+  if (options.attr)
+    attr = options.attr;
+  else
+    attr = options;
 
   try {
     container.attr('jio-domain', 'joolaio');
@@ -24674,11 +24690,19 @@ proto.markContainer = function (container, attr, callback) {
         container.attr('jio-' + key, a[key]);
       });
     });
+
+    if (options.css) {
+      container.addClass(options.css);
+    }
+
+    container.data('this', this);
+
+    return callback(null);
   }
   catch (ex) {
+    console.log(ex);
     return callback(ex);
   }
-  return callback(null);
 };
 
 proto.get = function (key) {
@@ -24726,8 +24750,8 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    //if (message && message.query && message.query.ts && message.query.ts.duration)
-      //joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+    if (message && message[0] && message[0].query && message[0].query.ts && message[0].query.ts.duration)
+      joolaio.logger.debug('fetch took: ' + message[0].query.ts.duration.toString() + 'ms, results: ' + (message[0] && message[0].documents ? message[0].documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });

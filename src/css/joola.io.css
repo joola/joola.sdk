@@ -427,6 +427,7 @@
 
 [jio-type="datepicker"] .daycell a {
   text-decoration: none;
+  border: 0;
 }
 
 [jio-type="datepicker"] .daycell:hover {
