@@ -102,7 +102,6 @@ var DatePicker = module.exports = function (options, callback) {
     $container: null,
     comparePeriod: false
   };
-
   this.currentMode = 'base-from';
 
   this.original_base_fromdate = null;
@@ -114,14 +113,24 @@ var DatePicker = module.exports = function (options, callback) {
   this.min_date.setMonth(this.min_date.getMonth() - 6);
   this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
 
-  this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -30);
+  if (options.endDate)
+    this.base_todate = new Date(options.endDate);
+  else
+    this.base_todate = new Date(this.max_date);
+
+  if (options.startDate)
+    this.base_fromdate = new Date(options.startDate);
+  else
+    this.base_fromdate = self.addDays(this.base_todate, -30);
+
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
     this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
     this.disableCompare = true;
   }
+
+  console.log(this.base_fromdate);
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
@@ -659,44 +668,7 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this.formatDate = function (date) {
-    var format = function (date, formatString) {
-      var formatDate = date;
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      var yyyy = formatDate.getFullYear();
-      var yy = yyyy.toString().substring(2);
-      var m = formatDate.getMonth() + 1;
-      var mm = m < 10 ? "0" + m : m;
-      var mmm = months[m - 1];
-      var d = formatDate.getDate();
-      var dd = d < 10 ? "0" + d : d;
-      var fff = formatDate.getMilliseconds().toString();
-      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
-      var h = formatDate.getHours();
-      var hh = h < 10 ? "0" + h : h;
-      var n = formatDate.getMinutes();
-      var nn = n < 10 ? "0" + n : n;
-      var s = formatDate.getSeconds();
-      var ss = s < 10 ? "0" + s : s;
-
-      formatString = formatString.replace(/yyyy/i, yyyy);
-      formatString = formatString.replace(/yy/i, yy);
-      formatString = formatString.replace(/mmm/i, mmm);
-      formatString = formatString.replace(/mm/i, mm);
-      formatString = formatString.replace(/m/i, m);
-      formatString = formatString.replace(/dd/i, dd);
-      formatString = formatString.replace(/d/i, d);
-      formatString = formatString.replace(/hh/i, hh);
-      //formatString = formatString.replace(/h/i, h);
-      formatString = formatString.replace(/nn/i, nn);
-      //formatString = formatString.replace(/n/i, n);
-      formatString = formatString.replace(/ss/i, ss);
-      formatString = formatString.replace(/fff/i, fff);
-      //formatString = formatString.replace(/s/i, s);
-
-      return formatString;
-    };
-
-    return format(date, 'mmm dd, yyyy');
+    return joola.common.moment(date).format(self.options.dateformat, 'MMM DD, YYYY');
   };
 
   this.drawCell = function (date) {
@@ -904,10 +876,12 @@ var DatePicker = module.exports = function (options, callback) {
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'datepicker'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'datepicker'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
