@@ -103,3 +103,14 @@ common.parse = function (string, callback) {
 common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
+
+common.parseQueryString = function (qs, key) {
+  var vars = qs.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (decodeURIComponent(pair[0]) == variable) {
+      return decodeURIComponent(pair[1]);
+    }
+  }
+  return key;
+};

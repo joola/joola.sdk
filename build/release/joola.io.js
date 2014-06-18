@@ -13507,10 +13507,6 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
-    case parser.BINARY_ACK:
-      this.onack(packet);
-      break;
-
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -13559,10 +13555,8 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
-
-    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: type,
+      type: parser.ACK,
       id: id,
       data: args
     });
@@ -17479,7 +17473,6 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
-  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -17531,14 +17524,6 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
-/**
- * Packet type `binary ack`. For acks with binary arguments.
- *
- * @api public
- */
-
-exports.BINARY_ACK = 6;
-
 exports.Encoder = Encoder
 
 /**
@@ -17561,7 +17546,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -17586,7 +17571,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -17672,7 +17657,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -17718,7 +17703,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -19995,7 +19980,7 @@ function toArray(list, index) {
 module.exports=module.exports={
   "name": "joola.io.sdk",
   "preferGlobal": false,
-  "version": "0.6.1-develop",
+  "version": "0.6.2-develop-oo",
   "author": "Joola <info@joo.la>",
   "description": "joola.io's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -20629,6 +20614,16 @@ common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
 
+common.parseQueryString = function (qs, key) {
+  var vars = qs.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (decodeURIComponent(pair[0]) == variable) {
+      return decodeURIComponent(pair[1]);
+    }
+  }
+  return key;
+};
 },{"./modifiers":98,"cloneextend":1,"crypto":22,"util":17}],97:[function(require,module,exports){
 /**
  *  @title joola.io
@@ -20746,7 +20741,7 @@ Date.prototype.format = function (formatString) {
   formatString = formatString.replace(/yy/i, yy);
   formatString = formatString.replace(/mmm/i, mmm);
   formatString = formatString.replace(/mm/i, mm);
-  formatString = formatString.replace(/m/i, m);
+  //formatString = formatString.replace(/m/, m);
   formatString = formatString.replace(/dd/i, dd);
   formatString = formatString.replace(/d/i, d);
   formatString = formatString.replace(/hh/i, hh);
@@ -21247,6 +21242,7 @@ var Canvas = module.exports = function (options, callback) {
         var viz = self.options.visualizations[key];
         if (viz.container) {
           viz.query = self.prepareQuery(viz.query);
+          viz.force = true;
           switch (viz.type.toLowerCase()) {
             case 'timeline':
               $(viz.container).Timeline(viz);
@@ -21301,9 +21297,13 @@ var Canvas = module.exports = function (options, callback) {
 joolaio.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid) {
+      if (!uuid || options.force) {
         //create new
         if (!options)
           options = {};
@@ -24726,8 +24726,8 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    if (message && message.query && message.query.ts && message.query.ts.duration)
-      joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+    //if (message && message.query && message.query.ts && message.query.ts.duration)
+      //joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });

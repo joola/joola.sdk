@@ -101,8 +101,8 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    if (message && message.query && message.query.ts && message.query.ts.duration)
-      joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+    //if (message && message.query && message.query.ts && message.query.ts.duration)
+      //joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });

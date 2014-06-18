@@ -76,6 +76,7 @@ var Canvas = module.exports = function (options, callback) {
         var viz = self.options.visualizations[key];
         if (viz.container) {
           viz.query = self.prepareQuery(viz.query);
+          viz.force = true;
           switch (viz.type.toLowerCase()) {
             case 'timeline':
               $(viz.container).Timeline(viz);
@@ -130,9 +131,13 @@ var Canvas = module.exports = function (options, callback) {
 joolaio.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid) {
+      if (!uuid || options.force) {
         //create new
         if (!options)
           options = {};
