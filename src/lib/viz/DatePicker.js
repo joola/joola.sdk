@@ -130,8 +130,6 @@ var DatePicker = module.exports = function (options, callback) {
     this.disableCompare = true;
   }
 
-  console.log(this.base_fromdate);
-
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
   this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
@@ -632,8 +630,9 @@ var DatePicker = module.exports = function (options, callback) {
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
+      if (self.options.canvas){
         self.options.canvas.emit('datechange', self);
+      }
 
       self.DateUpdate();
     });

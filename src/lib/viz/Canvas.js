@@ -58,16 +58,38 @@ var Canvas = module.exports = function (options, callback) {
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
       _query.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        _query.interval = self.options.datepicker._interval;
     }
 
     return _query;
   };
 
+  this.parseInterval = function ($container) {
+    return $container.find('.active').attr('data-id');
+  };
+
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker && self.options.datepicker.container)
+    if (self.options.datepicker && self.options.datepicker.container) {
+      self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+    }
+
+    if (self.options.datepicker && self.options.datepicker.interval) {
+      self.options.datepicker.$interval = $(self.options.datepicker.interval);
+      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+
+      self.options.datepicker.$interval.on('change', function (e, data) {
+        console.log('interval change', e, data.dataId, data.$container);
+        self.options.datepicker._interval = data.$container.attr('data-id');
+        self.emit('intervalchange', data.dataId);
+
+        self.options.datepicker.$interval.find('button').removeClass('active');
+        data.$container.addClass('active');
+      });
+    }
 
     if (self.options.visualizations && self.options.visualizations) {
       Object.keys(self.options.visualizations).forEach(function (key) {

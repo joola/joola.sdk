@@ -21183,6 +21183,10 @@ joolaio.get = function (key) {
 };
 
 
+joolaio.colors = ['#058DC7', '#ED7E17', '#50B432', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
+joolaio.offcolors = ['#AADFF3', '#F2D5BD', '#C9E7BE', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE'];
+
+
 },{"./../../package.json":91,"./common/api":92,"./common/dispatch":93,"./common/events":94,"./common/globals":95,"./common/index":96,"./common/logger":97,"./viz/index":111,"querystring":12,"socket.io-client":48,"url":16}],100:[function(require,module,exports){
 /**
  *  @title joola.io
@@ -21244,16 +21248,38 @@ var Canvas = module.exports = function (options, callback) {
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
       _query.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        _query.interval = self.options.datepicker._interval;
     }
 
     return _query;
   };
 
+  this.parseInterval = function ($container) {
+    return $container.find('.active').attr('data-id');
+  };
+
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker && self.options.datepicker.container)
+    if (self.options.datepicker && self.options.datepicker.container) {
+      self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+    }
+
+    if (self.options.datepicker && self.options.datepicker.interval) {
+      self.options.datepicker.$interval = $(self.options.datepicker.interval);
+      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+
+      self.options.datepicker.$interval.on('change', function (e, data) {
+        console.log('interval change', e, data.dataId, data.$container);
+        self.options.datepicker._interval = data.$container.attr('data-id');
+        self.emit('intervalchange', data.dataId);
+
+        self.options.datepicker.$interval.find('button').removeClass('active');
+        data.$container.addClass('active');
+      });
+    }
 
     if (self.options.visualizations && self.options.visualizations) {
       Object.keys(self.options.visualizations).forEach(function (key) {
@@ -21486,8 +21512,6 @@ var DatePicker = module.exports = function (options, callback) {
     this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
     this.disableCompare = true;
   }
-
-  console.log(this.base_fromdate);
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
@@ -21989,8 +22013,9 @@ var DatePicker = module.exports = function (options, callback) {
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
+      if (self.options.canvas){
         self.options.canvas.emit('datechange', self);
+      }
 
       self.DateUpdate();
     });
@@ -23343,8 +23368,6 @@ Pie.meta = {
     }
   }
 };
-
-console.log('test7');
 },{"./_proto":110,"underscore":90}],106:[function(require,module,exports){
 /*jshint -W083 */
 
@@ -24310,6 +24333,13 @@ var Timeline = module.exports = function (options, callback) {
     return $html;
   };
 
+  this.formatSeries = function (series) {
+    series.forEach(function (ser, index) {
+      series[index].color = joolaio.colors[index];
+    });
+    return series;
+  };
+
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
@@ -24323,13 +24353,13 @@ var Timeline = module.exports = function (options, callback) {
         return;
       }
       message = message[0];
-      console.log(message);
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
+      series = self.formatSeries(series);
       var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-      if (!self.chartDrawn) {
+      if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
             text: null
@@ -24411,8 +24441,7 @@ var Timeline = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
+      else if (self.options.query.realtime) { //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -24448,6 +24477,16 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
+      else { //new data, draw from scretch'
+        series.forEach(function (ser, index) {
+          if (self.chart.series[index]) {
+            self.chart.series[index].remove(false);
+          }
+
+          self.chart.addSeries(ser, false, false);
+        });
+        self.chart.redraw();
+      }
     });
   };
 
@@ -24480,11 +24519,19 @@ var Timeline = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
+            console.log('canvas date change', self);
+
             //let's change our query and fetch again
             self.options.query.timeframe = {};
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
+            self.draw(self.options);
+          });
+
+          self.options.canvas.on('intervalchange', function (dates) {
+            console.log('interval change', self);
+            self.options.query.interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });
         }

@@ -48,6 +48,13 @@ var Timeline = module.exports = function (options, callback) {
     return $html;
   };
 
+  this.formatSeries = function (series) {
+    series.forEach(function (ser, index) {
+      series[index].color = joolaio.colors[index];
+    });
+    return series;
+  };
+
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
@@ -61,13 +68,13 @@ var Timeline = module.exports = function (options, callback) {
         return;
       }
       message = message[0];
-      console.log(message);
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
+      series = self.formatSeries(series);
       var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-      if (!self.chartDrawn) {
+      if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
             text: null
@@ -149,8 +156,7 @@ var Timeline = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
+      else if (self.options.query.realtime) { //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -186,6 +192,16 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
+      else { //new data, draw from scretch'
+        series.forEach(function (ser, index) {
+          if (self.chart.series[index]) {
+            self.chart.series[index].remove(false);
+          }
+
+          self.chart.addSeries(ser, false, false);
+        });
+        self.chart.redraw();
+      }
     });
   };
 
@@ -218,11 +234,19 @@ var Timeline = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
+            console.log('canvas date change', self);
+
             //let's change our query and fetch again
             self.options.query.timeframe = {};
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
+            self.draw(self.options);
+          });
+
+          self.options.canvas.on('intervalchange', function (dates) {
+            console.log('interval change', self);
+            self.options.query.interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });
         }

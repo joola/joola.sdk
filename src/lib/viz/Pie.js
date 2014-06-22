@@ -321,5 +321,3 @@ Pie.meta = {
     }
   }
 };
-
-console.log('test7');
