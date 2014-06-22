@@ -147,6 +147,12 @@ var DatePicker = module.exports = function (options, callback) {
   this.comparePeriod = false;
   this.isCompareChecked = false;
 
+  self.base_todate.setHours(23);
+  self.base_todate.setMinutes(59);
+  self.base_todate.setSeconds(59);
+  self.base_todate.setMilliseconds(999);
+
+
   //self.getState(self);
 
   this.offsetX = 0;
@@ -196,7 +202,7 @@ var DatePicker = module.exports = function (options, callback) {
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
       '<td class="dates"></td>' +
-      '<td><div class="dropdownmarker"></div></td>' +
+      '<td class="dropdownmarker"></td>' +
       '</tr>' +
       '</table></div></div>');
 
@@ -626,6 +632,11 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $optionscontainer.find('.apply').click(function (e) {
+      self.base_todate.setHours(23);
+      self.base_todate.setMinutes(59);
+      self.base_todate.setSeconds(59);
+      self.base_todate.setMilliseconds(999);
+            
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
@@ -645,6 +656,11 @@ var DatePicker = module.exports = function (options, callback) {
 
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
+
+    if (self.options.onDraw) {
+      joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+      window[self.options.onDraw](self.options.$container, self);
+    }
   };
 
   this.DateUpdate = function () {

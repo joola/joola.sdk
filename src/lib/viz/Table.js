@@ -215,8 +215,8 @@ var Table = module.exports = function (options, callback) {
       }
 
       if (series[0].data.length > 0) {
-        if ($table.length)
-          self.tablesort.refresh();
+        //if ($table.length)
+          //self.tablesort.refresh();
 
         var limit = self.options.limit || 5;
         trs = self.options.$container.find('tbody tr');

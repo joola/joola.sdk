@@ -43,8 +43,32 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    var self = this;
+
+    var $html = $('' +
+      '<div class="jio timeline caption"></div>' +
+      '<div class="jio timeline chartwrapper">' +
+      '  <div class="jio timeline controls"></div>' +
+      '  <div class="clear"></div>' +
+      '  <div class="jio timeline thechart"></div>' +
+      '  <div class="clear"></div>' +
+      '</div>');
+
+    if (true || (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
+      var $container = $($html.find('.controls'));
+      var $picker = $('<div class="jio timeline metric picker"></div>');
+      var pickerOptions = {
+        selected: self.options.query.metrics[0]
+      };
+      $picker.MetricPicker(pickerOptions);
+      $container.append($picker);
+      
+      var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
+      var secondaryPickerOptions = {};
+      $secondaryPicker.MetricPicker(secondaryPickerOptions);
+     
+      $container.append($secondaryPicker);
+    }
     return $html;
   };
 
@@ -62,8 +86,6 @@ var Timeline = module.exports = function (options, callback) {
         console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
@@ -153,6 +175,12 @@ var Timeline = module.exports = function (options, callback) {
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
+
+        if (self.options.onDraw) {
+          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+          window[self.options.onDraw](self.options.$container, self);
+        }
+
         if (typeof callback === 'function')
           return callback(null);
       }
@@ -234,8 +262,6 @@ var Timeline = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
-            console.log('canvas date change', self);
-
             //let's change our query and fetch again
             self.options.query.timeframe = {};
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
@@ -244,8 +270,7 @@ var Timeline = module.exports = function (options, callback) {
             self.draw(self.options);
           });
 
-          self.options.canvas.on('intervalchange', function (dates) {
-            console.log('interval change', self);
+          self.options.canvas.on('intervalchange', function () {
             self.options.query.interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });

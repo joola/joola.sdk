@@ -9,11 +9,11 @@
  **/
 
 var ce = require('cloneextend');
-var Metric = module.exports = function (options, callback) {
+var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joolaio.events.emit('metricpicker.init.start');
 
   //mixin
   this._super = {};
@@ -24,14 +24,14 @@ var Metric = module.exports = function (options, callback) {
 
   var self = this;
 
-  this._id = '_metric';
+  this._id = 'metricpicker';
   this.uuid = joolaio.common.uuid();
   this.options = {
     canvas: null,
-    legend: true,
     container: null,
     $container: null,
-    query: null
+    metrics: [],
+    selected: null
   };
   this.drawn = false;
 
@@ -40,53 +40,32 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<div class="jio metricbox caption"></div>' +
-      '<div class="jio metricbox value"></div>');
+    var $html = $('' +
+      '<div class="jio-metricpicker-wrapper">\n' +
+      '  <button class="btn jio-metricpicker-button"></button>' +
+      '  <div class="clear"></div>' +
+      '</div>\n');
+
+    //<div class="metricscontainer" style="display: block;"><div></div><div class="search input-prepend"><input type="text" class="quicksearch span2"><span class="add-on"><i class="searchicon icon-search"></i></span></div><ul class="categorylist"><li class="node  level_0 on" style="padding-left: 0px; background-image: none;"><div class="category" style="display: none;">undefined</div><ul class="jcontainer on"><li class="node leaf level_1" data-metricname="Bet Count" data-metricid="gamerounds.betcount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count" data-text="Total bets placed. [actual]: sum(gr_betcount)." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Losing Bets Count" data-metricid="gamerounds.losingbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Losing Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Losing Bets Count" data-text="Total number of losing bets. [actual]: case when gr_winlose = 0 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Winning Bets Count" data-metricid="gamerounds.winningbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Winning Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Winning Bets Count" data-text="Total number of winning bets. [actual]: case when gr_winlose = 1 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Session Count" data-metricid="gamesessions.sessioncount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Session Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Session Count" data-text="Total Sessions. [actual]: sum(1) as sessioncount, this will count all valid gamesessions." title=""></i> </div></div></div></li><li class="node leaf level_1 on" data-metricname="Player Count" data-metricid="calc.playercount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Player Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Player Count" data-text="Number of unique players. [actual]: For all valid sessions take the number of unique players who played." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Session" data-metricid="calc.betspersession" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Session</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Session" data-text="Average number of bets per session. [actual]: betcount / sessioncount" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Player" data-metricid="calc.betsperplayer" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Player</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Player" data-text="Average number of bets per session. [actual]: betcount / playercount" title=""></i> </div></div></div></li></ul></li></ul></div>
+
     return $html;
   };
 
   this.draw = function (options, callback) {
-    this.options.query.dimensions = [];
-    this.options.query.metrics = this.options.query.metrics.splice(0, 1);
-    return this._super.fetch(this.options.query, function (err, message) {
-      if (err) {
-        if (typeof callback === 'function')
-          return callback(err);
-        //else
-        //throw err;
+    if (!self.drawn) {
+      self.options.$container.append(self.options.template || self.template());
 
-        return;
-      }
-      message = message[0];
-      var value;
-      if (message.documents && message.documents.length > 0)
-        value = message.documents[0].fvalues[message.metrics[0].key];
-      else
-        value = 0;
+      if (typeof callback === 'function')
+        return callback(null, self);
+    }
+    else {
 
-      if (!value)
-        value = 0;
+    }
 
-      /*
-       var decimals = 2;
-       if (message.metrics[0].decimals)
-       decimals = message.metrics[0].decimals
-       value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
-       */
-      if (!self.drawn) {
-        self.options.$container.append(self.options.template || self.template());
-        self.options.$container.find('.caption').text(self.options.caption || '');
-        self.drawn = true;
-
-        self.options.$container.find('.value').text(value);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      }
-      else {
-        console.log('aaaa', value);
-        self.options.$container.find('.value').text(value);
-      }
-    });
+    if (self.options.selected)
+      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '<span class="caret"></span>');
+    else
+      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '<span class="caret"></span>');
   };
 
   //here we go
@@ -99,7 +78,7 @@ var Metric = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, {
         attr: [
-          {'type': 'metric'},
+          {'type': 'metricpicker'},
           {'uuid': self.uuid}
         ],
         css: self.options.css
@@ -117,32 +96,13 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (dates) {
-            console.log('metric date change');
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            self.draw(self.options);
-          });
-
-          self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
-            self.draw(self.options);
-          });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
-
-        //if (self.options.query) {
-        //  return self.draw(options, callback);
-        //}
+        joolaio.events.emit('metricpicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
     });
-
   }
   catch (err) {
     callback(err);
@@ -156,7 +116,7 @@ var Metric = module.exports = function (options, callback) {
 joolaio.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
-    $.fn.Metric = function (options, callback) {
+    $.fn.MetricPicker = function (options, callback) {
       if (!options)
         options = {force: false};
       else if (!options.hasOwnProperty('force'))
@@ -183,10 +143,10 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joolaio.viz.MetricPicker(options, function (err, metricpicker) {
           if (err)
             throw err;
-          metric.draw(options, callback);
+          metricpicker.draw(options, callback);
         }).options.$container;
       }
       else {
@@ -201,31 +161,10 @@ joolaio.events.on('core.init.finish', function () {
       }
       return result;
     };
-
-    /*
-     joolaio.events.on('core.ready', function () {
-     if (typeof (jQuery) != 'undefined') {
-     $.find('.jio.metric').forEach(function (container) {
-     var $container = $(container);
-
-     var caption = $container.attr('data-caption') || '';
-     var timeframe = $container.attr('data-timeframe');
-     var metrics = $container.attr('data-metrics');
-     metrics = eval("(" + metrics + ')');
-
-     var query = {
-     timeframe: timeframe,
-     metrics: [metrics]
-     };
-     $container.Metric({caption: caption, query: query});
-     });
-     }
-     });
-     */
   }
 });
 
-Metric.template = function (options) {
+MetricPicker.template = function (options) {
   var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
@@ -233,8 +172,8 @@ Metric.template = function (options) {
   return html;
 };
 
-Metric.meta = {
-  key: 'metricbox',
+MetricPicker.meta = {
+  key: 'metricpicker',
   jQueryTag: 'Metric',
   title: 'Metric Box',
   tagline: '',
@@ -256,7 +195,7 @@ Metric.meta = {
     },
     draw: '$("#example").Metric(options);'
   },
-  template: Metric.template(),
+  template: MetricPicker.template(),
   metaOptions: {
     container: {
       datatype: 'string',

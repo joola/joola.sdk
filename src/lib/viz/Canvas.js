@@ -97,6 +97,7 @@ var Canvas = module.exports = function (options, callback) {
         if (viz.container) {
           viz.query = self.prepareQuery(viz.query);
           viz.force = true;
+          viz.canvas = self;
           switch (viz.type.toLowerCase()) {
             case 'timeline':
               $(viz.container).Timeline(viz);

@@ -17600,6 +17600,7 @@ api.getJSON = function (options, objOptions, callback) {
     joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
+      console.log('adding on',joolaio.io.socket);
       joolaio.io.socket.on(routeID + ':done', processResponse);
     }
     else {
@@ -18158,6 +18159,8 @@ joolaio.dispatch = require('./common/dispatch');
 joolaio.common = require('./common/index');
 joolaio.events = require('./common/events');
 
+joolaio.events.setMaxListeners(100);
+
 joolaio.on = joolaio.events.on;
 
 joolaio.api = require('./common/api');
@@ -18295,18 +18298,20 @@ joolaio.init = function (options, callback) {
       }
 
       //css
-      var css = document.createElement('link');
-      expected++;
-      css.onload = function () {
-        //jQuery.noConflict(true);
-        //done('css');
-      };
-      css.rel = 'stylesheet';
-      css.href = joolaio.options.host + '/joola.io.css';
-      document.head.appendChild(css);
-      done('css');
-      if (expected === 0)
-        return done('none');
+      if (!joolaio.options.skipcss) {
+        var css = document.createElement('link');
+        expected++;
+        css.onload = function () {
+          //jQuery.noConflict(true);
+          //done('css');
+        };
+        css.rel = 'stylesheet';
+        css.href = joolaio.options.host + '/joola.io.css';
+        document.head.appendChild(css);
+        done('css');
+        if (expected === 0)
+          return done('none');
+      }
     }
     else {
       return done('not browser');
@@ -18449,8 +18454,12 @@ joolaio.get = function (key) {
 };
 
 
+joolaio.colors = ['#058DC7', '#ED7E17', '#50B432', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
+joolaio.offcolors = ['#AADFF3', '#F2D5BD', '#C9E7BE', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE'];
+
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":79,"./common/api":80,"./common/dispatch":81,"./common/events":82,"./common/globals":83,"./common/index":84,"./common/logger":85,"./viz/index":99,"querystring":21,"socket.io-client":36,"url":30}],88:[function(require,module,exports){
+},{"./../../package.json":79,"./common/api":80,"./common/dispatch":81,"./common/events":82,"./common/globals":83,"./common/index":84,"./common/logger":85,"./viz/index":100,"querystring":21,"socket.io-client":36,"url":30}],88:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -18511,16 +18520,38 @@ var Canvas = module.exports = function (options, callback) {
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
       _query.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        _query.interval = self.options.datepicker._interval;
     }
 
     return _query;
   };
 
+  this.parseInterval = function ($container) {
+    return $container.find('.active').attr('data-id');
+  };
+
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker && self.options.datepicker.container)
+    if (self.options.datepicker && self.options.datepicker.container) {
+      self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+    }
+
+    if (self.options.datepicker && self.options.datepicker.interval) {
+      self.options.datepicker.$interval = $(self.options.datepicker.interval);
+      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+
+      self.options.datepicker.$interval.on('change', function (e, data) {
+        console.log('interval change', e, data.dataId, data.$container);
+        self.options.datepicker._interval = data.$container.attr('data-id');
+        self.emit('intervalchange', data.dataId);
+
+        self.options.datepicker.$interval.find('button').removeClass('active');
+        data.$container.addClass('active');
+      });
+    }
 
     if (self.options.visualizations && self.options.visualizations) {
       Object.keys(self.options.visualizations).forEach(function (key) {
@@ -18528,6 +18559,7 @@ var Canvas = module.exports = function (options, callback) {
         if (viz.container) {
           viz.query = self.prepareQuery(viz.query);
           viz.force = true;
+          viz.canvas = self;
           switch (viz.type.toLowerCase()) {
             case 'timeline':
               $(viz.container).Timeline(viz);
@@ -18621,7 +18653,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":98,"cloneextend":33,"eventemitter2":34}],89:[function(require,module,exports){
+},{"./_proto":99,"cloneextend":33,"eventemitter2":34}],89:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -18754,8 +18786,6 @@ var DatePicker = module.exports = function (options, callback) {
     this.disableCompare = true;
   }
 
-  console.log(this.base_fromdate);
-
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
   this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
@@ -18772,6 +18802,12 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.comparePeriod = false;
   this.isCompareChecked = false;
+
+  self.base_todate.setHours(23);
+  self.base_todate.setMinutes(59);
+  self.base_todate.setSeconds(59);
+  self.base_todate.setMilliseconds(999);
+
 
   //self.getState(self);
 
@@ -18822,7 +18858,7 @@ var DatePicker = module.exports = function (options, callback) {
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
       '<td class="dates"></td>' +
-      '<td><div class="dropdownmarker"></div></td>' +
+      '<td class="dropdownmarker"></td>' +
       '</tr>' +
       '</table></div></div>');
 
@@ -19252,12 +19288,18 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $optionscontainer.find('.apply').click(function (e) {
+      self.base_todate.setHours(23);
+      self.base_todate.setMinutes(59);
+      self.base_todate.setSeconds(59);
+      self.base_todate.setMilliseconds(999);
+            
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
+      if (self.options.canvas){
         self.options.canvas.emit('datechange', self);
+      }
 
       self.DateUpdate();
     });
@@ -19270,6 +19312,11 @@ var DatePicker = module.exports = function (options, callback) {
 
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
+
+    if (self.options.onDraw) {
+      joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+      window[self.options.onDraw](self.options.$container, self);
+    }
   };
 
   this.DateUpdate = function () {
@@ -19292,7 +19339,7 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this.formatDate = function (date) {
-    return joola.common.moment(date).format('MMM DD, YYYY');
+    return joola.common.moment(date).format(self.options.dateformat, 'MMM DD, YYYY');
   };
 
   this.drawCell = function (date) {
@@ -19566,7 +19613,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":98,"underscore":78}],90:[function(require,module,exports){
+},{"./_proto":99,"underscore":78}],90:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -19705,7 +19752,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":98}],91:[function(require,module,exports){
+},{"./_proto":99}],91:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -19790,8 +19837,8 @@ var Metric = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null, self);
       }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
+      else {
+        console.log('aaaa', value);
         self.options.$container.find('.value').text(value);
       }
     });
@@ -19825,8 +19872,19 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (e) {
-            console.log('metric', 'datechange', e);
+          self.options.canvas.on('datechange', function (dates) {
+            console.log('metric date change');
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.draw(self.options);
+          });
+
+          self.options.canvas.on('intervalchange', function () {
+            self.options.query.interval = self.options.canvas.options.datepicker._interval;
+            self.draw(self.options);
           });
         }
 
@@ -20011,7 +20069,263 @@ Metric.meta = {
     }
   }
 };
-},{"./_proto":98,"cloneextend":33}],92:[function(require,module,exports){
+},{"./_proto":99,"cloneextend":33}],92:[function(require,module,exports){
+/**
+ *  @title joola.io
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var ce = require('cloneextend');
+var MetricPicker = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joolaio.events.emit('metricpicker.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = ce.clone(require('./_proto')[x]);
+    this._super[x] = ce.clone(require('./_proto')[x]);
+  }
+
+  var self = this;
+
+  this._id = 'metricpicker';
+  this.uuid = joolaio.common.uuid();
+  this.options = {
+    canvas: null,
+    container: null,
+    $container: null,
+    metrics: [],
+    selected: null
+  };
+  this.drawn = false;
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.template = function () {
+    var $html = $('' +
+      '<div class="jio-metricpicker-wrapper">\n' +
+      '  <button class="btn jio-metricpicker-button"></button>' +
+      '  <div class="clear"></div>' +
+      '</div>\n');
+
+    //<div class="metricscontainer" style="display: block;"><div></div><div class="search input-prepend"><input type="text" class="quicksearch span2"><span class="add-on"><i class="searchicon icon-search"></i></span></div><ul class="categorylist"><li class="node  level_0 on" style="padding-left: 0px; background-image: none;"><div class="category" style="display: none;">undefined</div><ul class="jcontainer on"><li class="node leaf level_1" data-metricname="Bet Count" data-metricid="gamerounds.betcount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count" data-text="Total bets placed. [actual]: sum(gr_betcount)." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Losing Bets Count" data-metricid="gamerounds.losingbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Losing Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Losing Bets Count" data-text="Total number of losing bets. [actual]: case when gr_winlose = 0 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Winning Bets Count" data-metricid="gamerounds.winningbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Winning Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Winning Bets Count" data-text="Total number of winning bets. [actual]: case when gr_winlose = 1 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Session Count" data-metricid="gamesessions.sessioncount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Session Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Session Count" data-text="Total Sessions. [actual]: sum(1) as sessioncount, this will count all valid gamesessions." title=""></i> </div></div></div></li><li class="node leaf level_1 on" data-metricname="Player Count" data-metricid="calc.playercount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Player Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Player Count" data-text="Number of unique players. [actual]: For all valid sessions take the number of unique players who played." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Session" data-metricid="calc.betspersession" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Session</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Session" data-text="Average number of bets per session. [actual]: betcount / sessioncount" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Player" data-metricid="calc.betsperplayer" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Player</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Player" data-text="Average number of bets per session. [actual]: betcount / playercount" title=""></i> </div></div></div></li></ul></li></ul></div>
+
+    return $html;
+  };
+
+  this.draw = function (options, callback) {
+    if (!self.drawn) {
+      self.options.$container.append(self.options.template || self.template());
+
+      if (typeof callback === 'function')
+        return callback(null, self);
+    }
+    else {
+
+    }
+
+    if (self.options.selected)
+      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '<span class="caret"></span>');
+    else
+      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '<span class="caret"></span>');
+  };
+
+  //here we go
+  try {
+    joolaio.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'metricpicker'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css
+      }, function (err) {
+        if (err)
+          return callback(err);
+        joolaio.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+        }
+
+        joolaio.events.emit('metricpicker.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joolaio.events.on('core.init.finish', function () {
+  var found;
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.MetricPicker = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || (options && options.force)) {
+        if (options && options.force && uuid) {
+          var existing = null;
+          found = false;
+          joolaio.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joolaio.viz.MetricPicker(options, function (err, metricpicker) {
+          if (err)
+            throw err;
+          metricpicker.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        found = false;
+        joolaio.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+MetricPicker.template = function (options) {
+  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio metricbox caption"></div>\n' +
+    '  <div class="jio metricbox value"></div>\n' +
+    '</div>';
+  return html;
+};
+
+MetricPicker.meta = {
+  key: 'metricpicker',
+  jQueryTag: 'Metric',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'Metric Boxes...',
+  longDescription: '',
+  example: {
+    css: 'width:100%',
+    options: {
+      caption: 'Mouse moves (last month)',
+      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves',
+        "realtime": true
+      }
+    },
+    draw: '$("#example").Metric(options);'
+  },
+  template: MetricPicker.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, metric box clicked.'
+    }
+  }
+};
+},{"./_proto":99,"cloneextend":33}],93:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -20286,7 +20600,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":98,"underscore":78}],93:[function(require,module,exports){
+},{"./_proto":99,"underscore":78}],94:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -20610,9 +20924,7 @@ Pie.meta = {
     }
   }
 };
-
-console.log('test5');
-},{"./_proto":98,"underscore":78}],94:[function(require,module,exports){
+},{"./_proto":99,"underscore":78}],95:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -20837,7 +21149,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":98,"underscore":78}],95:[function(require,module,exports){
+},{"./_proto":99,"underscore":78}],96:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -21098,7 +21410,7 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":98}],96:[function(require,module,exports){
+},{"./_proto":99}],97:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -21142,12 +21454,14 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<table class="jio table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
+    var $caption = $('<div class="jio-table-caption"></div>');
+    var $table = $('<table class="jio table">' +
+      '<thead></thead>' +
+      '<tbody></tbody>' +
       '</table>');
+    var $html = $('<div></div>');
+    $html.append($caption);
+    $html.append($table);
     return $html;
   };
 
@@ -21180,9 +21494,18 @@ var Table = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        var $thead = $($html.find('thead'));
-        var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        var $caption = $html.find('.jio-table-caption');
+        var $table = $html.find('.table');
+        if ($caption)
+          $caption.html(self.options.caption);
 
+        var $thead = $html.find('thead');
+        var $tbody = $table.find('tbody');
+
+        $thead.empty();
+        $tbody.empty();
+
+        var $head_tr = $('<tr class="jio tbl captions"></tr>');
         message.dimensions.forEach(function (d) {
           var $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
@@ -21193,15 +21516,11 @@ var Table = module.exports = function (options, callback) {
           $th.text(m.name);
           $head_tr.append($th);
         });
-
         $thead.append($head_tr);
-        $html.append($thead);
 
-        var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (point) {
             var $tr = $('<tr></tr>');
-
             var index = 0;
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
@@ -21213,17 +21532,21 @@ var Table = module.exports = function (options, callback) {
               $td.text(point[index++]);
               $tr.append($td);
             });
-
             $tbody.append($tr);
           });
         });
-        $html.append($tbody);
-        self.options.$container.append($html);
 
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
-        });
+        self.options.$container.append($html);
+        if ($table.length > 0) {
+          self.tablesort = new Tablesort($table.get(0), {
+            descending: true,
+            current: $table.find('th')[1]
+          });
+        }
+        if (self.options.onDraw) {
+          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+          window[self.options.onDraw](self.options.$container, self);
+        }
 
         if (typeof callback === 'function')
           return callback(null);
@@ -21297,10 +21620,16 @@ var Table = module.exports = function (options, callback) {
           if (existingkeys.indexOf(_key) == -1)
             $tr.remove();
         }
+
+        if (self.options.onUpdate) {
+          joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
+          window[self.options.onUpdate](self.options.$container, self);
+        }
       }
 
       if (series[0].data.length > 0) {
-        self.tablesort.refresh();
+        //if ($table.length)
+          //self.tablesort.refresh();
 
         var limit = self.options.limit || 5;
         trs = self.options.$container.find('tbody tr');
@@ -21509,7 +21838,7 @@ Table.meta = {
     }
   }
 };
-},{"./_proto":98,"underscore":78}],97:[function(require,module,exports){
+},{"./_proto":99,"underscore":78}],98:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -21555,9 +21884,40 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    var self = this;
+
+    var $html = $('' +
+      '<div class="jio timeline caption"></div>' +
+      '<div class="jio timeline chartwrapper">' +
+      '  <div class="jio timeline controls"></div>' +
+      '  <div class="clear"></div>' +
+      '  <div class="jio timeline thechart"></div>' +
+      '  <div class="clear"></div>' +
+      '</div>');
+
+    if (true || (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
+      var $container = $($html.find('.controls'));
+      var $picker = $('<div class="jio timeline metric picker"></div>');
+      var pickerOptions = {
+        selected: self.options.query.metrics[0]
+      };
+      $picker.MetricPicker(pickerOptions);
+      $container.append($picker);
+      
+      var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
+      var secondaryPickerOptions = {};
+      $secondaryPicker.MetricPicker(secondaryPickerOptions);
+     
+      $container.append($secondaryPicker);
+    }
     return $html;
+  };
+
+  this.formatSeries = function (series) {
+    series.forEach(function (ser, index) {
+      series[index].color = joolaio.colors[index];
+    });
+    return series;
   };
 
   this.draw = function (options, callback) {
@@ -21567,19 +21927,17 @@ var Timeline = module.exports = function (options, callback) {
         console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
       message = message[0];
-      console.log(message);
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
+      series = self.formatSeries(series);
       var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-      if (!self.chartDrawn) {
+      if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
             text: null
@@ -21596,7 +21954,9 @@ var Timeline = module.exports = function (options, callback) {
             spacingRight: 0,
             borderWidth: 0,
             plotBorderWidth: 0,
-            type: 'area'
+            type: 'area',
+            alignTicks: true,
+            animation: false
           },
           series: series,
           xAxis: {
@@ -21656,11 +22016,16 @@ var Timeline = module.exports = function (options, callback) {
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
+
+        if (self.options.onDraw) {
+          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
+          window[self.options.onDraw](self.options.$container, self);
+        }
+
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
+      else if (self.options.query.realtime) { //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -21695,6 +22060,16 @@ var Timeline = module.exports = function (options, callback) {
             }
           });
         });
+      }
+      else { //new data, draw from scretch'
+        series.forEach(function (ser, index) {
+          if (self.chart.series[index]) {
+            self.chart.series[index].remove(false);
+          }
+
+          self.chart.addSeries(ser, false, false);
+        });
+        self.chart.redraw();
       }
     });
   };
@@ -21733,6 +22108,11 @@ var Timeline = module.exports = function (options, callback) {
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
+            self.draw(self.options);
+          });
+
+          self.options.canvas.on('intervalchange', function () {
+            self.options.query.interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });
         }
@@ -21900,7 +22280,7 @@ Timeline.meta = {
   chartProvider: 'highcharts',
   license: 'MIT'
 };
-},{"./_proto":98,"moment":35,"underscore":78}],98:[function(require,module,exports){
+},{"./_proto":99,"moment":35,"underscore":78}],99:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -22159,7 +22539,7 @@ proto.find = function (obj) {
 };
 
 
-},{"cloneextend":33,"moment":35,"underscore":78}],99:[function(require,module,exports){
+},{"cloneextend":33,"moment":35,"underscore":78}],100:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -22176,6 +22556,7 @@ viz._id = 'viz';
 
 //pickers
 viz.DatePicker = require('./DatePicker');
+viz.MetricPicker = require('./MetricPicker');
 
 //panels
 viz.Canvas = require('./Canvas');
@@ -22197,4 +22578,4 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"./Canvas":88,"./DatePicker":89,"./Geo":90,"./Metric":91,"./MiniTable":92,"./Pie":93,"./PunchCard":94,"./Sparkline":95,"./Table":96,"./Timeline":97}]},{},[87])
+},{"./Canvas":88,"./DatePicker":89,"./Geo":90,"./Metric":91,"./MetricPicker":92,"./MiniTable":93,"./Pie":94,"./PunchCard":95,"./Sparkline":96,"./Table":97,"./Timeline":98}]},{},[87])

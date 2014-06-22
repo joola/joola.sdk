@@ -45,6 +45,8 @@ joolaio.dispatch = require('./common/dispatch');
 joolaio.common = require('./common/index');
 joolaio.events = require('./common/events');
 
+joolaio.events.setMaxListeners(100);
+
 joolaio.on = joolaio.events.on;
 
 joolaio.api = require('./common/api');

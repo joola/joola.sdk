@@ -14,6 +14,7 @@ viz._id = 'viz';
 
 //pickers
 viz.DatePicker = require('./DatePicker');
+viz.MetricPicker = require('./MetricPicker');
 
 //panels
 viz.Canvas = require('./Canvas');

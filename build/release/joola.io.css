@@ -34,7 +34,7 @@
   text-decoration: none;
 }
 
-[jio-domain="joolaio"] .btn:active, .btn.active {
+[jio-domain="joolaio"] .btn-default:active, .btn-default.active {
   background-image: none;
   outline: 0;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
@@ -147,6 +147,7 @@
   color: #333;
 }
 
+/*
 [jio-type="datepicker"] .datetable .dropdownmarker {
   position: absolute;
   top: 10px;
@@ -174,7 +175,7 @@
   border-right-color: transparent;
   border-left-color: transparent;
   border-top-color: transparent;
-}
+}*/
 
 [jio-type="datepicker"] .picker {
   position: absolute;
@@ -204,7 +205,7 @@
   clear: both;
   padding: 5px;
 
-  font-size: 75%;
+  /*font-size: 75%;*/ 
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .customdate {
@@ -382,16 +383,16 @@
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer input,
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer textarea {
-
+/*
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: none; /*border linear 0.1s, box-shadow linear 0.1s;*/
+  -webkit-transition: none; 
   -moz-transition: border linear 0.1s, box-shadow linear 0.1s;
   -ms-transition: border linear 0.1s, box-shadow linear 0.1s;
   -o-transition: border linear 0.1s, box-shadow linear 0.1s;
   transition: border linear 0.1s, box-shadow linear 0.1s;
-
+*/
 }
 
 [jio-type="datepicker"] .picker .wrapper .calendars .ui-datepicker-prev, [jio-type="datepicker"] .picker .wrapper .calendars .ui-datepicker-next {
@@ -427,7 +428,7 @@
 
 [jio-type="datepicker"] .daycell a {
   text-decoration: none;
-  border: 0;
+  /*border: 0;*/
 }
 
 [jio-type="datepicker"] .daycell:hover {
@@ -494,6 +495,62 @@
   -webkit-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+
+.jio-metricpicker-wrapper {
+  font-size: 12px;
+  height: 28px;
+  line-height: 25px;
+  padding: 1px 10px;
+  padding-right: 25px;
+  cursor: pointer;
+}
+
+.jio-metricpicker-wrapper .btn {
+  border: 1px solid rgb(225, 225, 225);
+  border-radius: 5px;
+  color: rgb(54, 54, 54);
+  display: inline-block;
+  font-size: 1.125em;
+  font-weight: 400;
+  float: left;
+  height: 36px;
+  line-height: 34px;
+  padding: 1px 30px;
+  text-shadow: 0 1px 0 rgb(255, 255, 255);
+  text-transform: uppercase;
+  -webkit-transition: border-color 0s ease-in;
+  -moz-transition: border-color 0s ease-in;
+  -o-transition: border-color 0s ease-in;
+  transition: border-color 0s ease-in;
+  background-color: rgb(245, 245, 245);
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.jio-metricpicker-wrapper .btn {
+  font-size: 12px;
+  height: 28px;
+  line-height: 25px;
+  padding: 1px 10px;
+  padding-right: 25px;
+  cursor: pointer;
+}
+
+.jio-metricpicker-wrapper button.btn::after {
+  content: "";
+  height: 25px;
+  position: absolute;
+  background: rgb(245, 245, 245) url("https://localhost:8081/img/caret.png") center no-repeat;
+  width: 25px;
+}
+
+[jio-domain="joolaio"] .caret {
+  margin-left: 10px;
+}
+
+.jio.timeline.metric.picker {
+  float: left;
 }
 [jio-domain="joolaio"] {
   margin: 0;

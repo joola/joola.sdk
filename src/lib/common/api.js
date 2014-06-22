@@ -281,6 +281,7 @@ api.getJSON = function (options, objOptions, callback) {
     joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
+      console.log('adding on',joolaio.io.socket);
       joolaio.io.socket.on(routeID + ':done', processResponse);
     }
     else {
