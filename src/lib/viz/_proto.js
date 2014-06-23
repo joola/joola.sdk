@@ -125,7 +125,7 @@ proto.fetch = function (context, query, callback) {
   joolaio.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
+proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart) {
   var series = [];
   if (!metrics)
     return series;
@@ -141,9 +141,27 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   });
 
   metrics.forEach(function (metric, index) {
+    var defaultAxis = {
+      endOnTick: false,
+      title: {
+        text: metric.name
+      },
+      labels: {
+        enabled: true,
+        style: {
+          color: '#b3b3b1'
+        }
+      },
+      gridLineDashStyle: 'Dot',
+      opposite: false
+    };
+    if (chart.options.yAxis.length <= index) {
+      chart.addAxis(defaultAxis, false, false, false);
+    }
     series[index] = {
       name: metric.name,
-      data: []
+      data: [],
+      yAxis: index
     };
 
     documents.forEach(function (document) {
@@ -168,7 +186,7 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
       }
     });
   });
-
+  console.log(series);
   return series;
 };
 
@@ -185,9 +203,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-          document.fvalues[dimensions[0].key],
-          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-        ]
+        document.fvalues[dimensions[0].key],
+        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+      ]
       );
     });
   });

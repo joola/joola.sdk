@@ -83,7 +83,6 @@ var Metric = module.exports = function (options, callback) {
           return callback(null, self);
       }
       else {
-        console.log('aaaa', value);
         self.options.$container.find('.value').text(value);
       }
     });

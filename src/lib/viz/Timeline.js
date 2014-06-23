@@ -33,7 +33,15 @@ var Timeline = module.exports = function (options, callback) {
     canvas: null,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    pickers: {
+      main: {
+        enabled: false
+      },
+      secondary: {
+        enabled: false
+      }
+    }
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -54,7 +62,7 @@ var Timeline = module.exports = function (options, callback) {
       '  <div class="clear"></div>' +
       '</div>');
 
-    if (true || (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
+    if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
       var $container = $($html.find('.controls'));
       var $picker = $('<div class="jio timeline metric picker"></div>');
       var pickerOptions = {
@@ -62,11 +70,11 @@ var Timeline = module.exports = function (options, callback) {
       };
       $picker.MetricPicker(pickerOptions);
       $container.append($picker);
-      
+
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
       var secondaryPickerOptions = {};
       $secondaryPicker.MetricPicker(secondaryPickerOptions);
-     
+
       $container.append($secondaryPicker);
     }
     return $html;
@@ -92,10 +100,7 @@ var Timeline = module.exports = function (options, callback) {
       message = message[0];
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-
-      var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      series = self.formatSeries(series);
-      var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
+      var series = null;
       if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
@@ -103,21 +108,21 @@ var Timeline = module.exports = function (options, callback) {
           },
           chart: {
             backgroundColor: 'transparent',
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            spacingTop: 0,
-            spacingBottom: 0,
-            spacingLeft: 0,
-            spacingRight: 0,
+            /*marginTop: 0,
+             marginBottom: 0,
+             marginLeft: 0,
+             marginRight: 0,
+             spacingTop: 0,
+             spacingBottom: 0,
+             spacingLeft: 0,
+             spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
             alignTicks: true,
             animation: false
           },
-          series: series,
+          //series: series,
           xAxis: {
             type: (message.dimensions[0].datatype === 'date' ? 'datetime' : 'category'),
             endOnTick: false,
@@ -132,19 +137,49 @@ var Timeline = module.exports = function (options, callback) {
               }
             }
           },
-          yAxis: {
-            endOnTick: false,
-            title: {
-              text: null
+          yAxis: [
+            {
+              endOnTick: false,
+              title: {
+                text: null
+              },
+              labels: {
+                enabled: true,
+                style: {
+                  color: '#b3b3b1'
+                }
+              },
+              gridLineDashStyle: 'Dot'
             },
-            labels: {
-              enabled: true,
-              style: {
-                color: '#b3b3b1'
-              }
+            {
+              endOnTick: false,
+              title: {
+                text: null
+              },
+              labels: {
+                enabled: true,
+                style: {
+                  color: '#b3b3b1'
+                }
+              },
+              gridLineDashStyle: 'Dot',
+              opposite: true
             },
-            gridLineDashStyle: 'Dot'
-          },
+            {
+              endOnTick: false,
+              title: {
+                text: null
+              },
+              labels: {
+                enabled: true,
+                style: {
+                  color: 'red'
+                }
+              },
+              gridLineDashStyle: 'Dot',
+              opposite: true
+            }
+          ],
           legend: {enabled: false},
           credits: {enabled: false},
           exporting: {enabled: true},
@@ -176,6 +211,17 @@ var Timeline = module.exports = function (options, callback) {
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
 
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
+        series = self.formatSeries(series);
+        var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
+
+        series.forEach(function (ser) {
+          self.chart.addSeries(ser, false, false);
+        });
+        self.chart.redraw();
+        self.chart.reflow();
+
+
         if (self.options.onDraw) {
           joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
           window[self.options.onDraw](self.options.$container, self);
@@ -185,6 +231,8 @@ var Timeline = module.exports = function (options, callback) {
           return callback(null);
       }
       else if (self.options.query.realtime) { //we're dealing with realtime
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
+        series = self.formatSeries(series);
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -221,14 +269,19 @@ var Timeline = module.exports = function (options, callback) {
         });
       }
       else { //new data, draw from scretch'
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
+        series = self.formatSeries(series);
         series.forEach(function (ser, index) {
-          if (self.chart.series[index]) {
-            self.chart.series[index].remove(false);
-          }
-
-          self.chart.addSeries(ser, false, false);
+          if (self.chart.series[index])
+            self.chart.series[index].update(ser, false);
+          else
+            self.chart.addSeries(ser, false, false);
         });
+        while (self.chart.series.length > series.length) {
+          self.chart.series[self.chart.series.length - 1].remove(false);
+        }
         self.chart.redraw();
+        self.chart.reflow();
       }
     });
   };

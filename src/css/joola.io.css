@@ -541,7 +541,15 @@
   content: "";
   height: 25px;
   position: absolute;
-  background: rgb(245, 245, 245) url("https://localhost:8081/img/caret.png") center no-repeat;
+  background: rgb(245, 245, 245) url("https://localhost:8081/img/arrow_down.png") center no-repeat;
+  width: 25px;
+}
+
+.jio-metricpicker-wrapper button.btn.active::after {
+  content: "";
+  height: 25px;
+  position: absolute;
+  background: rgb(245, 245, 245) url("https://localhost:8081/img/arrow_up.png") center no-repeat;
   width: 25px;
 }
 
