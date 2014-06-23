@@ -13507,6 +13507,10 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
+    case parser.BINARY_ACK:
+      this.onack(packet);
+      break;
+
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -13555,8 +13559,10 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
+
+    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: parser.ACK,
+      type: type,
       id: id,
       data: args
     });
@@ -17473,6 +17479,7 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
+  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -17524,6 +17531,14 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
+/**
+ * Packet type `binary ack`. For acks with binary arguments.
+ *
+ * @api public
+ */
+
+exports.BINARY_ACK = 6;
+
 exports.Encoder = Encoder
 
 /**
@@ -17546,7 +17561,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -17571,7 +17586,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -17657,7 +17672,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -17703,7 +17718,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -20523,10 +20538,12 @@ joolaio.timezone = function (tz) {
 
 
 var
-  util = require('util');
+  util = require('util'),
+  _ = require('underscore');
 
 var common = util;
 common._id = 'common';
+common._ = _;
 
 module.exports = exports = common;
 common.extend = common._extend;
@@ -20624,7 +20641,7 @@ common.parseQueryString = function (qs, key) {
   }
   return key;
 };
-},{"./modifiers":98,"crypto":22,"moment":47,"util":17}],97:[function(require,module,exports){
+},{"./modifiers":98,"crypto":22,"moment":47,"underscore":90,"util":17}],97:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -21260,7 +21277,6 @@ var Canvas = module.exports = function (options, callback) {
       self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
 
       self.options.datepicker.$interval.on('change', function (e, data) {
-        console.log('interval change', e, data.dataId, data.$container);
         self.options.datepicker._interval = data.$container.attr('data-id');
         self.emit('intervalchange', data.dataId);
 
@@ -21764,7 +21780,6 @@ var DatePicker = module.exports = function (options, callback) {
       }
     });
 
-
     $('.datepicker').find('a[href="#"]').each(function (index, item) {
       $(this).on('click', function (event) {
         event.stopPropagation();
@@ -21987,6 +22002,9 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
+        if (self.comparePeriod)
+          $picker.offset({top: $picker.offset().top+20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        else
         $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
       }
     });
@@ -22008,14 +22026,10 @@ var DatePicker = module.exports = function (options, callback) {
       self.base_todate.setMinutes(59);
       self.base_todate.setSeconds(59);
       self.base_todate.setMilliseconds(999);
-            
+
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
-
-      if (self.options.canvas){
-        self.options.canvas.emit('datechange', self);
-      }
 
       self.DateUpdate();
     });
@@ -22026,7 +22040,6 @@ var DatePicker = module.exports = function (options, callback) {
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
 
-    //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
 
     if (self.options.onDraw) {
@@ -22050,6 +22063,19 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
+
+    var $container = $(self.options.container);
+    $container.find('.datelabel.fromdate').text(_this.formatDate(_this.applied_base_fromdate));
+    $container.find('.datelabel.todate').text(_this.formatDate(_this.applied_base_todate));
+
+    if (_this.comparePeriod) {
+      $container.find('.compare').show();
+      $container.find('.datelabel.compare.fromdate').text(_this.formatDate(_this.applied_compare_fromdate));
+      $container.find('.datelabel.compare.todate').text(_this.formatDate(_this.applied_compare_todate));
+    }
+    else
+      $container.find('.compare').hide();
+
     $(self).trigger("datechange", options);
     $(joolaio).trigger("datechange", options);
   };
@@ -24618,15 +24644,17 @@ var Timeline = module.exports = function (options, callback) {
       '  <div class="clear"></div>' +
       '</div>');
 
+    var $container = $($html.find('.controls'));
     if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
-      var $container = $($html.find('.controls'));
       var $picker = $('<div class="jio timeline metric picker"></div>');
       var pickerOptions = {
         selected: self.options.query.metrics[0]
       };
       $picker.MetricPicker(pickerOptions);
       $container.append($picker);
-
+    }
+    if ((self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled)) {
+      $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
       var secondaryPickerOptions = {};
       $secondaryPicker.MetricPicker(secondaryPickerOptions);
@@ -24647,7 +24675,6 @@ var Timeline = module.exports = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
 
@@ -24838,6 +24865,10 @@ var Timeline = module.exports = function (options, callback) {
         }
         self.chart.redraw();
         self.chart.reflow();
+      }
+      if (self.options.onUpdate) {
+        joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
+        window[self.options.onUpdate](self.options.$container, self, series);
       }
     });
   };
@@ -25212,7 +25243,8 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
     series[index] = {
       name: metric.name,
       data: [],
-      yAxis: index
+      yAxis: index,
+      turboThreshold: documents.length + 10
     };
 
     documents.forEach(function (document) {
@@ -25237,7 +25269,6 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
       }
     });
   });
-  console.log(series);
   return series;
 };
 
@@ -25254,9 +25285,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });

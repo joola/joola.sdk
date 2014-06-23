@@ -82,7 +82,6 @@ var Canvas = module.exports = function (options, callback) {
       self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
 
       self.options.datepicker.$interval.on('change', function (e, data) {
-        console.log('interval change', e, data.dataId, data.$container);
         self.options.datepicker._interval = data.$container.attr('data-id');
         self.emit('intervalchange', data.dataId);
 

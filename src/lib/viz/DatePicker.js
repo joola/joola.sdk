@@ -392,7 +392,6 @@ var DatePicker = module.exports = function (options, callback) {
       }
     });
 
-
     $('.datepicker').find('a[href="#"]').each(function (index, item) {
       $(this).on('click', function (event) {
         event.stopPropagation();
@@ -615,6 +614,9 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
+        if (self.comparePeriod)
+          $picker.offset({top: $picker.offset().top+20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        else
         $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
       }
     });
@@ -636,14 +638,10 @@ var DatePicker = module.exports = function (options, callback) {
       self.base_todate.setMinutes(59);
       self.base_todate.setSeconds(59);
       self.base_todate.setMilliseconds(999);
-            
+
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
-
-      if (self.options.canvas){
-        self.options.canvas.emit('datechange', self);
-      }
 
       self.DateUpdate();
     });
@@ -654,7 +652,6 @@ var DatePicker = module.exports = function (options, callback) {
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
 
-    //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
 
     if (self.options.onDraw) {
@@ -678,6 +675,19 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
+
+    var $container = $(self.options.container);
+    $container.find('.datelabel.fromdate').text(_this.formatDate(_this.applied_base_fromdate));
+    $container.find('.datelabel.todate').text(_this.formatDate(_this.applied_base_todate));
+
+    if (_this.comparePeriod) {
+      $container.find('.compare').show();
+      $container.find('.datelabel.compare.fromdate').text(_this.formatDate(_this.applied_compare_fromdate));
+      $container.find('.datelabel.compare.todate').text(_this.formatDate(_this.applied_compare_todate));
+    }
+    else
+      $container.find('.compare').hide();
+
     $(self).trigger("datechange", options);
     $(joolaio).trigger("datechange", options);
   };

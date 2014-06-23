@@ -10,16 +10,18 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
 var
-  util = require('util');
+  util = require('util'),
+  _ = require('underscore');
 
 var common = util;
 common._id = 'common';
 
 module.exports = exports = common;
 common.extend = common._extend;
+
 common.moment = require('moment');
+common._ = _;
 
 require('./modifiers');
 

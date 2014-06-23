@@ -161,7 +161,8 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
     series[index] = {
       name: metric.name,
       data: [],
-      yAxis: index
+      yAxis: index,
+      turboThreshold: documents.length + 10
     };
 
     documents.forEach(function (document) {
@@ -186,7 +187,6 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
       }
     });
   });
-  console.log(series);
   return series;
 };
 
@@ -203,9 +203,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });

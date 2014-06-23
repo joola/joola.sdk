@@ -62,15 +62,17 @@ var Timeline = module.exports = function (options, callback) {
       '  <div class="clear"></div>' +
       '</div>');
 
+    var $container = $($html.find('.controls'));
     if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
-      var $container = $($html.find('.controls'));
       var $picker = $('<div class="jio timeline metric picker"></div>');
       var pickerOptions = {
         selected: self.options.query.metrics[0]
       };
       $picker.MetricPicker(pickerOptions);
       $container.append($picker);
-
+    }
+    if ((self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled)) {
+      $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
       var secondaryPickerOptions = {};
       $secondaryPicker.MetricPicker(secondaryPickerOptions);
@@ -91,7 +93,6 @@ var Timeline = module.exports = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
 
@@ -282,6 +283,10 @@ var Timeline = module.exports = function (options, callback) {
         }
         self.chart.redraw();
         self.chart.reflow();
+      }
+      if (self.options.onUpdate) {
+        joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
+        window[self.options.onUpdate](self.options.$container, self, series);
       }
     });
   };
