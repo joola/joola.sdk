@@ -75,6 +75,8 @@ var Timeline = module.exports = function (options, callback) {
       $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
       var secondaryPickerOptions = {};
+      if (self.options.query.metrics.length > 1)
+        secondaryPickerOptions.selected = self.options.query.metrics[1];
       $secondaryPicker.MetricPicker(secondaryPickerOptions);
 
       $container.append($secondaryPicker);

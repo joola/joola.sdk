@@ -43,6 +43,7 @@ var MetricPicker = module.exports = function (options, callback) {
     var $html = $('' +
       '<div class="jio-metricpicker-wrapper">\n' +
       '  <button class="btn jio-metricpicker-button"></button>' +
+      '  <div class="jio-metricpicker-container"></div>' +
       '  <div class="clear"></div>' +
       '</div>\n');
 
@@ -55,17 +56,104 @@ var MetricPicker = module.exports = function (options, callback) {
     if (!self.drawn) {
       self.options.$container.append(self.options.template || self.template());
 
-      if (typeof callback === 'function')
-        return callback(null, self);
+      if (!self.options.metrics.length > 0 || (self.options.metrics && !self.options.metrics.length === 0))
+        joola.metrics.list(function (err, list) {
+          if (err)
+            throw err;
+
+          var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
+          var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
+
+          var mOpen = false;
+          var mSkipOne = false;
+          var mlasttarget = null;
+
+          list.forEach(function (metric) {
+            var collection = {key: metric.collection};
+
+            var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
+            $li.off('click');
+            $li.on('click', function (e) {
+              e.stopPropagation();
+              var $placeholder = $('#' + $metricsPopup.attr('data-target'));
+              $placeholder.attr('data-selected', collection.key + '.' + metric.key);
+
+              var $content = metric.name;
+              $placeholder.html($content);
+              $placeholder.addClass('active');
+              $('.metricsPopup').removeClass('active');
+              mOpen = false;
+              mlasttarget = null;
+
+              joola.events.emit('playgroundRedraw');
+            });
+            $ul.append($li);
+          });
+
+          $btn.on('click', function (e) {
+            console.log('click');
+            var $this = $(this);
+            e.stopPropagation();
+            if (mOpen && mlasttarget == this.id) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+            }
+            else if (mSkipOne) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+              mSkipOne = false;
+            }
+            else {
+              $ul.addClass('active');
+              mlasttarget = this.id;
+              mOpen = true;
+            }
+            var offset = $btn.position();
+            $ul.css('top', offset.top + $btn.outerHeight() - 1);
+            $ul.css('left', offset.left);
+            $ul.find('ul.active').removeClass('active');
+
+            $ul.attr('data-target', this.id);
+
+            //set selected
+            $ul.find('li').removeClass('active');
+            if ($this.attr('data-selected') && $this.attr('data-selected').length > 0) {
+              var $li = $($ul.find('li[data-member="' + $this.attr('data-selected') + '"]')[0]);
+              $li.addClass('active');
+              $li.parent().addClass('active');
+            }
+          });
+
+          $ul.on('click', function (e) {
+            e.stopPropagation();
+          });
+          $('body').on('click', function () {
+            $ul.removeClass('active');
+          });
+
+          $btn.on('click', function () {
+            var $this = $(this);
+            $this.toggleClass('active');
+          });
+
+          if (typeof callback === 'function')
+            return callback(null, self);
+        });
+      else {
+        if (typeof callback === 'function')
+          return callback(null, self);
+      }
     }
     else {
 
     }
 
     if (self.options.selected)
-      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '<span class="caret"></span>');
+      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
     else
-      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '<span class="caret"></span>');
+      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
   };
 
   //here we go

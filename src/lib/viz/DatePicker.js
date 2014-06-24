@@ -110,7 +110,7 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_todate = null;
 
   this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
-  this.min_date.setMonth(this.min_date.getMonth() - 6);
+  this.min_date.setMonth(this.min_date.getMonth() - 12);
   this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
 
   if (options.endDate)
@@ -614,10 +614,14 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
-        if (self.comparePeriod)
-          $picker.offset({top: $picker.offset().top+20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        if (!self.pickerOffset)
+          self.pickerOffset = $picker.offset().top ;
+        if (self.comparePeriod) {
+          $picker.offset({top: self.pickerOffset + 20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+          console.log('compare period2', self.comparePeriod);
+        }
         else
-        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+          $picker.offset({top: self.pickerOffset, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
       }
     });
     $table.click(function (e) {

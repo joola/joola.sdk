@@ -489,6 +489,194 @@
   border-bottom: #CCC solid 1px;
 }
 
+[jio-domain="joolaio"] .datebox.jcontainer {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(239, 239, 239);
+  cursor: pointer;
+  position: relative;
+  z-index: 19;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  width: auto;
+}
+
+[jio-domain="joolaio"] .datebox.jcontainer .datetable .dates {
+  background-color: rgb(245, 245, 245);
+  padding: 3px;
+  padding-bottom: 2px;
+  padding-left: 8px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[jio-domain="joolaio"] .datebox.jcontainer .datetable .dates .datelabel {
+  font-size: .875em;
+}
+
+[jio-domain="joolaio"] .datebox.jcontainer .datetable .dropdownmarker {
+  padding-left: 18px;
+  border-radius: 0 5px 5px 0;
+  -moz-border-radius: 0 5px 5px 0;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+}
+
+[jio-domain="joolaio"] .datebox.jcontainer .datetable .dropdownmarker {
+  background: rgb(245, 245, 245) url("http://localhost:8080/img/arrow_down.png") no-repeat 50% 50%;
+  width: 25px;
+  margin-right: 5px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[jio-type="datepicker"] .datebox.jcontainer.expanded .datetable .dropdownmarker {
+  background: rgb(245, 245, 245) url("http://localhost:8080/img/arrow_up.png") no-repeat 50% 50%;
+  width: 25px;
+  margin-right: 5px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[jio-type="datepicker"] .picker .wrapper .calendars {
+  padding-top: 5px;
+}
+
+[jio-type="datepicker"] .picker .wrapper .calendars .datetable-prev div {
+  padding-left: 0;
+}
+
+[jio-domain="joolaio"] .picker .wrapper .calendars .datetable-next div {
+  padding-right: 0;
+}
+
+[jio-type="datepicker"] .picker .wrapper .calendars .datetable-prev div, [jio-domain="joolaio"] .picker .wrapper .calendars .datetable-next div {
+  padding-top: 8px;
+  height: 28px;
+}
+
+[jio-type="datepicker"] .ui-datepicker-title {
+  height: 28px;
+  color: rgb(102, 102, 102);
+  padding-top: 3px;
+  font-weight: 600;
+}
+
+[jio-type="datepicker"] .optionscontainer .customdate {
+  display: none;
+}
+
+[jio-type="datepicker"] .optionscontainer .divider {
+  display: none;
+}
+
+[jio-type="datepicker"] .daterange {
+  padding-left: 0;
+}
+
+[jio-type="datepicker"] .picker .wrapper .control .optionscontainer .daterange .dateoption {
+  border: rgb(204, 204, 204) solid 1px;
+  cursor: pointer;
+  width: 7em;
+  padding: 2px;
+  padding-left: 5px;
+  margin-bottom: 6px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-top: 2px;
+}
+
+[jio-type="datepicker"] .picker .wrapper .control .optionscontainer .daterange .dateoption.active {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+[jio-type="datepicker"] .ui-datepicker-calendar th {
+  font-weight: 600;
+}
+
+[jio-type="datepicker"] .daycell a {
+  color: rgb(0, 136, 204);
+  border-bottom: 0;
+}
+
+[jio-type="datepicker"] .optionscontainer input, [jio-type="datepicker"] .optionscontainer textarea {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+
+[jio-type="datepicker"] .optionscontainer .compareoption {
+  font-weight: 300 !important;
+}
+
+[jio-type="datepicker"] ._buttons {
+  bottom: 15px;
+  position: absolute;
+  right: 25px;
+}
+
+[jio-type="datepicker"] button.black {
+  background-color: rgb(109, 109, 109);
+  background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, rgb(109, 109, 109)), color-stop(100%, rgb(26, 26, 26)));
+  background-image: -webkit-linear-gradient(top, rgb(109, 109, 109), rgb(26, 26, 26));
+  background-image: -moz-linear-gradient(to bottom, #6d6d6d, #1a1a1a);
+  background-image: -o-linear-gradient(top, #6d6d6d, #1a1a1a);
+  background-image: linear-gradient(top, #6d6d6d, #1a1a1a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#6d6d6d', EndColorStr='#1a1a1a');
+  border: 1px solid rgb(76, 76, 76);
+  border-bottom: 0;
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  text-shadow: 0 -1px 0 rgb(39, 39, 39);
+}
+
+[jio-type="datepicker"] button.black:hover {
+  background-color: rgb(127, 127, 127);
+  background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, rgb(127, 127, 127)), color-stop(100%, rgb(26, 26, 26)));
+  background-image: -webkit-linear-gradient(top, rgb(127, 127, 127), rgb(26, 26, 26));
+  background-image: -moz-linear-gradient(to bottom, #7f7f7f, #1a1a1a);
+  background-image: -o-linear-gradient(top, #7f7f7f, #1a1a1a);
+  background-image: linear-gradient(top, #7f7f7f, #1a1a1a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#7f7f7f', EndColorStr='#1a1a1a');
+  color: white;
+}
+
+[jio-type="datepicker"] button.black:active {
+  background-color: rgb(127, 127, 127);
+  background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, rgb(127, 127, 127)), color-stop(100%, rgb(26, 26, 26)));
+  background-image: -webkit-linear-gradient(top, rgb(127, 127, 127), rgb(26, 26, 26));
+  background-image: -moz-linear-gradient(to bottom, #7f7f7f, #1a1a1a);
+  background-image: -o-linear-gradient(top, #7f7f7f, #1a1a1a);
+  background-image: linear-gradient(top, #7f7f7f, #1a1a1a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#7f7f7f', EndColorStr='#1a1a1a');
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgb(76, 76, 76);
+  border-bottom: 0;
+}
+
+[jio-type="datepicker"] button.small {
+  font-size: .875em;
+  height: 28px;
+  line-height: 26px;
+  padding: 1px 10px;
+}
+
+[jio-type="datepicker"] .optionscontainer .apply {
+  font-family: "Signika", helvetica, arial, sans-serif;
+  margin-top: -5px;
+  text-transform: uppercase;
+}
+
+[jio-type="datepicker"] .optionscontainer .cancel {
+  text-decoration: underline;
+  color: rgb(34, 68, 187);
+  cursor: pointer;
+  padding-left: 10px;
+}
+
 .unselectable {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
@@ -532,24 +720,39 @@
   height: 28px;
   line-height: 25px;
   padding: 1px 10px;
-  padding-right: 25px;
+  padding-right: 30px;
   cursor: pointer;
+
+  border-radius: 5px;
 }
 
 .jio-metricpicker-wrapper button.btn::after {
   content: "";
   height: 25px;
   position: absolute;
-  background: rgb(245, 245, 245) url("https://localhost:8081/img/arrow_down.png") center no-repeat;
+  background: rgb(245, 245, 245) url("http://localhost:8080/img/arrow_down.png") center no-repeat;
   width: 25px;
+  margin-left: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  border-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+
 }
 
 .jio-metricpicker-wrapper button.btn.active::after {
   content: "";
   height: 25px;
   position: absolute;
-  background: rgb(245, 245, 245) url("https://localhost:8081/img/arrow_up.png") center no-repeat;
+  background: rgb(245, 245, 245) url("http://localhost:8080/img/arrow_up.png") center no-repeat;
   width: 25px;
+  margin-left: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  border-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
 }
 
 [jio-domain="joolaio"] .caret {
@@ -564,6 +767,70 @@
   float: left;
   padding-top: 5px;
 }
+
+.jio-metricpicker-container {
+  position: absolute;
+  width: 196px;
+  border: 1px solid;
+  font-size: 13px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: none;
+  background: #efefef;
+
+  border-color: #7b98e8;
+  color: #2f67b4;
+  cursor: default;
+
+  z-index: 999;
+}
+
+.jio-metricpicker-container.active {
+  display: block;
+}
+
+.jio-metricpicker-container div.metricOption {
+  cursor: pointer;
+  width: 155px;
+
+  background-color: #c5dcfe;
+  border-color: #2f67b4;
+  color: #2f67b4;
+  border: 1px solid;
+
+  border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+  font-weight: bold;
+  height: 30px;
+  margin: 3px 10px 3px 0;
+  padding: 5px;
+  text-align: left;
+
+  margin-left: 14px;
+}
+
+.jio-metricpicker-container div.metricOption:hover {
+  background-color: #6faefd;
+}
+
+.jio-metricpicker-container div.metricOption:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.jio-metricpicker-container div.metricOption.active {
+  background-color: #6faefd;
+  color: white;
+}
+
 [jio-domain="joolaio"] {
   margin: 0;
   padding: 0;
