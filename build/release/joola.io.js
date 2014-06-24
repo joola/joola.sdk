@@ -13507,6 +13507,10 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
+    case parser.BINARY_ACK:
+      this.onack(packet);
+      break;
+
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -13555,8 +13559,10 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
+
+    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: parser.ACK,
+      type: type,
       id: id,
       data: args
     });
@@ -17473,6 +17479,7 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
+  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -17524,6 +17531,14 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
+/**
+ * Packet type `binary ack`. For acks with binary arguments.
+ *
+ * @api public
+ */
+
+exports.BINARY_ACK = 6;
+
 exports.Encoder = Encoder
 
 /**
@@ -17546,7 +17561,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -17571,7 +17586,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -17657,7 +17672,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -17703,7 +17718,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -20830,6 +20845,31 @@ JSON.stringify = function (obj) {
   return result;
 };
 */
+
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+  // if the other array is a falsy value, return
+  if (!array)
+    return false;
+
+  // compare lengths - can save a lot of time 
+  if (this.length != array.length)
+    return false;
+
+  for (var i = 0, l=this.length; i < l; i++) {
+    // Check if we have nested arrays
+    if (this[i] instanceof Array && array[i] instanceof Array) {
+      // recurse into the nested arrays
+      if (!this[i].equals(array[i]))
+        return false;
+    }
+    else if (this[i] != array[i]) {
+      // Warning - two different object instances will never be equal: {x:20} != {x:20}
+      return false;
+    }
+  }
+  return true;
+}   
 },{}],99:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  *  @title joola.io
@@ -21017,8 +21057,9 @@ joolaio.init = function (options, callback) {
       }
 
       //css
+      var css;
       if (!joolaio.options.skipcss) {
-        var css = document.createElement('link');
+        css = document.createElement('link');
         expected++;
         css.onload = function () {
           //jQuery.noConflict(true);
@@ -21031,6 +21072,19 @@ joolaio.init = function (options, callback) {
         if (expected === 0)
           return done('none');
       }
+      
+      css = document.createElement('link');
+      expected++;
+      css.onload = function () {
+        //jQuery.noConflict(true);
+        //done('css');
+      };
+      css.rel = 'stylesheet';
+      css.href = '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css';
+      document.head.appendChild(css);
+      done('css');
+      if (expected === 0)
+        return done('none');
     }
     else {
       return done('not browser');
@@ -22811,6 +22865,9 @@ Metric.meta = {
  **/
 
 var ce = require('cloneextend');
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
 var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
@@ -22825,6 +22882,10 @@ var MetricPicker = module.exports = function (options, callback) {
   }
 
   var self = this;
+  self.events = new EventEmitter2({wildcard: true, newListener: true});
+
+  self.on = self.events.on;
+  self.emit = self.events.emit;
 
   this._id = 'metricpicker';
   this.uuid = joolaio.common.uuid();
@@ -22845,11 +22906,17 @@ var MetricPicker = module.exports = function (options, callback) {
     var $html = $('' +
       '<div class="jio-metricpicker-wrapper">\n' +
       '  <button class="btn jio-metricpicker-button"></button>' +
-      '  <div class="jio-metricpicker-container"></div>' +
+      '  <button class="close">×</button>' +
+      '  <div class="jio-metricpicker-container">' +
+      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+      '    <div class="clear"></div>' +
+      '  </div>' +
       '  <div class="clear"></div>' +
       '</div>\n');
 
-    //<div class="metricscontainer" style="display: block;"><div></div><div class="search input-prepend"><input type="text" class="quicksearch span2"><span class="add-on"><i class="searchicon icon-search"></i></span></div><ul class="categorylist"><li class="node  level_0 on" style="padding-left: 0px; background-image: none;"><div class="category" style="display: none;">undefined</div><ul class="jcontainer on"><li class="node leaf level_1" data-metricname="Bet Count" data-metricid="gamerounds.betcount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count" data-text="Total bets placed. [actual]: sum(gr_betcount)." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Losing Bets Count" data-metricid="gamerounds.losingbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Losing Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Losing Bets Count" data-text="Total number of losing bets. [actual]: case when gr_winlose = 0 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Winning Bets Count" data-metricid="gamerounds.winningbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Winning Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Winning Bets Count" data-text="Total number of winning bets. [actual]: case when gr_winlose = 1 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Session Count" data-metricid="gamesessions.sessioncount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Session Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Session Count" data-text="Total Sessions. [actual]: sum(1) as sessioncount, this will count all valid gamesessions." title=""></i> </div></div></div></li><li class="node leaf level_1 on" data-metricname="Player Count" data-metricid="calc.playercount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Player Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Player Count" data-text="Number of unique players. [actual]: For all valid sessions take the number of unique players who played." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Session" data-metricid="calc.betspersession" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Session</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Session" data-text="Average number of bets per session. [actual]: betcount / sessioncount" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Player" data-metricid="calc.betsperplayer" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Player</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Player" data-text="Average number of bets per session. [actual]: betcount / playercount" title=""></i> </div></div></div></li></ul></li></ul></div>
+    if (this.options.fixed) {
+      $html.find('.close').remove();
+    }
 
     return $html;
   };
@@ -22857,14 +22924,14 @@ var MetricPicker = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     if (!self.drawn) {
       self.options.$container.append(self.options.template || self.template());
-
-      if (!self.options.metrics.length > 0 || (self.options.metrics && !self.options.metrics.length === 0))
+      var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
+      var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
+      var $close = $(self.options.$container.find('.close'));
+      var $search = $(self.options.$container.find('.quicksearch'));
+      if (self.options.metrics.length === 0)
         joola.metrics.list(function (err, list) {
           if (err)
             throw err;
-
-          var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
-          var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
 
           var mOpen = false;
           var mSkipOne = false;
@@ -22876,26 +22943,48 @@ var MetricPicker = module.exports = function (options, callback) {
             var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
+              var $this = $(this);
               e.stopPropagation();
-              var $placeholder = $('#' + $metricsPopup.attr('data-target'));
-              $placeholder.attr('data-selected', collection.key + '.' + metric.key);
 
+              if ($this.hasClass('disabled'))
+                return;
+
+              self.options.selected = metric;
               var $content = metric.name;
-              $placeholder.html($content);
-              $placeholder.addClass('active');
-              $('.metricsPopup').removeClass('active');
+              $btn.html($content);
+              $btn.removeClass('active');
+              $ul.removeClass('active');
               mOpen = false;
               mlasttarget = null;
 
-              joola.events.emit('playgroundRedraw');
+              self.markSelected();
+
+              self.emit('change', metric);
             });
             $ul.append($li);
           });
 
+          $close.on('click', function (e) {
+            self.options.selected = null;
+            self.markSelected();
+            self.emit('change', null);
+          });
+
+          $search.keyup(function () {
+            var $this = $(this);
+            var val = $this.val();
+            if (val.length >= 2) {
+              $ul.find('div[data-member]').hide();
+              $ul.find('div[data-member*="' + val + '"]').show();
+            }
+            else
+              $ul.find('div[data-member]').show();
+          });
+
           $btn.on('click', function (e) {
-            console.log('click');
             var $this = $(this);
             e.stopPropagation();
+
             if (mOpen && mlasttarget == this.id) {
               $ul.removeClass('active');
               mlasttarget = null;
@@ -22920,19 +23009,17 @@ var MetricPicker = module.exports = function (options, callback) {
             $ul.attr('data-target', this.id);
 
             //set selected
-            $ul.find('li').removeClass('active');
-            if ($this.attr('data-selected') && $this.attr('data-selected').length > 0) {
-              var $li = $($ul.find('li[data-member="' + $this.attr('data-selected') + '"]')[0]);
-              $li.addClass('active');
-              $li.parent().addClass('active');
-            }
+            self.markSelected();
           });
 
           $ul.on('click', function (e) {
             e.stopPropagation();
           });
           $('body').on('click', function () {
+            $btn.removeClass('active');
             $ul.removeClass('active');
+            mlasttarget = null;
+            mOpen = false;
           });
 
           $btn.on('click', function () {
@@ -22952,10 +23039,29 @@ var MetricPicker = module.exports = function (options, callback) {
 
     }
 
-    if (self.options.selected)
-      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
-    else
-      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+    self.markSelected = function () {
+      $ul.find('div').removeClass('active');
+      if (self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
+        self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.close').show();
+      }
+      else {
+        self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+        self.options.$container.find('.close').hide();
+      }
+
+      $ul.find('div[data-member]').removeClass('disabled');
+      if (self.options.disabled) {
+        if (!Array.isArray(self.options.disabled))
+          self.options.disabled = [self.options.disabled];
+
+        self.options.disabled.forEach(function (disable) {
+          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+        });
+      }
+    };
+    self.markSelected();
   };
 
   //here we go
@@ -23143,7 +23249,7 @@ MetricPicker.meta = {
     }
   }
 };
-},{"./_proto":111,"cloneextend":1}],105:[function(require,module,exports){
+},{"./_proto":111,"cloneextend":1,"eventemitter2":2}],105:[function(require,module,exports){
 /**
  *  @title joola.io
  *  @overview the open-source data analytics framework
@@ -24324,6 +24430,11 @@ var Table = module.exports = function (options, callback) {
         $tbody.empty();
 
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        if (true) {
+          var $th = $('<th class="jio tbl caption checkbox"></th>');
+
+          $head_tr.append($th);
+        }
         message.dimensions.forEach(function (d) {
           var $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
@@ -24340,9 +24451,26 @@ var Table = module.exports = function (options, callback) {
           ser.data.forEach(function (point) {
             var $tr = $('<tr></tr>');
             var index = 0;
+            var $chk;
+            if (true) {
+              var $td = $('<td class="jio tbl value checkbox"><input type="checkbox"></td>');
+              $chk = $td.find('input')
+              $tr.append($td);
+            }
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
-              $td.text(point[index++]);
+              var value = point[index++];
+              $td.text(value);
+              if ($chk.length > 0) {
+                $chk.on('click', function (e) {
+                  if (self.options.canvas) {
+                    if (this.checked)
+                      self.options.canvas.emit('table:checked', self, self.options.$container, d, value);
+                    else
+                      self.options.canvas.emit('table:unchecked', self, self.options.$container, d, value);
+                  }
+                });
+              }
               $tr.append($td);
             });
             message.metrics.forEach(function (m) {
@@ -24447,9 +24575,9 @@ var Table = module.exports = function (options, callback) {
 
       if (series[0].data.length > 0) {
         //if ($table.length)
-          //self.tablesort.refresh();
+        //self.tablesort.refresh();
 
-        var limit = self.options.limit || 5;
+        var limit = self.options.limit || 10;
         trs = self.options.$container.find('tbody tr');
         for (var z = 0; z < trs.length; z++) {
           var elem = trs[z];
@@ -24667,8 +24795,9 @@ Table.meta = {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var moment = require('moment');
-var _ = require('underscore');
+var
+  moment = require('moment'),
+  _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
   if (!callback)
@@ -24702,6 +24831,7 @@ var Timeline = module.exports = function (options, callback) {
       }
     }
   };
+
   this.chartDrawn = false;
   this.realtimeQueries = [];
 
@@ -24725,32 +24855,87 @@ var Timeline = module.exports = function (options, callback) {
     if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
       var $picker = $('<div class="jio timeline metric picker"></div>');
       var pickerOptions = {
-        selected: self.options.query.metrics[0]
+        fixed: true,
+        selected: self.options.query[0].metrics[0]
       };
-      $picker.MetricPicker(pickerOptions);
+      if (self.options.query[0].metrics.length > 1)
+        pickerOptions.disabled = self.options.query[0].metrics[1];
+
+      $picker.MetricPicker(pickerOptions, function (err, ref) {
+        if (err)
+          throw err;
+
+        self.options.pickers.main.ref = ref;
+        ref.on('change', function (metric) {
+          self.options.query[0].metrics[0] = metric;
+          self.draw();
+          if (self.options.pickers.secondary && self.options.pickers.secondary.ref)
+            self.options.pickers.secondary.ref.options.disabled = metric;
+        });
+      });
       $container.append($picker);
     }
     if ((self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled)) {
       $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
-      var secondaryPickerOptions = {};
-      if (self.options.query.metrics.length > 1)
-        secondaryPickerOptions.selected = self.options.query.metrics[1];
-      $secondaryPicker.MetricPicker(secondaryPickerOptions);
+      var secondaryPickerOptions = {
+      };
+
+      secondaryPickerOptions.disabled = self.options.query[0].metrics[0];
+      if (self.options.query[0].metrics.length > 1)
+        secondaryPickerOptions.selected = self.options.query[0].metrics[1];
+      $secondaryPicker.MetricPicker(secondaryPickerOptions, function (err, ref) {
+        if (err)
+          throw err;
+
+        self.options.pickers.secondary.ref = ref;
+        ref.on('change', function (metric) {
+          if (metric)
+            self.options.query[0].metrics[1] = metric;
+          else
+            self.options.query[0].metrics = [self.options.query[0].metrics[0]];
+          self.draw();
+          self.options.pickers.main.ref.options.disabled = metric;
+        });
+      });
 
       $container.append($secondaryPicker);
+    }
+
+    if (self.options.canvas) {
+      self.options.canvas.on('table:checked', function (ref, container, d, value) {
+        var _q = joola.common.extend({}, self.options.query[0]);
+        _q.filter = [
+          [d.key, 'eq', value]
+        ];
+        self.options.query.push(_q);
+        self.draw();
+      });
+      self.options.canvas.on('table:unchecked', function (ref, container, d, value) {
+        self.options.query.forEach(function (q, i) {
+          if (q.filter)
+            if (q.filter && q.filter[0].equals([d.key, 'eq', value])) {
+              self.options.query.splice(i, 1);
+            }
+        });
+        self.draw();
+      });
     }
     return $html;
   };
 
-  this.formatSeries = function (series) {
+  this.formatSeries = function (series, ordinal) {
     series.forEach(function (ser, index) {
-      series[index].color = joolaio.colors[index];
+      series[index].color = joolaio.colors[(ordinal * series.length) + index];
     });
     return series;
   };
 
   this.draw = function (options, callback) {
+    if (!Array.isArray(self.options.query)) {
+      self.options.query = [self.options.query];
+    }
+
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
@@ -24759,10 +24944,12 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
+      var _message = message;
       message = message[0];
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
       var series = null;
+      var allSeries = [];
       if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
@@ -24801,7 +24988,7 @@ var Timeline = module.exports = function (options, callback) {
           },
           yAxis: [
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -24814,7 +25001,7 @@ var Timeline = module.exports = function (options, callback) {
               gridLineDashStyle: 'Dot'
             },
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -24828,7 +25015,7 @@ var Timeline = module.exports = function (options, callback) {
               opposite: true
             },
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -24873,16 +25060,10 @@ var Timeline = module.exports = function (options, callback) {
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
 
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
         var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-
-        series.forEach(function (ser) {
-          self.chart.addSeries(ser, false, false);
-        });
-        self.chart.redraw();
-        self.chart.reflow();
-
+        allSeries = allSeries.concat(series);
 
         if (self.options.onDraw) {
           joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
@@ -24892,9 +25073,9 @@ var Timeline = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) { //we're dealing with realtime
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
+      else if (self.options.query[0].realtime) { //we're dealing with realtime
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -24930,24 +25111,42 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
-      else { //new data, draw from scretch'
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
-        series.forEach(function (ser, index) {
-          if (self.chart.series[index])
-            self.chart.series[index].update(ser, false);
-          else
-            self.chart.addSeries(ser, false, false);
-        });
-        while (self.chart.series.length > series.length) {
-          self.chart.series[self.chart.series.length - 1].remove(false);
-        }
-        self.chart.redraw();
-        self.chart.reflow();
+      else { //new data, draw from scretch
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
+
+        allSeries = allSeries.concat(series);
       }
+
+
+      //plot additional series
+      if (_message.length > 1) {
+        for (var i = 1; i < _message.length; i++) {
+          message = _message[i];
+          series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+          series = self.formatSeries(series,i);
+          self.chart.addSeries(series, false, false);
+
+          allSeries = allSeries.concat(series);
+        }
+      }
+
+      allSeries.forEach(function (ser, index) {
+        if (self.chart.series[index])
+          self.chart.series[index].update(ser, false);
+        else
+          self.chart.addSeries(ser, false, false);
+      });
+      while (self.chart.series.length > allSeries.length) {
+        self.chart.series[self.chart.series.length - 1].remove(false);
+      }
+
+      self.chart.redraw();
+      self.chart.reflow();
+
       if (self.options.onUpdate) {
         joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
-        window[self.options.onUpdate](self.options.$container, self, series);
+        window[self.options.onUpdate](self.options.$container, self, allSeries);
       }
     });
   };
@@ -24982,15 +25181,15 @@ var Timeline = module.exports = function (options, callback) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
             //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
+            self.options.query[0].timeframe = {};
+            self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
+            self.options.query[0].timeframe.end = new Date(dates.base_todate);
 
             self.draw(self.options);
           });
 
           self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
+            self.options.query[0].interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });
         }
@@ -25258,9 +25457,12 @@ proto.fetch = function (context, query, callback) {
   }
   var _query = ce.clone(query);
 
+  if (!Array.isArray(_query))
+    _query = [_query];
+
   if (context && context.options && context.options.canvas) {
-    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
-    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+    context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query[0].interval;
+    context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query[0].timeframe;
   }
 
   //adjust offset
@@ -25286,7 +25488,7 @@ proto.fetch = function (context, query, callback) {
   joolaio.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart) {
+proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart, query, ordinal) {
   var series = [];
   if (!metrics)
     return series;
@@ -25327,6 +25529,14 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
       fillOpacity: index === 0 ? 0.2 : 0
     };
 
+    if (query.filter && query.filter.length > 0) {
+      var name = '';
+      query.filter.forEach(function (filter) {
+        name += filter[2] + ': ';
+      });
+      //name = name.substring(0, name.length - 2);
+      series[index].name = name + series[index].name;
+    }
     documents.forEach(function (document) {
       var x = document.fvalues[dimensions[0].key];
       var nameBased = true;
@@ -25365,9 +25575,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });

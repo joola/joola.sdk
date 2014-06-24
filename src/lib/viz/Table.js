@@ -93,6 +93,11 @@ var Table = module.exports = function (options, callback) {
         $tbody.empty();
 
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        if (true) {
+          var $th = $('<th class="jio tbl caption checkbox"></th>');
+
+          $head_tr.append($th);
+        }
         message.dimensions.forEach(function (d) {
           var $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
@@ -109,9 +114,26 @@ var Table = module.exports = function (options, callback) {
           ser.data.forEach(function (point) {
             var $tr = $('<tr></tr>');
             var index = 0;
+            var $chk;
+            if (true) {
+              var $td = $('<td class="jio tbl value checkbox"><input type="checkbox"></td>');
+              $chk = $td.find('input')
+              $tr.append($td);
+            }
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
-              $td.text(point[index++]);
+              var value = point[index++];
+              $td.text(value);
+              if ($chk.length > 0) {
+                $chk.on('click', function (e) {
+                  if (self.options.canvas) {
+                    if (this.checked)
+                      self.options.canvas.emit('table:checked', self, self.options.$container, d, value);
+                    else
+                      self.options.canvas.emit('table:unchecked', self, self.options.$container, d, value);
+                  }
+                });
+              }
               $tr.append($td);
             });
             message.metrics.forEach(function (m) {
@@ -216,9 +238,9 @@ var Table = module.exports = function (options, callback) {
 
       if (series[0].data.length > 0) {
         //if ($table.length)
-          //self.tablesort.refresh();
+        //self.tablesort.refresh();
 
-        var limit = self.options.limit || 5;
+        var limit = self.options.limit || 10;
         trs = self.options.$container.find('tbody tr');
         for (var z = 0; z < trs.length; z++) {
           var elem = trs[z];

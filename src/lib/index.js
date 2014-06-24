@@ -184,8 +184,9 @@ joolaio.init = function (options, callback) {
       }
 
       //css
+      var css;
       if (!joolaio.options.skipcss) {
-        var css = document.createElement('link');
+        css = document.createElement('link');
         expected++;
         css.onload = function () {
           //jQuery.noConflict(true);
@@ -198,6 +199,19 @@ joolaio.init = function (options, callback) {
         if (expected === 0)
           return done('none');
       }
+      
+      css = document.createElement('link');
+      expected++;
+      css.onload = function () {
+        //jQuery.noConflict(true);
+        //done('css');
+      };
+      css.rel = 'stylesheet';
+      css.href = '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css';
+      document.head.appendChild(css);
+      done('css');
+      if (expected === 0)
+        return done('none');
     }
     else {
       return done('not browser');

@@ -97,9 +97,12 @@ proto.fetch = function (context, query, callback) {
   }
   var _query = ce.clone(query);
 
+  if (!Array.isArray(_query))
+    _query = [_query];
+
   if (context && context.options && context.options.canvas) {
-    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
-    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+    context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query[0].interval;
+    context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query[0].timeframe;
   }
 
   //adjust offset
@@ -125,7 +128,7 @@ proto.fetch = function (context, query, callback) {
   joolaio.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart) {
+proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart, query, ordinal) {
   var series = [];
   if (!metrics)
     return series;
@@ -166,6 +169,14 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
       fillOpacity: index === 0 ? 0.2 : 0
     };
 
+    if (query.filter && query.filter.length > 0) {
+      var name = '';
+      query.filter.forEach(function (filter) {
+        name += filter[2] + ': ';
+      });
+      //name = name.substring(0, name.length - 2);
+      series[index].name = name + series[index].name;
+    }
     documents.forEach(function (document) {
       var x = document.fvalues[dimensions[0].key];
       var nameBased = true;
@@ -204,9 +215,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });

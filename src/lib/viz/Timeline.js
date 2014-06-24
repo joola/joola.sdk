@@ -8,8 +8,9 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var moment = require('moment');
-var _ = require('underscore');
+var
+  moment = require('moment'),
+  _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
   if (!callback)
@@ -43,6 +44,7 @@ var Timeline = module.exports = function (options, callback) {
       }
     }
   };
+
   this.chartDrawn = false;
   this.realtimeQueries = [];
 
@@ -66,32 +68,87 @@ var Timeline = module.exports = function (options, callback) {
     if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
       var $picker = $('<div class="jio timeline metric picker"></div>');
       var pickerOptions = {
-        selected: self.options.query.metrics[0]
+        fixed: true,
+        selected: self.options.query[0].metrics[0]
       };
-      $picker.MetricPicker(pickerOptions);
+      if (self.options.query[0].metrics.length > 1)
+        pickerOptions.disabled = self.options.query[0].metrics[1];
+
+      $picker.MetricPicker(pickerOptions, function (err, ref) {
+        if (err)
+          throw err;
+
+        self.options.pickers.main.ref = ref;
+        ref.on('change', function (metric) {
+          self.options.query[0].metrics[0] = metric;
+          self.draw();
+          if (self.options.pickers.secondary && self.options.pickers.secondary.ref)
+            self.options.pickers.secondary.ref.options.disabled = metric;
+        });
+      });
       $container.append($picker);
     }
     if ((self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled)) {
       $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
       var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
-      var secondaryPickerOptions = {};
-      if (self.options.query.metrics.length > 1)
-        secondaryPickerOptions.selected = self.options.query.metrics[1];
-      $secondaryPicker.MetricPicker(secondaryPickerOptions);
+      var secondaryPickerOptions = {
+      };
+
+      secondaryPickerOptions.disabled = self.options.query[0].metrics[0];
+      if (self.options.query[0].metrics.length > 1)
+        secondaryPickerOptions.selected = self.options.query[0].metrics[1];
+      $secondaryPicker.MetricPicker(secondaryPickerOptions, function (err, ref) {
+        if (err)
+          throw err;
+
+        self.options.pickers.secondary.ref = ref;
+        ref.on('change', function (metric) {
+          if (metric)
+            self.options.query[0].metrics[1] = metric;
+          else
+            self.options.query[0].metrics = [self.options.query[0].metrics[0]];
+          self.draw();
+          self.options.pickers.main.ref.options.disabled = metric;
+        });
+      });
 
       $container.append($secondaryPicker);
+    }
+
+    if (self.options.canvas) {
+      self.options.canvas.on('table:checked', function (ref, container, d, value) {
+        var _q = joola.common.extend({}, self.options.query[0]);
+        _q.filter = [
+          [d.key, 'eq', value]
+        ];
+        self.options.query.push(_q);
+        self.draw();
+      });
+      self.options.canvas.on('table:unchecked', function (ref, container, d, value) {
+        self.options.query.forEach(function (q, i) {
+          if (q.filter)
+            if (q.filter && q.filter[0].equals([d.key, 'eq', value])) {
+              self.options.query.splice(i, 1);
+            }
+        });
+        self.draw();
+      });
     }
     return $html;
   };
 
-  this.formatSeries = function (series) {
+  this.formatSeries = function (series, ordinal) {
     series.forEach(function (ser, index) {
-      series[index].color = joolaio.colors[index];
+      series[index].color = joolaio.colors[(ordinal * series.length) + index];
     });
     return series;
   };
 
   this.draw = function (options, callback) {
+    if (!Array.isArray(self.options.query)) {
+      self.options.query = [self.options.query];
+    }
+
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
@@ -100,10 +157,12 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
+      var _message = message;
       message = message[0];
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
       var series = null;
+      var allSeries = [];
       if (!self.chartDrawn) { //initial draw
         var chartOptions = joolaio.common.extend({
           title: {
@@ -142,7 +201,7 @@ var Timeline = module.exports = function (options, callback) {
           },
           yAxis: [
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -155,7 +214,7 @@ var Timeline = module.exports = function (options, callback) {
               gridLineDashStyle: 'Dot'
             },
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -169,7 +228,7 @@ var Timeline = module.exports = function (options, callback) {
               opposite: true
             },
             {
-              endOnTick: false,
+              endOnTick: true,
               title: {
                 text: null
               },
@@ -214,16 +273,10 @@ var Timeline = module.exports = function (options, callback) {
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
 
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
         var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-
-        series.forEach(function (ser) {
-          self.chart.addSeries(ser, false, false);
-        });
-        self.chart.redraw();
-        self.chart.reflow();
-
+        allSeries = allSeries.concat(series);
 
         if (self.options.onDraw) {
           joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
@@ -233,9 +286,9 @@ var Timeline = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) { //we're dealing with realtime
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
+      else if (self.options.query[0].realtime) { //we're dealing with realtime
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -271,24 +324,42 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
-      else { //new data, draw from scretch'
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
-        series.forEach(function (ser, index) {
-          if (self.chart.series[index])
-            self.chart.series[index].update(ser, false);
-          else
-            self.chart.addSeries(ser, false, false);
-        });
-        while (self.chart.series.length > series.length) {
-          self.chart.series[self.chart.series.length - 1].remove(false);
-        }
-        self.chart.redraw();
-        self.chart.reflow();
+      else { //new data, draw from scretch
+        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+        series = self.formatSeries(series,0);
+
+        allSeries = allSeries.concat(series);
       }
+
+
+      //plot additional series
+      if (_message.length > 1) {
+        for (var i = 1; i < _message.length; i++) {
+          message = _message[i];
+          series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart, message.query);
+          series = self.formatSeries(series,i);
+          self.chart.addSeries(series, false, false);
+
+          allSeries = allSeries.concat(series);
+        }
+      }
+
+      allSeries.forEach(function (ser, index) {
+        if (self.chart.series[index])
+          self.chart.series[index].update(ser, false);
+        else
+          self.chart.addSeries(ser, false, false);
+      });
+      while (self.chart.series.length > allSeries.length) {
+        self.chart.series[self.chart.series.length - 1].remove(false);
+      }
+
+      self.chart.redraw();
+      self.chart.reflow();
+
       if (self.options.onUpdate) {
         joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
-        window[self.options.onUpdate](self.options.$container, self, series);
+        window[self.options.onUpdate](self.options.$container, self, allSeries);
       }
     });
   };
@@ -323,15 +394,15 @@ var Timeline = module.exports = function (options, callback) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
             //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
+            self.options.query[0].timeframe = {};
+            self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
+            self.options.query[0].timeframe.end = new Date(dates.base_todate);
 
             self.draw(self.options);
           });
 
           self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
+            self.options.query[0].interval = self.options.canvas.options.datepicker._interval;
             self.draw(self.options);
           });
         }

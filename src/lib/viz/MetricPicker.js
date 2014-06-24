@@ -9,6 +9,9 @@
  **/
 
 var ce = require('cloneextend');
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
 var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
@@ -23,6 +26,10 @@ var MetricPicker = module.exports = function (options, callback) {
   }
 
   var self = this;
+  self.events = new EventEmitter2({wildcard: true, newListener: true});
+
+  self.on = self.events.on;
+  self.emit = self.events.emit;
 
   this._id = 'metricpicker';
   this.uuid = joolaio.common.uuid();
@@ -43,11 +50,17 @@ var MetricPicker = module.exports = function (options, callback) {
     var $html = $('' +
       '<div class="jio-metricpicker-wrapper">\n' +
       '  <button class="btn jio-metricpicker-button"></button>' +
-      '  <div class="jio-metricpicker-container"></div>' +
+      '  <button class="close">×</button>' +
+      '  <div class="jio-metricpicker-container">' +
+      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+      '    <div class="clear"></div>' +
+      '  </div>' +
       '  <div class="clear"></div>' +
       '</div>\n');
 
-    //<div class="metricscontainer" style="display: block;"><div></div><div class="search input-prepend"><input type="text" class="quicksearch span2"><span class="add-on"><i class="searchicon icon-search"></i></span></div><ul class="categorylist"><li class="node  level_0 on" style="padding-left: 0px; background-image: none;"><div class="category" style="display: none;">undefined</div><ul class="jcontainer on"><li class="node leaf level_1" data-metricname="Bet Count" data-metricid="gamerounds.betcount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count" data-text="Total bets placed. [actual]: sum(gr_betcount)." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Losing Bets Count" data-metricid="gamerounds.losingbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Losing Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Losing Bets Count" data-text="Total number of losing bets. [actual]: case when gr_winlose = 0 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Winning Bets Count" data-metricid="gamerounds.winningbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Winning Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Winning Bets Count" data-text="Total number of winning bets. [actual]: case when gr_winlose = 1 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Session Count" data-metricid="gamesessions.sessioncount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Session Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Session Count" data-text="Total Sessions. [actual]: sum(1) as sessioncount, this will count all valid gamesessions." title=""></i> </div></div></div></li><li class="node leaf level_1 on" data-metricname="Player Count" data-metricid="calc.playercount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Player Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Player Count" data-text="Number of unique players. [actual]: For all valid sessions take the number of unique players who played." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Session" data-metricid="calc.betspersession" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Session</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Session" data-text="Average number of bets per session. [actual]: betcount / sessioncount" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Player" data-metricid="calc.betsperplayer" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Player</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Player" data-text="Average number of bets per session. [actual]: betcount / playercount" title=""></i> </div></div></div></li></ul></li></ul></div>
+    if (this.options.fixed) {
+      $html.find('.close').remove();
+    }
 
     return $html;
   };
@@ -55,14 +68,14 @@ var MetricPicker = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     if (!self.drawn) {
       self.options.$container.append(self.options.template || self.template());
-
-      if (!self.options.metrics.length > 0 || (self.options.metrics && !self.options.metrics.length === 0))
+      var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
+      var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
+      var $close = $(self.options.$container.find('.close'));
+      var $search = $(self.options.$container.find('.quicksearch'));
+      if (self.options.metrics.length === 0)
         joola.metrics.list(function (err, list) {
           if (err)
             throw err;
-
-          var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
-          var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
 
           var mOpen = false;
           var mSkipOne = false;
@@ -74,26 +87,48 @@ var MetricPicker = module.exports = function (options, callback) {
             var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
+              var $this = $(this);
               e.stopPropagation();
-              var $placeholder = $('#' + $metricsPopup.attr('data-target'));
-              $placeholder.attr('data-selected', collection.key + '.' + metric.key);
 
+              if ($this.hasClass('disabled'))
+                return;
+
+              self.options.selected = metric;
               var $content = metric.name;
-              $placeholder.html($content);
-              $placeholder.addClass('active');
-              $('.metricsPopup').removeClass('active');
+              $btn.html($content);
+              $btn.removeClass('active');
+              $ul.removeClass('active');
               mOpen = false;
               mlasttarget = null;
 
-              joola.events.emit('playgroundRedraw');
+              self.markSelected();
+
+              self.emit('change', metric);
             });
             $ul.append($li);
           });
 
+          $close.on('click', function (e) {
+            self.options.selected = null;
+            self.markSelected();
+            self.emit('change', null);
+          });
+
+          $search.keyup(function () {
+            var $this = $(this);
+            var val = $this.val();
+            if (val.length >= 2) {
+              $ul.find('div[data-member]').hide();
+              $ul.find('div[data-member*="' + val + '"]').show();
+            }
+            else
+              $ul.find('div[data-member]').show();
+          });
+
           $btn.on('click', function (e) {
-            console.log('click');
             var $this = $(this);
             e.stopPropagation();
+
             if (mOpen && mlasttarget == this.id) {
               $ul.removeClass('active');
               mlasttarget = null;
@@ -118,19 +153,17 @@ var MetricPicker = module.exports = function (options, callback) {
             $ul.attr('data-target', this.id);
 
             //set selected
-            $ul.find('li').removeClass('active');
-            if ($this.attr('data-selected') && $this.attr('data-selected').length > 0) {
-              var $li = $($ul.find('li[data-member="' + $this.attr('data-selected') + '"]')[0]);
-              $li.addClass('active');
-              $li.parent().addClass('active');
-            }
+            self.markSelected();
           });
 
           $ul.on('click', function (e) {
             e.stopPropagation();
           });
           $('body').on('click', function () {
+            $btn.removeClass('active');
             $ul.removeClass('active');
+            mlasttarget = null;
+            mOpen = false;
           });
 
           $btn.on('click', function () {
@@ -150,10 +183,29 @@ var MetricPicker = module.exports = function (options, callback) {
 
     }
 
-    if (self.options.selected)
-      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
-    else
-      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+    self.markSelected = function () {
+      $ul.find('div').removeClass('active');
+      if (self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
+        self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.close').show();
+      }
+      else {
+        self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+        self.options.$container.find('.close').hide();
+      }
+
+      $ul.find('div[data-member]').removeClass('disabled');
+      if (self.options.disabled) {
+        if (!Array.isArray(self.options.disabled))
+          self.options.disabled = [self.options.disabled];
+
+        self.options.disabled.forEach(function (disable) {
+          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+        });
+      }
+    };
+    self.markSelected();
   };
 
   //here we go
