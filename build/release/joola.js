@@ -18110,9 +18110,7 @@ JSON.stringify = function (obj) {
 
 //THE OBJECT
 var joola = global.joola = exports;
-if (!global.hasOwnProperty('joola'))
-  global.joola = global.joola;
-
+  
 //base options
 joola.options = {
   token: null,
