@@ -1,11 +1,11 @@
 describe("system", function () {
   before(function (done) {
-    this.uid = joolaio.common.uuid();
+    this.uid = joola.common.uuid();
     done();
   });
 
   it("should get the version", function (done) {
-    joolaio.system.version(function (err, version) {
+    joola.system.version(function (err, version) {
       if (err)
         return done(err);
 
@@ -15,7 +15,7 @@ describe("system", function () {
   });
 
   it("should get the node UID", function (done) {
-    joolaio.system.nodeUID(function (err, uid) {
+    joola.system.nodeUID(function (err, uid) {
       if (err)
         return done(err);
 
@@ -25,7 +25,7 @@ describe("system", function () {
   });
 
   xit("should get the node list", function (done) {
-    joolaio.system.nodeList(function (err, list) {
+    joola.system.nodeList(function (err, list) {
       if (err)
         return done(err);
 
@@ -35,7 +35,7 @@ describe("system", function () {
   });
 
   it("should get the node details", function (done) {
-    joolaio.system.nodeDetails(function (err, details) {
+    joola.system.nodeDetails(function (err, details) {
       if (err)
         return done(err);
 
@@ -45,7 +45,7 @@ describe("system", function () {
   });
 
   xit("should list the connected clients", function (done) {
-    joolaio.system.connectedClients(function (err, clients) {
+    joola.system.connectedClients(function (err, clients) {
       if (err)
         return done(err);
 
@@ -55,7 +55,7 @@ describe("system", function () {
   });
 
   xit("should blacklist an ip", function (done) {
-    joolaio.system.blacklist('255.255.255.255', true, 0, function (err) {
+    joola.system.blacklist('255.255.255.255', true, 0, function (err) {
       if (err)
         return done(err);
 
@@ -64,7 +64,7 @@ describe("system", function () {
   });
 
   xit("should remove blacklisted ip", function (done) {
-    joolaio.system.blacklist('255.255.255.255', false, 0, function (err) {
+    joola.system.blacklist('255.255.255.255', false, 0, function (err) {
       if (err)
         return done(err);
 
@@ -73,7 +73,7 @@ describe("system", function () {
   });
 
   xit("should blacklist an ip with ttl", function (done) {
-    joolaio.system.blacklist('255.255.255.255', true, 1000, function (err) {
+    joola.system.blacklist('255.255.255.255', true, 1000, function (err) {
       if (err)
         return done(err);
 
@@ -83,7 +83,7 @@ describe("system", function () {
   });
 
   xit("should purge the cache", function (done) {
-    joolaio.system.purgeCache(function (err) {
+    joola.system.purgeCache(function (err) {
       if (err)
         return done(err);
 

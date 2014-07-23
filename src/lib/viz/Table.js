@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -15,7 +15,7 @@ var Table = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('table.init.start');
+  joola.events.emit('table.init.start');
 
   //mixin
   this._super = {};
@@ -27,7 +27,7 @@ var Table = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_table';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -214,7 +214,7 @@ var Table = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -227,9 +227,9 @@ var Table = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('table.init.finish', self);
+        joola.events.emit('table.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -244,7 +244,7 @@ var Table = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Table = function (options, callback) {
@@ -258,7 +258,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -273,7 +273,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Table(options, function (err, table) {
+        result = new joola.viz.Table(options, function (err, table) {
           if (err)
             throw err;
           table.draw(options, callback);
@@ -282,7 +282,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -295,7 +295,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Table.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <table class="jio table">\n' +
     '    <thead>\n' +
     '    </thead>\n' +

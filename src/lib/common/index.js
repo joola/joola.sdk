@@ -1,7 +1,7 @@
 /*jshint -W083 */
 
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -67,10 +67,10 @@ common.hookEvents = function (obj) {
           var self = this;
           var timeID = 'Function ' + (obj_id ? obj_id + '.' : '') + name;
 
-          if (joolaio.options.debug.functions.enabled && console.time)
+          if (joola.options.debug.functions.enabled && console.time)
             console.time(timeID);
           var result = fn.apply(self, arguments);
-          if (joolaio.options.debug.functions.enabled && console.time) {
+          if (joola.options.debug.functions.enabled && console.time) {
             console.timeEnd(timeID);
           }
           return result;

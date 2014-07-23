@@ -1,11 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/**
+/*!
  * The buffer module from node.js, for the browser.
  *
- * Author:   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * License:  MIT
- *
- * `npm install buffer`
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
  */
 
 var base64 = require('base64-js')
@@ -22,17 +20,14 @@ Buffer.poolSize = 8192
  *   === false   Use Object implementation (compatible down to IE6)
  */
 Buffer._useTypedArrays = (function () {
-   // Detect if browser supports Typed Arrays. Supported browsers are IE 10+,
-   // Firefox 4+, Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+.
-  if (typeof Uint8Array !== 'function' || typeof ArrayBuffer !== 'function')
-    return false
-
-  // Does the browser support adding properties to `Uint8Array` instances? If
-  // not, then that's the same as no `Uint8Array` support. We need to be able to
-  // add all the node Buffer API methods.
-  // Bug in Firefox 4-29, now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
+  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
+  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
+  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
+  // because we need to be able to add all the node Buffer API methods. This is an issue
+  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
   try {
-    var arr = new Uint8Array(0)
+    var buf = new ArrayBuffer(0)
+    var arr = new Uint8Array(buf)
     arr.foo = function () { return 42 }
     return 42 === arr.foo() &&
         typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
@@ -75,14 +70,14 @@ function Buffer (subject, encoding, noZero) {
   else if (type === 'string')
     length = Buffer.byteLength(subject, encoding)
   else if (type === 'object')
-    length = coerce(subject.length) // Assume object is an array
+    length = coerce(subject.length) // assume that object is array-like
   else
     throw new Error('First argument needs to be a number, array or string.')
 
   var buf
   if (Buffer._useTypedArrays) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = augment(new Uint8Array(length))
+    buf = Buffer._augment(new Uint8Array(length))
   } else {
     // Fallback: Return THIS instance of Buffer (created by `new`)
     buf = this
@@ -91,9 +86,8 @@ function Buffer (subject, encoding, noZero) {
   }
 
   var i
-  if (Buffer._useTypedArrays && typeof Uint8Array === 'function' &&
-      subject instanceof Uint8Array) {
-    // Speed optimization -- use set if we're copying from a Uint8Array
+  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
     buf._set(subject)
   } else if (isArrayish(subject)) {
     // Treat array-ish objects as a byte array
@@ -390,9 +384,14 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   if (target.length - target_start < end - start)
     end = target.length - target_start + start
 
-  // copy!
-  for (var i = 0; i < end - start; i++)
-    target[i + target_start] = this[i + start]
+  var len = end - start
+
+  if (len < 100 || !Buffer._useTypedArrays) {
+    for (var i = 0; i < len; i++)
+      target[i + target_start] = this[i + start]
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
 }
 
 function _base64Slice (buf, start, end) {
@@ -461,7 +460,7 @@ Buffer.prototype.slice = function (start, end) {
   end = clamp(end, len, len)
 
   if (Buffer._useTypedArrays) {
-    return augment(this.subarray(start, end))
+    return Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
     var newBuf = new Buffer(sliceLen, undefined, true)
@@ -904,7 +903,7 @@ Buffer.prototype.inspect = function () {
  * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
  */
 Buffer.prototype.toArrayBuffer = function () {
-  if (typeof Uint8Array === 'function') {
+  if (typeof Uint8Array !== 'undefined') {
     if (Buffer._useTypedArrays) {
       return (new Buffer(this)).buffer
     } else {
@@ -929,9 +928,9 @@ function stringtrim (str) {
 var BP = Buffer.prototype
 
 /**
- * Augment the Uint8Array *instance* (not the class!) with Buffer methods
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
-function augment (arr) {
+Buffer._augment = function (arr) {
   arr._isBuffer = true
 
   // save reference to original Uint8Array get/set methods before overwriting
@@ -1120,7 +1119,6 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     ? Uint8Array
     : Array
 
-	var ZERO   = '0'.charCodeAt(0)
 	var PLUS   = '+'.charCodeAt(0)
 	var SLASH  = '/'.charCodeAt(0)
 	var NUMBER = '0'.charCodeAt(0)
@@ -1229,9 +1227,9 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 		return output
 	}
 
-	module.exports.toByteArray = b64ToByteArray
-	module.exports.fromByteArray = uint8ToBase64
-}())
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
+}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],3:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
@@ -1985,7 +1983,10 @@ EventEmitter.prototype.addListener = function(type, listener) {
                     'leak detected. %d listeners added. ' +
                     'Use emitter.setMaxListeners() to increase limit.',
                     this._events[type].length);
-      console.trace();
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
     }
   }
 
@@ -2630,7 +2631,7 @@ var isArray = Array.isArray || function (xs) {
   // [https://gist.github.com/1020396] by [https://github.com/atk]
   object.atob || (
   object.atob = function (input) {
-    input = input.replace(/=+$/, '')
+    input = input.replace(/=+$/, '');
     if (input.length % 4 == 1) {
       throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
     }
@@ -2741,8 +2742,11 @@ process.argv = [];
 function noop() {}
 
 process.on = noop;
+process.addListener = noop;
 process.once = noop;
 process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
 process.emit = noop;
 
 process.binding = function (name) {
@@ -4682,8 +4686,8 @@ function indexOf (xs, x) {
   return -1;
 }
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./index.js":23,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":17,"buffer":1,"events":10,"inherits":16,"process/browser.js":24,"string_decoder":29}],27:[function(require,module,exports){
+}).call(this,require("FWaASH"))
+},{"./index.js":23,"FWaASH":17,"buffer":1,"events":10,"inherits":16,"process/browser.js":24,"string_decoder":29}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5471,10 +5475,6 @@ function base64DetectIncompleteChar(buffer) {
 }
 
 },{"buffer":1}],30:[function(require,module,exports){
-/*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
-(function () {
-  "use strict";
-
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5503,6 +5503,23 @@ exports.resolve = urlResolve;
 exports.resolveObject = urlResolveObject;
 exports.format = urlFormat;
 
+exports.Url = Url;
+
+function Url() {
+  this.protocol = null;
+  this.slashes = null;
+  this.auth = null;
+  this.host = null;
+  this.port = null;
+  this.hostname = null;
+  this.hash = null;
+  this.search = null;
+  this.query = null;
+  this.pathname = null;
+  this.path = null;
+  this.href = null;
+}
+
 // Reference: RFC 3986, RFC 1808, RFC 2396
 
 // define these here so at least they only have to be
@@ -5515,20 +5532,19 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
 
     // RFC 2396: characters not allowed for various reasons.
-    unwise = ['{', '}', '|', '\\', '^', '~', '`'].concat(delims),
+    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
 
     // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-    autoEscape = ['\''].concat(delims),
+    autoEscape = ['\''].concat(unwise),
     // Characters that are never ever allowed in a hostname.
     // Note that any invalid chars are also handled, but these
     // are the ones that are *expected* to be seen, so we fast-path
     // them.
-    nonHostChars = ['%', '/', '?', ';', '#']
-      .concat(unwise).concat(autoEscape),
-    nonAuthChars = ['/', '@', '?', '#'].concat(delims),
+    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+    hostEndingChars = ['/', '?', '#'],
     hostnameMaxLen = 255,
-    hostnamePartPattern = /^[a-zA-Z0-9][a-z0-9A-Z_-]{0,62}$/,
-    hostnamePartStart = /^([a-zA-Z0-9][a-z0-9A-Z_-]{0,62})(.*)$/,
+    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
+    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
     // protocols that can allow "unsafe" and "unwise" chars.
     unsafeProtocol = {
       'javascript': true,
@@ -5538,18 +5554,6 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     hostlessProtocol = {
       'javascript': true,
       'javascript:': true
-    },
-    // protocols that always have a path component.
-    pathedProtocol = {
-      'http': true,
-      'https': true,
-      'ftp': true,
-      'gopher': true,
-      'file': true,
-      'http:': true,
-      'ftp:': true,
-      'gopher:': true,
-      'file:': true
     },
     // protocols that always contain a // bit.
     slashedProtocol = {
@@ -5567,14 +5571,19 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     querystring = require('querystring');
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
-  if (url && typeof(url) === 'object' && url.href) return url;
+  if (url && isObject(url) && url instanceof Url) return url;
 
-  if (typeof url !== 'string') {
+  var u = new Url;
+  u.parse(url, parseQueryString, slashesDenoteHost);
+  return u;
+}
+
+Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+  if (!isString(url)) {
     throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
   }
 
-  var out = {},
-      rest = url;
+  var rest = url;
 
   // trim before proceeding.
   // This is to support parse stuff like "  http://foo.com  \n"
@@ -5584,7 +5593,7 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (proto) {
     proto = proto[0];
     var lowerProto = proto.toLowerCase();
-    out.protocol = lowerProto;
+    this.protocol = lowerProto;
     rest = rest.substr(proto.length);
   }
 
@@ -5596,78 +5605,85 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
     var slashes = rest.substr(0, 2) === '//';
     if (slashes && !(proto && hostlessProtocol[proto])) {
       rest = rest.substr(2);
-      out.slashes = true;
+      this.slashes = true;
     }
   }
 
   if (!hostlessProtocol[proto] &&
       (slashes || (proto && !slashedProtocol[proto]))) {
+
     // there's a hostname.
     // the first instance of /, ?, ;, or # ends the host.
-    // don't enforce full RFC correctness, just be unstupid about it.
-
+    //
     // If there is an @ in the hostname, then non-host chars *are* allowed
-    // to the left of the first @ sign, unless some non-auth character
+    // to the left of the last @ sign, unless some host-ending character
     // comes *before* the @-sign.
     // URLs are obnoxious.
-    var atSign = rest.indexOf('@');
-    if (atSign !== -1) {
-      var auth = rest.slice(0, atSign);
+    //
+    // ex:
+    // http://a@b@c/ => user:a@b host:c
+    // http://a@b?@c => user:a host:c path:/?@c
 
-      // there *may be* an auth
-      var hasAuth = true;
-      for (var i = 0, l = nonAuthChars.length; i < l; i++) {
-        if (auth.indexOf(nonAuthChars[i]) !== -1) {
-          // not a valid auth.  Something like http://foo.com/bar@baz/
-          hasAuth = false;
-          break;
-        }
-      }
+    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+    // Review our test case against browsers more comprehensively.
 
-      if (hasAuth) {
-        // pluck off the auth portion.
-        out.auth = decodeURIComponent(auth);
-        rest = rest.substr(atSign + 1);
-      }
+    // find the first instance of any hostEndingChars
+    var hostEnd = -1;
+    for (var i = 0; i < hostEndingChars.length; i++) {
+      var hec = rest.indexOf(hostEndingChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
     }
 
-    var firstNonHost = -1;
-    for (var i = 0, l = nonHostChars.length; i < l; i++) {
-      var index = rest.indexOf(nonHostChars[i]);
-      if (index !== -1 &&
-          (firstNonHost < 0 || index < firstNonHost)) firstNonHost = index;
-    }
-
-    if (firstNonHost !== -1) {
-      out.host = rest.substr(0, firstNonHost);
-      rest = rest.substr(firstNonHost);
+    // at this point, either we have an explicit point where the
+    // auth portion cannot go past, or the last @ char is the decider.
+    var auth, atSign;
+    if (hostEnd === -1) {
+      // atSign can be anywhere.
+      atSign = rest.lastIndexOf('@');
     } else {
-      out.host = rest;
-      rest = '';
+      // atSign must be in auth portion.
+      // http://a@b/c@d => host:b auth:a path:/c@d
+      atSign = rest.lastIndexOf('@', hostEnd);
     }
+
+    // Now we have a portion which is definitely the auth.
+    // Pull that off.
+    if (atSign !== -1) {
+      auth = rest.slice(0, atSign);
+      rest = rest.slice(atSign + 1);
+      this.auth = decodeURIComponent(auth);
+    }
+
+    // the host is the remaining to the left of the first non-host char
+    hostEnd = -1;
+    for (var i = 0; i < nonHostChars.length; i++) {
+      var hec = rest.indexOf(nonHostChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
+    }
+    // if we still have not hit it, then the entire thing is a host.
+    if (hostEnd === -1)
+      hostEnd = rest.length;
+
+    this.host = rest.slice(0, hostEnd);
+    rest = rest.slice(hostEnd);
 
     // pull out port.
-    var p = parseHost(out.host);
-    var keys = Object.keys(p);
-    for (var i = 0, l = keys.length; i < l; i++) {
-      var key = keys[i];
-      out[key] = p[key];
-    }
+    this.parseHost();
 
     // we've indicated that there is a hostname,
     // so even if it's empty, it has to be present.
-    out.hostname = out.hostname || '';
+    this.hostname = this.hostname || '';
 
     // if hostname begins with [ and ends with ]
     // assume that it's an IPv6 address.
-    var ipv6Hostname = out.hostname[0] === '[' &&
-        out.hostname[out.hostname.length - 1] === ']';
+    var ipv6Hostname = this.hostname[0] === '[' &&
+        this.hostname[this.hostname.length - 1] === ']';
 
     // validate a little.
-    if (out.hostname.length > hostnameMaxLen) {
-      out.hostname = '';
-    } else if (!ipv6Hostname) {
-      var hostparts = out.hostname.split(/\./);
+    if (!ipv6Hostname) {
+      var hostparts = this.hostname.split(/\./);
       for (var i = 0, l = hostparts.length; i < l; i++) {
         var part = hostparts[i];
         if (!part) continue;
@@ -5695,38 +5711,44 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
             if (notHost.length) {
               rest = '/' + notHost.join('.') + rest;
             }
-            out.hostname = validParts.join('.');
+            this.hostname = validParts.join('.');
             break;
           }
         }
       }
     }
 
-    // hostnames are always lower case.
-    out.hostname = out.hostname.toLowerCase();
+    if (this.hostname.length > hostnameMaxLen) {
+      this.hostname = '';
+    } else {
+      // hostnames are always lower case.
+      this.hostname = this.hostname.toLowerCase();
+    }
 
     if (!ipv6Hostname) {
       // IDNA Support: Returns a puny coded representation of "domain".
       // It only converts the part of the domain name that
       // has non ASCII characters. I.e. it dosent matter if
       // you call it with a domain that already is in ASCII.
-      var domainArray = out.hostname.split('.');
+      var domainArray = this.hostname.split('.');
       var newOut = [];
       for (var i = 0; i < domainArray.length; ++i) {
         var s = domainArray[i];
         newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
             'xn--' + punycode.encode(s) : s);
       }
-      out.hostname = newOut.join('.');
+      this.hostname = newOut.join('.');
     }
 
-    out.host = (out.hostname || '') +
-        ((out.port) ? ':' + out.port : '');
-    out.href += out.host;
+    var p = this.port ? ':' + this.port : '';
+    var h = this.hostname || '';
+    this.host = h + p;
+    this.href += this.host;
 
     // strip [ and ] from the hostname
+    // the host field still retains them, though
     if (ipv6Hostname) {
-      out.hostname = out.hostname.substr(1, out.hostname.length - 2);
+      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
       if (rest[0] !== '/') {
         rest = '/' + rest;
       }
@@ -5755,38 +5777,39 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
   var hash = rest.indexOf('#');
   if (hash !== -1) {
     // got a fragment string.
-    out.hash = rest.substr(hash);
+    this.hash = rest.substr(hash);
     rest = rest.slice(0, hash);
   }
   var qm = rest.indexOf('?');
   if (qm !== -1) {
-    out.search = rest.substr(qm);
-    out.query = rest.substr(qm + 1);
+    this.search = rest.substr(qm);
+    this.query = rest.substr(qm + 1);
     if (parseQueryString) {
-      out.query = querystring.parse(out.query);
+      this.query = querystring.parse(this.query);
     }
     rest = rest.slice(0, qm);
   } else if (parseQueryString) {
     // no query string, but parseQueryString still requested
-    out.search = '';
-    out.query = {};
+    this.search = '';
+    this.query = {};
   }
-  if (rest) out.pathname = rest;
-  if (slashedProtocol[proto] &&
-      out.hostname && !out.pathname) {
-    out.pathname = '/';
+  if (rest) this.pathname = rest;
+  if (slashedProtocol[lowerProto] &&
+      this.hostname && !this.pathname) {
+    this.pathname = '/';
   }
 
   //to support http.request
-  if (out.pathname || out.search) {
-    out.path = (out.pathname ? out.pathname : '') +
-               (out.search ? out.search : '');
+  if (this.pathname || this.search) {
+    var p = this.pathname || '';
+    var s = this.search || '';
+    this.path = p + s;
   }
 
   // finally, reconstruct the href based on what has been validated.
-  out.href = urlFormat(out);
-  return out;
-}
+  this.href = this.format();
+  return this;
+};
 
 // format a parsed object into a url string
 function urlFormat(obj) {
@@ -5794,44 +5817,49 @@ function urlFormat(obj) {
   // If it's an obj, this is a no-op.
   // this way, you can call url_format() on strings
   // to clean up potentially wonky urls.
-  if (typeof(obj) === 'string') obj = urlParse(obj);
+  if (isString(obj)) obj = urlParse(obj);
+  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
+  return obj.format();
+}
 
-  var auth = obj.auth || '';
+Url.prototype.format = function() {
+  var auth = this.auth || '';
   if (auth) {
     auth = encodeURIComponent(auth);
     auth = auth.replace(/%3A/i, ':');
     auth += '@';
   }
 
-  var protocol = obj.protocol || '',
-      pathname = obj.pathname || '',
-      hash = obj.hash || '',
+  var protocol = this.protocol || '',
+      pathname = this.pathname || '',
+      hash = this.hash || '',
       host = false,
       query = '';
 
-  if (obj.host !== undefined) {
-    host = auth + obj.host;
-  } else if (obj.hostname !== undefined) {
-    host = auth + (obj.hostname.indexOf(':') === -1 ?
-        obj.hostname :
-        '[' + obj.hostname + ']');
-    if (obj.port) {
-      host += ':' + obj.port;
+  if (this.host) {
+    host = auth + this.host;
+  } else if (this.hostname) {
+    host = auth + (this.hostname.indexOf(':') === -1 ?
+        this.hostname :
+        '[' + this.hostname + ']');
+    if (this.port) {
+      host += ':' + this.port;
     }
   }
 
-  if (obj.query && typeof obj.query === 'object' &&
-      Object.keys(obj.query).length) {
-    query = querystring.stringify(obj.query);
+  if (this.query &&
+      isObject(this.query) &&
+      Object.keys(this.query).length) {
+    query = querystring.stringify(this.query);
   }
 
-  var search = obj.search || (query && ('?' + query)) || '';
+  var search = this.search || (query && ('?' + query)) || '';
 
   if (protocol && protocol.substr(-1) !== ':') protocol += ':';
 
   // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
   // unless they had them to begin with.
-  if (obj.slashes ||
+  if (this.slashes ||
       (!protocol || slashedProtocol[protocol]) && host !== false) {
     host = '//' + (host || '');
     if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
@@ -5842,40 +5870,68 @@ function urlFormat(obj) {
   if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
   if (search && search.charAt(0) !== '?') search = '?' + search;
 
+  pathname = pathname.replace(/[?#]/g, function(match) {
+    return encodeURIComponent(match);
+  });
+  search = search.replace('#', '%23');
+
   return protocol + host + pathname + search + hash;
-}
+};
 
 function urlResolve(source, relative) {
-  return urlFormat(urlResolveObject(source, relative));
+  return urlParse(source, false, true).resolve(relative);
 }
+
+Url.prototype.resolve = function(relative) {
+  return this.resolveObject(urlParse(relative, false, true)).format();
+};
 
 function urlResolveObject(source, relative) {
   if (!source) return relative;
+  return urlParse(source, false, true).resolveObject(relative);
+}
 
-  source = urlParse(urlFormat(source), false, true);
-  relative = urlParse(urlFormat(relative), false, true);
+Url.prototype.resolveObject = function(relative) {
+  if (isString(relative)) {
+    var rel = new Url();
+    rel.parse(relative, false, true);
+    relative = rel;
+  }
+
+  var result = new Url();
+  Object.keys(this).forEach(function(k) {
+    result[k] = this[k];
+  }, this);
 
   // hash is always overridden, no matter what.
-  source.hash = relative.hash;
+  // even href="" will remove it.
+  result.hash = relative.hash;
 
+  // if the relative url is empty, then there's nothing left to do here.
   if (relative.href === '') {
-    source.href = urlFormat(source);
-    return source;
+    result.href = result.format();
+    return result;
   }
 
   // hrefs like //foo/bar always cut to the protocol.
   if (relative.slashes && !relative.protocol) {
-    relative.protocol = source.protocol;
+    // take everything except the protocol from relative
+    Object.keys(relative).forEach(function(k) {
+      if (k !== 'protocol')
+        result[k] = relative[k];
+    });
+
     //urlParse appends trailing / to urls like http://www.example.com
-    if (slashedProtocol[relative.protocol] &&
-        relative.hostname && !relative.pathname) {
-      relative.path = relative.pathname = '/';
+    if (slashedProtocol[result.protocol] &&
+        result.hostname && !result.pathname) {
+      result.path = result.pathname = '/';
     }
-    relative.href = urlFormat(relative);
-    return relative;
+
+    result.href = result.format();
+    return result;
   }
 
-  if (relative.protocol && relative.protocol !== source.protocol) {
+  if (relative.protocol && relative.protocol !== result.protocol) {
     // if it's a known url protocol, then changing
     // the protocol does weird things
     // first, if it's not file:, then we MUST have a host,
@@ -5885,10 +5941,14 @@ function urlResolveObject(source, relative) {
     // because that's known to be hostless.
     // anything else is assumed to be absolute.
     if (!slashedProtocol[relative.protocol]) {
-      relative.href = urlFormat(relative);
-      return relative;
+      Object.keys(relative).forEach(function(k) {
+        result[k] = relative[k];
+      });
+      result.href = result.format();
+      return result;
     }
-    source.protocol = relative.protocol;
+
+    result.protocol = relative.protocol;
     if (!relative.host && !hostlessProtocol[relative.protocol]) {
       var relPath = (relative.pathname || '').split('/');
       while (relPath.length && !(relative.host = relPath.shift()));
@@ -5896,72 +5956,72 @@ function urlResolveObject(source, relative) {
       if (!relative.hostname) relative.hostname = '';
       if (relPath[0] !== '') relPath.unshift('');
       if (relPath.length < 2) relPath.unshift('');
-      relative.pathname = relPath.join('/');
+      result.pathname = relPath.join('/');
+    } else {
+      result.pathname = relative.pathname;
     }
-    source.pathname = relative.pathname;
-    source.search = relative.search;
-    source.query = relative.query;
-    source.host = relative.host || '';
-    source.auth = relative.auth;
-    source.hostname = relative.hostname || relative.host;
-    source.port = relative.port;
-    //to support http.request
-    if (source.pathname !== undefined || source.search !== undefined) {
-      source.path = (source.pathname ? source.pathname : '') +
-                    (source.search ? source.search : '');
+    result.search = relative.search;
+    result.query = relative.query;
+    result.host = relative.host || '';
+    result.auth = relative.auth;
+    result.hostname = relative.hostname || relative.host;
+    result.port = relative.port;
+    // to support http.request
+    if (result.pathname || result.search) {
+      var p = result.pathname || '';
+      var s = result.search || '';
+      result.path = p + s;
     }
-    source.slashes = source.slashes || relative.slashes;
-    source.href = urlFormat(source);
-    return source;
+    result.slashes = result.slashes || relative.slashes;
+    result.href = result.format();
+    return result;
   }
 
-  var isSourceAbs = (source.pathname && source.pathname.charAt(0) === '/'),
+  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
       isRelAbs = (
-          relative.host !== undefined ||
+          relative.host ||
           relative.pathname && relative.pathname.charAt(0) === '/'
       ),
       mustEndAbs = (isRelAbs || isSourceAbs ||
-                    (source.host && relative.pathname)),
+                    (result.host && relative.pathname)),
       removeAllDots = mustEndAbs,
-      srcPath = source.pathname && source.pathname.split('/') || [],
+      srcPath = result.pathname && result.pathname.split('/') || [],
       relPath = relative.pathname && relative.pathname.split('/') || [],
-      psychotic = source.protocol &&
-          !slashedProtocol[source.protocol];
+      psychotic = result.protocol && !slashedProtocol[result.protocol];
 
   // if the url is a non-slashed url, then relative
   // links like ../.. should be able
   // to crawl up to the hostname, as well.  This is strange.
-  // source.protocol has already been set by now.
+  // result.protocol has already been set by now.
   // Later on, put the first path part into the host field.
   if (psychotic) {
-
-    delete source.hostname;
-    delete source.port;
-    if (source.host) {
-      if (srcPath[0] === '') srcPath[0] = source.host;
-      else srcPath.unshift(source.host);
+    result.hostname = '';
+    result.port = null;
+    if (result.host) {
+      if (srcPath[0] === '') srcPath[0] = result.host;
+      else srcPath.unshift(result.host);
     }
-    delete source.host;
+    result.host = '';
     if (relative.protocol) {
-      delete relative.hostname;
-      delete relative.port;
+      relative.hostname = null;
+      relative.port = null;
       if (relative.host) {
         if (relPath[0] === '') relPath[0] = relative.host;
         else relPath.unshift(relative.host);
       }
-      delete relative.host;
+      relative.host = null;
     }
     mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
   }
 
   if (isRelAbs) {
     // it's absolute.
-    source.host = (relative.host || relative.host === '') ?
-                      relative.host : source.host;
-    source.hostname = (relative.hostname || relative.hostname === '') ?
-                      relative.hostname : source.hostname;
-    source.search = relative.search;
-    source.query = relative.query;
+    result.host = (relative.host || relative.host === '') ?
+                  relative.host : result.host;
+    result.hostname = (relative.hostname || relative.hostname === '') ?
+                      relative.hostname : result.hostname;
+    result.search = relative.search;
+    result.query = relative.query;
     srcPath = relPath;
     // fall through to the dot-handling below.
   } else if (relPath.length) {
@@ -5970,53 +6030,55 @@ function urlResolveObject(source, relative) {
     if (!srcPath) srcPath = [];
     srcPath.pop();
     srcPath = srcPath.concat(relPath);
-    source.search = relative.search;
-    source.query = relative.query;
-  } else if ('search' in relative) {
+    result.search = relative.search;
+    result.query = relative.query;
+  } else if (!isNullOrUndefined(relative.search)) {
     // just pull out the search.
     // like href='?foo'.
     // Put this after the other two cases because it simplifies the booleans
     if (psychotic) {
-      source.hostname = source.host = srcPath.shift();
+      result.hostname = result.host = srcPath.shift();
       //occationaly the auth can get stuck only in host
       //this especialy happens in cases like
       //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-      var authInHost = source.host && source.host.indexOf('@') > 0 ?
-                       source.host.split('@') : false;
+      var authInHost = result.host && result.host.indexOf('@') > 0 ?
+                       result.host.split('@') : false;
       if (authInHost) {
-        source.auth = authInHost.shift();
-        source.host = source.hostname = authInHost.shift();
+        result.auth = authInHost.shift();
+        result.host = result.hostname = authInHost.shift();
       }
     }
-    source.search = relative.search;
-    source.query = relative.query;
+    result.search = relative.search;
+    result.query = relative.query;
     //to support http.request
-    if (source.pathname !== undefined || source.search !== undefined) {
-      source.path = (source.pathname ? source.pathname : '') +
-                    (source.search ? source.search : '');
+    if (!isNull(result.pathname) || !isNull(result.search)) {
+      result.path = (result.pathname ? result.pathname : '') +
+                    (result.search ? result.search : '');
     }
-    source.href = urlFormat(source);
-    return source;
+    result.href = result.format();
+    return result;
   }
+
   if (!srcPath.length) {
     // no path at all.  easy.
     // we've already handled the other stuff above.
-    delete source.pathname;
+    result.pathname = null;
     //to support http.request
-    if (!source.search) {
-      source.path = '/' + source.search;
+    if (result.search) {
+      result.path = '/' + result.search;
     } else {
-      delete source.path;
+      result.path = null;
     }
-    source.href = urlFormat(source);
-    return source;
+    result.href = result.format();
+    return result;
   }
+
   // if a url ENDs in . or .., then it must get a trailing slash.
   // however, if it ends in anything else non-slashy,
   // then it must NOT get a trailing slash.
   var last = srcPath.slice(-1)[0];
   var hasTrailingSlash = (
-      (source.host || relative.host) && (last === '.' || last === '..') ||
+      (result.host || relative.host) && (last === '.' || last === '..') ||
       last === '');
 
   // strip single dots, resolve double dots to parent dir
@@ -6056,52 +6118,70 @@ function urlResolveObject(source, relative) {
 
   // put the host back
   if (psychotic) {
-    source.hostname = source.host = isAbsolute ? '' :
+    result.hostname = result.host = isAbsolute ? '' :
                                     srcPath.length ? srcPath.shift() : '';
     //occationaly the auth can get stuck only in host
     //this especialy happens in cases like
     //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-    var authInHost = source.host && source.host.indexOf('@') > 0 ?
-                     source.host.split('@') : false;
+    var authInHost = result.host && result.host.indexOf('@') > 0 ?
+                     result.host.split('@') : false;
     if (authInHost) {
-      source.auth = authInHost.shift();
-      source.host = source.hostname = authInHost.shift();
+      result.auth = authInHost.shift();
+      result.host = result.hostname = authInHost.shift();
     }
   }
 
-  mustEndAbs = mustEndAbs || (source.host && srcPath.length);
+  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
 
   if (mustEndAbs && !isAbsolute) {
     srcPath.unshift('');
   }
 
-  source.pathname = srcPath.join('/');
-  //to support request.http
-  if (source.pathname !== undefined || source.search !== undefined) {
-    source.path = (source.pathname ? source.pathname : '') +
-                  (source.search ? source.search : '');
+  if (!srcPath.length) {
+    result.pathname = null;
+    result.path = null;
+  } else {
+    result.pathname = srcPath.join('/');
   }
-  source.auth = relative.auth || source.auth;
-  source.slashes = source.slashes || relative.slashes;
-  source.href = urlFormat(source);
-  return source;
-}
 
-function parseHost(host) {
-  var out = {};
+  //to support request.http
+  if (!isNull(result.pathname) || !isNull(result.search)) {
+    result.path = (result.pathname ? result.pathname : '') +
+                  (result.search ? result.search : '');
+  }
+  result.auth = relative.auth || result.auth;
+  result.slashes = result.slashes || relative.slashes;
+  result.href = result.format();
+  return result;
+};
+
+Url.prototype.parseHost = function() {
+  var host = this.host;
   var port = portPattern.exec(host);
   if (port) {
     port = port[0];
     if (port !== ':') {
-      out.port = port.substr(1);
+      this.port = port.substr(1);
     }
     host = host.substr(0, host.length - port.length);
   }
-  if (host) out.hostname = host;
-  return out;
+  if (host) this.hostname = host;
+};
+
+function isString(arg) {
+  return typeof arg === "string";
 }
 
-}());
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isNull(arg) {
+  return arg === null;
+}
+function isNullOrUndefined(arg) {
+  return  arg == null;
+}
 
 },{"punycode":18,"querystring":21}],31:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
@@ -6699,8 +6779,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":31,"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":17,"inherits":16}],33:[function(require,module,exports){
+}).call(this,require("FWaASH"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":31,"FWaASH":17,"inherits":16}],33:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -7515,8 +7595,8 @@ function foreach(object, block, context)
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-}).call(this,require("/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/joola/dev/joola.io.sdk/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":17}],35:[function(require,module,exports){
+}).call(this,require("FWaASH"))
+},{"FWaASH":17}],35:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -10691,6 +10771,10 @@ Socket.prototype.onpacket = function(packet){
       this.onack(packet);
       break;
 
+    case parser.BINARY_ACK:
+      this.onack(packet);
+      break;
+
     case parser.DISCONNECT:
       this.ondisconnect();
       break;
@@ -10739,8 +10823,10 @@ Socket.prototype.ack = function(id){
     sent = true;
     var args = toArray(arguments);
     debug('sending ack %j', args);
+
+    var type = hasBin(args) ? parser.BINARY_ACK : parser.ACK;
     self.packet({
-      type: parser.ACK,
+      type: type,
       id: id,
       data: args
     });
@@ -14657,6 +14743,7 @@ exports.types = [
   'EVENT',
   'BINARY_EVENT',
   'ACK',
+  'BINARY_ACK',
   'ERROR'
 ];
 
@@ -14708,6 +14795,14 @@ exports.ERROR = 4;
 
 exports.BINARY_EVENT = 5;
 
+/**
+ * Packet type `binary ack`. For acks with binary arguments.
+ *
+ * @api public
+ */
+
+exports.BINARY_ACK = 6;
+
 exports.Encoder = Encoder
 
 /**
@@ -14730,7 +14825,7 @@ function Encoder() {};
 Encoder.prototype.encode = function(obj, callback){
   debug('encoding packet %j', obj);
 
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     encodeAsBinary(obj, callback);
   }
   else {
@@ -14755,7 +14850,7 @@ function encodeAsString(obj) {
   str += obj.type;
 
   // attachments if we have them
-  if (exports.BINARY_EVENT == obj.type || exports.ACK == obj.type) {
+  if (exports.BINARY_EVENT == obj.type || exports.BINARY_ACK == obj.type) {
     str += obj.attachments;
     str += '-';
   }
@@ -14841,7 +14936,7 @@ Decoder.prototype.add = function(obj) {
   var packet;
   if ('string' == typeof obj) {
     packet = decodeString(obj);
-    if (exports.BINARY_EVENT == packet.type || exports.ACK == packet.type) { // binary packet's json
+    if (exports.BINARY_EVENT == packet.type || exports.BINARY_ACK == packet.type) { // binary packet's json
       this.reconstructor = new BinaryReconstructor(packet);
 
       // no attachments, labeled binary but no binary data to follow
@@ -14887,7 +14982,7 @@ function decodeString(str) {
   if (null == exports.types[p.type]) return error();
 
   // look up attachments if type binary
-  if (exports.BINARY_EVENT == p.type || exports.ACK == p.type) {
+  if (exports.BINARY_EVENT == p.type || exports.BINARY_ACK == p.type) {
     p.attachments = '';
     while (str.charAt(++i) != '-') {
       p.attachments += str.charAt(i);
@@ -17163,18 +17258,18 @@ function toArray(list, index) {
 
 },{}],79:[function(require,module,exports){
 module.exports={
-  "name": "joola.io.sdk",
+  "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.6.1-develop",
+  "version": "0.7.3",
   "author": "Joola <info@joo.la>",
-  "description": "joola.io's software development kit (SDK)",
+  "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/joola/joola.io.sdk.git"
+    "url": "https://github.com/joola/joola.sdk.git"
   },
-  "bugs": "https://github.com/joola/joola.io.sdk/issues",
+  "bugs": "https://github.com/joola/joola.sdk/issues",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -17223,11 +17318,11 @@ module.exports={
 
 },{}],80:[function(require,module,exports){
 /**
- *  @title joola.io/lib/sdk/common/api
+ *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>. Some rights reserved. See LICENSE, AUTHORS
  *
- *  Provides the SDK with a centralized management for consuming data from a joola.io
+ *  Provides the SDK with a centralized management for consuming data from a joola
  *  node. All API calls are routed through this interface.
  **/
 
@@ -17321,10 +17416,10 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
     tokens = {_: null, __: null};
   }
 
-  if (api.requestCount < (joolaio.options.maxRequests || 100)) {
+  if (api.requestCount < (joola.options.maxRequests || 100)) {
     api.requestCount++;
     try {
-      var parts = require('url').parse(joolaio.options.host);
+      var parts = require('url').parse(joola.options.host);
       var options = {
         tokens: tokens,
         host: parts.hostname,
@@ -17373,9 +17468,9 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
+  joola.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joola.APITOKEN || joola.TOKEN ));
 
-  if (!joolaio.io || joolaio.options.ajax || options.ajax) {
+  if (!joola.io || joola.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
     options.path += '?' + qs;
     var timerID, aborted;
@@ -17401,7 +17496,7 @@ api.getJSON = function (options, objOptions, callback) {
               obj = JSON.parse(output);
             }
             catch (ex) {
-              joolaio.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
+              joola.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
               return callback(new Error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message));
             }
           }
@@ -17413,8 +17508,8 @@ api.getJSON = function (options, objOptions, callback) {
           }
           else if (res.statusCode == 401) {
             //let's redirect to login
-            if (joolaio.options.logouturl)
-              location.href = joolaio.options.logouturl;
+            if (joola.options.logouturl)
+              location.href = joola.options.logouturl;
 
             return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
@@ -17431,7 +17526,7 @@ api.getJSON = function (options, objOptions, callback) {
           req.xhr.abort();
         else
           req.abort();
-      }, options.timeout || joolaio.options.timeout || 15000);
+      }, options.timeout || joola.options.timeout || 15000);
 
       req.on('error', function (err) {
         return callback(err);
@@ -17452,26 +17547,26 @@ api.getJSON = function (options, objOptions, callback) {
       var message = data.message;
 
       if (message && !message.hasOwnProperty('realtime')) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
       else if (!message) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
 
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
-        if (joolaio.options.logouturl)
-          location.href = joolaio.options.logouturl;
+        if (joola.options.logouturl)
+          location.href = joola.options.logouturl;
 
         return callback(new Error('Failed to execute request: ' + data.message.message));
       }
@@ -17482,12 +17577,12 @@ api.getJSON = function (options, objOptions, callback) {
     };
 
 
-    var routeID = options.path + '-' + joolaio.common.uuid();
+    var routeID = options.path + '-' + joola.common.uuid();
 
-    if (joolaio.TOKEN)
-      objOptions._token = joolaio.TOKEN;
+    if (joola.TOKEN)
+      objOptions._token = joola.TOKEN;
     if (!objOptions._token)
-      objOptions.APIToken = joolaio.APITOKEN;
+      objOptions.APIToken = joola.APITOKEN;
 
     if (options.tokens && (options.tokens._ || options.tokens.__)) {
       objOptions._token = null;
@@ -17500,33 +17595,33 @@ api.getJSON = function (options, objOptions, callback) {
 
     objOptions._path = options.path;
 
-    joolaio.io.socket.emit(routeID, objOptions);
-    joolaio.events.emit('rpc:start', 1);
-    joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+    joola.io.socket.emit(routeID, objOptions);
+    joola.events.emit('rpc:start', 1);
+    joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
 
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
-      joolaio.io.socket.on(routeID + ':done', processResponse);
+      joola.io.socket.on(routeID + ':done', processResponse);
     }
     else {
-      joolaio.io.socket.once(routeID + ':done', processResponse);
+      joola.io.socket.once(routeID + ':done', processResponse);
     }
   }
 };
 
-joolaio.events.on('rpc:start', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls++;
+joola.events.on('rpc:start', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls++;
 });
 
-joolaio.events.on('rpc:done', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls--;
+joola.events.on('rpc:done', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls--;
 });
 },{"http":11,"https":15,"querystring":21,"url":30}],81:[function(require,module,exports){
 /**
- *  joola.io
+ *  joola
  *
  *  Copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *
@@ -17547,7 +17642,7 @@ dispatch.buildstub = function (callback) {
   var self = this;
 
   try {
-    var parts = require('url').parse(joolaio.options.host);
+    var parts = require('url').parse(joola.options.host);
     var port = parts.port;
     if (!port)
       port = parts.protocol === 'http:' ? 80 : 443;
@@ -17563,17 +17658,17 @@ dispatch.buildstub = function (callback) {
       ajax: true
     };
 
-    joolaio.api.getJSON(options, {}, function (err, result) {
+    joola.api.getJSON(options, {}, function (err, result) {
       if (err)
         return callback(err);
 
-      joolaio.api.describe = {};
+      joola.api.describe = {};
       Object.keys(result).forEach(function (endpoints) {
         dispatch[endpoints] = {};
         Object.keys(result[endpoints]).forEach(function (fn) {
-          if (!joolaio.api.describe[endpoints])
-            joolaio.api.describe[endpoints] = {};
-          joolaio.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
+          if (!joola.api.describe[endpoints])
+            joola.api.describe[endpoints] = {};
+          joola.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
@@ -17604,7 +17699,7 @@ dispatch.buildstub = function (callback) {
               shouldAppendWorkspace = 1;
             }
             if (shouldAppendWorkspace > 0)
-              _args[_fn.inputs[0]] = joolaio.USER.workspace;
+              _args[_fn.inputs[0]] = joola.USER.workspace;
             Object.keys(args).forEach(function (arg) {
               if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
                 args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
@@ -17616,11 +17711,11 @@ dispatch.buildstub = function (callback) {
             });
 
             args = _args;
-            joolaio.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+            joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
+              joola.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
                 if (result) {
                   return _callback(err, result, headers);
                 }
@@ -17633,10 +17728,10 @@ dispatch.buildstub = function (callback) {
               return _callback(ex);
             }
           };
-          if (!joolaio[endpoints])
-            joolaio[endpoints] = {};
-          if (!joolaio[endpoints][fn])
-            joolaio[endpoints][fn] = dispatch[endpoints][fn];
+          if (!joola[endpoints])
+            joola[endpoints] = {};
+          if (!joola[endpoints][fn])
+            joola[endpoints][fn] = dispatch[endpoints][fn];
         });
       });
       return callback(null);
@@ -17650,7 +17745,7 @@ dispatch.buildstub = function (callback) {
 
 },{"cloneextend":33,"url":30}],82:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17670,7 +17765,7 @@ module.exports = exports = _events;
 },{"eventemitter2":34}],83:[function(require,module,exports){
 (function (global){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17683,13 +17778,13 @@ global.emptyfunc = function () {
 
 };
 
-joolaio.timezone = function (tz) {
+joola.timezone = function (tz) {
   if (tz)
-    joolaio.options.timezoneOffset = tz;
+    joola.options.timezoneOffset = tz;
 
   var offset = 0;
-  if (joolaio.options.timezoneOffset)
-    offset = joolaio.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
+  if (joola.options.timezoneOffset)
+    offset = joola.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
 
   return offset;
 };
@@ -17698,7 +17793,7 @@ joolaio.timezone = function (tz) {
 /*jshint -W083 */
 
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17764,10 +17859,10 @@ common.hookEvents = function (obj) {
           var self = this;
           var timeID = 'Function ' + (obj_id ? obj_id + '.' : '') + name;
 
-          if (joolaio.options.debug.functions.enabled && console.time)
+          if (joola.options.debug.functions.enabled && console.time)
             console.time(timeID);
           var result = fn.apply(self, arguments);
-          if (joolaio.options.debug.functions.enabled && console.time) {
+          if (joola.options.debug.functions.enabled && console.time) {
             console.timeEnd(timeID);
           }
           return result;
@@ -17803,7 +17898,7 @@ common.hash = function (string) {
 
 },{"./modifiers":86,"cloneextend":33,"crypto":5,"util":32}],85:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17830,7 +17925,7 @@ logger._log = function (level, message, callback) {
       break;
   }
 
-  if (!joolaio.options.debug.enabled)
+  if (!joola.options.debug.enabled)
     return;
 
   if (typeof message === 'object')
@@ -17838,10 +17933,10 @@ logger._log = function (level, message, callback) {
   else
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
-  if (joolaio.options.isBrowser && console.debug) {
+  if (joola.options.isBrowser && console.debug) {
     if (['silly', 'debug'].indexOf(level) == -1)
       console[level](message);
-    else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
+    else if (joola.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
       console[level](message);
   }
   else
@@ -17873,10 +17968,10 @@ logger.error = function (message, callback) {
 
 },{}],86:[function(require,module,exports){
 /**
- *  @title joola.io/lib/common/modifiers
- *  @overview Includes different prototype modifiers used by joola.io
+ *  @title joola/lib/common/modifiers
+ *  @overview Includes different prototype modifiers used by joola
  *  @description
- *  joola.io requires some additional support for prototype modification, for example, extending Date to support format.
+ *  joola requires some additional support for prototype modification, for example, extending Date to support format.
  *
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>. Some rights reserved. See LICENSE, AUTHORS
@@ -18003,7 +18098,7 @@ JSON.stringify = function (obj) {
 },{}],87:[function(require,module,exports){
 (function (global){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18014,10 +18109,12 @@ JSON.stringify = function (obj) {
 
 
 //THE OBJECT
-var joolaio = global.joolaio = global.joola = exports;
+var joola = global.joola = exports;
+if (!global.hasOwnProperty('joola'))
+  global.joola = global.joola;
 
 //base options
-joolaio.options = {
+joola.options = {
   token: null,
   host: null,
   cssHost: '',
@@ -18041,45 +18138,45 @@ joolaio.options = {
 };
 
 //libraries
-joolaio.globals = require('./common/globals');
-joolaio.logger = require('./common/logger');
-joolaio.dispatch = require('./common/dispatch');
-joolaio.common = require('./common/index');
-joolaio.events = require('./common/events');
+joola.globals = require('./common/globals');
+joola.logger = require('./common/logger');
+joola.dispatch = require('./common/dispatch');
+joola.common = require('./common/index');
+joola.events = require('./common/events');
 
-joolaio.on = joolaio.events.on;
+joola.on = joola.events.on;
 
-joolaio.api = require('./common/api');
-joolaio.state = {};
-joolaio.viz = require('./viz/index');
+joola.api = require('./common/api');
+joola.state = {};
+joola.viz = require('./viz/index');
 
-joolaio.VERSION = require('./../../package.json').version;
-joolaio._token = null;
-joolaio._apitoken = null;
+joola.VERSION = require('./../../package.json').version;
+joola._token = null;
+joola._apitoken = null;
 
-Object.defineProperty(joolaio, 'TOKEN', {
+Object.defineProperty(joola, 'TOKEN', {
   get: function () {
-    return joolaio._token;
+    return joola._token;
   },
   set: function (value) {
-    joolaio._token = value;
-    joolaio.events.emit('core.init.finish');
-    joolaio.events.emit('ready');
+    joola._token = value;
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
   }
 });
 
-Object.defineProperty(joolaio, 'APITOKEN', {
+Object.defineProperty(joola, 'APITOKEN', {
   get: function () {
-    return joolaio._apitoken;
+    return joola._apitoken;
   },
   set: function (value) {
-    joolaio._apitoken = value;
-    joolaio.USER = null;
-    joolaio._token = null;
+    joola._apitoken = value;
+    joola.USER = null;
+    joola._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
-      joolaio.USER = user;
-      //joolaio.TOKEN = user.token._;
+    joola.dispatch.users.verifyAPIToken(joola.APITOKEN, function (err, user) {
+      joola.USER = user;
+      //joola.TOKEN = user.token._;
     });
   }
 });
@@ -18097,19 +18194,19 @@ if (isBrowser()) {
   Object.keys(elems).forEach(function (key) {
     var scr = elems[key];
     if (scr.src) {
-      if (scr.src.indexOf('joola.io.js') > -1 || scr.src.indexOf('joola.io.min.js') > -1) {
+      if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joolaio.options.host = parts.protocol + '//' + parts.host;
+        joola.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
-            joolaio.options.APIToken = qs.APIToken;
+            joola.options.APIToken = qs.APIToken;
           }
           if (qs && qs.token) {
-            joolaio.options.token = qs.token;
+            joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joolaio.options.host = qs.host;
+            joola.options.host = qs.host;
           }
         }
       }
@@ -18118,10 +18215,10 @@ if (isBrowser()) {
 }
 
 //init procedure
-joolaio.init = function (options, callback) {
+joola.init = function (options, callback) {
   callback = callback || emptyfunc;
-  joolaio.options = joolaio.common.extend(joolaio.options, options);
-  joolaio.options.isBrowser = isBrowser();
+  joola.options = joola.common.extend(joola.options, options);
+  joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
     var expected = 0;
@@ -18134,7 +18231,7 @@ joolaio.init = function (options, callback) {
     }
 
     var script;
-    if (joolaio.options.isBrowser) {
+    if (joola.options.isBrowser) {
       if (typeof (jQuery) === 'undefined') {
         script = document.createElement('script');
         expected++;
@@ -18191,7 +18288,7 @@ joolaio.init = function (options, callback) {
         //done('css');
       };
       css.rel = 'stylesheet';
-      css.href = joolaio.options.host + '/joola.io.css';
+      css.href = joola.options.host + '/joola.css';
       document.head.appendChild(css);
       done('css');
       if (expected === 0)
@@ -18204,144 +18301,144 @@ joolaio.init = function (options, callback) {
 
   browser3rd(function () {
     if (options.token) {
-      joolaio._token = options.token;
+      joola._token = options.token;
     }
     else {
       if (typeof location !== 'undefined') {
         var qs = require('querystring');
         var parts = qs.parse(location.search.substring(1, location.search.length));
         if (parts.token)
-          joolaio._token = parts.token;
-      }
+          joola._token = parts.token;
+      } 
     }
-    joolaio.events.emit('core.init.start');
-    joolaio.logger.info('Starting joola.io client SDK, version ' + joolaio.VERSION);
+    joola.events.emit('core.init.start');
+    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
-    //else if (joolaio.options.isBrowser) {
-    if (!joolaio.options.host && joolaio.options.isBrowser) {
-      joolaio.options.host = location.protocol + '//' + location.host;
+    //else if (joola.options.isBrowser) {
+    if (!joola.options.host && joola.options.isBrowser) {
+      joola.options.host = location.protocol + '//' + location.host;
     }
 
-    if (!joolaio.options.host)
-      throw new Error('joola.io host not specified');
+    if (!joola.options.host)
+      throw new Error('joola host not specified');
 
     //var io = require('socket.io-browserify');
     var io = require('socket.io-client');
-    joolaio.io = io;
-    joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+    joola.io = io;
+    joola.io.socket = joola.io.connect(joola.options.host);
 
-    joolaio.io.socket.on('SIG_HUP', function () {
+    joola.io.socket.on('SIG_HUP', function () {
       console.log('SIG_HUP');
     });
 
     //}
-    //joolaio.config.init(function (err) {
+    //joola.config.init(function (err) {
     // if (err)
     //   return callback(err);
 
-    joolaio.dispatch.buildstub(function (err) {
+    joola.dispatch.buildstub(function (err) {
       if (err)
         return callback(err);
 
-      if (joolaio.options.token) {
-        joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
+      if (joola.options.token) {
+        joola.dispatch.users.getByToken(joola._token, function (err, user) {
           if (err)
             return callback(err);
 
-          joolaio.USER = user;
-          joolaio.TOKEN = joolaio._token;
-          joolaio.events.emit('core.init.finish');
+          joola.USER = user;
+          joola.TOKEN = joola._token;
+          joola.events.emit('core.init.finish');
           if (callback)
-            return callback(null, joolaio);
+            return callback(null, joola);
 
         });
       }
-      else if (joolaio.options.APIToken) {
-        joolaio._apitoken = joolaio.options.APIToken;
-        joolaio.USER = null;
-        joolaio._token = null;
+      else if (joola.options.APIToken) {
+        joola._apitoken = joola.options.APIToken;
+        joola.USER = null;
+        joola._token = null;
 
-        joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
-          joolaio.USER = user;
-          joolaio.events.emit('core.init.finish');
-          joolaio.events.emit('ready');
+        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+          joola.USER = user;
+          joola.events.emit('core.init.finish');
+          joola.events.emit('ready');
           if (typeof callback === 'function')
-            return callback(null, joolaio);
+            return callback(null, joola);
         });
       }
       else {
-        joolaio.events.emit('core.init.finish');
-        joolaio.events.emit('ready');
+        joola.events.emit('core.init.finish');
+        joola.events.emit('ready');
         if (typeof callback === 'function')
-          return callback(null, joolaio);
+          return callback(null, joola);
       }
     });
     //});
 
     //global function hook (for debug)
-    if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
-      [joolaio].forEach(function (obj) {
-        joolaio.common.hookEvents(obj, function (event) {
+    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+      [joola].forEach(function (obj) {
+        joola.common.hookEvents(obj, function (event) {
         });
       });
 
     //global event catcher (for debug)
-    if (joolaio.options.debug.enabled && joolaio.options.debug.events)
-      joolaio.events.onAny(function () {
-        if (joolaio.options.debug.events.enabled)
-          joolaio.logger.debug('Event raised: ' + this.event);
-        if (joolaio.options.debug.events.enabled && joolaio.options.debug.events.trace)
+    if (joola.options.debug.enabled && joola.options.debug.events)
+      joola.events.onAny(function () {
+        if (joola.options.debug.events.enabled)
+          joola.logger.debug('Event raised: ' + this.event);
+        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
           console.trace();
       });
   });
 };
 
-if (joolaio.options.APIToken || joolaio.options.token) {
-  joolaio.init({});
+if (joola.options.APIToken || joola.options.token) {
+  joola.init({});
 }
 
-joolaio.set = function (key, value, callback) {
-  joolaio.options[key] = value;
+joola.set = function (key, value, callback) {
+  joola.options[key] = value;
   if (key === 'APIToken') {
-    joolaio._apitoken = joolaio.options.APIToken;
-    joolaio.USER = null;
-    joolaio._token = null;
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
       if (err)
         return callback(err);
       if (!user)
         return callback(new Error('Failed to verify API Token'));
 
-      joolaio.USER = user;
+      joola.USER = user;
       if (typeof callback === 'function') {
         return callback(null);
       }
     });
   }
   else if (key === 'token') {
-    joolaio._token = joolaio.options._token;
-    joolaio.USER = null;
-    joolaio.APIToken = null;
+    joola._token = joola.options._token;
+    joola.USER = null;
+    joola.APIToken = null;
 
-    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
-      joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
+      joola.USER = user;
+      joola.TOKEN = user.token._;
       if (typeof callback === 'function')
         return callback(null);
     });
   }
 };
 
-joolaio.get = function (key) {
-  return joolaio.options[key];
+joola.get = function (key) {
+  return joola.options[key];
 };
 
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./../../package.json":79,"./common/api":80,"./common/dispatch":81,"./common/events":82,"./common/globals":83,"./common/index":84,"./common/logger":85,"./viz/index":99,"querystring":21,"socket.io-client":36,"url":30}],88:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18361,7 +18458,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start');
 
   //mixin
   this._super = {};
@@ -18377,7 +18474,7 @@ var Canvas = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_canvas';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     container: null,
     $container: null,
@@ -18392,7 +18489,7 @@ var Canvas = module.exports = function (options, callback) {
   this.prepareQuery = function (query) {
     var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = joolaio.common.extend(self.options.query, _query);
+      _query = joola.common.extend(self.options.query, _query);
     }
     if (self.options.datepicker) {
       var _datepicker = $(self.options.datepicker).DatePicker();
@@ -18433,7 +18530,7 @@ var Canvas = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -18446,8 +18543,8 @@ var Canvas = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
-        joolaio.events.emit('canvas.init.finish', self);
+        joola.viz.onscreen.push(self);
+        joola.events.emit('canvas.init.finish', self);
         if (typeof callback === 'function') {
           return callback(null, self);
         }
@@ -18460,7 +18557,7 @@ var Canvas = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
       var result = null;
@@ -18471,7 +18568,7 @@ joolaio.events.on('core.init.finish', function () {
           options = {};
         options.container = this.get(0);
 
-        result = new joolaio.viz.Canvas(options, function (err, canvas) {
+        result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
           canvas.draw(options, callback);
@@ -18480,7 +18577,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -18493,7 +18590,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 },{"./_proto":98,"cloneextend":33,"eventemitter2":34}],89:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18509,7 +18606,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('datepicker.init.start');
+  joola.events.emit('datepicker.init.start');
 
   //mixin
   this._super = {};
@@ -18589,7 +18686,7 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this._id = '_datepicker';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
@@ -18604,9 +18701,9 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
+  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
   this.min_date.setMonth(this.min_date.getMonth() - 6);
-  this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
+  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
 
   this.base_todate = new Date(this.max_date);
   this.base_fromdate = self.addDays(this.base_todate, -30);
@@ -19149,7 +19246,7 @@ var DatePicker = module.exports = function (options, callback) {
       self.options.canvas.emit('datechange', options);
     }
     $(self).trigger("datechange", options);
-    $(joolaio).trigger("datechange", options);
+    $(joola).trigger("datechange", options);
   };
 
   this.formatDate = function (date) {
@@ -19392,7 +19489,7 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -19405,7 +19502,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -19417,7 +19514,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
-        joolaio.events.emit('datepicker.init.finish', self);
+        joola.events.emit('datepicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -19432,7 +19529,7 @@ var DatePicker = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) !== 'undefined' || typeof ($) !== 'undefined') {
     $.fn.DatePicker = function (options, callback) {
       var result = null;
@@ -19442,7 +19539,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+        result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
             throw err;
           datepicker.draw(options, callback);
@@ -19451,7 +19548,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19464,7 +19561,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 },{"./_proto":98,"underscore":78}],90:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19478,7 +19575,7 @@ var Geo = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('geo.init.start');
+  joola.events.emit('geo.init.start');
 
   //mixin
   this._super = {};
@@ -19490,7 +19587,7 @@ var Geo = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_geo';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -19543,7 +19640,7 @@ var Geo = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -19556,9 +19653,9 @@ var Geo = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('geo.init.finish', self);
+        joola.events.emit('geo.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -19573,7 +19670,7 @@ var Geo = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Geo = function (options, callback) {
       var result = null;
@@ -19583,14 +19680,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Geo(options, function (err, geo) {
+        result = new joola.viz.Geo(options, function (err, geo) {
           geo.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19603,7 +19700,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 },{"./_proto":98}],91:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19617,7 +19714,7 @@ var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joola.events.emit('metric.init.start');
 
   //mixin
   this._super = {};
@@ -19629,7 +19726,7 @@ var Metric = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_metric';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     legend: true,
@@ -19695,7 +19792,7 @@ var Metric = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -19708,7 +19805,7 @@ var Metric = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -19724,7 +19821,7 @@ var Metric = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
+        joola.events.emit('metric.init.finish', self);
 
         //if (self.options.query) {
         //  return self.draw(options, callback);
@@ -19744,7 +19841,7 @@ var Metric = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
@@ -19758,7 +19855,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -19774,7 +19871,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
           metric.draw(options, callback);
@@ -19783,7 +19880,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19794,7 +19891,7 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-     joolaio.events.on('core.ready', function () {
+     joola.events.on('core.ready', function () {
      if (typeof (jQuery) != 'undefined') {
      $.find('.jio.metric').forEach(function (container) {
      var $container = $(container);
@@ -19817,7 +19914,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Metric.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
     '</div>';
@@ -19907,7 +20004,7 @@ Metric.meta = {
 };
 },{"./_proto":98,"cloneextend":33}],92:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19923,7 +20020,7 @@ var MiniTable = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('minitable.init.start');
+  joola.events.emit('minitable.init.start');
 
   //mixin
   this._super = {};
@@ -19935,7 +20032,7 @@ var MiniTable = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_minitable';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -20122,7 +20219,7 @@ var MiniTable = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -20135,9 +20232,9 @@ var MiniTable = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('minitable.init.finish', self);
+        joola.events.emit('minitable.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20152,7 +20249,7 @@ var MiniTable = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.MiniTable = function (options, callback) {
       var result = null;
@@ -20162,14 +20259,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.MiniTable(options, function (err, minitable) {
+        result = new joola.viz.MiniTable(options, function (err, minitable) {
           minitable.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20182,7 +20279,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 },{"./_proto":98,"underscore":78}],93:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -20198,7 +20295,7 @@ var Pie = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('pie.init.start');
+  joola.events.emit('pie.init.start');
 
   //mixin
   this._super = {};
@@ -20210,7 +20307,7 @@ var Pie = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_pie';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     limit: 5,
@@ -20237,7 +20334,7 @@ var Pie = module.exports = function (options, callback) {
 
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.extend({
           title: {
             text: null
           },
@@ -20309,7 +20406,7 @@ var Pie = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -20322,9 +20419,9 @@ var Pie = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('pie.init.finish', self);
+        joola.events.emit('pie.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20339,7 +20436,7 @@ var Pie = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Pie = function (options, callback) {
@@ -20353,7 +20450,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -20368,7 +20465,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Pie(options, function (err, pie) {
+        result = new joola.viz.Pie(options, function (err, pie) {
           if (err)
             throw err;
           pie.draw(options, callback);
@@ -20377,7 +20474,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20390,7 +20487,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Pie.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio-pie-caption"></div>\n' +
     '  <div class="jio-pie-chart"></div>\n' +
     '</div>';
@@ -20506,7 +20603,7 @@ Pie.meta = {
 /*jshint -W083 */
 
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -20521,7 +20618,7 @@ var PunchCard = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('punchcard.init.start');
+  joola.events.emit('punchcard.init.start');
 
   //mixin
   this._super = {};
@@ -20533,7 +20630,7 @@ var PunchCard = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_punchcard';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -20612,7 +20709,7 @@ var PunchCard = module.exports = function (options, callback) {
       }
       var series = self.makeSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.extend({
           title: {
             text: null
           },
@@ -20667,7 +20764,7 @@ var PunchCard = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -20680,9 +20777,9 @@ var PunchCard = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('punchcard.init.finish', self);
+        joola.events.emit('punchcard.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20697,7 +20794,7 @@ var PunchCard = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.PunchCard = function (options, callback) {
       var result = null;
@@ -20707,14 +20804,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.PunchCard(options, function (err, punchcard) {
+        result = new joola.viz.PunchCard(options, function (err, punchcard) {
           punchcard.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20729,7 +20826,7 @@ joolaio.events.on('core.init.finish', function () {
 
 },{"./_proto":98,"underscore":78}],95:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -20743,7 +20840,7 @@ var Sparkline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('sparkline.init.start');
+  joola.events.emit('sparkline.init.start');
 
   //mixin
   this._super = {};
@@ -20755,7 +20852,7 @@ var Sparkline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_sparkline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
@@ -20788,7 +20885,7 @@ var Sparkline = module.exports = function (options, callback) {
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.extend({
           title: {
             text: null
           },
@@ -20892,7 +20989,7 @@ var Sparkline = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -20905,7 +21002,7 @@ var Sparkline = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -20928,7 +21025,7 @@ var Sparkline = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('sparkline.init.finish', self);
+        joola.events.emit('sparkline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20943,7 +21040,7 @@ var Sparkline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Sparkline = function (options, callback) {
@@ -20953,7 +21050,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -20968,7 +21065,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Sparkline(options, function (err, sparkline) {
+        result = new joola.viz.Sparkline(options, function (err, sparkline) {
           if (err)
             throw err;
           sparkline.draw(options, callback);
@@ -20977,7 +21074,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20990,7 +21087,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 },{"./_proto":98}],96:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21006,7 +21103,7 @@ var Table = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('table.init.start');
+  joola.events.emit('table.init.start');
 
   //mixin
   this._super = {};
@@ -21018,7 +21115,7 @@ var Table = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_table';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -21205,7 +21302,7 @@ var Table = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -21218,9 +21315,9 @@ var Table = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('table.init.finish', self);
+        joola.events.emit('table.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -21235,7 +21332,7 @@ var Table = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Table = function (options, callback) {
@@ -21249,7 +21346,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -21264,7 +21361,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Table(options, function (err, table) {
+        result = new joola.viz.Table(options, function (err, table) {
           if (err)
             throw err;
           table.draw(options, callback);
@@ -21273,7 +21370,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -21286,7 +21383,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Table.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <table class="jio table">\n' +
     '    <thead>\n' +
     '    </thead>\n' +
@@ -21398,7 +21495,7 @@ Table.meta = {
 };
 },{"./_proto":98,"underscore":78}],97:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21414,7 +21511,7 @@ var Timeline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('timeline.init.start');
+  joola.events.emit('timeline.init.start');
 
   //mixin
   this._super = {};
@@ -21426,7 +21523,7 @@ var Timeline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_timeline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
@@ -21466,7 +21563,7 @@ var Timeline = module.exports = function (options, callback) {
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.extend({
           title: {
             text: null
           },
@@ -21587,7 +21684,7 @@ var Timeline = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -21600,7 +21697,7 @@ var Timeline = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -21621,7 +21718,7 @@ var Timeline = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('timeline.init.finish', self);
+        joola.events.emit('timeline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -21636,7 +21733,7 @@ var Timeline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Timeline = function (options, callback) {
@@ -21650,7 +21747,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -21663,7 +21760,7 @@ joolaio.events.on('core.init.finish', function () {
         }
         //create new
         options.container = this.get(0);
-        result = new joolaio.viz.Timeline(options, function (err, timeline) {
+        result = new joola.viz.Timeline(options, function (err, timeline) {
           if (err)
             throw err;
           timeline.draw(options, callback);
@@ -21672,7 +21769,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -21685,7 +21782,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Timeline.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio timeline caption"></div>\n' +
     '  <div class="jio timeline chartwrapper">\n' +
     '    <div class="jio timeline thechart"></div>\n' +
@@ -21786,7 +21883,7 @@ Timeline.meta = {
 };
 },{"./_proto":98,"moment":35,"underscore":78}],98:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21807,8 +21904,8 @@ proto._id = '_proto';
 proto.stop = function () {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
 };
@@ -21816,8 +21913,8 @@ proto.stop = function () {
 proto.destroy = function (container, obj) {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
   this.options.$container.empty();
@@ -21829,7 +21926,7 @@ proto.markContainer = function (container, attr, callback) {
     };
 
   try {
-    container.attr('jio-domain', 'joolaio');
+    container.attr('jio-domain', 'joola');
 
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
@@ -21876,8 +21973,8 @@ proto.fetch = function (context, query, callback) {
 
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
-    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
-    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
+    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
+    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
   }
 
   var args = [];
@@ -21889,12 +21986,12 @@ proto.fetch = function (context, query, callback) {
       return callback(err);
 
     if (message && message.query && message.query.ts && message.query.ts.duration)
-      joolaio.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+      joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });
 
-  joolaio.query.fetch.apply(this, args);
+  joola.query.fetch.apply(this, args);
 };
 
 proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
@@ -22017,9 +22114,9 @@ proto.baseHTML = function (callback) {
 
 proto.onError = function (err, callback) {
   if (err && err.message)
-    joolaio.logger.error(err.message);
+    joola.logger.error(err.message);
   else
-    joolaio.logger.error(err);
+    joola.logger.error(err);
   return callback(err);
 };
 
@@ -22030,7 +22127,7 @@ proto.find = function (obj) {
 
 },{"cloneextend":33,"moment":35,"underscore":78}],99:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>

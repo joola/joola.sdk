@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -10,12 +10,12 @@
 
 
 //THE OBJECT
-var joolaio = global.joolaio = exports;
+var joola = global.joola = exports;
 if (!global.hasOwnProperty('joola'))
-  global.joola = global.joolaio;
+  global.joola = global.joola;
 
 //base options
-joolaio.options = {
+joola.options = {
   token: null,
   host: null,
   cssHost: '',
@@ -39,45 +39,45 @@ joolaio.options = {
 };
 
 //libraries
-joolaio.globals = require('./common/globals');
-joolaio.logger = require('./common/logger');
-joolaio.dispatch = require('./common/dispatch');
-joolaio.common = require('./common/index');
-joolaio.events = require('./common/events');
+joola.globals = require('./common/globals');
+joola.logger = require('./common/logger');
+joola.dispatch = require('./common/dispatch');
+joola.common = require('./common/index');
+joola.events = require('./common/events');
 
-joolaio.on = joolaio.events.on;
+joola.on = joola.events.on;
 
-joolaio.api = require('./common/api');
-joolaio.state = {};
-joolaio.viz = require('./viz/index');
+joola.api = require('./common/api');
+joola.state = {};
+joola.viz = require('./viz/index');
 
-joolaio.VERSION = require('./../../package.json').version;
-joolaio._token = null;
-joolaio._apitoken = null;
+joola.VERSION = require('./../../package.json').version;
+joola._token = null;
+joola._apitoken = null;
 
-Object.defineProperty(joolaio, 'TOKEN', {
+Object.defineProperty(joola, 'TOKEN', {
   get: function () {
-    return joolaio._token;
+    return joola._token;
   },
   set: function (value) {
-    joolaio._token = value;
-    joolaio.events.emit('core.init.finish');
-    joolaio.events.emit('ready');
+    joola._token = value;
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
   }
 });
 
-Object.defineProperty(joolaio, 'APITOKEN', {
+Object.defineProperty(joola, 'APITOKEN', {
   get: function () {
-    return joolaio._apitoken;
+    return joola._apitoken;
   },
   set: function (value) {
-    joolaio._apitoken = value;
-    joolaio.USER = null;
-    joolaio._token = null;
+    joola._apitoken = value;
+    joola.USER = null;
+    joola._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
-      joolaio.USER = user;
-      //joolaio.TOKEN = user.token._;
+    joola.dispatch.users.verifyAPIToken(joola.APITOKEN, function (err, user) {
+      joola.USER = user;
+      //joola.TOKEN = user.token._;
     });
   }
 });
@@ -95,19 +95,19 @@ if (isBrowser()) {
   Object.keys(elems).forEach(function (key) {
     var scr = elems[key];
     if (scr.src) {
-      if (scr.src.indexOf('joola.io.js') > -1 || scr.src.indexOf('joola.io.min.js') > -1) {
+      if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joolaio.options.host = parts.protocol + '//' + parts.host;
+        joola.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
-            joolaio.options.APIToken = qs.APIToken;
+            joola.options.APIToken = qs.APIToken;
           }
           if (qs && qs.token) {
-            joolaio.options.token = qs.token;
+            joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joolaio.options.host = qs.host;
+            joola.options.host = qs.host;
           }
         }
       }
@@ -116,10 +116,10 @@ if (isBrowser()) {
 }
 
 //init procedure
-joolaio.init = function (options, callback) {
+joola.init = function (options, callback) {
   callback = callback || emptyfunc;
-  joolaio.options = joolaio.common.extend(joolaio.options, options);
-  joolaio.options.isBrowser = isBrowser();
+  joola.options = joola.common.extend(joola.options, options);
+  joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
     var expected = 0;
@@ -132,7 +132,7 @@ joolaio.init = function (options, callback) {
     }
 
     var script;
-    if (joolaio.options.isBrowser) {
+    if (joola.options.isBrowser) {
       if (typeof (jQuery) === 'undefined') {
         script = document.createElement('script');
         expected++;
@@ -189,7 +189,7 @@ joolaio.init = function (options, callback) {
         //done('css');
       };
       css.rel = 'stylesheet';
-      css.href = joolaio.options.host + '/joola.io.css';
+      css.href = joola.options.host + '/joola.css';
       document.head.appendChild(css);
       done('css');
       if (expected === 0)
@@ -202,136 +202,136 @@ joolaio.init = function (options, callback) {
 
   browser3rd(function () {
     if (options.token) {
-      joolaio._token = options.token;
+      joola._token = options.token;
     }
     else {
       if (typeof location !== 'undefined') {
         var qs = require('querystring');
         var parts = qs.parse(location.search.substring(1, location.search.length));
         if (parts.token)
-          joolaio._token = parts.token;
-      }
+          joola._token = parts.token;
+      } 
     }
-    joolaio.events.emit('core.init.start');
-    joolaio.logger.info('Starting joola.io client SDK, version ' + joolaio.VERSION);
+    joola.events.emit('core.init.start');
+    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
-    //else if (joolaio.options.isBrowser) {
-    if (!joolaio.options.host && joolaio.options.isBrowser) {
-      joolaio.options.host = location.protocol + '//' + location.host;
+    //else if (joola.options.isBrowser) {
+    if (!joola.options.host && joola.options.isBrowser) {
+      joola.options.host = location.protocol + '//' + location.host;
     }
 
-    if (!joolaio.options.host)
-      throw new Error('joola.io host not specified');
+    if (!joola.options.host)
+      throw new Error('joola host not specified');
 
     //var io = require('socket.io-browserify');
     var io = require('socket.io-client');
-    joolaio.io = io;
-    joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+    joola.io = io;
+    joola.io.socket = joola.io.connect(joola.options.host);
 
-    joolaio.io.socket.on('SIG_HUP', function () {
+    joola.io.socket.on('SIG_HUP', function () {
       console.log('SIG_HUP');
     });
 
     //}
-    //joolaio.config.init(function (err) {
+    //joola.config.init(function (err) {
     // if (err)
     //   return callback(err);
 
-    joolaio.dispatch.buildstub(function (err) {
+    joola.dispatch.buildstub(function (err) {
       if (err)
         return callback(err);
 
-      if (joolaio.options.token) {
-        joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
+      if (joola.options.token) {
+        joola.dispatch.users.getByToken(joola._token, function (err, user) {
           if (err)
             return callback(err);
 
-          joolaio.USER = user;
-          joolaio.TOKEN = joolaio._token;
-          joolaio.events.emit('core.init.finish');
+          joola.USER = user;
+          joola.TOKEN = joola._token;
+          joola.events.emit('core.init.finish');
           if (callback)
-            return callback(null, joolaio);
+            return callback(null, joola);
 
         });
       }
-      else if (joolaio.options.APIToken) {
-        joolaio._apitoken = joolaio.options.APIToken;
-        joolaio.USER = null;
-        joolaio._token = null;
+      else if (joola.options.APIToken) {
+        joola._apitoken = joola.options.APIToken;
+        joola.USER = null;
+        joola._token = null;
 
-        joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
-          joolaio.USER = user;
-          joolaio.events.emit('core.init.finish');
-          joolaio.events.emit('ready');
+        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+          joola.USER = user;
+          joola.events.emit('core.init.finish');
+          joola.events.emit('ready');
           if (typeof callback === 'function')
-            return callback(null, joolaio);
+            return callback(null, joola);
         });
       }
       else {
-        joolaio.events.emit('core.init.finish');
-        joolaio.events.emit('ready');
+        joola.events.emit('core.init.finish');
+        joola.events.emit('ready');
         if (typeof callback === 'function')
-          return callback(null, joolaio);
+          return callback(null, joola);
       }
     });
     //});
 
     //global function hook (for debug)
-    if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
-      [joolaio].forEach(function (obj) {
-        joolaio.common.hookEvents(obj, function (event) {
+    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+      [joola].forEach(function (obj) {
+        joola.common.hookEvents(obj, function (event) {
         });
       });
 
     //global event catcher (for debug)
-    if (joolaio.options.debug.enabled && joolaio.options.debug.events)
-      joolaio.events.onAny(function () {
-        if (joolaio.options.debug.events.enabled)
-          joolaio.logger.debug('Event raised: ' + this.event);
-        if (joolaio.options.debug.events.enabled && joolaio.options.debug.events.trace)
+    if (joola.options.debug.enabled && joola.options.debug.events)
+      joola.events.onAny(function () {
+        if (joola.options.debug.events.enabled)
+          joola.logger.debug('Event raised: ' + this.event);
+        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
           console.trace();
       });
   });
 };
 
-if (joolaio.options.APIToken || joolaio.options.token) {
-  joolaio.init({});
+if (joola.options.APIToken || joola.options.token) {
+  joola.init({});
 }
 
-joolaio.set = function (key, value, callback) {
-  joolaio.options[key] = value;
+joola.set = function (key, value, callback) {
+  joola.options[key] = value;
   if (key === 'APIToken') {
-    joolaio._apitoken = joolaio.options.APIToken;
-    joolaio.USER = null;
-    joolaio._token = null;
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
       if (err)
         return callback(err);
       if (!user)
         return callback(new Error('Failed to verify API Token'));
 
-      joolaio.USER = user;
+      joola.USER = user;
       if (typeof callback === 'function') {
         return callback(null);
       }
     });
   }
   else if (key === 'token') {
-    joolaio._token = joolaio.options._token;
-    joolaio.USER = null;
-    joolaio.APIToken = null;
+    joola._token = joola.options._token;
+    joola.USER = null;
+    joola.APIToken = null;
 
-    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
-      joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
+      joola.USER = user;
+      joola.TOKEN = user.token._;
       if (typeof callback === 'function')
         return callback(null);
     });
   }
 };
 
-joolaio.get = function (key) {
-  return joolaio.options[key];
+joola.get = function (key) {
+  return joola.options[key];
 };
 

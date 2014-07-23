@@ -1,10 +1,10 @@
-[jio-domain="joolaio"] .btn-group, .btn-group-vertical {
+[jio-domain="joola"] .btn-group, .btn-group-vertical {
   position: relative;
   display: inline-block;
   vertical-align: middle;
 }
 
-[jio-domain="joolaio"] .btn {
+[jio-domain="joola"] .btn {
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0;
@@ -29,57 +29,57 @@
   border-color: #ccc;
 }
 
-[jio-domain="joolaio"] .btn:hover, .btn:focus {
+[jio-domain="joola"] .btn:hover, .btn:focus {
   color: #333;
   text-decoration: none;
 }
 
-[jio-domain="joolaio"] .btn:active, .btn.active {
+[jio-domain="joola"] .btn:active, .btn.active {
   background-image: none;
   outline: 0;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-[jio-domain="joolaio"] .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+[jio-domain="joola"] .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
   color: #333;
   background-color: #ebebeb;
   border-color: #adadad;
 }
 
-[jio-domain="joolaio"] .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+[jio-domain="joola"] .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
   color: #333;
   background-color: #ebebeb;
   border-color: #adadad;
 }
 
-[jio-domain="joolaio"] .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+[jio-domain="joola"] .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
   background-image: none;
 }
 
-[jio-domain="joolaio"] .btn-group > .btn, .btn-group-vertical > .btn {
+[jio-domain="joola"] .btn-group > .btn, .btn-group-vertical > .btn {
   position: relative;
   float: left;
 }
 
-[jio-domain="joolaio"] .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+[jio-domain="joola"] .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-[jio-domain="joolaio"] .btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+[jio-domain="joola"] .btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
   margin-left: -1px;
 }
 
-[jio-domain="joolaio"] .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+[jio-domain="joola"] .btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
   border-radius: 0;
 }
 
-[jio-domain="joolaio"] .btn-group > .btn:first-child {
+[jio-domain="joola"] .btn-group > .btn:first-child {
   margin-left: 0;
 }
 
-[jio-domain="joolaio"] .btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {
+[jio-domain="joola"] .btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
 }
@@ -494,7 +494,7 @@
   -o-user-select: none;
   user-select: none;
 }
-[jio-domain="joolaio"] {
+[jio-domain="joola"] {
   margin: 0;
   padding: 0;
 }

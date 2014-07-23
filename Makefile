@@ -17,12 +17,12 @@ compile:
 		@NODE_ENV=test
 		grunt
 		#echo Current Directory: $(CURDIR)
-		#./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
-		#node ./node_modules/.bin/uglifyjs $(CURDIR)/bin/joola.io.js --source-map $(CURDIR)/bin/joola.io.min.js.map --source-map-url /joola.io.min.js.map -p $$(grep -o "/" <<<"$(CURDIR)/" | wc -l) -c -m > ./bin/joola.io.min.js
+		#./node_modules/.bin/browserify ./lib/3rd/* ./index.js -i ./bin/joola.js -o ./bin/joola.js
+		#node ./node_modules/.bin/uglifyjs $(CURDIR)/bin/joola.js --source-map $(CURDIR)/bin/joola.min.js.map --source-map-url /joola.min.js.map -p $$(grep -o "/" <<<"$(CURDIR)/" | wc -l) -c -m > ./bin/joola.min.js
     
 watch:
 		@NODE_ENV=test
-		./node_modules/.bin/watchify ./lib/3rd/* ./index.js -i ./bin/joola.io.js -o ./bin/joola.io.js
+		./node_modules/.bin/watchify ./lib/3rd/* ./index.js -i ./bin/joola.js -o ./bin/joola.js
 
 lint:
 		@./node_modules/.bin/jshint ./src/lib ./test

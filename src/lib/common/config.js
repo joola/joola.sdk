@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -15,16 +15,16 @@ var config = exports;
 config._id = 'config';
 
 config.init = function (callback) {
-  joolaio.events.emit('config.init.start');
+  joola.events.emit('config.init.start');
   var self = this;
   var loadLocal = function (callback) {
     //TODO: Remove this
-    //joolaio.common.extend(joolaio.options, require('../config/config.json'));
+    //joola.common.extend(joola.options, require('../config/config.json'));
     return self.verify(callback);
   };
 
   //if in browser, first try to get values from url
-  if (joolaio.options.isBrowser) {
+  if (joola.options.isBrowser) {
     var location = window.location;
     var query = url.parse(location.href, true).query;
     if (Object.keys(query).length > 1) {
@@ -53,18 +53,18 @@ config.init = function (callback) {
         var value = query[part];
         if (key.indexOf('.') > -1) {
           key = recurParseStringToObject(key, value, '', 0);
-          joolaio.common.mixin(_query, key);
+          joola.common.mixin(_query, key);
         }
         else
           _query[key] = value;
       });
 
       query = _query;
-      joolaio.common.extend(joolaio.options, query);
+      joola.common.extend(joola.options, query);
     }
     else {
       return loadLocal(function(){
-        joolaio.events.emit('config.init.finish');
+        joola.events.emit('config.init.finish');
         return callback.apply(this,arguments);
       });
     }
@@ -72,23 +72,23 @@ config.init = function (callback) {
   else {
     //default behavior, load local config
     return loadLocal(function(){
-      joolaio.events.emit('config.init.finish');
+      joola.events.emit('config.init.finish');
       return callback.apply(this,arguments);
     });
   }
 
   this.verify(function(){
-    joolaio.events.emit('config.init.finish');
+    joola.events.emit('config.init.finish');
     return callback.apply(this,arguments);
   });
 };
 
 config.verify = function (callback) {
-  joolaio.events.emit('config.verify.start');
+  joola.events.emit('config.verify.start');
 
-  if (!joolaio.options.version)
+  if (!joola.options.version)
     return callback(new Error('Failed to verify configuration'));
 
-  joolaio.events.emit('config.verify.finish');
+  joola.events.emit('config.verify.finish');
   return callback(null);
 };

@@ -5,7 +5,7 @@ describe("common", function () {
       b: 2
     };
 
-    joolaio.common.stringify(obj, function (err, str) {
+    joola.common.stringify(obj, function (err, str) {
       expect(str).to.equal(JSON.stringify(obj));
       done();
     });
@@ -18,7 +18,7 @@ describe("common", function () {
     };
     var str = JSON.stringify(obj);
 
-    joolaio.common.parse(str, function (err, _obj) {
+    joola.common.parse(str, function (err, _obj) {
       expect(str).to.equal(JSON.stringify(_obj));
       done();
     });
@@ -26,13 +26,13 @@ describe("common", function () {
 
   it("should hash strings correctly", function () {
     var expected = '26207976637e23e1bed51683c33a6d73';
-    var actual = joolaio.common.hash('thisisatestforhash');
+    var actual = joola.common.hash('thisisatestforhash');
     expect(actual).to.equal(expected);
   });
 
   it("should generate uuid - 9 chars long", function () {
     var expected = 9;
-    var actual = joolaio.common.uuid().length;
+    var actual = joola.common.uuid().length;
     expect(actual).to.equal(expected);
   });
 
@@ -40,7 +40,7 @@ describe("common", function () {
     var ids = [];
 
     for (var i = 0; i < 3200; i++) {
-      var uuid = joolaio.common.uuid();
+      var uuid = joola.common.uuid();
       if (ids.indexOf(uuid) > -1) {
         return done(new Error('Found duplicate uuid [' + uuid + ']'));
       }

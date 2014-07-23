@@ -1,6 +1,6 @@
 describe("beacon-basic", function () {
   before(function (done) {
-    this.uid = joolaio.common.uuid();
+    this.uid = joola.common.uuid();
     global.uid = this.uid;
     this.collection = 'test-collection-basic-' + this.uid;
 
@@ -17,7 +17,7 @@ describe("beacon-basic", function () {
 
   it("should load a single document", function (done) {
     var self = this;
-    joolaio.beacon.insert(this.collection, jQuery.extend({}, this.documents[0]), function (err, doc) {
+    joola.beacon.insert(this.collection, jQuery.extend({}, this.documents[0]), function (err, doc) {
       self.dup = new Date(doc[0].timestamp).toISOString();
       //doc = doc[0];
       //expect(doc.saved).to.equal(true);
@@ -29,7 +29,7 @@ describe("beacon-basic", function () {
     var doc = jQuery.extend({}, this.documents[0]);
     doc.timestamp = this.dup;
 
-    joolaio.beacon.insert(this.collection, doc, function (err, doc) {
+    joola.beacon.insert(this.collection, doc, function (err, doc) {
       doc = doc[0];
       //expect(doc.saved).to.equal(false);
       done();
@@ -40,7 +40,7 @@ describe("beacon-basic", function () {
     var doc = jQuery.extend({}, this.documents[0]);
     doc.timestamp = this.dup;
 
-    joolaio.beacon.insert(this.collection, [doc, doc], function (err, doc) {
+    joola.beacon.insert(this.collection, [doc, doc], function (err, doc) {
       /*expect(doc.length).to.equal(2);
       doc.forEach(function (d) {
         expect(d.saved).to.equal(false);
@@ -54,7 +54,7 @@ describe("beacon-basic", function () {
     var docs = jQuery.extend({}, self.documents);
     var counter = 0;
 
-    joolaio.beacon.insert(self.collection, docs, function (err, docs) {
+    joola.beacon.insert(self.collection, docs, function (err, docs) {
       if (err)
         return done(err);
 
@@ -71,7 +71,7 @@ describe("beacon-basic", function () {
       {"visitors": 3},
       {"visitors": 4}
     ];
-    joolaio.beacon.insert(this.collection + '-nots', documents, function (err, docs) {
+    joola.beacon.insert(this.collection + '-nots', documents, function (err, docs) {
       if (err)
         return done(err);
 
@@ -90,7 +90,7 @@ describe("beacon-basic", function () {
       {"visitors": 3},
       {"visitors": 4}
     ];
-    joolaio.beacon.insert(this.collection + '-nots', documents, function (err, docs) {
+    joola.beacon.insert(this.collection + '-nots', documents, function (err, docs) {
       if (err)
         return done(err);
 

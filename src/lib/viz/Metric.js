@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -13,7 +13,7 @@ var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joola.events.emit('metric.init.start');
 
   //mixin
   this._super = {};
@@ -25,7 +25,7 @@ var Metric = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_metric';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     legend: true,
@@ -91,7 +91,7 @@ var Metric = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -104,7 +104,7 @@ var Metric = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -120,7 +120,7 @@ var Metric = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
+        joola.events.emit('metric.init.finish', self);
 
         //if (self.options.query) {
         //  return self.draw(options, callback);
@@ -140,7 +140,7 @@ var Metric = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
@@ -154,7 +154,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -170,7 +170,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
           metric.draw(options, callback);
@@ -179,7 +179,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -190,7 +190,7 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-     joolaio.events.on('core.ready', function () {
+     joola.events.on('core.ready', function () {
      if (typeof (jQuery) != 'undefined') {
      $.find('.jio.metric').forEach(function (container) {
      var $container = $(container);
@@ -213,7 +213,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Metric.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
     '</div>';
