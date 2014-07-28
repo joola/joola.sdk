@@ -54,7 +54,7 @@ var Pie = module.exports = function (options, callback) {
 
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joola.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },

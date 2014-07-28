@@ -60,30 +60,30 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
-
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
-        var chartOptions = joola.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
           chart: {
             backgroundColor: 'transparent',
-            marginTop: 0,
+            /*marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
             marginRight: 0,
             spacingTop: 0,
             spacingBottom: 0,
             spacingLeft: 0,
-            spacingRight: 0,
+            spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
-            type: 'area'
+            type: 'area',
+            height: 250
           },
           series: series,
           xAxis: {
@@ -118,7 +118,7 @@ var Timeline = module.exports = function (options, callback) {
           exporting: {enabled: true},
           plotOptions: {
             column: {allowPointSelect: true},
-            series: {
+            line: {
               turboThreshold: message.documents.length + 1000,
               color: '#333333',
               fillOpacity: 0.1,
@@ -136,7 +136,6 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }, self.options.chart);
-
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);

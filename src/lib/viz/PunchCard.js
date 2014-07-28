@@ -107,7 +107,7 @@ var PunchCard = module.exports = function (options, callback) {
       }
       var series = self.makeSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joola.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
