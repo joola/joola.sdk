@@ -80,7 +80,7 @@ var Timeline = module.exports = function (options, callback) {
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            height: self.options.height || null
+			height: self.options.height || self.options.$container.height()
           },
           lang: {
             noData: 'No data to display'
