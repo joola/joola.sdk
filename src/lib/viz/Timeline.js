@@ -49,9 +49,12 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    console.log('draw');
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
+      console.log('return');
       if (err) {
+        console.log(err);
         if (typeof callback === 'function')
           return callback(err);
 
@@ -59,7 +62,7 @@ var Timeline = module.exports = function (options, callback) {
       }
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-
+      console.log('aaaa');
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
@@ -80,7 +83,7 @@ var Timeline = module.exports = function (options, callback) {
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-			height: self.options.height || self.options.$container.height()
+            height: self.options.height || self.options.$container.height() || 250
           },
           lang: {
             noData: 'No data to display'
