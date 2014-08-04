@@ -80,7 +80,17 @@ var Timeline = module.exports = function (options, callback) {
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            height: 250
+            height: self.options.height || null
+          },
+          lang: {
+            noData: 'No data to display'
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
           },
           series: series,
           xAxis: {
@@ -180,6 +190,12 @@ var Timeline = module.exports = function (options, callback) {
         });
       }
     });
+  };
+
+
+  this.hasData = function () {
+    var self = this;
+    return self.chart.hasData();
   };
 
   //here we go

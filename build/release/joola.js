@@ -20972,7 +20972,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 //THE OBJECT
 var joola = global.joola = exports;
-  
+
 //base options
 joola.options = {
   token: null,
@@ -21105,10 +21105,19 @@ joola.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
+              var script = document.createElement('script');
+              expected++;
+              script.onload = function () {
+                done('highcharts-nodata');
+              };
+              script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+              document.head.appendChild(script);
+
               done('highcharts');
             };
             script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
+
 
             done('jquery-ui');
           };
@@ -21124,6 +21133,14 @@ joola.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
+          var script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+            done('highcharts-nodata-2');
+          };
+          script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+          document.head.appendChild(script);
+          
           done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
@@ -21169,7 +21186,7 @@ joola.init = function (options, callback) {
         var parts = qs.parse(location.search.substring(1, location.search.length));
         if (parts.token)
           joola._token = parts.token;
-      } 
+      }
     }
     joola.events.emit('core.init.start');
     joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
@@ -24435,7 +24452,17 @@ var Timeline = module.exports = function (options, callback) {
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            height: 250
+            height: self.options.height || null
+          },
+          lang: {
+            noData: 'No data to display'
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
           },
           series: series,
           xAxis: {
@@ -24535,6 +24562,12 @@ var Timeline = module.exports = function (options, callback) {
         });
       }
     });
+  };
+
+
+  this.hasData = function () {
+    var self = this;
+    return self.chart.hasData();
   };
 
   //here we go
@@ -24863,6 +24896,14 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   var exist = _.find(dimensions, function (d) {
     return d.datatype === 'date';
   });
+
+  if (metrics.length === 0) {
+    series[0] = {
+      type: 'line',
+      name: 'no data',
+      data: []
+    };
+  }
 
   metrics.forEach(function (metric, index) {
     series[index] = {

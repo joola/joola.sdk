@@ -11,7 +11,7 @@
 
 //THE OBJECT
 var joola = global.joola = exports;
-  
+
 //base options
 joola.options = {
   token: null,
@@ -144,10 +144,19 @@ joola.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
+              var script = document.createElement('script');
+              expected++;
+              script.onload = function () {
+                done('highcharts-nodata');
+              };
+              script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+              document.head.appendChild(script);
+
               done('highcharts');
             };
             script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
+
 
             done('jquery-ui');
           };
@@ -163,6 +172,14 @@ joola.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
+          var script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+            done('highcharts-nodata-2');
+          };
+          script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+          document.head.appendChild(script);
+          
           done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
@@ -208,7 +225,7 @@ joola.init = function (options, callback) {
         var parts = qs.parse(location.search.substring(1, location.search.length));
         if (parts.token)
           joola._token = parts.token;
-      } 
+      }
     }
     joola.events.emit('core.init.start');
     joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
