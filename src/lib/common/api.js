@@ -224,7 +224,6 @@ api.getJSON = function (options, objOptions, callback) {
     options.path = options.path.substring(1);
 
     var processResponse = function (data) {
-      console.log('response',data);
       var headers = data.headers;
       var message = data.message;
 
