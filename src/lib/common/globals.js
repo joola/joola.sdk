@@ -8,6 +8,8 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
+
 global.emptyfunc = function () {
 
 };

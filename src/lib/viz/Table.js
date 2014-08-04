@@ -8,7 +8,9 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  _ = require('underscore');
 
 
 var Table = module.exports = function (options, callback) {
