@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -15,7 +15,7 @@ var Timeline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('timeline.init.start');
+  joola.events.emit('timeline.init.start');
 
   //mixin
   this._super = {};
@@ -27,7 +27,7 @@ var Timeline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_timeline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
@@ -42,45 +42,58 @@ var Timeline = module.exports = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
+  this.template = function () {
+    var $html = $('<div class="jio timeline caption"></div>' +
+      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    return $html;
+  };
+
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
-
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
+      var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
           chart: {
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            spacingTop: 0,
-            spacingBottom: 0,
-            spacingLeft: 0,
-            spacingRight: 0,
+            backgroundColor: 'transparent',
+            /*marginTop: 0,
+             marginBottom: 0,
+             marginLeft: 0,
+             marginRight: 0,
+             spacingTop: 0,
+             spacingBottom: 0,
+             spacingLeft: 0,
+             spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
-            type: 'area'
+            type: 'area',
+            height: self.options.height || self.options.$container.height() || 250
+          },
+          lang: {
+            noData: 'No data to display'
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
           },
           series: series,
           xAxis: {
-            type: (message.dimensions[0].datatype === 'date' ? 'datetime' : 'category'),
+            type: (linear ? 'datetime' : 'category'),
             endOnTick: false,
             tickWidth: 0,
             dateTimeLabelFormats: {
@@ -111,7 +124,7 @@ var Timeline = module.exports = function (options, callback) {
           exporting: {enabled: true},
           plotOptions: {
             column: {allowPointSelect: true},
-            series: {
+            line: {
               turboThreshold: message.documents.length + 1000,
               color: '#333333',
               fillOpacity: 0.1,
@@ -129,7 +142,9 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }, self.options.chart);
-        self.chart = self.options.$container.highcharts(chartOptions);
+        self.options.$container.append(self.options.template || self.template());
+        self.options.$container.find('.caption').text(self.options.caption || '');
+        self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
@@ -176,9 +191,15 @@ var Timeline = module.exports = function (options, callback) {
     });
   };
 
+
+  this.hasData = function () {
+    var self = this;
+    return self.chart.hasData();
+  };
+
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -191,7 +212,7 @@ var Timeline = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -212,7 +233,7 @@ var Timeline = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('timeline.init.finish', self);
+        joola.events.emit('timeline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -227,17 +248,21 @@ var Timeline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Timeline = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -249,10 +274,8 @@ joolaio.events.on('core.init.finish', function () {
           }
         }
         //create new
-        if (!options)
-          options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Timeline(options, function (err, timeline) {
+        result = new joola.viz.Timeline(options, function (err, timeline) {
           if (err)
             throw err;
           timeline.draw(options, callback);
@@ -261,7 +284,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -273,23 +296,47 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Timeline.template = function (options) {
+  var html = '<div id="example" jio-domain="joola" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio timeline caption"></div>\n' +
+    '  <div class="jio timeline chartwrapper">\n' +
+    '    <div class="jio timeline thechart"></div>\n' +
+    '  </div>\n' +
+    '</div>';
+  return html;
+};
+
 Timeline.meta = {
   key: 'timeline',
   title: 'Timeline',
   tagline: '',
   jQueryTag: 'Timeline',
   description: '' +
-    'Timeline description.' +
+    'Timelines are a great way to show metrics over time.' +
     '',
   example: {
     css: 'height:250px;',
     options: {
+      caption: 'Mouse moves (last 30 seconds)',
+      chart: {
+        chart: {
+          spacing: 0,
+          backgroundColor: 'transparent',
+          type: 'column'
+        },
+        plotOptions: {
+          column: {
+            color: 'rgba(240,95,104,1)'
+          }
+        }
+      },
       query: {
-        timeframe: 'last_month',
-        interval: 'day',
+        timeframe: 'last_30_seconds',
+        interval: 'second',
         dimensions: ['timestamp'],
         metrics: ['mousemoves'],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        realtime: true
       }
     },
     draw: '$("#example").Timeline(options)',
@@ -297,7 +344,23 @@ Timeline.meta = {
       'http://jsfiddle.com/'
     ]
   },
+  template: Timeline.template(),
   metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
     query: {
       datatype: 'object',
       defaultValue: null,

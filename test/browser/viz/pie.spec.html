@@ -13,7 +13,7 @@
   <script src="/node_modules/underscore/underscore.js"></script>
   <script src="/build/release/joola.js"></script>
   <script>
-    joola.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo', ajax: true});
+    joola.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo'});
   </script>
   <script>
     mocha.setup('bdd');
@@ -31,36 +31,49 @@
 
   <!-- TEST HTML GO HERE -->
   <div id="version" style="display:none"></div>
-  <div id="datepicker"></div>
+  <div id="viz"></div>
 
   <!-- END OF TEST HTML GO HERE -->
 
   <!-- TEST SPEC GO HERE -->
   <script>
-    //joola.events.on('ready', function () {
-    describe('DatePicker', function (done) {
-      it('should draw the date picker', function () {
+    describe('Pie Chart', function () {
+      it('should draw a pie chart', function (done) {
         //$('#datepicker').DatePicker();
-        var options = {};
-        options.container = $('#datepicker').get(0);
-        var result = new joola.viz.DatePicker(options, function (err, datepicker) {
+        var options = {
+          "query": {
+            "timeframe": "last_month",
+            "interval": "day",
+            "dimensions": [
+              "browser"
+            ],
+            "metrics": [
+              "mousemoves"
+            ],
+            "collection": "demo-mousemoves"
+          }
+        };
+
+        $('#viz').Pie(options, function (err) {
           if (err)
             throw err;
-          datepicker.draw(options, done);
-        }).options.$container;
+          return done();
+        });
       });
 
-      it('should raise event when clicking apply', function (done) {
-        var $picker = $('#datepicker');
-        $(joola).on('datechange', function () {
-          done();
-        });
+      it('should get the drawn viz', function () {
+        var viz = $('#viz').Pie();
+        expect(viz).to.be.ok;
+      });
 
-        var $btn = $($picker.find('.btn.apply'));
-        $btn.click();
+      it('should have the chart drawn', function () {
+        var viz = $('#viz').Pie();
+        expect(viz).to.be.ok;
+        expect(viz.chart).to.be.ok;
+        expect(viz.chart.series).to.be.ok;
+        expect(viz.chart.series.length).to.be.greaterThan(0);
       });
     });
-    //});
   </script>
   <!-- END OF TEST SPEC GO HERE -->
 

@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -15,7 +15,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('datepicker.init.start');
+  joola.events.emit('datepicker.init.start');
 
   //mixin
   this._super = {};
@@ -95,7 +95,7 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this._id = '_datepicker';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
@@ -110,9 +110,9 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
+  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
   this.min_date.setMonth(this.min_date.getMonth() - 6);
-  this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
+  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
 
   this.base_todate = new Date(this.max_date);
   this.base_fromdate = self.addDays(this.base_todate, -30);
@@ -655,7 +655,7 @@ var DatePicker = module.exports = function (options, callback) {
       self.options.canvas.emit('datechange', options);
     }
     $(self).trigger("datechange", options);
-    $(joolaio).trigger("datechange", options);
+    $(joola).trigger("datechange", options);
   };
 
   this.formatDate = function (date) {
@@ -898,7 +898,7 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -911,7 +911,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -923,7 +923,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
-        joolaio.events.emit('datepicker.init.finish', self);
+        joola.events.emit('datepicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -938,7 +938,7 @@ var DatePicker = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) !== 'undefined' || typeof ($) !== 'undefined') {
     $.fn.DatePicker = function (options, callback) {
       var result = null;
@@ -948,7 +948,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+        result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
             throw err;
           datepicker.draw(options, callback);
@@ -957,7 +957,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;

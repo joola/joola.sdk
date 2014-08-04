@@ -1,11 +1,11 @@
 describe("config", function () {
   before(function (done) {
-    this.uid = joolaio.common.uuid();
+    this.uid = joola.common.uuid();
     return done();
   });
 
   it("should set a config value", function (done) {
-    joolaio.config.set('test-config-' + this.uid, 'test', function (err) {
+    joola.config.set('test-config-' + this.uid, 'test', function (err) {
       if (err)
         return done(err);
       return done();
@@ -13,7 +13,7 @@ describe("config", function () {
   });
 
   it("should get config value", function (done) {
-    joolaio.config.get('test-config-' + this.uid, function (err, value) {
+    joola.config.get('test-config-' + this.uid, function (err, value) {
       if (err)
         return done(err);
 
@@ -23,7 +23,7 @@ describe("config", function () {
   });
 
   xit("should get all config", function (done) {
-    joolaio.config.get('*', function (err, config) {
+    joola.config.get('*', function (err, config) {
       if (err)
         return done(err);
 

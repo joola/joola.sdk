@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -13,7 +13,7 @@ var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joola.events.emit('metric.init.start');
 
   //mixin
   this._super = {};
@@ -25,7 +25,7 @@ var Metric = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_metric';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     legend: true,
@@ -34,7 +34,8 @@ var Metric = module.exports = function (options, callback) {
     query: null
   };
   this.drawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -46,17 +47,18 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
-
         return;
       }
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -73,7 +75,7 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
-        self.options.$container.append(self.template());
+        self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
 
@@ -91,7 +93,7 @@ var Metric = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -104,7 +106,7 @@ var Metric = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -120,7 +122,7 @@ var Metric = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
+        joola.events.emit('metric.init.finish', self);
 
         //if (self.options.query) {
         //  return self.draw(options, callback);
@@ -140,17 +142,21 @@ var Metric = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || (options && options.force)) {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -166,7 +172,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
           metric.draw(options, callback);
@@ -175,7 +181,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -186,7 +192,7 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-     joolaio.events.on('core.ready', function () {
+     joola.events.on('core.ready', function () {
      if (typeof (jQuery) != 'undefined') {
      $.find('.jio.metric').forEach(function (container) {
      var $container = $(container);
@@ -208,27 +214,92 @@ joolaio.events.on('core.init.finish', function () {
   }
 });
 
+Metric.template = function (options) {
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio metricbox caption"></div>\n' +
+    '  <div class="jio metricbox value"></div>\n' +
+    '</div>';
+  return html;
+};
+
 Metric.meta = {
   key: 'metricbox',
+  jQueryTag: 'Metric',
   title: 'Metric Box',
   tagline: '',
   description: '' +
-    'The Metric Box allows you to create category based visualizations.' +
-    '<br/>Another line' +
-    '<br/>Another line' +
-    '',
+    'Metric Boxes...',
+  longDescription: '',
   example: {
-    css: 'height:250px;width:250px',
-    query: {
-      timeframe:'last_month',
-      interval:'day',
-      dimensions: [],
-      metrics: ['mousemoves'],
-      collection: 'demo-mousemoves'
-    },
+    css: 'width:100%',
     options: {
-
+      caption: 'Mouse moves (last month)',
+      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves',
+        "realtime": true
+      }
     },
-    draw: '$("#example").Metric({query: query})'
+    draw: '$("#example").Metric(options);'
+  },
+  template: Metric.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template:{
+      datatype:'string',
+      defaultValue:null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, metric box clicked.'
+    }
   }
 };

@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -26,7 +26,7 @@ logger._log = function (level, message, callback) {
       break;
   }
 
-  if (!joolaio.options.debug.enabled)
+  if (!joola.options.debug.enabled)
     return;
 
   if (typeof message === 'object')
@@ -34,10 +34,10 @@ logger._log = function (level, message, callback) {
   else
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
-  if (joolaio.options.isBrowser && console.debug) {
+  if (joola.options.isBrowser && console.debug) {
     if (['silly', 'debug'].indexOf(level) == -1)
       console[level](message);
-    else if (joolaio.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
+    else if (joola.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
       console[level](message);
   }
   else

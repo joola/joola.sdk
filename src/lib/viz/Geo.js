@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -13,7 +13,7 @@ var Geo = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('geo.init.start');
+  joola.events.emit('geo.init.start');
 
   //mixin
   this._super = {};
@@ -25,7 +25,7 @@ var Geo = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_geo';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -78,7 +78,7 @@ var Geo = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -91,9 +91,9 @@ var Geo = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('geo.init.finish', self);
+        joola.events.emit('geo.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -108,7 +108,7 @@ var Geo = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Geo = function (options, callback) {
       var result = null;
@@ -118,14 +118,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Geo(options, function (err, geo) {
+        result = new joola.viz.Geo(options, function (err, geo) {
           geo.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;

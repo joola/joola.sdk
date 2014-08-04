@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -13,7 +13,7 @@ global.joola = require('../../src/lib/index.js');
 before(function (done) {
   
   global.uid = joola.common.uuid();
-  joolaio.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'}, function (err) {
+  joola.init({host: 'https://joola-io-example.herokuapp.com:443', APIToken: 'apitoken-demo'}, function (err) {
     if (err)
       return done(err);
 

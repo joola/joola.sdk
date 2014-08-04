@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19,7 +19,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start');
 
   //mixin
   this._super = {};
@@ -35,7 +35,7 @@ var Canvas = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_canvas';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     container: null,
     $container: null,
@@ -50,7 +50,7 @@ var Canvas = module.exports = function (options, callback) {
   this.prepareQuery = function (query) {
     var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = joolaio.common.extend(self.options.query, _query);
+      _query = joola.common.extend(self.options.query, _query);
     }
     if (self.options.datepicker) {
       var _datepicker = $(self.options.datepicker).DatePicker();
@@ -91,7 +91,7 @@ var Canvas = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -104,8 +104,8 @@ var Canvas = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
-        joolaio.events.emit('canvas.init.finish', self);
+        joola.viz.onscreen.push(self);
+        joola.events.emit('canvas.init.finish', self);
         if (typeof callback === 'function') {
           return callback(null, self);
         }
@@ -118,7 +118,7 @@ var Canvas = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
       var result = null;
@@ -129,7 +129,7 @@ joolaio.events.on('core.init.finish', function () {
           options = {};
         options.container = this.get(0);
 
-        result = new joolaio.viz.Canvas(options, function (err, canvas) {
+        result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
           canvas.draw(options, callback);
@@ -138,7 +138,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;

@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -15,7 +15,7 @@ var Pie = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('pie.init.start');
+  joola.events.emit('pie.init.start');
 
   //mixin
   this._super = {};
@@ -27,7 +27,7 @@ var Pie = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_pie';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     limit: 5,
@@ -36,37 +36,40 @@ var Pie = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
 
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
           chart: {
-            marginTop: 0,
+            /*marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
             marginRight: 0,
             spacingTop: 0,
             spacingBottom: 0,
             spacingLeft: 0,
-            spacingRight: 0,
+            spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'pie',
@@ -101,32 +104,31 @@ var Pie = module.exports = function (options, callback) {
       else if (self.options.query.realtime) {
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
-          var found = false;
           self.chart.series[serIndex].points.forEach(function (point) {
-            //var exist = _.find(series, function (s) {
             var exist = _.find(ser.data, function (p) {
-              point.update(p[1]);
               return p[0] == point.name;
             });
-            //});
-            if (!exist)
-              point.remove();
+            if (exist)
+              point.update(exist[1], false);
+            else
+              point.remove(false);
           });
           ser.data.forEach(function (point) {
             var exist = _.find(self.chart.series[serIndex].points, function (p) {
               return p.name == point[0];
             });
             if (!exist)
-              self.chart.series[serIndex].addPoint([point[0], point[1]]);
+              self.chart.series[serIndex].addPoint([point[0], point[1]], false, false);
           });
         });
+        self.chart.redraw();
       }
     });
   };
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -139,9 +141,9 @@ var Pie = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('pie.init.finish', self);
+        joola.events.emit('pie.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -156,17 +158,21 @@ var Pie = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Pie = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
       if (!uuid || options.force) {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -181,14 +187,16 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Pie(options, function (err, pie) {
+        result = new joola.viz.Pie(options, function (err, pie) {
+          if (err)
+            throw err;
           pie.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -199,6 +207,14 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
+
+Pie.template = function (options) {
+  var html = '<div id="example" jio-domain="joola" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio-pie-caption"></div>\n' +
+    '  <div class="jio-pie-chart"></div>\n' +
+    '</div>';
+  return html;
+};
 
 Pie.meta = {
   key: 'pie-chart',
@@ -217,31 +233,74 @@ Pie.meta = {
         interval: 'day',
         dimensions: ['browser'],
         metrics: ['mousemoves'],
-        collection: 'demo-mousemoves'
+        collection: 'demo-mousemoves',
+        "realtime": true
       }
     },
-    draw: '$("#example").Pie(options);'
+    draw: '$("#example").Pie(options);',
+    external: [
+      {
+        title: 'Change Pie Limits',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'Another example',
+        src: 'http://jsfiddle.com'
+      },
+      {
+        title: 'And yet another',
+        src: 'http://jsfiddle.com'
+      }
+    ]
   },
+  template: Pie.template(),
   metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
     query: {
       datatype: 'object',
       defaultValue: null,
-      description: '`required` contains the `query` object.'
+      description: '`required` contains the <a href="/data/query">query</a> object.'
     },
     chart: {
       datatype: 'object',
       defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
+      description: '`optional` Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
     },
     limit: {
       datatype: 'number',
       defaultValue: '5',
-      description: 'The number of items to show.'
+      description: '`optional` The number of items to show.'
     },
     legend: {
       datatype: 'bool',
       defaultValue: 'true',
-      description: 'Show the Pie Chart legend.'
+      description: '`optional` Show the Pie Chart legend.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
     }
   },
   metaEvents: {

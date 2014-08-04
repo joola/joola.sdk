@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -13,7 +13,7 @@ var Sparkline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('sparkline.init.start');
+  joola.events.emit('sparkline.init.start');
 
   //mixin
   this._super = {};
@@ -25,7 +25,7 @@ var Sparkline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_sparkline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
@@ -58,7 +58,7 @@ var Sparkline = module.exports = function (options, callback) {
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
@@ -162,7 +162,7 @@ var Sparkline = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -175,7 +175,7 @@ var Sparkline = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -198,7 +198,7 @@ var Sparkline = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('sparkline.init.finish', self);
+        joola.events.emit('sparkline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -213,7 +213,7 @@ var Sparkline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Sparkline = function (options, callback) {
@@ -223,7 +223,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -238,7 +238,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Sparkline(options, function (err, sparkline) {
+        result = new joola.viz.Sparkline(options, function (err, sparkline) {
           if (err)
             throw err;
           sparkline.draw(options, callback);
@@ -247,7 +247,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
