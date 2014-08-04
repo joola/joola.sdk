@@ -52,11 +52,8 @@ var Timeline = module.exports = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
@@ -64,7 +61,7 @@ var Timeline = module.exports = function (options, callback) {
         self.realtimeQueries.push(message.realtime);
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
+      var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
         var chartOptions = joola.common.mixin({
           title: {
@@ -73,21 +70,31 @@ var Timeline = module.exports = function (options, callback) {
           chart: {
             backgroundColor: 'transparent',
             /*marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            spacingTop: 0,
-            spacingBottom: 0,
-            spacingLeft: 0,
-            spacingRight: 0,*/
+             marginBottom: 0,
+             marginLeft: 0,
+             marginRight: 0,
+             spacingTop: 0,
+             spacingBottom: 0,
+             spacingLeft: 0,
+             spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            height: 250
+            height: self.options.height || null
+          },
+          lang: {
+            noData: 'No data to display'
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
           },
           series: series,
           xAxis: {
-            type: (message.dimensions[0].datatype === 'date' ? 'datetime' : 'category'),
+            type: (linear ? 'datetime' : 'category'),
             endOnTick: false,
             tickWidth: 0,
             dateTimeLabelFormats: {
@@ -183,6 +190,12 @@ var Timeline = module.exports = function (options, callback) {
         });
       }
     });
+  };
+
+
+  this.hasData = function () {
+    var self = this;
+    return self.chart.hasData();
   };
 
   //here we go

@@ -125,6 +125,14 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
     return d.datatype === 'date';
   });
 
+  if (metrics.length === 0) {
+    series[0] = {
+      type: 'line',
+      name: 'no data',
+      data: []
+    };
+  }
+
   metrics.forEach(function (metric, index) {
     series[index] = {
       name: metric.name,
