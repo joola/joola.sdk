@@ -36,22 +36,25 @@ var Pie = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
 
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
         var chartOptions = joola.common.mixin({

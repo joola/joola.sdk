@@ -34,7 +34,8 @@ var Metric = module.exports = function (options, callback) {
     query: null
   };
   this.drawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -46,17 +47,18 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
-
         return;
       }
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
