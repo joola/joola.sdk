@@ -17351,7 +17351,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.10",
+  "version": "0.7.11",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -18360,7 +18360,6 @@ joola.init = function (options, callback) {
 
   callback = callback || emptyfunc;
   joola.options = joola.common.mixin(joola.options, options);
-  console.log(joola.options);
   joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
@@ -18590,7 +18589,8 @@ joola.init = function (options, callback) {
   };
 };
 
-joola.init({});
+if (!require.main)
+  joola.init({});
 
 //try injecting global
 if (!global.joola)
