@@ -9,6 +9,7 @@
  **/
 
 var
+  joola = require('../index'),
   EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 var

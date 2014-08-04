@@ -10,6 +10,8 @@
 
 
 var
+  joola = require('../index'),
+  
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');

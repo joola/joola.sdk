@@ -9,6 +9,7 @@
  **/
 
 var
+  joola = require('../index'),
   url = require('url');
 
 var config = exports;

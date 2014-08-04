@@ -8,6 +8,7 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
 
 var viz = exports;
 viz._id = 'viz';

@@ -8,7 +8,8 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
+var joola = require('../index');
+  
 var logger = exports;
 logger._id = 'logger';
 

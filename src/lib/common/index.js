@@ -12,6 +12,7 @@
 
 
 var
+  joola = require('../index'),
   util = require('util'),
   _ = require('underscore'),
   de = require('deep-extend'),
