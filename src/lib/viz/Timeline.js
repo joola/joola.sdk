@@ -73,17 +73,17 @@ var Timeline = module.exports = function (options, callback) {
           chart: {
             backgroundColor: 'transparent',
             /*marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            spacingTop: 0,
-            spacingBottom: 0,
-            spacingLeft: 0,
-            spacingRight: 0,*/
+             marginBottom: 0,
+             marginLeft: 0,
+             marginRight: 0,
+             spacingTop: 0,
+             spacingBottom: 0,
+             spacingLeft: 0,
+             spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            height: 250
+            height: self.options.height || self.options.$container.height()
           },
           series: series,
           xAxis: {
