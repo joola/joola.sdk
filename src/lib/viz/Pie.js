@@ -36,22 +36,25 @@ var Pie = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
 
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
         var chartOptions = joola.common.mixin({
@@ -59,14 +62,14 @@ var Pie = module.exports = function (options, callback) {
             text: null
           },
           chart: {
-            marginTop: 0,
+            /*marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
             marginRight: 0,
             spacingTop: 0,
             spacingBottom: 0,
             spacingLeft: 0,
-            spacingRight: 0,
+            spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'pie',
@@ -101,25 +104,24 @@ var Pie = module.exports = function (options, callback) {
       else if (self.options.query.realtime) {
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
-          var found = false;
           self.chart.series[serIndex].points.forEach(function (point) {
-            //var exist = _.find(series, function (s) {
             var exist = _.find(ser.data, function (p) {
-              point.update(p[1]);
               return p[0] == point.name;
             });
-            //});
-            if (!exist)
-              point.remove();
+            if (exist)
+              point.update(exist[1], false);
+            else
+              point.remove(false);
           });
           ser.data.forEach(function (point) {
             var exist = _.find(self.chart.series[serIndex].points, function (p) {
               return p.name == point[0];
             });
             if (!exist)
-              self.chart.series[serIndex].addPoint([point[0], point[1]]);
+              self.chart.series[serIndex].addPoint([point[0], point[1]], false, false);
           });
         });
+        self.chart.redraw();
       }
     });
   };
@@ -257,7 +259,7 @@ Pie.meta = {
       datatype: 'string',
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    }, 
+    },
     template: {
       datatype: 'string',
       defaultValue: null,
