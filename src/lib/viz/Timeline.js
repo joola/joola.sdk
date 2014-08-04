@@ -8,8 +8,10 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var moment = require('moment');
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  moment = require('moment'),
+  _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
   if (!callback)

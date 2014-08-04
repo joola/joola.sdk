@@ -8,6 +8,7 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
 
 var Sparkline = module.exports = function (options, callback) {
   if (!callback)

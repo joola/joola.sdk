@@ -8,7 +8,10 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+var 
+  joola = require('../index'),
+  ce = require('cloneextend');
+
 var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {

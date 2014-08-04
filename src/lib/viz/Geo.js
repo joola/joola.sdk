@@ -8,7 +8,8 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
+var joola = require('../index');
+  
 var Geo = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {

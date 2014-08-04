@@ -9,7 +9,9 @@
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
  */
 
-var ce = require('cloneextend');
+var
+  joola = require('../index'),
+  ce = require('cloneextend');
 
 var dispatch = exports;
 dispatch._id = 'dispatch';
