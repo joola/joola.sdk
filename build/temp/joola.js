@@ -18330,35 +18330,34 @@ function isBrowser() {
   return typeof(window) !== 'undefined';
 }
 
-//init procedure
-joola.init = function (options, callback) {
+if (isBrowser()) {
+  var elems = document.getElementsByTagName('script');
 
-  if (isBrowser()) {
-    var elems = document.getElementsByTagName('script');
-
-    Object.keys(elems).forEach(function (key) {
-      var scr = elems[key];
-      if (scr.src) {
-        if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
-          var parts = require('url').parse(scr.src);
-          joola.options.host = parts.protocol + '//' + parts.host;
-          if (parts.query) {
-            var qs = require('querystring').parse(parts.query);
-            if (qs && qs.APIToken) {
-              joola.options.APIToken = qs.APIToken;
-            }
-            if (qs && qs.token) {
-              joola.options.token = qs.token;
-            }
-            if (qs && qs.host) {
-              joola.options.host = qs.host;
-            }
+  Object.keys(elems).forEach(function (key) {
+    var scr = elems[key];
+    if (scr.src) {
+      if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
+        var parts = require('url').parse(scr.src);
+        joola.options.host = parts.protocol + '//' + parts.host;
+        if (parts.query) {
+          var qs = require('querystring').parse(parts.query);
+          if (qs && qs.APIToken) {
+            joola.options.APIToken = qs.APIToken;
+          }
+          if (qs && qs.token) {
+            joola.options.token = qs.token;
+          }
+          if (qs && qs.host) {
+            joola.options.host = qs.host;
           }
         }
       }
-    });
-  }
+    }
+  });
+}
 
+//init procedure
+joola.init = function (options, callback) {
   callback = callback || emptyfunc;
   joola.options = joola.common.mixin(joola.options, options);
   joola.options.isBrowser = isBrowser();
@@ -18551,48 +18550,49 @@ joola.init = function (options, callback) {
           console.trace();
       });
   });
-
-  joola.set = function (key, value, callback) {
-    joola.options[key] = value;
-    if (key === 'APIToken') {
-      joola._apitoken = joola.options.APIToken;
-      joola.USER = null;
-      joola._token = null;
-
-      joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
-        if (err)
-          return callback(err);
-        if (!user)
-          return callback(new Error('Failed to verify API Token'));
-
-        joola.USER = user;
-        if (typeof callback === 'function') {
-          return callback(null);
-        }
-      });
-    }
-    else if (key === 'token') {
-      joola._token = joola.options._token;
-      joola.USER = null;
-      joola.APIToken = null;
-
-      joola.dispatch.users.getByToken(joola._token, function (err, user) {
-        joola.USER = user;
-        joola.TOKEN = user.token._;
-        if (typeof callback === 'function')
-          return callback(null);
-      });
-    }
-  };
-
-  joola.get = function (key) {
-    return joola.options[key];
-  };
 };
 
-if (!require.main) {
+if (joola.options.APIToken || joola.options.token) {
   joola.init({});
 }
+
+
+joola.set = function (key, value, callback) {
+  joola.options[key] = value;
+  if (key === 'APIToken') {
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
+
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      if (!user)
+        return callback(new Error('Failed to verify API Token'));
+
+      joola.USER = user;
+      if (typeof callback === 'function') {
+        return callback(null);
+      }
+    });
+  }
+  else if (key === 'token') {
+    joola._token = joola.options._token;
+    joola.USER = null;
+    joola.APIToken = null;
+
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
+      joola.USER = user;
+      joola.TOKEN = user.token._;
+      if (typeof callback === 'function')
+        return callback(null);
+    });
+  }
+};
+
+joola.get = function (key) {
+  return joola.options[key];
+};
 
 //try injecting global
 if (!global.joola)
