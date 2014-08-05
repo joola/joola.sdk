@@ -18255,82 +18255,83 @@ JSON.stringify = function (obj) {
 //THE OBJECT
 var joola = exports;
 
-//init procedure
-joola.init = function (options, callback) {
-  //base options
-  joola.options = {
-    token: null,
-    host: null,
-    cssHost: '',
-    APIToken: null,
-    logouturl: null,
-    isBrowser: function isBrowser() {
-      return typeof(window) !== 'undefined';
-    }(),
-    maxRequests: 1000,
-    debug: {
+//base options
+joola.options = {
+  token: null,
+  host: null,
+  cssHost: '',
+  APIToken: null,
+  logouturl: null,
+  isBrowser: function isBrowser() {
+    return typeof(window) !== 'undefined';
+  }(),
+  maxRequests: 1000,
+  debug: {
+    enabled: false,
+    events: {
       enabled: false,
-      events: {
-        enabled: false,
-        trace: false
-      },
-      functions: {
-        enabled: false
-      }
+      trace: false
     },
-    timezoneOffset: null
-  };
+    functions: {
+      enabled: false
+    }
+  },
+  timezoneOffset: null
+};
 
 //libraries
-  joola.globals = require('./common/globals');
-  joola.logger = require('./common/logger');
-  joola.dispatch = require('./common/dispatch');
-  joola.common = require('./common/index');
-  joola.events = require('./common/events');
+joola.globals = require('./common/globals');
+joola.logger = require('./common/logger');
+joola.dispatch = require('./common/dispatch');
+joola.common = require('./common/index');
+joola.events = require('./common/events');
 
-  joola.on = joola.events.on;
+joola.on = joola.events.on;
 
-  joola.api = require('./common/api');
-  joola.state = {};
-  joola.viz = require('./viz/index');
+joola.api = require('./common/api');
+joola.state = {};
+joola.viz = require('./viz/index');
 
-  joola.VERSION = require('./../../package.json').version;
-  joola._token = null;
-  joola._apitoken = null;
+joola.VERSION = require('./../../package.json').version;
+joola._token = null;
+joola._apitoken = null;
 
-  Object.defineProperty(joola, 'TOKEN', {
-    get: function () {
-      return joola._token;
-    },
-    set: function (value) {
-      joola._token = value;
-      joola.events.emit('core.init.finish');
-      joola.events.emit('ready');
-    }
-  });
+Object.defineProperty(joola, 'TOKEN', {
+  get: function () {
+    return joola._token;
+  },
+  set: function (value) {
+    joola._token = value;
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
+  }
+});
 
-  Object.defineProperty(joola, 'APITOKEN', {
-    get: function () {
-      return joola._apitoken;
-    },
-    set: function (value) {
-      joola._apitoken = value;
-      joola.USER = null;
-      joola._token = null;
+Object.defineProperty(joola, 'APITOKEN', {
+  get: function () {
+    return joola._apitoken;
+  },
+  set: function (value) {
+    joola._apitoken = value;
+    joola.USER = null;
+    joola._token = null;
 
-      joola.dispatch.users.verifyAPIToken(joola.APITOKEN, function (err, user) {
-        joola.USER = user;
-        //joola.TOKEN = user.token._;
-      });
-    }
-  });
+    joola.dispatch.users.verifyAPIToken(joola.APITOKEN, function (err, user) {
+      joola.USER = user;
+      //joola.TOKEN = user.token._;
+    });
+  }
+});
 
-  require('./common/globals');
+require('./common/globals');
 
 //parse the querystring if browser for default options
-  function isBrowser() {
-    return typeof(window) !== 'undefined';
-  }
+function isBrowser() {
+  return typeof(window) !== 'undefined';
+}
+
+//init procedure
+joola.init = function (options, callback) {
 
   if (isBrowser()) {
     var elems = document.getElementsByTagName('script');
@@ -18589,8 +18590,9 @@ joola.init = function (options, callback) {
   };
 };
 
-if (!require.main)
+if (!require.main) {
   joola.init({});
+}
 
 //try injecting global
 if (!global.joola)
