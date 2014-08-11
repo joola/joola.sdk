@@ -1,4 +1,4 @@
-# joola.sdk [![Build Status][3]][4] [![Gitter chat](https://badges.gitter.im/joola/joola.png)](https://gitter.im/joola/joola)
+# joola.sdk [![Build Status][3]][4] [![Gitter chat](https://badges.gitter.im/joola/joola.png)](https://gitter.im/joola)
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/joola-io.svg)](https://saucelabs.com/u/joola-io)
 
@@ -75,7 +75,7 @@ If you're feeling lost or unsure, [just let us know](#Contact).
 ## Contact
 Contacting us is easy, ping us on one of these:
 
-- [![Gitter chat](https://badges.gitter.im/joola/joola.png)](https://gitter.im/joola/joola)
+- [![Gitter chat](https://badges.gitter.im/joola/joola.png)](https://gitter.im/joola)
 - [@joola][19]
 - [info@joo.la][20]
 - You can even fill out a [form][21].
