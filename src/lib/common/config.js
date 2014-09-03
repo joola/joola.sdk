@@ -54,7 +54,7 @@ config.init = function (callback) {
         var value = query[part];
         if (key.indexOf('.') > -1) {
           key = recurParseStringToObject(key, value, '', 0);
-          joola.common.mixin(_query, key);
+          joola.common._mixin(_query, key);
         }
         else
           _query[key] = value;

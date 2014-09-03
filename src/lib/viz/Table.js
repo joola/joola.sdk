@@ -38,18 +38,18 @@ var Table = module.exports = function (options, callback) {
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
-  
+
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.template = function () {
     var $html = $('<table class="jio table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
-      '</table>');
+    '<thead>' +
+    '</thead>' +
+    '<tbody>' +
+    '</tbody>' +
+    '</table>');
     return $html;
   };
 
@@ -66,6 +66,8 @@ var Table = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
+      console.log('post fetch', message);
+      message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -75,9 +77,8 @@ var Table = module.exports = function (options, callback) {
 
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      
-      var $col, $tr, trs;
 
+      var $col, $tr, trs;
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.drawn) {
         self.drawn = true;
@@ -318,7 +319,7 @@ Table.meta = {
   title: 'Table',
   tagline: '',
   description: '' +
-    'Plot powerful and customizable data tables.',
+  'Plot powerful and customizable data tables.',
   longDescription: '',
   example: {
     //css: 'height:250px;width:100%',
@@ -330,7 +331,7 @@ Table.meta = {
         dimensions: ['browser'],
         metrics: [
           {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
+          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
         collection: 'demo-mousemoves',
@@ -360,9 +361,9 @@ Table.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {

@@ -46,7 +46,7 @@ var Timeline = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
     return $html;
   };
 
@@ -56,15 +56,15 @@ var Timeline = module.exports = function (options, callback) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-
         return;
       }
+      message = message[0];
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
-        var chartOptions = joola.common.mixin({
+        var chartOptions = joola.common._mixin({
           title: {
             text: null
           },
@@ -127,7 +127,7 @@ var Timeline = module.exports = function (options, callback) {
           plotOptions: {
             column: {allowPointSelect: true},
             line: {
-              turboThreshold: message.documents.length + 1000,
+              turboThreshold: message.documents ? message.documents.length + 1000 : 0,
               color: '#333333',
               fillOpacity: 0.1,
               lineWidth: 3,
@@ -314,8 +314,8 @@ Timeline.meta = {
   tagline: '',
   jQueryTag: 'Timeline',
   description: '' +
-    'Timelines are a great way to show metrics over time.' +
-    '',
+  'Timelines are a great way to show metrics over time.' +
+  '',
   example: {
     css: 'height:250px;',
     options: {

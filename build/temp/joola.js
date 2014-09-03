@@ -17388,7 +17388,6 @@ module.exports={
     "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "grunt": "~0.4.5",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-css": "~0.5.4",
     "grunt-contrib-copy": "~0.5.0",
@@ -17920,7 +17919,28 @@ common.extend = common._extend;
 
 require('./modifiers');
 
-common.mixin = function (destination, source) {
+common.mixin = function (origin, add, overwrite) {
+  // Don't do anything if add isn't an object
+  if (!add || typeof add !== 'object') return origin;
+
+  var keys = Object.keys(add);
+  var i = 0;//keys.length;
+  while (i < keys.length) {
+    if (origin.hasOwnProperty(keys[i])) {
+      if (overwrite)
+        origin[keys[i]] = add[keys[i]];
+      //else
+      //common.extend(origin[keys[i]], add[keys[i]]);
+
+    }
+    else
+      origin[keys[i]] = add[keys[i]];
+    i++;
+  }
+  return origin;
+};
+
+common._mixin = function (destination, source) {
   if (arguments.length < 1 || typeof arguments[0] !== 'object') {
     return false;
   }
@@ -17938,18 +17958,18 @@ common.mixin = function (destination, source) {
     if (typeof obj !== 'object') return;
 
     for (var key in obj) {
-      if ( ! (key in obj)) continue;
+      if (!(key in obj)) continue;
 
       src = target[key];
       val = obj[key];
 
       if (val === target) continue;
 
-      if (typeof val === 'object' && key==='container'){
+      if (typeof val === 'object' && key === 'container') {
         target[key] = val;
         continue;
       }
-      
+
       if (typeof val !== 'object' || val === null) {
         target[key] = val;
         continue;
@@ -17962,7 +17982,7 @@ common.mixin = function (destination, source) {
 
       if (typeof src !== 'object' || src === null) {
         clone = (Array.isArray(val)) ? [] : {};
-        target[key] = common.mixin (clone, val);
+        target[key] = common._mixin(clone, val);
         continue;
       }
 
@@ -17972,11 +17992,10 @@ common.mixin = function (destination, source) {
         clone = (!Array.isArray(src)) ? src : {};
       }
 
-      target[key] = common.mixin (clone, val);
+      target[key] = common._mixin(clone, val);
     }
   });
   return target;
- 
 };
 
 //hook functions for timings
@@ -18156,7 +18175,7 @@ Date.prototype.format = function (formatString) {
   formatString = formatString.replace(/yy/i, yy);
   formatString = formatString.replace(/mmm/i, mmm);
   formatString = formatString.replace(/mm/i, mm);
-  formatString = formatString.replace(/m/i, m);
+  //formatString = formatString.replace(/m/, m);
   formatString = formatString.replace(/dd/i, dd);
   formatString = formatString.replace(/d/i, d);
   formatString = formatString.replace(/hh/i, hh);
@@ -18239,6 +18258,32 @@ JSON.stringify = function (obj) {
   return result;
 };
 */
+
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+  // if the other array is a falsy value, return
+  if (!array)
+    return false;
+
+  // compare lengths - can save a lot of time 
+  if (this.length != array.length)
+    return false;
+
+  for (var i = 0, l=this.length; i < l; i++) {
+    // Check if we have nested arrays
+    if (this[i] instanceof Array && array[i] instanceof Array) {
+      // recurse into the nested arrays
+      if (!this[i].equals(array[i]))
+        return false;
+    }
+    else if (this[i] != array[i]) {
+      // Warning - two different object instances will never be equal: {x:20} != {x:20}
+      return false;
+    }
+  }
+  return true;
+};  
+
 },{}],88:[function(require,module,exports){
 (function (global){
 /**
@@ -18254,6 +18299,10 @@ JSON.stringify = function (obj) {
 
 //THE OBJECT
 var joola = exports;
+
+//try injecting global
+if (!global.joola)
+  global.joola = joola;
 
 //base options
 joola.options = {
@@ -18285,7 +18334,7 @@ joola.logger = require('./common/logger');
 joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
-
+joola.events.setMaxListeners(1000);
 joola.on = joola.events.on;
 
 joola.api = require('./common/api');
@@ -18359,7 +18408,7 @@ if (isBrowser()) {
 //init procedure
 joola.init = function (options, callback) {
   callback = callback || emptyfunc;
-  joola.options = joola.common.mixin(joola.options, options);
+  joola.options = joola.common._mixin(joola.options, options);
   joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
@@ -18593,12 +18642,8 @@ joola.set = function (key, value, callback) {
 joola.get = function (key) {
   return joola.options[key];
 };
-
-//try injecting global
-if (!global.joola)
-  global.joola = joola;
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":80,"./common/api":81,"./common/dispatch":82,"./common/events":83,"./common/globals":84,"./common/index":85,"./common/logger":86,"./viz/index":100,"querystring":21,"socket.io-client":37,"url":30}],89:[function(require,module,exports){
+},{"./../../package.json":80,"./common/api":81,"./common/dispatch":82,"./common/events":83,"./common/globals":84,"./common/index":85,"./common/logger":86,"./viz/index":101,"querystring":21,"socket.io-client":37,"url":30}],89:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18654,83 +18699,123 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.query) {
       _query = joola.common.extend(self.options.query, _query);
     }
-    if (self.options.datepicker) {
-      var _datepicker = $(self.options.datepicker).DatePicker();
+    if (self.options.datepicker && self.options.datepicker.container) {
+      var _datepicker = $(self.options.datepicker.container).DatePicker();
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
+      _query.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        _query.interval = self.options.datepicker._interval;
     }
-
     return _query;
+  };
+
+  this.parseInterval = function ($container) {
+    return $container.find('.active').attr('data-id');
   };
 
   this.draw = function (options, callback) {
     var self = this;
+    if (self.options.datepicker && self.options.datepicker.container) {
+      self.options.datepicker.canvas = self;
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+    }
+    if (self.options.datepicker && self.options.datepicker.interval) {
+      self.options.datepicker.$interval = $(self.options.datepicker.interval);
+      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
 
-    if (self.options.datepicker)
-      $(self.options.datepicker).DatePicker({});
+      self.options.datepicker.$interval.on('change', function (e, data) {
+        self.options.datepicker._interval = data.$container.attr('data-id');
+        self.emit('intervalchange', data.dataId);
 
-    if (self.options.viz && self.options.viz.length > 0) {
-      self.options.viz.forEach(function (viz) {
-        viz.query = self.prepareQuery(viz.query);
-        switch (viz.type) {
-          case 'Metric':
-            $(viz.container).Metric(viz);
-            break;
-          default:
-            break;
+        self.options.datepicker.$interval.find('button').removeClass('active');
+        data.$container.addClass('active');
+      });
+    }
+
+    if (self.options.visualizations && self.options.visualizations) {
+      Object.keys(self.options.visualizations).forEach(function (key) {
+        var viz = self.options.visualizations[key];
+        if (viz.container) {
+          viz.query = self.prepareQuery(viz.query);
+          viz.force = true;
+          viz.canvas = self;
+          switch (viz.type.toLowerCase()) {
+            case 'timeline':
+              $(viz.container).Timeline(viz);
+              break;
+            case 'metric':
+              $(viz.container).Metric(viz);
+              break;
+            case 'table':
+              $(viz.container).Table(viz);
+              break;
+            case 'bartable':
+              $(viz.container).Table(viz);
+              break;
+            default:
+              break;
+          }
         }
       });
     }
 
-    if (typeof callback === 'function')
+    if (typeof callback === 'function') {
       return callback(null, self);
+    }
   };
 
   this.addVisualization = function (viz) {
+    if (!this.options.visualizations)
+      this.options.visualizations = {};
     this.options.visualizations[viz.uuid] = viz;
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  joola.common.mixin(self.options, options, true);
+  self.verify(self.options, function (err) {
+    if (err) {
+      return callback(err);
+    }
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
+    self.options.$container = $(self.options.container);
+    self.markContainer(self.options.$container, {
+      attr: [
         {'type': 'canvas'},
         {'uuid': self.uuid}
-      ], function (err) {
-        if (err)
-          return callback(err);
+      ],
+      css: self.options.css
+    }, function (err) {
+      if (err) {
+        return callback(err);
+      }
 
-        joola.viz.onscreen.push(self);
-        joola.events.emit('canvas.init.finish', self);
-        if (typeof callback === 'function') {
-          return callback(null, self);
-        }
-      });
+      joola.viz.onscreen.push(self);
+      joola.events.emit('canvas.init.finish', self);
+      if (typeof callback === 'function') {
+        return callback(null, self);
+      }
     });
-  }
-  catch (err) {
-    return self.onError(err, callback);
-  }
+  });
+
   return self;
 };
 
 joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid) {
+      if (!uuid || options.force) {
         //create new
         if (!options)
           options = {};
         options.container = this.get(0);
-
         result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
@@ -18751,7 +18836,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":88,"./_proto":99,"cloneextend":33,"eventemitter2":35}],90:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"cloneextend":33,"eventemitter2":35}],90:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18943,11 +19028,11 @@ var DatePicker = module.exports = function (options, callback) {
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-      '<tr>' +
-      '<td class="dates"></td>' +
-      '<td><div class="dropdownmarker"></div></td>' +
-      '</tr>' +
-      '</table></div></div>');
+    '<tr>' +
+    '<td class="dates"></td>' +
+    '<td><div class="dropdownmarker"></div></td>' +
+    '</tr>' +
+    '</table></div></div>');
 
     $container.append($table);
 
@@ -18965,54 +19050,54 @@ var DatePicker = module.exports = function (options, callback) {
     var $item = $('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-      '<td class="calendars"></td>' +
-      '<td class="control"><div class="optionscontainer"></div></td>' +
-      '</tr></table>');
+    '<td class="calendars"></td>' +
+    '<td class="control"><div class="optionscontainer"></div></td>' +
+    '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-      '</div>');
+    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+    '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-      '</div>');
+    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+    '</div>');
 
     $optionscontainer.append('<div class="daterange comparerange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('' +
-      '<hr class="divider">' +
-      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-      '<span class="cancel">Cancel</span></div>');
+    '<hr class="divider">' +
+    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+    '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $('<div class="datepicker"></div>');
 
     $item = $('<table><tr valign=top>' +
-      '<td class="datetable-prev unselectable"></td>' +
-      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-      '<td class="datetable-next unselectable"></td>' +
-      '</tr></table>');
+    '<td class="datetable-prev unselectable"></td>' +
+    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+    '<td class="datetable-next unselectable"></td>' +
+    '</tr></table>');
     $calendars.append($item);
 
     $('.datetable-prev').append('<div class="prev">' +
-      '<div class="inline-block prev">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block prev">' +
+    '</div>' +
+    '</div>');
     $('.datetable-prev .prev').off('click');
     $('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -19036,9 +19121,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $('.datetable-next').append('<div class="next">' +
-      '<div class="inline-block next">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block next">' +
+    '</div>' +
+    '</div>');
     $('.datetable-next .next').off('click');
     $('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -19358,7 +19443,10 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
-        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        $picker.offset({
+          top: $picker.offset().top,
+          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
+        });
       }
     });
     $table.click(function (e) {
@@ -19402,7 +19490,13 @@ var DatePicker = module.exports = function (options, callback) {
     _this.applied_base_todate = this.base_todate;
     _this.applied_compare_fromdate = this.compare_fromdate;
     _this.applied_compare_todate = this.compare_todate;
-    options = {base_fromdate: this.applied_base_fromdate, base_todate: this.applied_base_todate, compare_fromdate: this.applied_compare_fromdate, compare_todate: this.applied_compare_todate, compare: this.comparePeriod};
+    options = {
+      base_fromdate: this.applied_base_fromdate,
+      base_todate: this.applied_base_todate,
+      compare_fromdate: this.applied_compare_fromdate,
+      compare_todate: this.applied_compare_todate,
+      compare: this.comparePeriod
+    };
     $(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
     });
@@ -19654,7 +19748,7 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joola.common.mixin(self.options, options, true);
+    joola.common._extend(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -19668,14 +19762,12 @@ var DatePicker = module.exports = function (options, callback) {
           return callback(err);
 
         joola.viz.onscreen.push(self);
-
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
           if (elem.attr('jio-type') == 'canvas') {
             self.options.canvas = $(elem).Canvas();
           }
         }
-
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
@@ -19706,7 +19798,7 @@ joola.events.on('core.init.finish', function () {
         options.container = this.get(0);
         result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
-            throw err;
+            return callback(err);
           datepicker.draw(options, callback);
         }).options.$container;
       }
@@ -19724,7 +19816,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":88,"./_proto":99,"underscore":79}],91:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"underscore":79}],91:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -19864,7 +19956,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":88,"./_proto":99}],92:[function(require,module,exports){
+},{"../index":88,"./_proto":100}],92:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20173,7 +20265,403 @@ Metric.meta = {
     }
   }
 };
-},{"../index":88,"./_proto":99,"cloneextend":33}],93:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"cloneextend":33}],93:[function(require,module,exports){
+/**
+ *  @title joola
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var ce = require('cloneextend');
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+var MetricPicker = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joola.events.emit('metricpicker.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = ce.clone(require('./_proto')[x]);
+    this._super[x] = ce.clone(require('./_proto')[x]);
+  }
+
+  var self = this;
+  self.events = new EventEmitter2({wildcard: true, newListener: true});
+
+  self.on = self.events.on;
+  self.emit = self.events.emit;
+
+  this._id = 'metricpicker';
+  this.uuid = joola.common.uuid();
+  this.options = {
+    canvas: null,
+    container: null,
+    $container: null,
+    metrics: [],
+    selected: null
+  };
+  this.drawn = false;
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.template = function () {
+    var $html = $('' +
+      '<div class="jio-metricpicker-wrapper">\n' +
+      '  <button class="btn jio-metricpicker-button"></button>' +
+      '  <button class="close">×</button>' +
+      '  <div class="jio-metricpicker-container">' +
+      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+      '    <div class="clear"></div>' +
+      '  </div>' +
+      '  <div class="clear"></div>' +
+      '</div>\n');
+
+    if (this.options.fixed) {
+      $html.find('.close').remove();
+    }
+
+    return $html;
+  };
+
+  this.draw = function (options, callback) {
+    if (!self.drawn) {
+      self.options.$container.append(self.options.template || self.template());
+      var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
+      var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
+      var $close = $(self.options.$container.find('.close'));
+      var $search = $(self.options.$container.find('.quicksearch'));
+      if (self.options.metrics.length === 0)
+        joola.metrics.list(function (err, list) {
+          if (err)
+            throw err;
+
+          var mOpen = false;
+          var mSkipOne = false;
+          var mlasttarget = null;
+
+          list.forEach(function (metric) {
+            var collection = {key: metric.collection};
+
+            var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
+            $li.off('click');
+            $li.on('click', function (e) {
+              var $this = $(this);
+              e.stopPropagation();
+
+              if ($this.hasClass('disabled'))
+                return;
+
+              self.options.selected = metric;
+              var $content = metric.name;
+              $btn.html($content);
+              $btn.removeClass('active');
+              $ul.removeClass('active');
+              mOpen = false;
+              mlasttarget = null;
+
+              self.markSelected();
+
+              self.emit('change', metric);
+            });
+            $ul.append($li);
+          });
+
+          $close.on('click', function (e) {
+            self.options.selected = null;
+            self.markSelected();
+            self.emit('change', null);
+          });
+
+          $search.keyup(function () {
+            var $this = $(this);
+            var val = $this.val();
+            if (val.length >= 2) {
+              $ul.find('div[data-member]').hide();
+              $ul.find('div[data-member*="' + val + '"]').show();
+            }
+            else
+              $ul.find('div[data-member]').show();
+          });
+
+          $btn.on('click', function (e) {
+            var $this = $(this);
+            e.stopPropagation();
+
+            if (mOpen && mlasttarget == this.id) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+            }
+            else if (mSkipOne) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+              mSkipOne = false;
+            }
+            else {
+              $ul.addClass('active');
+              mlasttarget = this.id;
+              mOpen = true;
+            }
+            var offset = $btn.position();
+            $ul.css('top', offset.top + $btn.outerHeight() - 1);
+            $ul.css('left', offset.left);
+            $ul.find('ul.active').removeClass('active');
+
+            $ul.attr('data-target', this.id);
+
+            //set selected
+            self.markSelected();
+          });
+
+          $ul.on('click', function (e) {
+            e.stopPropagation();
+          });
+          $('body').on('click', function () {
+            $btn.removeClass('active');
+            $ul.removeClass('active');
+            mlasttarget = null;
+            mOpen = false;
+          });
+
+          $btn.on('click', function () {
+            var $this = $(this);
+            $this.toggleClass('active');
+          });
+
+          if (typeof callback === 'function')
+            return callback(null, self);
+        });
+      else {
+        if (typeof callback === 'function')
+          return callback(null, self);
+      }
+    }
+    else {
+
+    }
+
+    self.markSelected = function () {
+      $ul.find('div').removeClass('active');
+      if (self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
+        self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.close').show();
+      }
+      else {
+        self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+        self.options.$container.find('.close').hide();
+      }
+
+      $ul.find('div[data-member]').removeClass('disabled');
+      if (self.options.disabled) {
+        if (!Array.isArray(self.options.disabled))
+          self.options.disabled = [self.options.disabled];
+
+        self.options.disabled.forEach(function (disable) {
+          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+        });
+      }
+    };
+    self.markSelected();
+  };
+
+  //here we go
+  try {
+    joola.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'metricpicker'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css
+      }, function (err) {
+        if (err)
+          return callback(err);
+        joola.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+        }
+
+        joola.events.emit('metricpicker.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joola.events.on('core.init.finish', function () {
+  var found;
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.MetricPicker = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || (options && options.force)) {
+        if (options && options.force && uuid) {
+          var existing = null;
+          found = false;
+          joola.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joola.viz.MetricPicker(options, function (err, metricpicker) {
+          if (err)
+            throw err;
+          metricpicker.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        found = false;
+        joola.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+MetricPicker.template = function (options) {
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio metricbox caption"></div>\n' +
+    '  <div class="jio metricbox value"></div>\n' +
+    '</div>';
+  return html;
+};
+
+MetricPicker.meta = {
+  key: 'metricpicker',
+  jQueryTag: 'Metric',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'Metric Boxes...',
+  longDescription: '',
+  example: {
+    css: 'width:100%',
+    options: {
+      caption: 'Mouse moves (last month)',
+      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        metrics: ['mousemoves'],
+        collection: 'demo-mousemoves',
+        "realtime": true
+      }
+    },
+    draw: '$("#example").Metric(options);'
+  },
+  template: MetricPicker.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the metric.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, metric box clicked.'
+    }
+  }
+};
+},{"./_proto":100,"cloneextend":33,"eventemitter2":35}],94:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20449,7 +20937,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":88,"./_proto":99,"underscore":79}],94:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"underscore":79}],95:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20586,12 +21074,14 @@ var Pie = module.exports = function (options, callback) {
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
-
+ 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'pie'},
-        {'uuid': self.uuid}
-      ], function (err) {
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'pie'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css}, function (err) {
         if (err)
           return callback(err);
 
@@ -20775,7 +21265,7 @@ Pie.meta = {
     }
   }
 };
-},{"../index":88,"./_proto":99,"underscore":79}],95:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"underscore":79}],96:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -21002,7 +21492,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":88,"./_proto":99,"underscore":79}],96:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"underscore":79}],97:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21264,7 +21754,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":88,"./_proto":99}],97:[function(require,module,exports){
+},{"../index":88,"./_proto":100}],98:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21678,7 +22168,7 @@ Table.meta = {
     }
   }
 };
-},{"../index":88,"./_proto":99,"underscore":79}],98:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"underscore":79}],99:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21727,13 +22217,16 @@ var Timeline = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+    '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
     return $html;
   };
 
   this.draw = function (options, callback) {
+    console.log('draw');
     self.stop();
+    console.log('pre fetch', this.options.query);
     return this._super.fetch(self, this.options.query, function (err, message) {
+      console.log('post fetch', message);
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -21745,7 +22238,7 @@ var Timeline = module.exports = function (options, callback) {
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
-        var chartOptions = joola.common.mixin({
+        var chartOptions = joola.common._mixin({
           title: {
             text: null
           },
@@ -21995,8 +22488,8 @@ Timeline.meta = {
   tagline: '',
   jQueryTag: 'Timeline',
   description: '' +
-    'Timelines are a great way to show metrics over time.' +
-    '',
+  'Timelines are a great way to show metrics over time.' +
+  '',
   example: {
     css: 'height:250px;',
     options: {
@@ -22079,7 +22572,7 @@ Timeline.meta = {
   chartProvider: 'highcharts',
   license: 'MIT'
 };
-},{"../index":88,"./_proto":99,"moment":36,"underscore":79}],99:[function(require,module,exports){
+},{"../index":88,"./_proto":100,"moment":36,"underscore":79}],100:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22093,7 +22586,7 @@ Timeline.meta = {
 
 var
   joola = require('../index'),
-  
+
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -22127,7 +22620,7 @@ proto.markContainer = function (container, attr, callback) {
 
   try {
     container.attr('jio-domain', 'joola');
-
+    attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
         container.attr('jio-' + key, a[key]);
@@ -22150,11 +22643,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified for timeline.'));
+    return callback(new Error('no container specified.'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container for the timeline.'));
+    return callback(new Error('cannot find container [' + options.container + '].'));
 
   return callback(null);
 };
@@ -22333,7 +22826,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":88,"cloneextend":33,"moment":36,"underscore":79}],100:[function(require,module,exports){
+},{"../index":88,"cloneextend":33,"moment":36,"underscore":79}],101:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22351,6 +22844,7 @@ viz._id = 'viz';
 
 //pickers
 viz.DatePicker = require('./DatePicker');
+viz.MetricPicker = require('./MetricPicker');
 
 //panels
 viz.Canvas = require('./Canvas');
@@ -22372,4 +22866,4 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"../index":88,"./Canvas":89,"./DatePicker":90,"./Geo":91,"./Metric":92,"./MiniTable":93,"./Pie":94,"./PunchCard":95,"./Sparkline":96,"./Table":97,"./Timeline":98}]},{},[88])
+},{"../index":88,"./Canvas":89,"./DatePicker":90,"./Geo":91,"./Metric":92,"./MetricPicker":93,"./MiniTable":94,"./Pie":95,"./PunchCard":96,"./Sparkline":97,"./Table":98,"./Timeline":99}]},{},[88])

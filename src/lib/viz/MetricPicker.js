@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -16,7 +16,7 @@ var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metricpicker.init.start');
+  joola.events.emit('metricpicker.init.start');
 
   //mixin
   this._super = {};
@@ -32,7 +32,7 @@ var MetricPicker = module.exports = function (options, callback) {
   self.emit = self.events.emit;
 
   this._id = 'metricpicker';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
@@ -210,7 +210,7 @@ var MetricPicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -225,7 +225,7 @@ var MetricPicker = module.exports = function (options, callback) {
       }, function (err) {
         if (err)
           return callback(err);
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -238,7 +238,7 @@ var MetricPicker = module.exports = function (options, callback) {
           self.options.canvas.addVisualization(self);
         }
 
-        joolaio.events.emit('metricpicker.init.finish', self);
+        joola.events.emit('metricpicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -253,7 +253,7 @@ var MetricPicker = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.MetricPicker = function (options, callback) {
@@ -267,7 +267,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -283,7 +283,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.MetricPicker(options, function (err, metricpicker) {
+        result = new joola.viz.MetricPicker(options, function (err, metricpicker) {
           if (err)
             throw err;
           metricpicker.draw(options, callback);
@@ -292,7 +292,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -305,7 +305,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 MetricPicker.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
     '</div>';

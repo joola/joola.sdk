@@ -12,6 +12,10 @@
 //THE OBJECT
 var joola = exports;
 
+//try injecting global
+if (!global.joola)
+  global.joola = joola;
+
 //base options
 joola.options = {
   token: null,
@@ -42,7 +46,7 @@ joola.logger = require('./common/logger');
 joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
-
+joola.events.setMaxListeners(1000);
 joola.on = joola.events.on;
 
 joola.api = require('./common/api');
@@ -116,7 +120,7 @@ if (isBrowser()) {
 //init procedure
 joola.init = function (options, callback) {
   callback = callback || emptyfunc;
-  joola.options = joola.common.mixin(joola.options, options);
+  joola.options = joola.common._mixin(joola.options, options);
   joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
@@ -275,6 +279,8 @@ joola.init = function (options, callback) {
         joola._token = null;
 
         joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+          if (err)
+            return callback(err);
           joola.USER = user;
           joola.events.emit('core.init.finish');
           joola.events.emit('ready');
@@ -350,7 +356,3 @@ joola.set = function (key, value, callback) {
 joola.get = function (key) {
   return joola.options[key];
 };
-
-//try injecting global
-if (!global.joola)
-  global.joola = joola;

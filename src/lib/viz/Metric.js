@@ -8,7 +8,7 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var 
+var
   joola = require('../index'),
   ce = require('cloneextend');
 
@@ -38,14 +38,14 @@ var Metric = module.exports = function (options, callback) {
   };
   this.drawn = false;
   this.realtimeQueries = [];
-  
+
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.template = function () {
     var $html = $('<div class="jio metricbox caption"></div>' +
-      '<div class="jio metricbox value"></div>');
+    '<div class="jio metricbox value"></div>');
     return $html;
   };
 
@@ -54,6 +54,7 @@ var Metric = module.exports = function (options, callback) {
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
+      message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -61,7 +62,7 @@ var Metric = module.exports = function (options, callback) {
       }
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      
+
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -231,7 +232,7 @@ Metric.meta = {
   title: 'Metric Box',
   tagline: '',
   description: '' +
-    'Metric Boxes...',
+  'Metric Boxes...',
   longDescription: '',
   example: {
     css: 'width:100%',
@@ -255,9 +256,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {

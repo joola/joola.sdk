@@ -62,7 +62,6 @@ var Canvas = module.exports = function (options, callback) {
       if (self.options.datepicker && self.options.datepicker._interval)
         _query.interval = self.options.datepicker._interval;
     }
-
     return _query;
   };
 
@@ -72,12 +71,10 @@ var Canvas = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     var self = this;
-
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
     }
-
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);
       self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
@@ -118,41 +115,44 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
 
-    if (typeof callback === 'function')
+    if (typeof callback === 'function') {
       return callback(null, self);
+    }
   };
 
   this.addVisualization = function (viz) {
+    if (!this.options.visualizations)
+      this.options.visualizations = {};
     this.options.visualizations[viz.uuid] = viz;
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  joola.common.mixin(self.options, options, true);
+  self.verify(self.options, function (err) {
+    if (err) {
+      return callback(err);
+    }
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {attr: [
+    self.options.$container = $(self.options.container);
+    self.markContainer(self.options.$container, {
+      attr: [
         {'type': 'canvas'},
         {'uuid': self.uuid}
       ],
-        css: self.options.css}, function (err) {
-        if (err)
-          return callback(err);
+      css: self.options.css
+    }, function (err) {
+      if (err) {
+        return callback(err);
+      }
 
-        joola.viz.onscreen.push(self);
-        joola.events.emit('canvas.init.finish', self);
-        if (typeof callback === 'function') {
-          return callback(null, self);
-        }
-      });
+      joola.viz.onscreen.push(self);
+      joola.events.emit('canvas.init.finish', self);
+      if (typeof callback === 'function') {
+        return callback(null, self);
+      }
     });
-  }
-  catch (err) {
-    return self.onError(err, callback);
-  }
+  });
+
   return self;
 };
 
@@ -170,7 +170,6 @@ joola.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-
         result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);

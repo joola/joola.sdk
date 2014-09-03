@@ -11,7 +11,7 @@
 
 var
   joola = require('../index'),
-  
+
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -45,7 +45,7 @@ proto.markContainer = function (container, attr, callback) {
 
   try {
     container.attr('jio-domain', 'joola');
-
+    attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
         container.attr('jio-' + key, a[key]);
@@ -68,11 +68,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified for timeline.'));
+    return callback(new Error('no container specified.'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container for the timeline.'));
+    return callback(new Error('cannot find container [' + options.container + '].'));
 
   return callback(null);
 };
