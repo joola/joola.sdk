@@ -1,13 +1,16 @@
 /**
- *  @title joola.io/lib/sdk/common/api
+ *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>. Some rights reserved. See LICENSE, AUTHORS
  *
- *  Provides the SDK with a centralized management for consuming data from a joola.io
+ *  Provides the SDK with a centralized management for consuming data from a joola
  *  node. All API calls are routed through this interface.
  **/
 
 var
+  joola = require('../index'),
+  
+  
   http = require('http'),
   https = require('https'),
   querystring = require('querystring');
@@ -97,10 +100,10 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
     tokens = {_: null, __: null};
   }
 
-  if (api.requestCount < (joolaio.options.maxRequests || 100)) {
+  if (api.requestCount < (joola.options.maxRequests || 100)) {
     api.requestCount++;
     try {
-      var parts = require('url').parse(joolaio.options.host);
+      var parts = require('url').parse(joola.options.host);
       var options = {
         tokens: tokens,
         host: parts.hostname,
@@ -149,9 +152,9 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
+  joola.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joola.APITOKEN || joola.TOKEN ));
 
-  if (!joolaio.io || joolaio.options.ajax || options.ajax) {
+  if (!joola.io || joola.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
     options.path += '?' + qs;
     var timerID, aborted;
@@ -177,7 +180,7 @@ api.getJSON = function (options, objOptions, callback) {
               obj = JSON.parse(output);
             }
             catch (ex) {
-              joolaio.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
+              joola.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
               return callback(new Error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message));
             }
           }
@@ -189,8 +192,8 @@ api.getJSON = function (options, objOptions, callback) {
           }
           else if (res.statusCode == 401) {
             //let's redirect to login
-            if (joolaio.options.logouturl)
-              location.href = joolaio.options.logouturl;
+            if (joola.options.logouturl)
+              location.href = joola.options.logouturl;
 
             return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
@@ -207,7 +210,7 @@ api.getJSON = function (options, objOptions, callback) {
           req.xhr.abort();
         else
           req.abort();
-      }, options.timeout || joolaio.options.timeout || 15000);
+      }, options.timeout || joola.options.timeout || 15000);
 
       req.on('error', function (err) {
         return callback(err);
@@ -228,26 +231,26 @@ api.getJSON = function (options, objOptions, callback) {
       var message = data.message;
 
       if (message && !message.hasOwnProperty('realtime')) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
       else if (!message) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
 
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
-        if (joolaio.options.logouturl)
-          location.href = joolaio.options.logouturl;
+        if (joola.options.logouturl)
+          location.href = joola.options.logouturl;
 
         return callback(new Error('Failed to execute request: ' + data.message.message));
       }
@@ -258,12 +261,12 @@ api.getJSON = function (options, objOptions, callback) {
     };
 
 
-    var routeID = options.path + '-' + joolaio.common.uuid();
+    var routeID = options.path + '-' + joola.common.uuid();
 
-    if (joolaio.TOKEN)
-      objOptions._token = joolaio.TOKEN;
+    if (joola.TOKEN)
+      objOptions._token = joola.TOKEN;
     if (!objOptions._token)
-      objOptions.APIToken = joolaio.APITOKEN;
+      objOptions.APIToken = joola.APITOKEN;
 
     if (options.tokens && (options.tokens._ || options.tokens.__)) {
       objOptions._token = null;
@@ -276,28 +279,27 @@ api.getJSON = function (options, objOptions, callback) {
 
     objOptions._path = options.path;
 
-    joolaio.io.socket.emit(routeID, objOptions);
-    joolaio.events.emit('rpc:start', 1);
-    joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-
+    joola.io.socket.emit(routeID, objOptions);
+    joola.events.emit('rpc:start', 1);
+    joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+    
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
-      console.log('adding on',joolaio.io.socket);
-      joolaio.io.socket.on(routeID + ':done', processResponse);
+      joola.io.socket.on(routeID + ':done', processResponse);
     }
     else {
-      joolaio.io.socket.once(routeID + ':done', processResponse);
+      joola.io.socket.once(routeID + ':done', processResponse);
     }
   }
 };
 
-joolaio.events.on('rpc:start', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls++;
+joola.events.on('rpc:start', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls++;
 });
 
-joolaio.events.on('rpc:done', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls--;
+joola.events.on('rpc:done', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls--;
 });

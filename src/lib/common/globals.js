@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -8,17 +8,19 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
+
 global.emptyfunc = function () {
 
 };
 
-joolaio.timezone = function (tz) {
+joola.timezone = function (tz) {
   if (tz)
-    joolaio.options.timezoneOffset = tz;
+    joola.options.timezoneOffset = tz;
 
   var offset = 0;
-  if (joolaio.options.timezoneOffset)
-    offset = joolaio.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
+  if (joola.options.timezoneOffset)
+    offset = joola.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
 
   return offset;
 };

@@ -1,5 +1,5 @@
 /**
- *  joola.io
+ *  joola
  *
  *  Copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *
@@ -9,7 +9,9 @@
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
  */
 
-var ce = require('cloneextend');
+var
+  joola = require('../index'),
+  ce = require('cloneextend');
 
 var dispatch = exports;
 dispatch._id = 'dispatch';
@@ -20,7 +22,7 @@ dispatch.buildstub = function (callback) {
   var self = this;
 
   try {
-    var parts = require('url').parse(joolaio.options.host);
+    var parts = require('url').parse(joola.options.host);
     var port = parts.port;
     if (!port)
       port = parts.protocol === 'http:' ? 80 : 443;
@@ -36,17 +38,17 @@ dispatch.buildstub = function (callback) {
       ajax: true
     };
 
-    joolaio.api.getJSON(options, {}, function (err, result) {
+    joola.api.getJSON(options, {}, function (err, result) {
       if (err)
         return callback(err);
 
-      joolaio.api.describe = {};
+      joola.api.describe = {};
       Object.keys(result).forEach(function (endpoints) {
         dispatch[endpoints] = {};
         Object.keys(result[endpoints]).forEach(function (fn) {
-          if (!joolaio.api.describe[endpoints])
-            joolaio.api.describe[endpoints] = {};
-          joolaio.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
+          if (!joola.api.describe[endpoints])
+            joola.api.describe[endpoints] = {};
+          joola.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
@@ -77,7 +79,7 @@ dispatch.buildstub = function (callback) {
               shouldAppendWorkspace = 1;
             }
             if (shouldAppendWorkspace > 0)
-              _args[_fn.inputs[0]] = joolaio.USER.workspace;
+              _args[_fn.inputs[0]] = joola.USER.workspace;
             Object.keys(args).forEach(function (arg) {
               if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
                 args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
@@ -89,11 +91,11 @@ dispatch.buildstub = function (callback) {
             });
 
             args = _args;
-            joolaio.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+            joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
+              joola.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
                 if (result) {
                   return _callback(err, result, headers);
                 }
@@ -106,10 +108,10 @@ dispatch.buildstub = function (callback) {
               return _callback(ex);
             }
           };
-          if (!joolaio[endpoints])
-            joolaio[endpoints] = {};
-          if (!joolaio[endpoints][fn])
-            joolaio[endpoints][fn] = dispatch[endpoints][fn];
+          if (!joola[endpoints])
+            joola[endpoints] = {};
+          if (!joola[endpoints][fn])
+            joola[endpoints][fn] = dispatch[endpoints][fn];
         });
       });
       return callback(null);

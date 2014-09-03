@@ -9,8 +9,8 @@ describe("query-nested", function () {
 
   after(function (done) {
     var self = this;
-    joolaio.collections.delete(this.collection, function () {
-      joolaio.collections.delete( self.collection + '-nots', function () {
+    joola.collections.delete(this.collection, function () {
+      joola.collections.delete( self.collection + '-nots', function () {
         done();
       });
     });
@@ -24,7 +24,7 @@ describe("query-nested", function () {
       metrics: ['nvalue.actual'],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
 
@@ -46,7 +46,7 @@ describe("query-nested", function () {
       ],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
 
@@ -68,7 +68,7 @@ describe("query-nested", function () {
       ],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
       expect(result).to.be.ok;
@@ -89,7 +89,7 @@ describe("query-nested", function () {
       ],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
       expect(result).to.be.ok;
@@ -113,7 +113,7 @@ describe("query-nested", function () {
       ],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
       expect(result).to.be.ok;
@@ -137,7 +137,7 @@ describe("query-nested", function () {
       ],
       collection: this.collection
     };
-    joolaio.query.fetch(query, function (err, result) {
+    joola.query.fetch(query, function (err, result) {
       if (err)
         return done(err);
       expect(result).to.be.ok;

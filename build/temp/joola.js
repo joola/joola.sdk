@@ -7032,6 +7032,97 @@ function foreach(object, block, context)
  }
  */
 },{}],34:[function(require,module,exports){
+(function (Buffer){
+/*!
+ * Node.JS module "Deep Extend"
+ * @description Recursive object extending.
+ * @author Viacheslav Lotsmanov (unclechu) <lotsmanov89@gmail.com>
+ * @license MIT
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2013 Viacheslav Lotsmanov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/**
+ * Extening object that entered in first argument.
+ * Returns extended object or false if have no target object or incorrect type.
+ * If you wish to clone object, simply use that:
+ *  deepExtend({}, yourObj_1, [yourObj_N]) - first arg is new empty object
+ */
+var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
+    if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+        return false;
+    }
+
+    if (arguments.length < 2) return arguments[0];
+
+    var target = arguments[0];
+
+    // convert arguments to array and cut off target object
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var key, val, src, clone, tmpBuf;
+
+    args.forEach(function (obj) {
+        if (typeof obj !== 'object') return;
+
+        for (key in obj) {
+            if ( ! (key in obj)) continue;
+
+            src = target[key];
+            val = obj[key];
+
+            if (val === target) continue;
+
+            if (typeof val !== 'object' || val === null) {
+                target[key] = val;
+                continue;
+            } else if (val instanceof Buffer) {
+                tmpBuf = new Buffer(val.length);
+                val.copy(tmpBuf);
+                target[key] = tmpBuf;
+                continue;
+            }
+
+            if (typeof src !== 'object' || src === null) {
+                clone = (Array.isArray(val)) ? [] : {};
+                target[key] = deepExtend(clone, val);
+                continue;
+            }
+
+            if (Array.isArray(val)) {
+                clone = (Array.isArray(src)) ? src : [];
+            } else {
+                clone = (!Array.isArray(src)) ? src : {};
+            }
+
+            target[key] = deepExtend(clone, val);
+        }
+    });
+
+    return target;
+}
+
+}).call(this,require("buffer").Buffer)
+},{"buffer":1}],35:[function(require,module,exports){
 (function (process){
 ;!function(exports, undefined) {
 
@@ -7596,7 +7687,7 @@ function foreach(object, block, context)
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
 }).call(this,require("FWaASH"))
-},{"FWaASH":17}],35:[function(require,module,exports){
+},{"FWaASH":17}],36:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -9998,11 +10089,11 @@ function foreach(object, block, context)
     }
 }).call(this);
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":37}],37:[function(require,module,exports){
+},{"./lib/":38}],38:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10091,7 +10182,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":38,"./socket":40,"./url":41,"debug":43,"socket.io-parser":74}],38:[function(require,module,exports){
+},{"./manager":39,"./socket":41,"./url":42,"debug":44,"socket.io-parser":75}],39:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10535,7 +10626,7 @@ Manager.prototype.onreconnect = function(){
   this.emit('reconnect', attempt);
 };
 
-},{"./on":39,"./socket":40,"./url":41,"bind":42,"debug":43,"emitter":44,"engine.io-client":45,"object-component":71,"socket.io-parser":74}],39:[function(require,module,exports){
+},{"./on":40,"./socket":41,"./url":42,"bind":43,"debug":44,"emitter":45,"engine.io-client":46,"object-component":72,"socket.io-parser":75}],40:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -10561,7 +10652,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10924,7 +11015,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":39,"bind":42,"debug":43,"emitter":44,"has-binary-data":68,"indexof":70,"socket.io-parser":74,"to-array":77}],41:[function(require,module,exports){
+},{"./on":40,"bind":43,"debug":44,"emitter":45,"has-binary-data":69,"indexof":71,"socket.io-parser":75,"to-array":78}],42:[function(require,module,exports){
 (function (global){
 
 /**
@@ -10996,7 +11087,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":43,"parseuri":72}],42:[function(require,module,exports){
+},{"debug":44,"parseuri":73}],43:[function(require,module,exports){
 
 /**
  * Slice reference.
@@ -11022,7 +11113,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -11161,7 +11252,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -11325,11 +11416,11 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{"indexof":70}],45:[function(require,module,exports){
+},{"indexof":71}],46:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":46}],46:[function(require,module,exports){
+},{"./lib/":47}],47:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -11341,7 +11432,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":47,"engine.io-parser":55}],47:[function(require,module,exports){
+},{"./socket":48,"engine.io-parser":56}],48:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -11972,7 +12063,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":48,"./transports":49,"debug":43,"emitter":44,"engine.io-parser":55,"indexof":70,"parsejson":65,"parseqs":66,"parseuri":72}],48:[function(require,module,exports){
+},{"./transport":49,"./transports":50,"debug":44,"emitter":45,"engine.io-parser":56,"indexof":71,"parsejson":66,"parseqs":67,"parseuri":73}],49:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -12122,7 +12213,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"emitter":44,"engine.io-parser":55}],49:[function(require,module,exports){
+},{"emitter":45,"engine.io-parser":56}],50:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -12174,7 +12265,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":50,"./polling-xhr":51,"./websocket":53,"xmlhttprequest":54}],50:[function(require,module,exports){
+},{"./polling-jsonp":51,"./polling-xhr":52,"./websocket":54,"xmlhttprequest":55}],51:[function(require,module,exports){
 (function (global){
 
 /**
@@ -12410,7 +12501,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":52,"inherits":64}],51:[function(require,module,exports){
+},{"./polling":53,"inherits":65}],52:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -12724,7 +12815,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":52,"debug":43,"emitter":44,"inherits":64,"xmlhttprequest":54}],52:[function(require,module,exports){
+},{"./polling":53,"debug":44,"emitter":45,"inherits":65,"xmlhttprequest":55}],53:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -12971,7 +13062,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":48,"debug":43,"engine.io-parser":55,"inherits":64,"parseqs":66,"xmlhttprequest":54}],53:[function(require,module,exports){
+},{"../transport":49,"debug":44,"engine.io-parser":56,"inherits":65,"parseqs":67,"xmlhttprequest":55}],54:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -13202,7 +13293,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":48,"debug":43,"engine.io-parser":55,"inherits":64,"parseqs":66,"ws":67}],54:[function(require,module,exports){
+},{"../transport":49,"debug":44,"engine.io-parser":56,"inherits":65,"parseqs":67,"ws":68}],55:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -13223,7 +13314,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":62}],55:[function(require,module,exports){
+},{"has-cors":63}],56:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -13770,7 +13861,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":56,"after":57,"arraybuffer.slice":58,"base64-arraybuffer":59,"blob":60,"utf8":61}],56:[function(require,module,exports){
+},{"./keys":57,"after":58,"arraybuffer.slice":59,"base64-arraybuffer":60,"blob":61,"utf8":62}],57:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -13791,7 +13882,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -13821,7 +13912,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -13852,7 +13943,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -13913,7 +14004,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -13966,7 +14057,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -14209,7 +14300,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14234,7 +14325,7 @@ try {
   module.exports = false;
 }
 
-},{"global":63}],63:[function(require,module,exports){
+},{"global":64}],64:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -14244,9 +14335,9 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],64:[function(require,module,exports){
-module.exports=require(16)
 },{}],65:[function(require,module,exports){
+module.exports=require(16)
+},{}],66:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -14281,7 +14372,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -14320,7 +14411,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14365,7 +14456,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (global,Buffer){
 /*
  * Module requirements.
@@ -14426,12 +14517,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"buffer":1,"isarray":69}],69:[function(require,module,exports){
+},{"buffer":1,"isarray":70}],70:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -14442,7 +14533,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -14527,7 +14618,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -14554,7 +14645,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 (function (global,Buffer){
 /**
  * Modle requirements
@@ -14710,7 +14801,7 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"buffer":1,"isarray":75}],74:[function(require,module,exports){
+},{"buffer":1,"isarray":76}],75:[function(require,module,exports){
 (function (global,Buffer){
 
 /**
@@ -15098,9 +15189,9 @@ function error(data){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./binary":73,"buffer":1,"debug":43,"emitter":44,"isarray":75,"json3":76}],75:[function(require,module,exports){
-module.exports=require(69)
-},{}],76:[function(require,module,exports){
+},{"./binary":74,"buffer":1,"debug":44,"emitter":45,"isarray":76,"json3":77}],76:[function(require,module,exports){
+module.exports=require(70)
+},{}],77:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -15963,7 +16054,7 @@ module.exports=require(69)
   }
 }(this));
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -15978,7 +16069,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -17256,20 +17347,20 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{}],79:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports={
-  "name": "joola.io.sdk",
+  "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.6.2-develop-oo",
+  "version": "0.7.12",
   "author": "Joola <info@joo.la>",
-  "description": "joola.io's software development kit (SDK)",
+  "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/joola/joola.io.sdk.git"
+    "url": "https://github.com/joola/joola.sdk.git"
   },
-  "bugs": "https://github.com/joola/joola.io.sdk/issues",
+  "bugs": "https://github.com/joola/joola.sdk/issues",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -17290,6 +17381,7 @@ module.exports={
   "dependencies": {
     "async": "~0.2.10",
     "cloneextend": "^0.0.3",
+    "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
     "moment": "~2.5.1",
     "socket.io-client": "^1.0.2",
@@ -17316,17 +17408,20 @@ module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /**
- *  @title joola.io/lib/sdk/common/api
+ *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>. Some rights reserved. See LICENSE, AUTHORS
  *
- *  Provides the SDK with a centralized management for consuming data from a joola.io
+ *  Provides the SDK with a centralized management for consuming data from a joola
  *  node. All API calls are routed through this interface.
  **/
 
 var
+  joola = require('../index'),
+  
+  
   http = require('http'),
   https = require('https'),
   querystring = require('querystring');
@@ -17416,10 +17511,10 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
     tokens = {_: null, __: null};
   }
 
-  if (api.requestCount < (joolaio.options.maxRequests || 100)) {
+  if (api.requestCount < (joola.options.maxRequests || 100)) {
     api.requestCount++;
     try {
-      var parts = require('url').parse(joolaio.options.host);
+      var parts = require('url').parse(joola.options.host);
       var options = {
         tokens: tokens,
         host: parts.hostname,
@@ -17468,9 +17563,9 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
  */
 api.getJSON = function (options, objOptions, callback) {
   var prot = options.secure ? https : http;
-  joolaio.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joolaio.APITOKEN || joolaio.TOKEN ));
+  joola.logger.silly('[api] Fetching JSON from ' + options.host + ':' + options.port + options.path + '@' + (joola.APITOKEN || joola.TOKEN ));
 
-  if (!joolaio.io || joolaio.options.ajax || options.ajax) {
+  if (!joola.io || joola.options.ajax || options.ajax) {
     var qs = querystring.stringify(objOptions);
     options.path += '?' + qs;
     var timerID, aborted;
@@ -17496,7 +17591,7 @@ api.getJSON = function (options, objOptions, callback) {
               obj = JSON.parse(output);
             }
             catch (ex) {
-              joolaio.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
+              joola.logger.error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message);
               return callback(new Error('[api] Error: ' + options.host + ':' + options.port + options.path + '. Error: ' + ex.message));
             }
           }
@@ -17508,8 +17603,8 @@ api.getJSON = function (options, objOptions, callback) {
           }
           else if (res.statusCode == 401) {
             //let's redirect to login
-            if (joolaio.options.logouturl)
-              location.href = joolaio.options.logouturl;
+            if (joola.options.logouturl)
+              location.href = joola.options.logouturl;
 
             return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
@@ -17526,7 +17621,7 @@ api.getJSON = function (options, objOptions, callback) {
           req.xhr.abort();
         else
           req.abort();
-      }, options.timeout || joolaio.options.timeout || 15000);
+      }, options.timeout || joola.options.timeout || 15000);
 
       req.on('error', function (err) {
         return callback(err);
@@ -17547,26 +17642,26 @@ api.getJSON = function (options, objOptions, callback) {
       var message = data.message;
 
       if (message && !message.hasOwnProperty('realtime')) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
       else if (!message) {
-        joolaio.events.emit('rpc:done', 1);
-        //joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-        if (headers && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('waittime', headers['X-JoolaIO-Duration']);
-        if (headers && headers['X-JoolaIO-Duration-Fulfilled'] && headers['X-JoolaIO-Duration'])
-          joolaio.events.emit('latency', headers['X-JoolaIO-Duration'] - headers['X-JoolaIO-Duration-Fulfilled']);
+        joola.events.emit('rpc:done', 1);
+        //joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+        if (headers && headers['X-joola-Duration'])
+          joola.events.emit('waittime', headers['X-joola-Duration']);
+        if (headers && headers['X-joola-Duration-Fulfilled'] && headers['X-joola-Duration'])
+          joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
 
       if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
-        if (joolaio.options.logouturl)
-          location.href = joolaio.options.logouturl;
+        if (joola.options.logouturl)
+          location.href = joola.options.logouturl;
 
         return callback(new Error('Failed to execute request: ' + data.message.message));
       }
@@ -17577,12 +17672,12 @@ api.getJSON = function (options, objOptions, callback) {
     };
 
 
-    var routeID = options.path + '-' + joolaio.common.uuid();
+    var routeID = options.path + '-' + joola.common.uuid();
 
-    if (joolaio.TOKEN)
-      objOptions._token = joolaio.TOKEN;
+    if (joola.TOKEN)
+      objOptions._token = joola.TOKEN;
     if (!objOptions._token)
-      objOptions.APIToken = joolaio.APITOKEN;
+      objOptions.APIToken = joola.APITOKEN;
 
     if (options.tokens && (options.tokens._ || options.tokens.__)) {
       objOptions._token = null;
@@ -17595,34 +17690,33 @@ api.getJSON = function (options, objOptions, callback) {
 
     objOptions._path = options.path;
 
-    joolaio.io.socket.emit(routeID, objOptions);
-    joolaio.events.emit('rpc:start', 1);
-    joolaio.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-
+    joola.io.socket.emit(routeID, objOptions);
+    joola.events.emit('rpc:start', 1);
+    joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
+    
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
-      console.log('adding on',joolaio.io.socket);
-      joolaio.io.socket.on(routeID + ':done', processResponse);
+      joola.io.socket.on(routeID + ':done', processResponse);
     }
     else {
-      joolaio.io.socket.once(routeID + ':done', processResponse);
+      joola.io.socket.once(routeID + ':done', processResponse);
     }
   }
 };
 
-joolaio.events.on('rpc:start', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls++;
+joola.events.on('rpc:start', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls++;
 });
 
-joolaio.events.on('rpc:done', function () {
-  if (!joolaio.usage)
-    joolaio.usage = {currentCalls: 0};
-  joolaio.usage.currentCalls--;
+joola.events.on('rpc:done', function () {
+  if (!joola.usage)
+    joola.usage = {currentCalls: 0};
+  joola.usage.currentCalls--;
 });
-},{"http":11,"https":15,"querystring":21,"url":30}],81:[function(require,module,exports){
+},{"../index":88,"http":11,"https":15,"querystring":21,"url":30}],82:[function(require,module,exports){
 /**
- *  joola.io
+ *  joola
  *
  *  Copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *
@@ -17632,7 +17726,9 @@ joolaio.events.on('rpc:done', function () {
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
  */
 
-var ce = require('cloneextend');
+var
+  joola = require('../index'),
+  ce = require('cloneextend');
 
 var dispatch = exports;
 dispatch._id = 'dispatch';
@@ -17643,7 +17739,7 @@ dispatch.buildstub = function (callback) {
   var self = this;
 
   try {
-    var parts = require('url').parse(joolaio.options.host);
+    var parts = require('url').parse(joola.options.host);
     var port = parts.port;
     if (!port)
       port = parts.protocol === 'http:' ? 80 : 443;
@@ -17659,17 +17755,17 @@ dispatch.buildstub = function (callback) {
       ajax: true
     };
 
-    joolaio.api.getJSON(options, {}, function (err, result) {
+    joola.api.getJSON(options, {}, function (err, result) {
       if (err)
         return callback(err);
 
-      joolaio.api.describe = {};
+      joola.api.describe = {};
       Object.keys(result).forEach(function (endpoints) {
         dispatch[endpoints] = {};
         Object.keys(result[endpoints]).forEach(function (fn) {
-          if (!joolaio.api.describe[endpoints])
-            joolaio.api.describe[endpoints] = {};
-          joolaio.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
+          if (!joola.api.describe[endpoints])
+            joola.api.describe[endpoints] = {};
+          joola.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
 
           var _fn = result[endpoints][fn];
           dispatch[endpoints][fn] = function () {
@@ -17700,7 +17796,7 @@ dispatch.buildstub = function (callback) {
               shouldAppendWorkspace = 1;
             }
             if (shouldAppendWorkspace > 0)
-              _args[_fn.inputs[0]] = joolaio.USER.workspace;
+              _args[_fn.inputs[0]] = joola.USER.workspace;
             Object.keys(args).forEach(function (arg) {
               if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
                 args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
@@ -17712,11 +17808,11 @@ dispatch.buildstub = function (callback) {
             });
 
             args = _args;
-            joolaio.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+            joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
 
             var _callback = ce.clone(callback);//.clone();
             try {
-              joolaio.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
+              joola.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
                 if (result) {
                   return _callback(err, result, headers);
                 }
@@ -17729,10 +17825,10 @@ dispatch.buildstub = function (callback) {
               return _callback(ex);
             }
           };
-          if (!joolaio[endpoints])
-            joolaio[endpoints] = {};
-          if (!joolaio[endpoints][fn])
-            joolaio[endpoints][fn] = dispatch[endpoints][fn];
+          if (!joola[endpoints])
+            joola[endpoints] = {};
+          if (!joola[endpoints][fn])
+            joola[endpoints][fn] = dispatch[endpoints][fn];
         });
       });
       return callback(null);
@@ -17744,9 +17840,9 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"cloneextend":33,"url":30}],82:[function(require,module,exports){
+},{"../index":88,"cloneextend":33,"url":30}],83:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17757,16 +17853,17 @@ dispatch.buildstub = function (callback) {
 
 
 var
+  joola = require('../index'),
   EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"eventemitter2":34}],83:[function(require,module,exports){
+},{"../index":88,"eventemitter2":35}],84:[function(require,module,exports){
 (function (global){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17774,27 +17871,30 @@ module.exports = exports = _events;
  *  Licensed under GNU General Public License 3.0 or later.
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
+
+var joola = require('../index');
 
 global.emptyfunc = function () {
 
 };
 
-joolaio.timezone = function (tz) {
+joola.timezone = function (tz) {
   if (tz)
-    joolaio.options.timezoneOffset = tz;
+    joola.options.timezoneOffset = tz;
 
   var offset = 0;
-  if (joolaio.options.timezoneOffset)
-    offset = joolaio.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
+  if (joola.options.timezoneOffset)
+    offset = joola.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
 
   return offset;
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],84:[function(require,module,exports){
+},{"../index":88}],85:[function(require,module,exports){
+(function (Buffer){
 /*jshint -W083 */
 
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17803,9 +17903,14 @@ joolaio.timezone = function (tz) {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+
 var
+  joola = require('../index'),
   util = require('util'),
-  _ = require('underscore');
+  _ = require('underscore'),
+  de = require('deep-extend'),
+  ce = require('cloneextend');//,
+//JSONStream = require('JSONStream');
 
 var common = util;
 common._id = 'common';
@@ -17813,30 +17918,65 @@ common._id = 'common';
 module.exports = exports = common;
 common.extend = common._extend;
 
-common.moment = require('moment');
-common._ = _;
-
 require('./modifiers');
 
-common.mixin = function (origin, add, overwrite) {
-  // Don't do anything if add isn't an object
-  if (!add || typeof add !== 'object') return origin;
-
-  var keys = Object.keys(add);
-  var i = 0;//keys.length;
-  while (i < keys.length) {
-    if (origin.hasOwnProperty(keys[i])) {
-      if (overwrite)
-        origin[keys[i]] = add[keys[i]];
-      //else
-      //common.extend(origin[keys[i]], add[keys[i]]);
-
-    }
-    else
-      origin[keys[i]] = add[keys[i]];
-    i++;
+common.mixin = function (destination, source) {
+  if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+    return false;
   }
-  return origin;
+
+  if (arguments.length < 2) return arguments[0];
+
+  var target = arguments[0];
+
+  // convert arguments to array and cut off target object
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  var key, val, src, clone, tmpBuf;
+
+  args.forEach(function (obj) {
+    if (typeof obj !== 'object') return;
+
+    for (var key in obj) {
+      if ( ! (key in obj)) continue;
+
+      src = target[key];
+      val = obj[key];
+
+      if (val === target) continue;
+
+      if (typeof val === 'object' && key==='container'){
+        target[key] = val;
+        continue;
+      }
+      
+      if (typeof val !== 'object' || val === null) {
+        target[key] = val;
+        continue;
+      } else if (val instanceof Buffer) {
+        tmpBuf = new Buffer(val.length);
+        val.copy(tmpBuf);
+        target[key] = tmpBuf;
+        continue;
+      }
+
+      if (typeof src !== 'object' || src === null) {
+        clone = (Array.isArray(val)) ? [] : {};
+        target[key] = common.mixin (clone, val);
+        continue;
+      }
+
+      if (Array.isArray(val)) {
+        clone = (Array.isArray(src)) ? src : [];
+      } else {
+        clone = (!Array.isArray(src)) ? src : {};
+      }
+
+      target[key] = common.mixin (clone, val);
+    }
+  });
+  return target;
+ 
 };
 
 //hook functions for timings
@@ -17861,10 +18001,10 @@ common.hookEvents = function (obj) {
           var self = this;
           var timeID = 'Function ' + (obj_id ? obj_id + '.' : '') + name;
 
-          if (joolaio.options.debug.functions.enabled && console.time)
+          if (joola.options.debug.functions.enabled && console.time)
             console.time(timeID);
           var result = fn.apply(self, arguments);
-          if (joolaio.options.debug.functions.enabled && console.time) {
+          if (joola.options.debug.functions.enabled && console.time) {
             console.timeEnd(timeID);
           }
           return result;
@@ -17898,19 +18038,10 @@ common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
 };
 
-common.parseQueryString = function (qs, key) {
-  var vars = qs.split('&');
-  for (var i = 0; i < vars.length; i++) {
-    var pair = vars[i].split('=');
-    if (decodeURIComponent(pair[0]) == variable) {
-      return decodeURIComponent(pair[1]);
-    }
-  }
-  return key;
-};
-},{"./modifiers":86,"crypto":5,"moment":35,"underscore":78,"util":32}],85:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"../index":88,"./modifiers":87,"buffer":1,"cloneextend":33,"crypto":5,"deep-extend":34,"underscore":79,"util":32}],86:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -17919,7 +18050,8 @@ common.parseQueryString = function (qs, key) {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
+var joola = require('../index');
+  
 var logger = exports;
 logger._id = 'logger';
 
@@ -17930,7 +18062,6 @@ logger._log = function (level, message, callback) {
     case 'warn':
     case 'error':
       break;
-    case 'trace':
     case 'silly':
       level = 'debug';
       break;
@@ -17938,7 +18069,7 @@ logger._log = function (level, message, callback) {
       break;
   }
 
-  if (!joolaio.options.debug.enabled)
+  if (!joola.options.debug.enabled)
     return;
 
   if (typeof message === 'object')
@@ -17946,10 +18077,10 @@ logger._log = function (level, message, callback) {
   else
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + message;
 
-  if (joolaio.options.isBrowser && console.debug) {
-    if (['trace', 'silly', 'debug'].indexOf(level) == -1)
+  if (joola.options.isBrowser && console.debug) {
+    if (['silly', 'debug'].indexOf(level) == -1)
       console[level](message);
-    else if (joolaio.options.debug.enabled && ['trace', 'silly', 'debug'].indexOf(level) > -1)
+    else if (joola.options.debug.enabled && ['silly', 'debug'].indexOf(level) > -1)
       console[level](message);
   }
   else
@@ -17957,10 +18088,6 @@ logger._log = function (level, message, callback) {
 
   if (callback)
     return callback(null);
-};
-
-logger.trace = function (message, callback) {
-  return this._log('silly', message, callback);
 };
 
 logger.silly = function (message, callback) {
@@ -17983,12 +18110,12 @@ logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
 
-},{}],86:[function(require,module,exports){
+},{"../index":88}],87:[function(require,module,exports){
 /**
- *  @title joola.io/lib/common/modifiers
- *  @overview Includes different prototype modifiers used by joola.io
+ *  @title joola/lib/common/modifiers
+ *  @overview Includes different prototype modifiers used by joola
  *  @description
- *  joola.io requires some additional support for prototype modification, for example, extending Date to support format.
+ *  joola requires some additional support for prototype modification, for example, extending Date to support format.
  *
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>. Some rights reserved. See LICENSE, AUTHORS
@@ -18029,7 +18156,7 @@ Date.prototype.format = function (formatString) {
   formatString = formatString.replace(/yy/i, yy);
   formatString = formatString.replace(/mmm/i, mmm);
   formatString = formatString.replace(/mm/i, mm);
-  //formatString = formatString.replace(/m/, m);
+  formatString = formatString.replace(/m/i, m);
   formatString = formatString.replace(/dd/i, dd);
   formatString = formatString.replace(/d/i, d);
   formatString = formatString.replace(/hh/i, hh);
@@ -18112,10 +18239,10 @@ JSON.stringify = function (obj) {
   return result;
 };
 */
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 (function (global){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18126,12 +18253,10 @@ JSON.stringify = function (obj) {
 
 
 //THE OBJECT
-var joolaio = global.joolaio = exports;
-if (!global.hasOwnProperty('joola'))
-  global.joola = global.joolaio;
+var joola = exports;
 
 //base options
-joolaio.options = {
+joola.options = {
   token: null,
   host: null,
   cssHost: '',
@@ -18155,47 +18280,45 @@ joolaio.options = {
 };
 
 //libraries
-joolaio.globals = require('./common/globals');
-joolaio.logger = require('./common/logger');
-joolaio.dispatch = require('./common/dispatch');
-joolaio.common = require('./common/index');
-joolaio.events = require('./common/events');
+joola.globals = require('./common/globals');
+joola.logger = require('./common/logger');
+joola.dispatch = require('./common/dispatch');
+joola.common = require('./common/index');
+joola.events = require('./common/events');
 
-joolaio.events.setMaxListeners(100);
+joola.on = joola.events.on;
 
-joolaio.on = joolaio.events.on;
+joola.api = require('./common/api');
+joola.state = {};
+joola.viz = require('./viz/index');
 
-joolaio.api = require('./common/api');
-joolaio.state = {};
-joolaio.viz = require('./viz/index');
+joola.VERSION = require('./../../package.json').version;
+joola._token = null;
+joola._apitoken = null;
 
-joolaio.VERSION = require('./../../package.json').version;
-joolaio._token = null;
-joolaio._apitoken = null;
-
-Object.defineProperty(joolaio, 'TOKEN', {
+Object.defineProperty(joola, 'TOKEN', {
   get: function () {
-    return joolaio._token;
+    return joola._token;
   },
   set: function (value) {
-    joolaio._token = value;
-    joolaio.events.emit('core.init.finish');
-    joolaio.events.emit('ready');
+    joola._token = value;
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
   }
 });
 
-Object.defineProperty(joolaio, 'APITOKEN', {
+Object.defineProperty(joola, 'APITOKEN', {
   get: function () {
-    return joolaio._apitoken;
+    return joola._apitoken;
   },
   set: function (value) {
-    joolaio._apitoken = value;
-    joolaio.USER = null;
-    joolaio._token = null;
+    joola._apitoken = value;
+    joola.USER = null;
+    joola._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio.APITOKEN, function (err, user) {
-      joolaio.USER = user;
-      //joolaio.TOKEN = user.token._;
+    joola.dispatch.users.verifyAPIToken(joola.APITOKEN, function (err, user) {
+      joola.USER = user;
+      //joola.TOKEN = user.token._;
     });
   }
 });
@@ -18213,19 +18336,19 @@ if (isBrowser()) {
   Object.keys(elems).forEach(function (key) {
     var scr = elems[key];
     if (scr.src) {
-      if (scr.src.indexOf('joola.io.js') > -1 || scr.src.indexOf('joola.io.min.js') > -1) {
+      if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joolaio.options.host = parts.protocol + '//' + parts.host;
+        joola.options.host = parts.protocol + '//' + parts.host;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
-            joolaio.options.APIToken = qs.APIToken;
+            joola.options.APIToken = qs.APIToken;
           }
           if (qs && qs.token) {
-            joolaio.options.token = qs.token;
+            joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joolaio.options.host = qs.host;
+            joola.options.host = qs.host;
           }
         }
       }
@@ -18234,10 +18357,10 @@ if (isBrowser()) {
 }
 
 //init procedure
-joolaio.init = function (options, callback) {
+joola.init = function (options, callback) {
   callback = callback || emptyfunc;
-  joolaio.options = joolaio.common.extend(joolaio.options, options);
-  joolaio.options.isBrowser = isBrowser();
+  joola.options = joola.common.mixin(joola.options, options);
+  joola.options.isBrowser = isBrowser();
 
   function browser3rd(callback) {
     var expected = 0;
@@ -18250,7 +18373,7 @@ joolaio.init = function (options, callback) {
     }
 
     var script;
-    if (joolaio.options.isBrowser) {
+    if (joola.options.isBrowser) {
       if (typeof (jQuery) === 'undefined') {
         script = document.createElement('script');
         expected++;
@@ -18264,10 +18387,19 @@ joolaio.init = function (options, callback) {
             var script = document.createElement('script');
             expected++;
             script.onload = function () {
+              var script = document.createElement('script');
+              expected++;
+              script.onload = function () {
+                done('highcharts-nodata');
+              };
+              script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+              document.head.appendChild(script);
+
               done('highcharts');
             };
             script.src = '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
+
 
             done('jquery-ui');
           };
@@ -18283,6 +18415,14 @@ joolaio.init = function (options, callback) {
         script = document.createElement('script');
         expected++;
         script.onload = function () {
+          var script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+            done('highcharts-nodata-2');
+          };
+          script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+          document.head.appendChild(script);
+
           done('highcharts-2');
         };
         script.src = '//code.highcharts.com/highcharts.js';
@@ -18300,20 +18440,18 @@ joolaio.init = function (options, callback) {
       }
 
       //css
-      if (!joolaio.options.skipcss) {
-        var css = document.createElement('link');
-        expected++;
-        css.onload = function () {
-          //jQuery.noConflict(true);
-          //done('css');
-        };
-        css.rel = 'stylesheet';
-        css.href = joolaio.options.host + '/joola.io.css';
-        document.head.appendChild(css);
-        done('css');
-        if (expected === 0)
-          return done('none');
-      }
+      var css = document.createElement('link');
+      expected++;
+      css.onload = function () {
+        //jQuery.noConflict(true);
+        //done('css');
+      };
+      css.rel = 'stylesheet';
+      css.href = joola.options.host + '/joola.css';
+      document.head.appendChild(css);
+      done('css');
+      if (expected === 0)
+        return done('none');
     }
     else {
       return done('not browser');
@@ -18322,148 +18460,147 @@ joolaio.init = function (options, callback) {
 
   browser3rd(function () {
     if (options.token) {
-      joolaio._token = options.token;
+      joola._token = options.token;
     }
     else {
       if (typeof location !== 'undefined') {
         var qs = require('querystring');
         var parts = qs.parse(location.search.substring(1, location.search.length));
         if (parts.token)
-          joolaio._token = parts.token;
+          joola._token = parts.token;
       }
     }
-    joolaio.events.emit('core.init.start');
-    joolaio.logger.info('Starting joola.io client SDK, version ' + joolaio.VERSION);
+    joola.events.emit('core.init.start');
+    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
-    //else if (joolaio.options.isBrowser) {
-    if (!joolaio.options.host && joolaio.options.isBrowser) {
-      joolaio.options.host = location.protocol + '//' + location.host;
+    //else if (joola.options.isBrowser) {
+    if (!joola.options.host && joola.options.isBrowser) {
+      joola.options.host = location.protocol + '//' + location.host;
     }
 
-    if (!joolaio.options.host)
-      throw new Error('joola.io host not specified');
+    if (!joola.options.host)
+      throw new Error('joola host not specified');
 
     //var io = require('socket.io-browserify');
     var io = require('socket.io-client');
-    joolaio.io = io;
-    joolaio.io.socket = joolaio.io.connect(joolaio.options.host);
+    joola.io = io;
+    joola.io.socket = joola.io.connect(joola.options.host);
 
-    joolaio.io.socket.on('SIG_HUP', function () {
+    joola.io.socket.on('SIG_HUP', function () {
       console.log('SIG_HUP');
     });
 
     //}
-    //joolaio.config.init(function (err) {
+    //joola.config.init(function (err) {
     // if (err)
     //   return callback(err);
 
-    joolaio.dispatch.buildstub(function (err) {
+    joola.dispatch.buildstub(function (err) {
       if (err)
         return callback(err);
 
-      if (joolaio.options.token) {
-        joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
+      if (joola.options.token) {
+        joola.dispatch.users.getByToken(joola._token, function (err, user) {
           if (err)
             return callback(err);
 
-          joolaio.USER = user;
-          joolaio.TOKEN = joolaio._token;
-          joolaio.events.emit('core.init.finish');
+          joola.USER = user;
+          joola.TOKEN = joola._token;
+          joola.events.emit('core.init.finish');
           if (callback)
-            return callback(null, joolaio);
+            return callback(null, joola);
 
         });
       }
-      else if (joolaio.options.APIToken) {
-        joolaio._apitoken = joolaio.options.APIToken;
-        joolaio.USER = null;
-        joolaio._token = null;
+      else if (joola.options.APIToken) {
+        joola._apitoken = joola.options.APIToken;
+        joola.USER = null;
+        joola._token = null;
 
-        joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
-          joolaio.USER = user;
-          joolaio.events.emit('core.init.finish');
-          joolaio.events.emit('ready');
+        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+          joola.USER = user;
+          joola.events.emit('core.init.finish');
+          joola.events.emit('ready');
           if (typeof callback === 'function')
-            return callback(null, joolaio);
+            return callback(null, joola);
         });
       }
       else {
-        joolaio.events.emit('core.init.finish');
-        joolaio.events.emit('ready');
+        joola.events.emit('core.init.finish');
+        joola.events.emit('ready');
         if (typeof callback === 'function')
-          return callback(null, joolaio);
+          return callback(null, joola);
       }
     });
     //});
 
     //global function hook (for debug)
-    if (joolaio.options.debug && joolaio.options.debug.functions && joolaio.options.debug.functions.enabled)
-      [joolaio].forEach(function (obj) {
-        joolaio.common.hookEvents(obj, function (event) {
+    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+      [joola].forEach(function (obj) {
+        joola.common.hookEvents(obj, function (event) {
         });
       });
 
     //global event catcher (for debug)
-    if (joolaio.options.debug.enabled && joolaio.options.debug.events)
-      joolaio.events.onAny(function () {
-        if (joolaio.options.debug.events.enabled)
-          joolaio.logger.debug('Event raised: ' + this.event);
-        if (joolaio.options.debug.events.enabled && joolaio.options.debug.events.trace)
+    if (joola.options.debug.enabled && joola.options.debug.events)
+      joola.events.onAny(function () {
+        if (joola.options.debug.events.enabled)
+          joola.logger.debug('Event raised: ' + this.event);
+        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
           console.trace();
       });
   });
 };
 
-if (joolaio.options.APIToken || joolaio.options.token) {
-  joolaio.init({});
+if (joola.options.APIToken || joola.options.token) {
+  joola.init({});
 }
 
-joolaio.set = function (key, value, callback) {
-  joolaio.options[key] = value;
-  if (key === 'APIToken') {
-    joolaio._apitoken = joolaio.options.APIToken;
-    joolaio.USER = null;
-    joolaio._token = null;
 
-    joolaio.dispatch.users.verifyAPIToken(joolaio._apitoken, function (err, user) {
+joola.set = function (key, value, callback) {
+  joola.options[key] = value;
+  if (key === 'APIToken') {
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
+
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
       if (err)
         return callback(err);
       if (!user)
         return callback(new Error('Failed to verify API Token'));
 
-      joolaio.USER = user;
+      joola.USER = user;
       if (typeof callback === 'function') {
         return callback(null);
       }
     });
   }
   else if (key === 'token') {
-    joolaio._token = joolaio.options._token;
-    joolaio.USER = null;
-    joolaio.APIToken = null;
+    joola._token = joola.options._token;
+    joola.USER = null;
+    joola.APIToken = null;
 
-    joolaio.dispatch.users.getByToken(joolaio._token, function (err, user) {
-      joolaio.USER = user;
-      joolaio.TOKEN = user.token._;
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
+      joola.USER = user;
+      joola.TOKEN = user.token._;
       if (typeof callback === 'function')
         return callback(null);
     });
   }
 };
 
-joolaio.get = function (key) {
-  return joolaio.options[key];
+joola.get = function (key) {
+  return joola.options[key];
 };
 
-
-joolaio.colors = ['#058DC7', '#ED7E17', '#50B432', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
-joolaio.offcolors = ['#AADFF3', '#F2D5BD', '#C9E7BE', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE'];
-
-
+//try injecting global
+if (!global.joola)
+  global.joola = joola;
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":79,"./common/api":80,"./common/dispatch":81,"./common/events":82,"./common/globals":83,"./common/index":84,"./common/logger":85,"./viz/index":100,"querystring":21,"socket.io-client":36,"url":30}],88:[function(require,module,exports){
+},{"./../../package.json":80,"./common/api":81,"./common/dispatch":82,"./common/events":83,"./common/globals":84,"./common/index":85,"./common/logger":86,"./viz/index":100,"querystring":21,"socket.io-client":37,"url":30}],89:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18473,6 +18610,7 @@ joolaio.offcolors = ['#AADFF3', '#F2D5BD', '#C9E7BE', '#E1C9E8', '#F6F3B1', '#DA
  **/
 
 var
+  joola = require('../index'),
   EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 var
@@ -18483,7 +18621,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start');
 
   //mixin
   this._super = {};
@@ -18499,7 +18637,7 @@ var Canvas = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_canvas';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     container: null,
     $container: null,
@@ -18514,69 +18652,33 @@ var Canvas = module.exports = function (options, callback) {
   this.prepareQuery = function (query) {
     var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = joolaio.common.extend(self.options.query, _query);
+      _query = joola.common.extend(self.options.query, _query);
     }
-    if (self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker();
+    if (self.options.datepicker) {
+      var _datepicker = $(self.options.datepicker).DatePicker();
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
-      _query.interval = 'day';
-      if (self.options.datepicker && self.options.datepicker._interval)
-        _query.interval = self.options.datepicker._interval;
     }
 
     return _query;
   };
 
-  this.parseInterval = function ($container) {
-    return $container.find('.active').attr('data-id');
-  };
-
   this.draw = function (options, callback) {
     var self = this;
 
-    if (self.options.datepicker && self.options.datepicker.container) {
-      self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
-    }
+    if (self.options.datepicker)
+      $(self.options.datepicker).DatePicker({});
 
-    if (self.options.datepicker && self.options.datepicker.interval) {
-      self.options.datepicker.$interval = $(self.options.datepicker.interval);
-      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
-
-      self.options.datepicker.$interval.on('change', function (e, data) {
-        self.options.datepicker._interval = data.$container.attr('data-id');
-        self.emit('intervalchange', data.dataId);
-
-        self.options.datepicker.$interval.find('button').removeClass('active');
-        data.$container.addClass('active');
-      });
-    }
-
-    if (self.options.visualizations && self.options.visualizations) {
-      Object.keys(self.options.visualizations).forEach(function (key) {
-        var viz = self.options.visualizations[key];
-        if (viz.container) {
-          viz.query = self.prepareQuery(viz.query);
-          viz.force = true;
-          viz.canvas = self;
-          switch (viz.type.toLowerCase()) {
-            case 'timeline':
-              $(viz.container).Timeline(viz);
-              break;
-            case 'metric':
-              $(viz.container).Metric(viz);
-              break;
-            case 'table':
-              $(viz.container).Table(viz);
-              break;
-            case 'bartable':
-              $(viz.container).Table(viz);
-              break;
-            default:
-              break;
-          }
+    if (self.options.viz && self.options.viz.length > 0) {
+      self.options.viz.forEach(function (viz) {
+        viz.query = self.prepareQuery(viz.query);
+        switch (viz.type) {
+          case 'Metric':
+            $(viz.container).Metric(viz);
+            break;
+          default:
+            break;
         }
       });
     }
@@ -18591,22 +18693,21 @@ var Canvas = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {attr: [
+      self.markContainer(self.options.$container, [
         {'type': 'canvas'},
         {'uuid': self.uuid}
-      ],
-        css: self.options.css}, function (err) {
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
-        joolaio.events.emit('canvas.init.finish', self);
+        joola.viz.onscreen.push(self);
+        joola.events.emit('canvas.init.finish', self);
         if (typeof callback === 'function') {
           return callback(null, self);
         }
@@ -18619,22 +18720,18 @@ var Canvas = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Canvas = function (options, callback) {
-      if (!options)
-        options = {force: false};
-      else if (!options.hasOwnProperty('force'))
-        options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid || options.force) {
+      if (!uuid) {
         //create new
         if (!options)
           options = {};
         options.container = this.get(0);
 
-        result = new joolaio.viz.Canvas(options, function (err, canvas) {
+        result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
           canvas.draw(options, callback);
@@ -18643,7 +18740,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -18654,9 +18751,9 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":99,"cloneextend":33,"eventemitter2":34}],89:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"cloneextend":33,"eventemitter2":35}],90:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -18665,14 +18762,16 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  _ = require('underscore');
 
 
 var DatePicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('datepicker.init.start');
+  joola.events.emit('datepicker.init.start');
 
   //mixin
   this._super = {};
@@ -18752,13 +18851,14 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this._id = '_datepicker';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
     $container: null,
     comparePeriod: false
   };
+
   this.currentMode = 'base-from';
 
   this.original_base_fromdate = null;
@@ -18766,20 +18866,12 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
-  this.min_date.setMonth(this.min_date.getMonth() - 12);
-  this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
+  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
+  this.min_date.setMonth(this.min_date.getMonth() - 6);
+  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
 
-  if (options.endDate)
-    this.base_todate = new Date(options.endDate);
-  else
-    this.base_todate = new Date(this.max_date);
-
-  if (options.startDate)
-    this.base_fromdate = new Date(options.startDate);
-  else
-    this.base_fromdate = self.addDays(this.base_todate, -30);
-
+  this.base_todate = new Date(this.max_date);
+  this.base_fromdate = self.addDays(this.base_todate, -30);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -18803,12 +18895,6 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.comparePeriod = false;
   this.isCompareChecked = false;
-
-  self.base_todate.setHours(23);
-  self.base_todate.setMinutes(59);
-  self.base_todate.setSeconds(59);
-  self.base_todate.setMilliseconds(999);
-
 
   //self.getState(self);
 
@@ -18859,7 +18945,7 @@ var DatePicker = module.exports = function (options, callback) {
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
       '<td class="dates"></td>' +
-      '<td class="dropdownmarker"></td>' +
+      '<td><div class="dropdownmarker"></div></td>' +
       '</tr>' +
       '</table></div></div>');
 
@@ -19048,6 +19134,7 @@ var DatePicker = module.exports = function (options, callback) {
         self.handleChange();
       }
     });
+
 
     $('.datepicker').find('a[href="#"]').each(function (index, item) {
       $(this).on('click', function (event) {
@@ -19271,14 +19358,7 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
-        if (!self.pickerOffset)
-          self.pickerOffset = $picker.offset().top ;
-        if (self.comparePeriod) {
-          $picker.offset({top: self.pickerOffset + 20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
-          console.log('compare period2', self.comparePeriod);
-        }
-        else
-          $picker.offset({top: self.pickerOffset, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
       }
     });
     $table.click(function (e) {
@@ -19295,14 +19375,12 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $optionscontainer.find('.apply').click(function (e) {
-      self.base_todate.setHours(23);
-      self.base_todate.setMinutes(59);
-      self.base_todate.setSeconds(59);
-      self.base_todate.setMilliseconds(999);
-
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
+
+      if (self.options.canvas)
+        self.options.canvas.emit('datechange', self);
 
       self.DateUpdate();
     });
@@ -19313,12 +19391,8 @@ var DatePicker = module.exports = function (options, callback) {
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
 
+    //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
-
-    if (self.options.onDraw) {
-      joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
-      window[self.options.onDraw](self.options.$container, self);
-    }
   };
 
   this.DateUpdate = function () {
@@ -19336,25 +19410,49 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
-
-    var $container = $(self.options.container);
-    $container.find('.datelabel.fromdate').text(_this.formatDate(_this.applied_base_fromdate));
-    $container.find('.datelabel.todate').text(_this.formatDate(_this.applied_base_todate));
-
-    if (_this.comparePeriod) {
-      $container.find('.compare').show();
-      $container.find('.datelabel.compare.fromdate').text(_this.formatDate(_this.applied_compare_fromdate));
-      $container.find('.datelabel.compare.todate').text(_this.formatDate(_this.applied_compare_todate));
-    }
-    else
-      $container.find('.compare').hide();
-
     $(self).trigger("datechange", options);
-    $(joolaio).trigger("datechange", options);
+    $(joola).trigger("datechange", options);
   };
 
   this.formatDate = function (date) {
-    return joola.common.moment(date).format(self.options.dateformat, 'MMM DD, YYYY');
+    var format = function (date, formatString) {
+      var formatDate = date;
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var yyyy = formatDate.getFullYear();
+      var yy = yyyy.toString().substring(2);
+      var m = formatDate.getMonth() + 1;
+      var mm = m < 10 ? "0" + m : m;
+      var mmm = months[m - 1];
+      var d = formatDate.getDate();
+      var dd = d < 10 ? "0" + d : d;
+      var fff = formatDate.getMilliseconds().toString();
+      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
+      var h = formatDate.getHours();
+      var hh = h < 10 ? "0" + h : h;
+      var n = formatDate.getMinutes();
+      var nn = n < 10 ? "0" + n : n;
+      var s = formatDate.getSeconds();
+      var ss = s < 10 ? "0" + s : s;
+
+      formatString = formatString.replace(/yyyy/i, yyyy);
+      formatString = formatString.replace(/yy/i, yy);
+      formatString = formatString.replace(/mmm/i, mmm);
+      formatString = formatString.replace(/mm/i, mm);
+      formatString = formatString.replace(/m/i, m);
+      formatString = formatString.replace(/dd/i, dd);
+      formatString = formatString.replace(/d/i, d);
+      formatString = formatString.replace(/hh/i, hh);
+      //formatString = formatString.replace(/h/i, h);
+      formatString = formatString.replace(/nn/i, nn);
+      //formatString = formatString.replace(/n/i, n);
+      formatString = formatString.replace(/ss/i, ss);
+      formatString = formatString.replace(/fff/i, fff);
+      //formatString = formatString.replace(/s/i, s);
+
+      return formatString;
+    };
+
+    return format(date, 'mmm dd, yyyy');
   };
 
   this.drawCell = function (date) {
@@ -19556,22 +19654,20 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'datepicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css}, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'datepicker'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -19583,7 +19679,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
-        joolaio.events.emit('datepicker.init.finish', self);
+        joola.events.emit('datepicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -19598,7 +19694,7 @@ var DatePicker = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) !== 'undefined' || typeof ($) !== 'undefined') {
     $.fn.DatePicker = function (options, callback) {
       var result = null;
@@ -19608,7 +19704,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+        result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
             throw err;
           datepicker.draw(options, callback);
@@ -19617,7 +19713,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19628,9 +19724,9 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":99,"underscore":78}],90:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"underscore":79}],91:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19639,12 +19735,13 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
+var joola = require('../index');
+  
 var Geo = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('geo.init.start');
+  joola.events.emit('geo.init.start');
 
   //mixin
   this._super = {};
@@ -19656,7 +19753,7 @@ var Geo = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_geo';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -19709,7 +19806,7 @@ var Geo = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -19722,9 +19819,9 @@ var Geo = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('geo.init.finish', self);
+        joola.events.emit('geo.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -19739,7 +19836,7 @@ var Geo = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.Geo = function (options, callback) {
       var result = null;
@@ -19749,14 +19846,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Geo(options, function (err, geo) {
+        result = new joola.viz.Geo(options, function (err, geo) {
           geo.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19767,9 +19864,9 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":99}],91:[function(require,module,exports){
+},{"../index":88,"./_proto":99}],92:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -19778,12 +19875,15 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+var 
+  joola = require('../index'),
+  ce = require('cloneextend');
+
 var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joola.events.emit('metric.init.start');
 
   //mixin
   this._super = {};
@@ -19795,7 +19895,7 @@ var Metric = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_metric';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     legend: true,
@@ -19804,7 +19904,8 @@ var Metric = module.exports = function (options, callback) {
     query: null
   };
   this.drawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -19816,18 +19917,18 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
-
         return;
       }
-      message = message[0];
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -19852,7 +19953,9 @@ var Metric = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null, self);
       }
-      else {
+      else if (self.options.query.realtime) {
+        //we're dealing with realtime
+
         self.options.$container.find('.value').text(value);
       }
     });
@@ -19860,22 +19963,20 @@ var Metric = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'metric'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'metric'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
-        joolaio.viz.onscreen.push(self);
+
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -19886,23 +19987,12 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (dates) {
-            console.log('metric date change');
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            self.draw(self.options);
-          });
-
-          self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
-            self.draw(self.options);
+          self.options.canvas.on('datechange', function (e) {
+            console.log('metric', 'datechange', e);
           });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
+        joola.events.emit('metric.init.finish', self);
 
         //if (self.options.query) {
         //  return self.draw(options, callback);
@@ -19922,7 +20012,7 @@ var Metric = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
@@ -19936,7 +20026,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -19952,7 +20042,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
           metric.draw(options, callback);
@@ -19961,7 +20051,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -19972,7 +20062,7 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-     joolaio.events.on('core.ready', function () {
+     joola.events.on('core.ready', function () {
      if (typeof (jQuery) != 'undefined') {
      $.find('.jio.metric').forEach(function (container) {
      var $container = $(container);
@@ -19995,7 +20085,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Metric.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
     '</div>';
@@ -20032,9 +20122,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
+    template:{
+      datatype:'string',
+      defaultValue:null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {
@@ -20083,9 +20173,9 @@ Metric.meta = {
     }
   }
 };
-},{"./_proto":99,"cloneextend":33}],92:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"cloneextend":33}],93:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -20094,358 +20184,15 @@ Metric.meta = {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
-var MetricPicker = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joolaio.events.emit('metricpicker.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = ce.clone(require('./_proto')[x]);
-    this._super[x] = ce.clone(require('./_proto')[x]);
-  }
-
-  var self = this;
-
-  this._id = 'metricpicker';
-  this.uuid = joolaio.common.uuid();
-  this.options = {
-    canvas: null,
-    container: null,
-    $container: null,
-    metrics: [],
-    selected: null
-  };
-  this.drawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('' +
-      '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button"></button>' +
-      '  <div class="jio-metricpicker-container"></div>' +
-      '  <div class="clear"></div>' +
-      '</div>\n');
-
-    //<div class="metricscontainer" style="display: block;"><div></div><div class="search input-prepend"><input type="text" class="quicksearch span2"><span class="add-on"><i class="searchicon icon-search"></i></span></div><ul class="categorylist"><li class="node  level_0 on" style="padding-left: 0px; background-image: none;"><div class="category" style="display: none;">undefined</div><ul class="jcontainer on"><li class="node leaf level_1" data-metricname="Bet Count" data-metricid="gamerounds.betcount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count" data-text="Total bets placed. [actual]: sum(gr_betcount)." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Losing Bets Count" data-metricid="gamerounds.losingbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Losing Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Losing Bets Count" data-text="Total number of losing bets. [actual]: case when gr_winlose = 0 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Winning Bets Count" data-metricid="gamerounds.winningbets" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Winning Bets Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Winning Bets Count" data-text="Total number of winning bets. [actual]: case when gr_winlose = 1 then 1 else 0 end" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Session Count" data-metricid="gamesessions.sessioncount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Session Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Session Count" data-text="Total Sessions. [actual]: sum(1) as sessioncount, this will count all valid gamesessions." title=""></i> </div></div></div></li><li class="node leaf level_1 on" data-metricname="Player Count" data-metricid="calc.playercount" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Player Count</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Player Count" data-text="Number of unique players. [actual]: For all valid sessions take the number of unique players who played." title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Session" data-metricid="calc.betspersession" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Session</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Session" data-text="Average number of bets per session. [actual]: betcount / sessioncount" title=""></i> </div></div></div></li><li class="node leaf level_1" data-metricname="Bet Count / Player" data-metricid="calc.betsperplayer" style="display: list-item;"><div class="box"><div class="keyvaluepair"><div class="key">Bet Count / Player</div><div class="help"> <i class="tipsy icon-question-sign icon-white" data-toggle="tooltip" data-caption="Bet Count / Player" data-text="Average number of bets per session. [actual]: betcount / playercount" title=""></i> </div></div></div></li></ul></li></ul></div>
-
-    return $html;
-  };
-
-  this.draw = function (options, callback) {
-    if (!self.drawn) {
-      self.options.$container.append(self.options.template || self.template());
-
-      if (self.options.metrics.length === 0)
-        joola.metrics.list(function (err, list) {
-          if (err)
-            throw err;
-
-          var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
-          var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
-
-          var mOpen = false;
-          var mSkipOne = false;
-          var mlasttarget = null;
-
-          list.forEach(function (metric) {
-            var collection = {key: metric.collection};
-
-            var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
-            $li.off('click');
-            $li.on('click', function (e) {
-              e.stopPropagation();
-              var $placeholder = $('#' + $metricsPopup.attr('data-target'));
-              $placeholder.attr('data-selected', collection.key + '.' + metric.key);
-
-              var $content = metric.name;
-              $placeholder.html($content);
-              $placeholder.addClass('active');
-              $('.metricsPopup').removeClass('active');
-              mOpen = false;
-              mlasttarget = null;
-
-              joola.events.emit('playgroundRedraw');
-            });
-            $ul.append($li);
-          });
-
-          $btn.on('click', function (e) {
-            console.log('click');
-            var $this = $(this);
-            e.stopPropagation();
-            if (mOpen && mlasttarget == this.id) {
-              $ul.removeClass('active');
-              mlasttarget = null;
-              mOpen = false;
-            }
-            else if (mSkipOne) {
-              $ul.removeClass('active');
-              mlasttarget = null;
-              mOpen = false;
-              mSkipOne = false;
-            }
-            else {
-              $ul.addClass('active');
-              mlasttarget = this.id;
-              mOpen = true;
-            }
-            var offset = $btn.position();
-            $ul.css('top', offset.top + $btn.outerHeight() - 1);
-            $ul.css('left', offset.left);
-            $ul.find('ul.active').removeClass('active');
-
-            $ul.attr('data-target', this.id);
-
-            //set selected
-            $ul.find('li').removeClass('active');
-            if ($this.attr('data-selected') && $this.attr('data-selected').length > 0) {
-              var $li = $($ul.find('li[data-member="' + $this.attr('data-selected') + '"]')[0]);
-              $li.addClass('active');
-              $li.parent().addClass('active');
-            }
-          });
-
-          $ul.on('click', function (e) {
-            e.stopPropagation();
-          });
-          $('body').on('click', function () {
-            $ul.removeClass('active');
-          });
-
-          $btn.on('click', function () {
-            var $this = $(this);
-            $this.toggleClass('active');
-          });
-
-          if (typeof callback === 'function')
-            return callback(null, self);
-        });
-      else {
-        if (typeof callback === 'function')
-          return callback(null, self);
-      }
-    }
-    else {
-
-    }
-
-    if (self.options.selected)
-      self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
-    else
-      self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
-  };
-
-  //here we go
-  try {
-    joolaio.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
-
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'metricpicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
-        if (err)
-          return callback(err);
-        joolaio.viz.onscreen.push(self);
-
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
-          }
-        }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-
-        joolaio.events.emit('metricpicker.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
-
-  //callback(null, self);
-  return self;
-};
-
-joolaio.events.on('core.init.finish', function () {
-  var found;
-  if (typeof (jQuery) != 'undefined') {
-    $.fn.MetricPicker = function (options, callback) {
-      if (!options)
-        options = {force: false};
-      else if (!options.hasOwnProperty('force'))
-        options.force = true;
-      var result = null;
-      var uuid = this.attr('jio-uuid');
-      if (!uuid || (options && options.force)) {
-        if (options && options.force && uuid) {
-          var existing = null;
-          found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
-            if (viz.uuid == uuid && !found) {
-              found = true;
-              existing = viz;
-            }
-          });
-
-          if (found && existing) {
-            existing.destroy();
-          }
-        }
-
-        //create new
-        if (!options)
-          options = {};
-        options.container = this.get(0);
-        result = new joolaio.viz.MetricPicker(options, function (err, metricpicker) {
-          if (err)
-            throw err;
-          metricpicker.draw(options, callback);
-        }).options.$container;
-      }
-      else {
-        //return existing
-        found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
-          if (viz.uuid == uuid && !found) {
-            found = true;
-            result = viz;
-          }
-        });
-      }
-      return result;
-    };
-  }
-});
-
-MetricPicker.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
-    '</div>';
-  return html;
-};
-
-MetricPicker.meta = {
-  key: 'metricpicker',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: MetricPicker.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, metric box clicked.'
-    }
-  }
-};
-},{"./_proto":99,"cloneextend":33}],93:[function(require,module,exports){
-/**
- *  @title joola.io
- *  @overview the open-source data analytics framework
- *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
- *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
- *
- *  Licensed under GNU General Public License 3.0 or later.
- *  Some rights reserved. See LICENSE, AUTHORS.
- **/
-
-var _ = require('underscore');
-
+var 
+  joola = require('../index'),
+  _ = require('underscore');
 
 var MiniTable = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('minitable.init.start');
+  joola.events.emit('minitable.init.start');
 
   //mixin
   this._super = {};
@@ -20457,7 +20204,7 @@ var MiniTable = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_minitable';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -20644,7 +20391,7 @@ var MiniTable = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -20657,9 +20404,9 @@ var MiniTable = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('minitable.init.finish', self);
+        joola.events.emit('minitable.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20674,7 +20421,7 @@ var MiniTable = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.MiniTable = function (options, callback) {
       var result = null;
@@ -20684,14 +20431,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.MiniTable(options, function (err, minitable) {
+        result = new joola.viz.MiniTable(options, function (err, minitable) {
           minitable.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20702,9 +20449,9 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":99,"underscore":78}],94:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"underscore":79}],94:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -20713,14 +20460,16 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  _ = require('underscore');
 
 
 var Pie = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('pie.init.start');
+  joola.events.emit('pie.init.start');
 
   //mixin
   this._super = {};
@@ -20732,7 +20481,7 @@ var Pie = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_pie';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     limit: 5,
@@ -20741,37 +20490,40 @@ var Pie = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
 
         return;
       }
 
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
           chart: {
-            marginTop: 0,
+            /*marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
             marginRight: 0,
             spacingTop: 0,
             spacingBottom: 0,
             spacingLeft: 0,
-            spacingRight: 0,
+            spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'pie',
@@ -20806,49 +20558,46 @@ var Pie = module.exports = function (options, callback) {
       else if (self.options.query.realtime) {
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
-          var found = false;
           self.chart.series[serIndex].points.forEach(function (point) {
-            //var exist = _.find(series, function (s) {
             var exist = _.find(ser.data, function (p) {
-              point.update(p[1]);
               return p[0] == point.name;
             });
-            //});
-            if (!exist)
-              point.remove();
+            if (exist)
+              point.update(exist[1], false);
+            else
+              point.remove(false);
           });
           ser.data.forEach(function (point) {
             var exist = _.find(self.chart.series[serIndex].points, function (p) {
               return p.name == point[0];
             });
             if (!exist)
-              self.chart.series[serIndex].addPoint([point[0], point[1]]);
+              self.chart.series[serIndex].addPoint([point[0], point[1]], false, false);
           });
         });
+        self.chart.redraw();
       }
     });
   };
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
- 
+
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'pie'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css}, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'pie'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('pie.init.finish', self);
+        joola.events.emit('pie.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -20863,7 +20612,7 @@ var Pie = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Pie = function (options, callback) {
@@ -20877,7 +20626,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -20892,7 +20641,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Pie(options, function (err, pie) {
+        result = new joola.viz.Pie(options, function (err, pie) {
           if (err)
             throw err;
           pie.draw(options, callback);
@@ -20901,7 +20650,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -20914,7 +20663,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Pie.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio-pie-caption"></div>\n' +
     '  <div class="jio-pie-chart"></div>\n' +
     '</div>';
@@ -21026,11 +20775,11 @@ Pie.meta = {
     }
   }
 };
-},{"./_proto":99,"underscore":78}],95:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"underscore":79}],95:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21039,13 +20788,15 @@ Pie.meta = {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var 
+  joola = require('../index'),
+  _ = require('underscore');
 
 var PunchCard = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('punchcard.init.start');
+  joola.events.emit('punchcard.init.start');
 
   //mixin
   this._super = {};
@@ -21057,7 +20808,7 @@ var PunchCard = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_punchcard';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -21136,7 +20887,7 @@ var PunchCard = module.exports = function (options, callback) {
       }
       var series = self.makeSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
@@ -21191,7 +20942,7 @@ var PunchCard = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -21204,9 +20955,9 @@ var PunchCard = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('punchcard.init.finish', self);
+        joola.events.emit('punchcard.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -21221,7 +20972,7 @@ var PunchCard = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) != 'undefined') {
     $.fn.PunchCard = function (options, callback) {
       var result = null;
@@ -21231,14 +20982,14 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.PunchCard(options, function (err, punchcard) {
+        result = new joola.viz.PunchCard(options, function (err, punchcard) {
           punchcard.draw(options, callback);
         }).options.$container;
       }
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -21251,9 +21002,9 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 
-},{"./_proto":99,"underscore":78}],96:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"underscore":79}],96:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21262,12 +21013,13 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
 
 var Sparkline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('sparkline.init.start');
+  joola.events.emit('sparkline.init.start');
 
   //mixin
   this._super = {};
@@ -21279,7 +21031,7 @@ var Sparkline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_sparkline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
@@ -21312,7 +21064,7 @@ var Sparkline = module.exports = function (options, callback) {
 
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
-        var chartOptions = joolaio.common.extend({
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
@@ -21416,7 +21168,7 @@ var Sparkline = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -21429,7 +21181,7 @@ var Sparkline = module.exports = function (options, callback) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -21452,7 +21204,7 @@ var Sparkline = module.exports = function (options, callback) {
           });
         }
 
-        joolaio.events.emit('sparkline.init.finish', self);
+        joola.events.emit('sparkline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -21467,7 +21219,7 @@ var Sparkline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Sparkline = function (options, callback) {
@@ -21477,7 +21229,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -21492,7 +21244,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Sparkline(options, function (err, sparkline) {
+        result = new joola.viz.Sparkline(options, function (err, sparkline) {
           if (err)
             throw err;
           sparkline.draw(options, callback);
@@ -21501,7 +21253,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -21512,9 +21264,9 @@ joolaio.events.on('core.init.finish', function () {
     };
   }
 });
-},{"./_proto":99}],97:[function(require,module,exports){
+},{"../index":88,"./_proto":99}],97:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21523,14 +21275,16 @@ joolaio.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  _ = require('underscore');
 
 
 var Table = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('table.init.start');
+  joola.events.emit('table.init.start');
 
   //mixin
   this._super = {};
@@ -21542,7 +21296,7 @@ var Table = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_table';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
@@ -21550,20 +21304,19 @@ var Table = module.exports = function (options, callback) {
     query: null
   };
   this.chartDrawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.template = function () {
-    var $caption = $('<div class="jio-table-caption"></div>');
-    var $table = $('<table class="jio table">' +
-      '<thead></thead>' +
-      '<tbody></tbody>' +
+    var $html = $('<table class="jio table">' +
+      '<thead>' +
+      '</thead>' +
+      '<tbody>' +
+      '</tbody>' +
       '</table>');
-    var $html = $('<div></div>');
-    $html.append($caption);
-    $html.append($table);
     return $html;
   };
 
@@ -21578,16 +21331,18 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        else
-          throw err;
+
         return;
       }
 
-      message = message[0];
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var $col, $tr, trs;
 
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
@@ -21596,18 +21351,9 @@ var Table = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        var $caption = $html.find('.jio-table-caption');
-        var $table = $html.find('.table');
-        if ($caption)
-          $caption.html(self.options.caption);
-
-        var $thead = $html.find('thead');
-        var $tbody = $table.find('tbody');
-
-        $thead.empty();
-        $tbody.empty();
-
+        var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+
         message.dimensions.forEach(function (d) {
           var $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
@@ -21618,11 +21364,15 @@ var Table = module.exports = function (options, callback) {
           $th.text(m.name);
           $head_tr.append($th);
         });
-        $thead.append($head_tr);
 
+        $thead.append($head_tr);
+        $html.append($thead);
+
+        var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (point) {
             var $tr = $('<tr></tr>');
+
             var index = 0;
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
@@ -21634,21 +21384,17 @@ var Table = module.exports = function (options, callback) {
               $td.text(point[index++]);
               $tr.append($td);
             });
+
             $tbody.append($tr);
           });
         });
-
+        $html.append($tbody);
         self.options.$container.append($html);
-        if ($table.length > 0) {
-          self.tablesort = new Tablesort($table.get(0), {
-            descending: true,
-            current: $table.find('th')[1]
-          });
-        }
-        if (self.options.onDraw) {
-          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
-          window[self.options.onDraw](self.options.$container, self);
-        }
+
+        self.tablesort = new Tablesort($html.get(0), {
+          descending: true,
+          current: $html.find('th')[1]
+        });
 
         if (typeof callback === 'function')
           return callback(null);
@@ -21722,18 +21468,12 @@ var Table = module.exports = function (options, callback) {
           if (existingkeys.indexOf(_key) == -1)
             $tr.remove();
         }
-
-        if (self.options.onUpdate) {
-          joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
-          window[self.options.onUpdate](self.options.$container, self);
-        }
       }
 
       if (series[0].data.length > 0) {
-        //if ($table.length)
-          //self.tablesort.refresh();
+        self.tablesort.refresh();
 
-        var limit = self.options.limit || 10;
+        var limit = self.options.limit || 5;
         trs = self.options.$container.find('tbody tr');
         for (var z = 0; z < trs.length; z++) {
           var elem = trs[z];
@@ -21747,24 +21487,22 @@ var Table = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'table'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css}, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'table'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
-        joolaio.events.emit('table.init.finish', self);
+        joola.events.emit('table.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -21779,7 +21517,7 @@ var Table = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Table = function (options, callback) {
@@ -21793,7 +21531,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -21808,7 +21546,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Table(options, function (err, table) {
+        result = new joola.viz.Table(options, function (err, table) {
           if (err)
             throw err;
           table.draw(options, callback);
@@ -21817,7 +21555,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -21830,7 +21568,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Table.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <table class="jio table">\n' +
     '    <thead>\n' +
     '    </thead>\n' +
@@ -21859,7 +21597,7 @@ Table.meta = {
         dimensions: ['browser'],
         metrics: [
           {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
+          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
         collection: 'demo-mousemoves',
@@ -21889,9 +21627,9 @@ Table.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
+    template:{
+      datatype:'string',
+      defaultValue:null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {
@@ -21940,9 +21678,9 @@ Table.meta = {
     }
   }
 };
-},{"./_proto":99,"underscore":78}],98:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"underscore":79}],98:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -21951,14 +21689,16 @@ Table.meta = {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var moment = require('moment');
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  moment = require('moment'),
+  _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('timeline.init.start');
+  joola.events.emit('timeline.init.start');
 
   //mixin
   this._super = {};
@@ -21970,21 +21710,13 @@ var Timeline = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_timeline';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     canvas: null,
     container: null,
     $container: null,
-    query: null,
-    pickers: {
-      main: {
-        enabled: false
-      },
-      secondary: {
-        enabled: false
-      }
-    }
+    query: null
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -21994,44 +21726,9 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var self = this;
-
-    var $html = $('' +
-      '<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper">' +
-      '  <div class="jio timeline controls"></div>' +
-      '  <div class="clear"></div>' +
-      '  <div class="jio timeline thechart"></div>' +
-      '  <div class="clear"></div>' +
-      '</div>');
-
-    var $container = $($html.find('.controls'));
-    if ((self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled)) {
-      var $picker = $('<div class="jio timeline metric picker"></div>');
-      var pickerOptions = {
-        selected: self.options.query.metrics[0]
-      };
-      $picker.MetricPicker(pickerOptions);
-      $container.append($picker);
-    }
-    if ((self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled)) {
-      $container.append('<span class="jio-timeline-metric-picker-sep">and</span>');
-      var $secondaryPicker = $('<div class="jio timeline metric picker secondarypicker"></div>');
-      var secondaryPickerOptions = {};
-      if (self.options.query.metrics.length > 1)
-        secondaryPickerOptions.selected = self.options.query.metrics[1];
-      $secondaryPicker.MetricPicker(secondaryPickerOptions);
-
-      $container.append($secondaryPicker);
-    }
+    var $html = $('<div class="jio timeline caption"></div>' +
+      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
     return $html;
-  };
-
-  this.formatSeries = function (series) {
-    series.forEach(function (ser, index) {
-      series[index].color = joolaio.colors[index];
-    });
-    return series;
   };
 
   this.draw = function (options, callback) {
@@ -22043,12 +21740,12 @@ var Timeline = module.exports = function (options, callback) {
 
         return;
       }
-      message = message[0];
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      var series = null;
-      if (!self.chartDrawn) { //initial draw
-        var chartOptions = joolaio.common.extend({
+      var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
+      var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
+      if (!self.chartDrawn) {
+        var chartOptions = joola.common.mixin({
           title: {
             text: null
           },
@@ -22065,12 +21762,21 @@ var Timeline = module.exports = function (options, callback) {
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'area',
-            alignTicks: true,
-            animation: false
+            height: self.options.height || self.options.$container.height() || 250
           },
-          //series: series,
+          lang: {
+            noData: 'No data to display'
+          },
+          noData: {
+            style: {
+              fontWeight: 'bold',
+              fontSize: '15px',
+              color: '#303030'
+            }
+          },
+          series: series,
           xAxis: {
-            type: (message.dimensions[0].datatype === 'date' ? 'datetime' : 'category'),
+            type: (linear ? 'datetime' : 'category'),
             endOnTick: false,
             tickWidth: 0,
             dateTimeLabelFormats: {
@@ -22083,55 +21789,25 @@ var Timeline = module.exports = function (options, callback) {
               }
             }
           },
-          yAxis: [
-            {
-              endOnTick: false,
-              title: {
-                text: null
-              },
-              labels: {
-                enabled: true,
-                style: {
-                  color: '#b3b3b1'
-                }
-              },
-              gridLineDashStyle: 'Dot'
+          yAxis: {
+            endOnTick: false,
+            title: {
+              text: null
             },
-            {
-              endOnTick: false,
-              title: {
-                text: null
-              },
-              labels: {
-                enabled: true,
-                style: {
-                  color: '#b3b3b1'
-                }
-              },
-              gridLineDashStyle: 'Dot',
-              opposite: true
+            labels: {
+              enabled: true,
+              style: {
+                color: '#b3b3b1'
+              }
             },
-            {
-              endOnTick: false,
-              title: {
-                text: null
-              },
-              labels: {
-                enabled: true,
-                style: {
-                  color: 'red'
-                }
-              },
-              gridLineDashStyle: 'Dot',
-              opposite: true
-            }
-          ],
+            gridLineDashStyle: 'Dot'
+          },
           legend: {enabled: false},
           credits: {enabled: false},
           exporting: {enabled: true},
           plotOptions: {
             column: {allowPointSelect: true},
-            series: {
+            line: {
               turboThreshold: message.documents.length + 1000,
               color: '#333333',
               fillOpacity: 0.1,
@@ -22149,36 +21825,17 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }, self.options.chart);
-
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
-
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
-        var linear = !(message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-
-        series.forEach(function (ser) {
-          self.chart.addSeries(ser, false, false);
-        });
-        self.chart.redraw();
-        self.chart.reflow();
-
-
-        if (self.options.onDraw) {
-          joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
-          window[self.options.onDraw](self.options.$container, self);
-        }
-
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) { //we're dealing with realtime
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
+      else if (self.options.query.realtime) {
+        //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
             var found = false;
@@ -22214,46 +21871,31 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
-      else { //new data, draw from scretch'
-        series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents, self.chart);
-        series = self.formatSeries(series);
-        series.forEach(function (ser, index) {
-          if (self.chart.series[index])
-            self.chart.series[index].update(ser, false);
-          else
-            self.chart.addSeries(ser, false, false);
-        });
-        while (self.chart.series.length > series.length) {
-          self.chart.series[self.chart.series.length - 1].remove(false);
-        }
-        self.chart.redraw();
-        self.chart.reflow();
-      }
-      if (self.options.onUpdate) {
-        joola.logger.debug('Calling user-defined onUpdate [' + self.options.onUpdate + ']');
-        window[self.options.onUpdate](self.options.$container, self, series);
-      }
     });
+  };
+
+
+  this.hasData = function () {
+    var self = this;
+    return self.chart.hasData();
   };
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'timeline'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css}, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'timeline'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -22272,14 +21914,9 @@ var Timeline = module.exports = function (options, callback) {
 
             self.draw(self.options);
           });
-
-          self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
-            self.draw(self.options);
-          });
         }
 
-        joolaio.events.emit('timeline.init.finish', self);
+        joola.events.emit('timeline.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -22294,7 +21931,7 @@ var Timeline = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Timeline = function (options, callback) {
@@ -22308,7 +21945,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -22321,7 +21958,7 @@ joolaio.events.on('core.init.finish', function () {
         }
         //create new
         options.container = this.get(0);
-        result = new joolaio.viz.Timeline(options, function (err, timeline) {
+        result = new joola.viz.Timeline(options, function (err, timeline) {
           if (err)
             throw err;
           timeline.draw(options, callback);
@@ -22330,7 +21967,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -22343,7 +21980,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Timeline.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio timeline caption"></div>\n' +
     '  <div class="jio timeline chartwrapper">\n' +
     '    <div class="jio timeline thechart"></div>\n' +
@@ -22442,9 +22079,9 @@ Timeline.meta = {
   chartProvider: 'highcharts',
   license: 'MIT'
 };
-},{"./_proto":99,"moment":35,"underscore":78}],99:[function(require,module,exports){
+},{"../index":88,"./_proto":99,"moment":36,"underscore":79}],99:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -22455,6 +22092,8 @@ Timeline.meta = {
 
 
 var
+  joola = require('../index'),
+  
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -22465,8 +22104,8 @@ proto._id = '_proto';
 proto.stop = function () {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
 };
@@ -22474,46 +22113,31 @@ proto.stop = function () {
 proto.destroy = function (container, obj) {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
-  this.drawn = false;
   this.options.$container.empty();
 };
 
-proto.markContainer = function (container, options, callback) {
+proto.markContainer = function (container, attr, callback) {
   if (!callback)
     callback = function () {
     };
 
-  var attr;
-  if (options.attr)
-    attr = options.attr;
-  else
-    attr = options;
-
   try {
-    container.attr('jio-domain', 'joolaio');
+    container.attr('jio-domain', 'joola');
 
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
         container.attr('jio-' + key, a[key]);
       });
     });
-
-    if (options.css) {
-      container.addClass(options.css);
-    }
-
-    container.data('this', this);
-
-    return callback(null);
   }
   catch (ex) {
-    console.log(ex);
     return callback(ex);
   }
+  return callback(null);
 };
 
 proto.get = function (key) {
@@ -22526,11 +22150,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified..'));
+    return callback(new Error('no container specified for timeline.'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container.'));
+    return callback(new Error('cannot find container for the timeline.'));
 
   return callback(null);
 };
@@ -22549,8 +22173,8 @@ proto.fetch = function (context, query, callback) {
 
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
-    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
-    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
+    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
+    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
   }
 
   var args = [];
@@ -22561,16 +22185,16 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    if (message && message[0] && message[0].query && message[0].query.ts && message[0].query.ts.duration)
-      joolaio.logger.debug('fetch took: ' + message[0].query.ts.duration.toString() + 'ms, results: ' + (message[0] && message[0].documents ? message[0].documents.length.toString() : 'n/a'));
+    if (message && message.query && message.query.ts && message.query.ts.duration)
+      joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });
 
-  joolaio.query.fetch.apply(this, args);
+  joola.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart) {
+proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   var series = [];
   if (!metrics)
     return series;
@@ -22585,30 +22209,18 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
     return d.datatype === 'date';
   });
 
-  metrics.forEach(function (metric, index) {
-    var defaultAxis = {
-      endOnTick: false,
-      title: {
-        text: metric.name
-      },
-      labels: {
-        enabled: true,
-        style: {
-          color: '#b3b3b1'
-        }
-      },
-      gridLineDashStyle: 'Dot',
-      opposite: false
+  if (metrics.length === 0) {
+    series[0] = {
+      type: 'line',
+      name: 'no data',
+      data: []
     };
-    if (chart.options.yAxis.length <= index) {
-      chart.addAxis(defaultAxis, false, false, false);
-    }
+  }
+
+  metrics.forEach(function (metric, index) {
     series[index] = {
       name: metric.name,
-      data: [],
-      yAxis: index,
-      turboThreshold: documents.length + 10,
-      fillOpacity: index === 0 ? 0.2 : 0
+      data: []
     };
 
     documents.forEach(function (document) {
@@ -22633,6 +22245,7 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart)
       }
     });
   });
+
   return series;
 };
 
@@ -22649,9 +22262,9 @@ proto.makePieChartSeries = function (dimensions, metrics, documents) {
 
     documents.forEach(function (document) {
       series[index].data.push([
-        document.fvalues[dimensions[0].key],
-        document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-      ]
+          document.fvalues[dimensions[0].key],
+          document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+        ]
       );
     });
   });
@@ -22709,9 +22322,9 @@ proto.baseHTML = function (callback) {
 
 proto.onError = function (err, callback) {
   if (err && err.message)
-    joolaio.logger.error(err.message);
+    joola.logger.error(err.message);
   else
-    joolaio.logger.error(err);
+    joola.logger.error(err);
   return callback(err);
 };
 
@@ -22720,9 +22333,9 @@ proto.find = function (obj) {
 };
 
 
-},{"cloneextend":33,"moment":35,"underscore":78}],100:[function(require,module,exports){
+},{"../index":88,"cloneextend":33,"moment":36,"underscore":79}],100:[function(require,module,exports){
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -22731,13 +22344,13 @@ proto.find = function (obj) {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var joola = require('../index');
 
 var viz = exports;
 viz._id = 'viz';
 
 //pickers
 viz.DatePicker = require('./DatePicker');
-viz.MetricPicker = require('./MetricPicker');
 
 //panels
 viz.Canvas = require('./Canvas');
@@ -22759,4 +22372,4 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"./Canvas":88,"./DatePicker":89,"./Geo":90,"./Metric":91,"./MetricPicker":92,"./MiniTable":93,"./Pie":94,"./PunchCard":95,"./Sparkline":96,"./Table":97,"./Timeline":98}]},{},[87])
+},{"../index":88,"./Canvas":89,"./DatePicker":90,"./Geo":91,"./Metric":92,"./MiniTable":93,"./Pie":94,"./PunchCard":95,"./Sparkline":96,"./Table":97,"./Timeline":98}]},{},[88])

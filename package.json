@@ -1,16 +1,16 @@
 {
-  "name": "joola.io.sdk",
+  "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.6.2-develop-oo",
+  "version": "0.7.12",
   "author": "Joola <info@joo.la>",
-  "description": "joola.io's software development kit (SDK)",
+  "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/joola/joola.io.sdk.git"
+    "url": "https://github.com/joola/joola.sdk.git"
   },
-  "bugs": "https://github.com/joola/joola.io.sdk/issues",
+  "bugs": "https://github.com/joola/joola.sdk/issues",
   "contributors": [
     {
       "name": "Itay Weinberger",
@@ -31,6 +31,7 @@
   "dependencies": {
     "async": "~0.2.10",
     "cloneextend": "^0.0.3",
+    "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
     "moment": "~2.5.1",
     "socket.io-client": "^1.0.2",

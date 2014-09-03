@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -8,12 +8,15 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+var 
+  joola = require('../index'),
+  ce = require('cloneextend');
+
 var Metric = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('metric.init.start');
+  joola.events.emit('metric.init.start');
 
   //mixin
   this._super = {};
@@ -25,7 +28,7 @@ var Metric = module.exports = function (options, callback) {
   var self = this;
 
   this._id = '_metric';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     legend: true,
@@ -34,7 +37,8 @@ var Metric = module.exports = function (options, callback) {
     query: null
   };
   this.drawn = false;
-
+  this.realtimeQueries = [];
+  
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -46,18 +50,18 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    self.stop();
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
-        //else
-        //throw err;
-
         return;
       }
-      message = message[0];
+      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
+        self.realtimeQueries.push(message.realtime);
+      
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -82,7 +86,9 @@ var Metric = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null, self);
       }
-      else {
+      else if (self.options.query.realtime) {
+        //we're dealing with realtime
+
         self.options.$container.find('.value').text(value);
       }
     });
@@ -90,22 +96,20 @@ var Metric = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'metric'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'metric'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
-        joolaio.viz.onscreen.push(self);
+
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -116,23 +120,12 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (dates) {
-            console.log('metric date change');
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            self.draw(self.options);
-          });
-
-          self.options.canvas.on('intervalchange', function () {
-            self.options.query.interval = self.options.canvas.options.datepicker._interval;
-            self.draw(self.options);
+          self.options.canvas.on('datechange', function (e) {
+            console.log('metric', 'datechange', e);
           });
         }
 
-        joolaio.events.emit('metric.init.finish', self);
+        joola.events.emit('metric.init.finish', self);
 
         //if (self.options.query) {
         //  return self.draw(options, callback);
@@ -152,7 +145,7 @@ var Metric = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
     $.fn.Metric = function (options, callback) {
@@ -166,7 +159,7 @@ joolaio.events.on('core.init.finish', function () {
         if (options && options.force && uuid) {
           var existing = null;
           found = false;
-          joolaio.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function (viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -182,7 +175,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.Metric(options, function (err, metric) {
+        result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
           metric.draw(options, callback);
@@ -191,7 +184,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -202,7 +195,7 @@ joolaio.events.on('core.init.finish', function () {
     };
 
     /*
-     joolaio.events.on('core.ready', function () {
+     joola.events.on('core.ready', function () {
      if (typeof (jQuery) != 'undefined') {
      $.find('.jio.metric').forEach(function (container) {
      var $container = $(container);
@@ -225,7 +218,7 @@ joolaio.events.on('core.init.finish', function () {
 });
 
 Metric.template = function (options) {
-  var html = '<div id="example" jio-domain="joolaio" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
     '  <div class="jio metricbox caption"></div>\n' +
     '  <div class="jio metricbox value"></div>\n' +
     '</div>';
@@ -262,9 +255,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
+    template:{
+      datatype:'string',
+      defaultValue:null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {

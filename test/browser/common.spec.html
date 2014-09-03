@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>joola.io.sdk Tests</title>
+  <title>joola.sdk Tests</title>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
 
@@ -11,9 +11,9 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/sinon/lib/sinon.js"></script>
   <script src="/node_modules/underscore/underscore.js"></script>
-  <script src="/build/release/joola.io.js"></script>
+  <script src="/build/release/joola.js"></script>
   <script>
-    joolaio.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo', ajax: true});
+    joola.init({host: 'http://joola-io-example.herokuapp.com:80', APIToken: 'apitoken-demo', ajax: true});
   </script>
   <script>
     mocha.setup('bdd');
@@ -44,12 +44,12 @@
   <script src="/test/unit/2_common/modifiers.spec.js"></script>
 
   <script>
-    describe('joola.io common', function () {
+    describe('joola common', function () {
       it('should have a valid jQuery', function () {
         expect($).to.be.ok;
       });
     });
-    joolaio.events.on('ready', function () {
+    joola.events.on('ready', function () {
       it('should display the correct version', function () {
         var elem = $('#version');
         expect(elem.text()).to.be.ok;
@@ -71,14 +71,14 @@
 
   <!-- END OF TEST SPEC GO HERE -->
 
-  <!-- JOOLA.IO CODE GO HERE !! CALL run() -->
+  <!-- joola CODE GO HERE !! CALL run() -->
   <script>
-    joolaio.events.on('ready', function () {
+    joola.events.on('ready', function () {
       run();
-      $('#version').text(joolaio.VERSION);
+      $('#version').text(joola.VERSION);
     });
   </script>
-  <!-- END OF JOOLA.IO CODE GO HERE -->
+  <!-- END OF joola CODE GO HERE -->
 
   <!-- GENERIC FOOTER -->
 </div>

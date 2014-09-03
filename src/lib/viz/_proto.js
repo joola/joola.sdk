@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -10,6 +10,8 @@
 
 
 var
+  joola = require('../index'),
+  
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -20,8 +22,8 @@ proto._id = '_proto';
 proto.stop = function () {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
 };
@@ -29,46 +31,31 @@ proto.stop = function () {
 proto.destroy = function (container, obj) {
   if (this.realtimeQueries) {
     this.realtimeQueries.forEach(function (q) {
-      joolaio.logger.debug('Stopping realtime query [' + q + '].');
-      joolaio.query.stop(q);
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
     });
   }
-  this.drawn = false;
   this.options.$container.empty();
 };
 
-proto.markContainer = function (container, options, callback) {
+proto.markContainer = function (container, attr, callback) {
   if (!callback)
     callback = function () {
     };
 
-  var attr;
-  if (options.attr)
-    attr = options.attr;
-  else
-    attr = options;
-
   try {
-    container.attr('jio-domain', 'joolaio');
+    container.attr('jio-domain', 'joola');
 
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
         container.attr('jio-' + key, a[key]);
       });
     });
-
-    if (options.css) {
-      container.addClass(options.css);
-    }
-
-    container.data('this', this);
-
-    return callback(null);
   }
   catch (ex) {
-    console.log(ex);
     return callback(ex);
   }
+  return callback(null);
 };
 
 proto.get = function (key) {
@@ -81,11 +68,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified..'));
+    return callback(new Error('no container specified for timeline.'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container.'));
+    return callback(new Error('cannot find container for the timeline.'));
 
   return callback(null);
 };
@@ -97,18 +84,15 @@ proto.fetch = function (context, query, callback) {
   }
   var _query = ce.clone(query);
 
-  if (!Array.isArray(_query))
-    _query = [_query];
-
   if (context && context.options && context.options.canvas) {
-    context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query[0].interval;
-    context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query[0].timeframe;
+    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
   }
 
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
-    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
-    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joolaio.timezone(joolaio.options.timezoneOffset));
+    _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
+    _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
   }
 
   var args = [];
@@ -119,16 +103,16 @@ proto.fetch = function (context, query, callback) {
     if (err)
       return callback(err);
 
-    if (message && message[0] && message[0].query && message[0].query.ts && message[0].query.ts.duration)
-      joolaio.logger.debug('fetch took: ' + message[0].query.ts.duration.toString() + 'ms, results: ' + (message[0] && message[0].documents ? message[0].documents.length.toString() : 'n/a'));
+    if (message && message.query && message.query.ts && message.query.ts.duration)
+      joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
 
     return callback(null, message);
   });
 
-  joolaio.query.fetch.apply(this, args);
+  joola.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart, query, ordinal) {
+proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   var series = [];
   if (!metrics)
     return series;
@@ -143,40 +127,20 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart,
     return d.datatype === 'date';
   });
 
-  metrics.forEach(function (metric, index) {
-    var defaultAxis = {
-      endOnTick: false,
-      title: {
-        text: metric.name
-      },
-      labels: {
-        enabled: true,
-        style: {
-          color: '#b3b3b1'
-        }
-      },
-      gridLineDashStyle: 'Dot',
-      opposite: false
+  if (metrics.length === 0) {
+    series[0] = {
+      type: 'line',
+      name: 'no data',
+      data: []
     };
-    if (chart.options.yAxis.length <= index) {
-      chart.addAxis(defaultAxis, false, false, false);
-    }
+  }
+
+  metrics.forEach(function (metric, index) {
     series[index] = {
       name: metric.name,
-      data: [],
-      yAxis: index,
-      turboThreshold: documents.length + 10,
-      fillOpacity: index === 0 ? 0.2 : 0
+      data: []
     };
 
-    if (query.filter && query.filter.length > 0) {
-      var name = '';
-      query.filter.forEach(function (filter) {
-        name += filter[2] + ': ';
-      });
-      //name = name.substring(0, name.length - 2);
-      series[index].name = name + series[index].name;
-    }
     documents.forEach(function (document) {
       var x = document.fvalues[dimensions[0].key];
       var nameBased = true;
@@ -199,6 +163,7 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents, chart,
       }
     });
   });
+
   return series;
 };
 
@@ -275,9 +240,9 @@ proto.baseHTML = function (callback) {
 
 proto.onError = function (err, callback) {
   if (err && err.message)
-    joolaio.logger.error(err.message);
+    joola.logger.error(err.message);
   else
-    joolaio.logger.error(err);
+    joola.logger.error(err);
   return callback(err);
 };
 

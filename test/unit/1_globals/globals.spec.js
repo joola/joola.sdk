@@ -12,10 +12,10 @@ describe("globals", function () {
   });
 
   it("should set timezone [0]", function () {
-    joolaio.timezone(0);
+    joola.timezone(0);
   });
 
   it("should set timezone [2]", function () {
-    joolaio.timezone(2);
+    joola.timezone(2);
   });
 });

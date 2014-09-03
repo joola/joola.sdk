@@ -1,5 +1,5 @@
 /**
- *  @title joola.io
+ *  @title joola
  *  @overview the open-source data analytics framework
  *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
  *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
@@ -8,14 +8,16 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var _ = require('underscore');
+var
+  joola = require('../index'),
+  _ = require('underscore');
 
 
 var DatePicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joolaio.events.emit('datepicker.init.start');
+  joola.events.emit('datepicker.init.start');
 
   //mixin
   this._super = {};
@@ -95,13 +97,14 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this._id = '_datepicker';
-  this.uuid = joolaio.common.uuid();
+  this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
     $container: null,
     comparePeriod: false
   };
+
   this.currentMode = 'base-from';
 
   this.original_base_fromdate = null;
@@ -109,20 +112,12 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joolaio.objects.Query().SystemStartDate();
-  this.min_date.setMonth(this.min_date.getMonth() - 12);
-  this.max_date = new Date();//new joolaio.objects.Query().SystemEndDate();
+  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
+  this.min_date.setMonth(this.min_date.getMonth() - 6);
+  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
 
-  if (options.endDate)
-    this.base_todate = new Date(options.endDate);
-  else
-    this.base_todate = new Date(this.max_date);
-
-  if (options.startDate)
-    this.base_fromdate = new Date(options.startDate);
-  else
-    this.base_fromdate = self.addDays(this.base_todate, -30);
-
+  this.base_todate = new Date(this.max_date);
+  this.base_fromdate = self.addDays(this.base_todate, -30);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -146,12 +141,6 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.comparePeriod = false;
   this.isCompareChecked = false;
-
-  self.base_todate.setHours(23);
-  self.base_todate.setMinutes(59);
-  self.base_todate.setSeconds(59);
-  self.base_todate.setMilliseconds(999);
-
 
   //self.getState(self);
 
@@ -202,7 +191,7 @@ var DatePicker = module.exports = function (options, callback) {
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
       '<td class="dates"></td>' +
-      '<td class="dropdownmarker"></td>' +
+      '<td><div class="dropdownmarker"></div></td>' +
       '</tr>' +
       '</table></div></div>');
 
@@ -391,6 +380,7 @@ var DatePicker = module.exports = function (options, callback) {
         self.handleChange();
       }
     });
+
 
     $('.datepicker').find('a[href="#"]').each(function (index, item) {
       $(this).on('click', function (event) {
@@ -614,14 +604,7 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
-        if (!self.pickerOffset)
-          self.pickerOffset = $picker.offset().top ;
-        if (self.comparePeriod) {
-          $picker.offset({top: self.pickerOffset + 20, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
-          console.log('compare period2', self.comparePeriod);
-        }
-        else
-          $picker.offset({top: self.pickerOffset, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
       }
     });
     $table.click(function (e) {
@@ -638,14 +621,12 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $optionscontainer.find('.apply').click(function (e) {
-      self.base_todate.setHours(23);
-      self.base_todate.setMinutes(59);
-      self.base_todate.setSeconds(59);
-      self.base_todate.setMilliseconds(999);
-
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
+
+      if (self.options.canvas)
+        self.options.canvas.emit('datechange', self);
 
       self.DateUpdate();
     });
@@ -656,12 +637,8 @@ var DatePicker = module.exports = function (options, callback) {
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
 
+    //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
-
-    if (self.options.onDraw) {
-      joola.logger.debug('Calling user-defined onDraw [' + self.options.onDraw + ']');
-      window[self.options.onDraw](self.options.$container, self);
-    }
   };
 
   this.DateUpdate = function () {
@@ -679,25 +656,49 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
-
-    var $container = $(self.options.container);
-    $container.find('.datelabel.fromdate').text(_this.formatDate(_this.applied_base_fromdate));
-    $container.find('.datelabel.todate').text(_this.formatDate(_this.applied_base_todate));
-
-    if (_this.comparePeriod) {
-      $container.find('.compare').show();
-      $container.find('.datelabel.compare.fromdate').text(_this.formatDate(_this.applied_compare_fromdate));
-      $container.find('.datelabel.compare.todate').text(_this.formatDate(_this.applied_compare_todate));
-    }
-    else
-      $container.find('.compare').hide();
-
     $(self).trigger("datechange", options);
-    $(joolaio).trigger("datechange", options);
+    $(joola).trigger("datechange", options);
   };
 
   this.formatDate = function (date) {
-    return joola.common.moment(date).format(self.options.dateformat, 'MMM DD, YYYY');
+    var format = function (date, formatString) {
+      var formatDate = date;
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var yyyy = formatDate.getFullYear();
+      var yy = yyyy.toString().substring(2);
+      var m = formatDate.getMonth() + 1;
+      var mm = m < 10 ? "0" + m : m;
+      var mmm = months[m - 1];
+      var d = formatDate.getDate();
+      var dd = d < 10 ? "0" + d : d;
+      var fff = formatDate.getMilliseconds().toString();
+      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
+      var h = formatDate.getHours();
+      var hh = h < 10 ? "0" + h : h;
+      var n = formatDate.getMinutes();
+      var nn = n < 10 ? "0" + n : n;
+      var s = formatDate.getSeconds();
+      var ss = s < 10 ? "0" + s : s;
+
+      formatString = formatString.replace(/yyyy/i, yyyy);
+      formatString = formatString.replace(/yy/i, yy);
+      formatString = formatString.replace(/mmm/i, mmm);
+      formatString = formatString.replace(/mm/i, mm);
+      formatString = formatString.replace(/m/i, m);
+      formatString = formatString.replace(/dd/i, dd);
+      formatString = formatString.replace(/d/i, d);
+      formatString = formatString.replace(/hh/i, hh);
+      //formatString = formatString.replace(/h/i, h);
+      formatString = formatString.replace(/nn/i, nn);
+      //formatString = formatString.replace(/n/i, n);
+      formatString = formatString.replace(/ss/i, ss);
+      formatString = formatString.replace(/fff/i, fff);
+      //formatString = formatString.replace(/s/i, s);
+
+      return formatString;
+    };
+
+    return format(date, 'mmm dd, yyyy');
   };
 
   this.drawCell = function (date) {
@@ -899,22 +900,20 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joolaio.common.mixin(self.options, options, true);
+    joola.common.mixin(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
 
       self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'datepicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css}, function (err) {
+      self.markContainer(self.options.$container, [
+        {'type': 'datepicker'},
+        {'uuid': self.uuid}
+      ], function (err) {
         if (err)
           return callback(err);
 
-        joolaio.viz.onscreen.push(self);
+        joola.viz.onscreen.push(self);
 
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
@@ -926,7 +925,7 @@ var DatePicker = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
-        joolaio.events.emit('datepicker.init.finish', self);
+        joola.events.emit('datepicker.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -941,7 +940,7 @@ var DatePicker = module.exports = function (options, callback) {
   return self;
 };
 
-joolaio.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function () {
   if (typeof (jQuery) !== 'undefined' || typeof ($) !== 'undefined') {
     $.fn.DatePicker = function (options, callback) {
       var result = null;
@@ -951,7 +950,7 @@ joolaio.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joolaio.viz.DatePicker(options, function (err, datepicker) {
+        result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
             throw err;
           datepicker.draw(options, callback);
@@ -960,7 +959,7 @@ joolaio.events.on('core.init.finish', function () {
       else {
         //return existing
         var found = false;
-        joolaio.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
