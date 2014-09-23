@@ -48,7 +48,10 @@ proto.markContainer = function (container, attr, callback) {
     attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
-        container.attr('jio-' + key, a[key]);
+        if (key === 'css')
+          container.addClass(a[key]);
+        else
+          container.attr('jio-' + key, a[key]);
       });
     });
   }

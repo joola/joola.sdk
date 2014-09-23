@@ -137,7 +137,8 @@ var Canvas = module.exports = function (options, callback) {
     self.markContainer(self.options.$container, {
       attr: [
         {'type': 'canvas'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ],
       css: self.options.css
     }, function (err) {

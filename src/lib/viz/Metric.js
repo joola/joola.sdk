@@ -45,7 +45,7 @@ var Metric = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio metricbox caption"></div>' +
-    '<div class="jio metricbox value"></div>');
+      '<div class="jio metricbox value"></div>');
     return $html;
   };
 
@@ -105,7 +105,8 @@ var Metric = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'metric'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -220,8 +221,10 @@ joola.events.on('core.init.finish', function () {
 
 Metric.template = function (options) {
   var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
+    ' <div class="jio metricbox wrapper">\n' +
+    '   <div class="jio metricbox caption"></div>\n' +
+    '   <div class="jio metricbox value"></div>\n' +
+    ' </div>\n' +
     '</div>';
   return html;
 };
@@ -232,7 +235,7 @@ Metric.meta = {
   title: 'Metric Box',
   tagline: '',
   description: '' +
-  'Metric Boxes...',
+    'Metric Boxes...',
   longDescription: '',
   example: {
     css: 'width:100%',
