@@ -10,9 +10,9 @@
 
 var
   joola = require('../index'),
-  EventEmitter2 = require('eventemitter2').EventEmitter2;
+  EventEmitter2 = require('eventemitter2').EventEmitter2,
 
-var
+  _ = require('underscore'),
   ce = require('cloneextend'),
   _events = new EventEmitter2({wildcard: true, newListener: true});
 
@@ -41,6 +41,8 @@ var Canvas = module.exports = function (options, callback) {
     container: null,
     $container: null,
     visualizations: {},
+    metrics: [],
+    dimensions: [],
     state: {}
   };
 
@@ -52,6 +54,40 @@ var Canvas = module.exports = function (options, callback) {
     var _query = ce.extend({}, query);
     if (self.options.query) {
       _query = joola.common.extend(self.options.query, _query);
+    }
+    if (self.options.dimensions && self.options.dimensions.length > 0 && query.dimensions && query.dimensions.length > 0) {
+      _query.dimensions.forEach(function (dimension, i) {
+        var key;
+        if (typeof dimension === 'string')
+          key = dimension;
+        else if (typeof dimension === 'object')
+          key = dimension.key;
+
+        if (key) {
+          var exist = _.find(self.options.dimensions, function (m) {
+            return m.key === key;
+          });
+          if (exist)
+            _query.dimensions[i] = exist;
+        }
+      });
+    }
+    if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
+      _query.metrics.forEach(function (metric, i) {
+        var key;
+        if (typeof metric === 'string')
+          key = metric;
+        else if (typeof metric === 'object')
+          key = metric.key;
+
+        if (key) {
+          var exist = _.find(self.options.metrics, function (m) {
+            return m.key === key;
+          });
+          if (exist)
+            _query.metrics[i] = exist;
+        }
+      });
     }
     if (self.options.datepicker && self.options.datepicker.container) {
       var _datepicker = $(self.options.datepicker.container).DatePicker();
@@ -71,6 +107,8 @@ var Canvas = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     var self = this;
+    if (self.options.onDraw)
+      window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
@@ -105,8 +143,11 @@ var Canvas = module.exports = function (options, callback) {
             case 'table':
               $(viz.container).Table(viz);
               break;
+            case 'minitable':
+              $(viz.container).MiniTable(viz);
+              break;
             case 'bartable':
-              $(viz.container).Table(viz);
+              $(viz.container).BarTable(viz);
               break;
             default:
               break;

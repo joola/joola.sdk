@@ -17572,7 +17572,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.13-oo",
+  "version": "0.7.13",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -18529,6 +18529,7 @@ if (!global.joola)
 joola.options = {
   token: null,
   host: null,
+  skipcss: false,
   cssHost: '',
   APIToken: null,
   logouturl: null,
@@ -18547,6 +18548,7 @@ joola.options = {
     }
   },
   timezoneOffset: null
+
 };
 
 //libraries
@@ -18710,16 +18712,18 @@ joola.init = function (options, callback) {
       }
 
       //css
-      var css = document.createElement('link');
-      expected++;
-      css.onload = function () {
-        //jQuery.noConflict(true);
-        //done('css');
-      };
-      css.rel = 'stylesheet';
-      css.href = joola.options.host + '/joola.css';
-      document.head.appendChild(css);
-      done('css');
+      if (!joola.options.skipcss) {
+        var css = document.createElement('link');
+        expected++;
+        css.onload = function () {
+          //jQuery.noConflict(true);
+          //done('css');
+        };
+        css.rel = 'stylesheet';
+        css.href = joola.options.host + '/joola.css';
+        document.head.appendChild(css);
+        done('css');
+      }
       if (expected === 0)
         return done('none');
     }
@@ -18940,6 +18944,8 @@ var Canvas = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     var self = this;
+    if (self.options.onDraw)
+      window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       $(self.options.datepicker.container).DatePicker(self.options.datepicker);
@@ -19006,7 +19012,8 @@ var Canvas = module.exports = function (options, callback) {
     self.markContainer(self.options.$container, {
       attr: [
         {'type': 'canvas'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ],
       css: self.options.css
     }, function (err) {
@@ -19253,7 +19260,7 @@ var DatePicker = module.exports = function (options, callback) {
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
     '<tr>' +
     '<td class="dates"></td>' +
-    '<td><div class="dropdownmarker"></div></td>' +
+    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
     '</tr>' +
     '</table></div></div>');
 
@@ -19979,7 +19986,8 @@ var DatePicker = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'datepicker'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -20216,7 +20224,8 @@ var Metric = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    allowSelect: true
   };
   this.drawn = false;
   this.realtimeQueries = [];
@@ -20227,7 +20236,7 @@ var Metric = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio metricbox caption"></div>' +
-    '<div class="jio metricbox value"></div>');
+      '<div class="jio metricbox value"></div>');
     return $html;
   };
 
@@ -20261,15 +20270,22 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
+
+        if (self.options.allowSelect && self.options.onSelect)
+          self.options.$container.on('click', window[self.options.onSelect]);
 
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
 
         self.options.$container.find('.value').text(value);
@@ -20287,7 +20303,8 @@ var Metric = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'metric'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -20303,6 +20320,8 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
+          
+          //subscribe to default events
           self.options.canvas.on('datechange', function (e) {
             console.log('metric', 'datechange', e);
           });
@@ -20402,8 +20421,10 @@ joola.events.on('core.init.finish', function () {
 
 Metric.template = function (options) {
   var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
+    ' <div class="jio metricbox wrapper">\n' +
+    '   <div class="jio metricbox caption"></div>\n' +
+    '   <div class="jio metricbox value"></div>\n' +
+    ' </div>\n' +
     '</div>';
   return html;
 };
@@ -20414,7 +20435,7 @@ Metric.meta = {
   title: 'Metric Box',
   tagline: '',
   description: '' +
-  'Metric Boxes...',
+    'Metric Boxes...',
   longDescription: '',
   example: {
     css: 'width:100%',
@@ -21223,6 +21244,8 @@ var Pie = module.exports = function (options, callback) {
       
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         var chartOptions = joola.common.mixin({
           title: {
             text: null
@@ -21268,6 +21291,8 @@ var Pie = module.exports = function (options, callback) {
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           self.chart.series[serIndex].points.forEach(function (point) {
@@ -21303,7 +21328,8 @@ var Pie = module.exports = function (options, callback) {
       self.markContainer(self.options.$container, {
         attr: [
           {'type': 'pie'},
-          {'uuid': self.uuid}
+          {'uuid': self.uuid},
+          {css: self.options.css}
         ],
         css: self.options.css}, function (err) {
         if (err)
@@ -22047,7 +22073,6 @@ var Table = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      console.log('post fetch', message);
       message = message[0];
       if (err) {
         if (typeof callback === 'function')
@@ -22062,6 +22087,8 @@ var Table = module.exports = function (options, callback) {
       var $col, $tr, trs;
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.drawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         self.drawn = true;
 
         var $html = self.template();
@@ -22115,6 +22142,8 @@ var Table = module.exports = function (options, callback) {
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         trs = self.options.$container.find('tbody').find('tr');
         var existingkeys = [];
@@ -22210,7 +22239,8 @@ var Table = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'table'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -22460,6 +22490,8 @@ var Timeline = module.exports = function (options, callback) {
       var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
       var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
       if (!self.chartDrawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         var chartOptions = joola.common._mixin({
           title: {
             text: null
@@ -22550,6 +22582,8 @@ var Timeline = module.exports = function (options, callback) {
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (datapoint) {
@@ -22605,7 +22639,8 @@ var Timeline = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'timeline'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -22845,7 +22880,10 @@ proto.markContainer = function (container, attr, callback) {
     attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
-        container.attr('jio-' + key, a[key]);
+        if (key === 'css')
+          container.addClass(a[key]);
+        else
+          container.attr('jio-' + key, a[key]);
       });
     });
   }

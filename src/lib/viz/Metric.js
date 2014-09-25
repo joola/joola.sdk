@@ -34,7 +34,8 @@ var Metric = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    allowSelect: true
   };
   this.drawn = false;
   this.realtimeQueries = [];
@@ -79,15 +80,22 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
+
+        if (self.options.allowSelect && self.options.onSelect)
+          self.options.$container.on('click', window[self.options.onSelect]);
 
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
 
         self.options.$container.find('.value').text(value);
@@ -122,6 +130,8 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
+          
+          //subscribe to default events
           self.options.canvas.on('datechange', function (e) {
             console.log('metric', 'datechange', e);
           });

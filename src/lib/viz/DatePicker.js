@@ -186,12 +186,15 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
+
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
     '<tr>' +
     '<td class="dates"></td>' +
-    '<td><div class="dropdownmarker"></div></td>' +
+    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
     '</tr>' +
     '</table></div></div>');
 
@@ -631,6 +634,9 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.options.canvas)
         self.options.canvas.emit('datechange', self);
 
+      if (self.options.onUpdate)
+        window[self.options.onUpdate](self.container, self);
+
       self.DateUpdate();
     });
 
@@ -640,6 +646,9 @@ var DatePicker = module.exports = function (options, callback) {
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
 
+    if (self.options.onAfterDraw)
+      window[self.options.onAfterDraw](self.options.container, self);
+    
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
   };

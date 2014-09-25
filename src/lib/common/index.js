@@ -21,9 +21,9 @@ var
 
 var common = util;
 common._id = 'common';
-
 module.exports = exports = common;
 common.extend = common._extend;
+common._ = _;
 
 require('./modifiers');
 
@@ -163,4 +163,12 @@ common.parse = function (string, callback) {
 
 common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
+};
+
+common.ensureLength = function (string, length) {
+  while (string.length > length) {
+    string = string.replace('...');
+    string = string.substring(0, string.length - 1) + '...';
+  }
+  return string;
 };

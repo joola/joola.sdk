@@ -20,6 +20,7 @@ if (!global.joola)
 joola.options = {
   token: null,
   host: null,
+  skipcss: false,
   cssHost: '',
   APIToken: null,
   logouturl: null,
@@ -38,6 +39,7 @@ joola.options = {
     }
   },
   timezoneOffset: null
+
 };
 
 //libraries
@@ -201,16 +203,18 @@ joola.init = function (options, callback) {
       }
 
       //css
-      var css = document.createElement('link');
-      expected++;
-      css.onload = function () {
-        //jQuery.noConflict(true);
-        //done('css');
-      };
-      css.rel = 'stylesheet';
-      css.href = joola.options.host + '/joola.css';
-      document.head.appendChild(css);
-      done('css');
+      if (!joola.options.skipcss) {
+        var css = document.createElement('link');
+        expected++;
+        css.onload = function () {
+          //jQuery.noConflict(true);
+          //done('css');
+        };
+        css.rel = 'stylesheet';
+        css.href = joola.options.host + '/joola.css';
+        document.head.appendChild(css);
+        done('css');
+      }
       if (expected === 0)
         return done('none');
     }

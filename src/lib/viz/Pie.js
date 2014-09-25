@@ -59,6 +59,8 @@ var Pie = module.exports = function (options, callback) {
       
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
         var chartOptions = joola.common.mixin({
           title: {
             text: null
@@ -104,6 +106,8 @@ var Pie = module.exports = function (options, callback) {
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         series.forEach(function (ser, serIndex) {
           self.chart.series[serIndex].points.forEach(function (point) {

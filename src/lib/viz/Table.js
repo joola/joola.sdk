@@ -66,7 +66,6 @@ var Table = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      console.log('post fetch', message);
       message = message[0];
       if (err) {
         if (typeof callback === 'function')
@@ -80,8 +79,8 @@ var Table = module.exports = function (options, callback) {
 
       var $col, $tr, trs;
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
-      if (!self.drawn) {
-        self.drawn = true;
+      if (!self.chartDrawn) {
+        self.chartDrawn = true;
 
         var $html = self.template();
 
@@ -130,10 +129,15 @@ var Table = module.exports = function (options, callback) {
           current: $html.find('th')[1]
         });
 
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
+        
         if (typeof callback === 'function')
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         trs = self.options.$container.find('tbody').find('tr');
         var existingkeys = [];
@@ -228,8 +232,8 @@ var Table = module.exports = function (options, callback) {
 
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
-        {'type': 'table'},
-        {'uuid': self.uuid},
+        {type: 'table'},
+        {uuid: self.uuid},
         {css: self.options.css}
       ], function (err) {
         if (err)

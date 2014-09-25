@@ -46,7 +46,7 @@ var Timeline = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio timeline caption"></div>' +
-    '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
+      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
     return $html;
   };
 
@@ -150,6 +150,9 @@ var Timeline = module.exports = function (options, callback) {
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
+        if (self.options.onDraw)
+          window[self.options.onDraw](self);
+
         if (typeof callback === 'function')
           return callback(null);
       }
@@ -190,6 +193,9 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
+      if (self.options.onUpdate)
+        window[self.options.onUpdate](self.options.container, self, series);
+
     });
   };
 
@@ -315,8 +321,8 @@ Timeline.meta = {
   tagline: '',
   jQueryTag: 'Timeline',
   description: '' +
-  'Timelines are a great way to show metrics over time.' +
-  '',
+    'Timelines are a great way to show metrics over time.' +
+    '',
   example: {
     css: 'height:250px;',
     options: {

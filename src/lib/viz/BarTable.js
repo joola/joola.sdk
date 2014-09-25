@@ -12,11 +12,11 @@ var
   joola = require('../index'),
   _ = require('underscore');
 
-var MiniTable = module.exports = function (options, callback) {
+var BarTable = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joola.events.emit('minitable.init.start');
+  joola.events.emit('bartable.init.start');
 
   //mixin
   this._super = {};
@@ -27,13 +27,18 @@ var MiniTable = module.exports = function (options, callback) {
 
   var self = this;
 
-  this._id = '_minitable';
+  this._id = '_bartable';
   this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    strings: {
+      not_shown: 'Not shown'
+    },
+    limit: 10,
+    headers: false
   };
   this.chartDrawn = false;
 
@@ -42,7 +47,8 @@ var MiniTable = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<table class="jio minitable table">' +
+    var $html = $('<div class="bartable-caption"></div>' +
+      '<table class="jio bartable table">' +
       '<thead>' +
       '</thead>' +
       '<tbody>' +
@@ -79,54 +85,104 @@ var MiniTable = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        var $thead = $($html.find('thead'));
-        var $head_tr = $('<tr class="jio minitable captions"></tr>');
+        
+        if (self.options.headers) {
+          var $thead = $($html.find('thead'));
+          var $head_tr = $('<tr class="jio bartable captions"></tr>');
 
-        message.dimensions.forEach(function (d) {
-          var $th = $('<th class="jio minitable caption dimension"></th>');
-          $th.text(d.name);
-          $head_tr.append($th);
-        });
-        message.metrics.forEach(function (m) {
-          var $th = $('<th class="jio minitable caption metric"></th>');
-          $th.text(m.name);
-          $head_tr.append($th);
-        });
+          message.metrics.forEach(function (m) {
+            var $th = $('<th class="jio bartable caption metric"></th>');
+            $th.text(m.name);
+            $head_tr.append($th);
+          });
+          message.dimensions.forEach(function (d) {
+            var $th = $('<th class="jio bartable caption dimension"></th>');
+            $th.text(d.name);
+            $head_tr.append($th);
+          });
 
-        $thead.append($head_tr);
-        $html.append($thead);
-
+          $thead.append($head_tr);
+          $html.find('table').append($thead);
+        }
         var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
-          ser.data.forEach(function (point) {
-            var $tr = $('<tr></tr>');
+          var total = 0;
+          var shown = 0;
+          var notshown = 0;
+          ser.data.forEach(function (point, i) {
+            total += point[1];
+            if (i < (self.options.limit && self.options.limit < ser.data.length ? self.options.limit - 1 : self.options.limit ))
+              shown += point[1];
+            else
+              notshown += point[1];
+          });
 
+          ser.data.forEach(function (point, i) {
+            if (i < (self.options.limit && self.options.limit < ser.data.length ? self.options.limit - 1 : self.options.limit )) {
+              var $tr = $('<tr></tr>');
+              var index = 0;
+              var percentage = parseFloat(point[1]) / total * 100;
+              message.metrics.forEach(function (m) {
+                var $td = $('<td class="jio bartable value">' +
+                  '<div class="barwrapper">' +
+                  '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+                  '</div>' +
+                  '</td>');
+                //$td.text(point[1]);
+                $tr.append($td);
+              });
+
+              message.dimensions.forEach(function (d) {
+                var $td = $('<td class="jio bartable value dimension">' +
+                  '<div class="caption" title="Other"></div>' +
+                  '<div class="subcaption"></div>' +
+                  '</td>');
+
+                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],20));
+                $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
+                $tr.append($td);
+              });
+
+              $tbody.append($tr);
+            }
+          });
+          if (self.options.limit && self.options.limit < ser.data.length) {
+            var $tr = $('<tr></tr>');
             var index = 0;
-            message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio minitable value dimension"></td>');
-              $td.text(point[index++]);
+            var percentage = parseFloat(notshown) / total * 100;
+            message.metrics.forEach(function (m) {
+
+              var $td = $('<td class="jio bartable value metric">' +
+                '<div class="barwrapper">' +
+                '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+                '</div>' +
+                '</td>');
+              $td.find('.tablebar').css({'background-color': joola.colors[11]});
               $tr.append($td);
             });
-            message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio minitable value metric"></td>');
-              $td.text(point[index++]);
+
+            message.dimensions.forEach(function (d) {
+              var $td = $('<td class="jio bartable value dimension notshown">' +
+                '<div class="caption" title="Other"></div>' +
+                '<div class="subcaption"></div>' +
+                '</td>');
+
+              $td.find('.caption').text(percentage.toFixed(2) + '% ' + self.options.strings.not_shown || 'Not shown');
+              $td.find('.subcaption').text(notshown + ' ' + self.options.query.metrics[0].name);
               $tr.append($td);
             });
 
             $tbody.append($tr);
-          });
+          }
         });
-        $html.append($tbody);
+        $html.find('table').append($tbody);
         self.options.$container.append($html);
 
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
-        });
-
-
+        if (self.options.caption)
+          self.options.$container.find('.bartable-caption').text(self.options.caption);
+        
         if (self.options.onDraw)
-          window[self.options.onDraw](self);
+          window[self.options.onDraw](self.options.container, self);
 
         if (typeof callback === 'function')
           return callback(null);
@@ -173,12 +229,12 @@ var MiniTable = module.exports = function (options, callback) {
 
             index = 0;
             message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio minitable value dimension"></td>');
+              var $td = $('<td class="jio bartable value dimension"></td>');
               $td.text(point[index++]);
               $tr.append($td);
             });
             message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio minitable value metric"></td>');
+              var $td = $('<td class="jio bartable value metric"></td>');
               $td.text(point[index++]);
               $tr.append($td);
             });
@@ -203,14 +259,11 @@ var MiniTable = module.exports = function (options, callback) {
       }
 
       if (series[0].data.length > 0) {
-        self.tablesort.refresh();
-
-        var limit = 5;
         trs = self.options.$container.find('tbody tr');
         for (var z = 0; z < trs.length; z++) {
           var elem = trs[z];
           var $elem = $(elem);
-          if (z + 1 > limit)
+          if (z + 1 > self.options.limit)
             $elem.remove();
         }
       }
@@ -226,16 +279,16 @@ var MiniTable = module.exports = function (options, callback) {
 
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
-        {'type': 'minitable'},
-        {'uuid': self.uuid},
-        {'css': self.options.css}
+        {type: 'bartable'},
+        {uuid: self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
 
         joola.viz.onscreen.push(self);
 
-        joola.events.emit('minitable.init.finish', self);
+        joola.events.emit('bartable.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -253,7 +306,7 @@ var MiniTable = module.exports = function (options, callback) {
 joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
-    $.fn.MiniTable = function (options, callback) {
+    $.fn.BarTable = function (options, callback) {
       if (!options)
         options = {force: false};
       else if (!options.hasOwnProperty('force'))
@@ -279,10 +332,10 @@ joola.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.MiniTable(options, function (err, minitable) {
+        result = new joola.viz.BarTable(options, function (err, bartable) {
           if (err)
             throw err;
-          minitable.draw(options, callback);
+          bartable.draw(options, callback);
         }).options.$container;
       }
       else {
