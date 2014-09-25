@@ -132,8 +132,14 @@ var Metric = module.exports = function (options, callback) {
           self.options.canvas.addVisualization(self);
           
           //subscribe to default events
-          self.options.canvas.on('datechange', function (e) {
-            console.log('metric', 'datechange', e);
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.destroy();
+            self.draw(self.options);
           });
         }
 

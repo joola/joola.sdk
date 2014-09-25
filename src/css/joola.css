@@ -505,16 +505,6 @@
   height: 1px;
 }
 
-[jio-domain="joola"] [jio-type="timeline"] .oa-legend {
-  color: #666;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-[jio-domain="joola"] [jio-type="timeline"] .oa-legend-item {
-  float: right;
-}
-
 [jio-domain="joola"] [jio-type="bartable"] .table {
   margin-bottom: 10px;
   width: 100%;

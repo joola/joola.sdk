@@ -166,9 +166,17 @@ common.hash = function (string) {
 };
 
 common.ensureLength = function (string, length) {
-  while (string.length > length) {
-    string = string.replace('...');
+  if (!string)
+    return string;
+  if (typeof string !== 'string')
+    return string;
+  if (string === '')
+    return;
+  var counter = 0;
+  while (string.length > length && counter < 100) {
+    string = string.replace('...', '');
     string = string.substring(0, string.length - 1) + '...';
+    counter++;
   }
   return string;
 };

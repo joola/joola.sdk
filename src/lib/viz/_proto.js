@@ -35,6 +35,8 @@ proto.destroy = function (container, obj) {
       joola.query.stop(q);
     });
   }
+  this.chartDrawn = false;
+  this.drawn = false;
   this.options.$container.empty();
 };
 
@@ -139,8 +141,15 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   }
 
   metrics.forEach(function (metric, index) {
+    var metric_name = metric.name;
+    if (metric.filter) {
+      metric.filter.forEach(function(f){
+      metric_name = f[2] + ': ' + metric_name;
+      });
+    }
+
     series[index] = {
-      name: metric.name,
+      name: metric_name,
       data: []
     };
 

@@ -90,7 +90,10 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
     if (self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker();
+      var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
+        if (err)
+          throw err;
+      });
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
@@ -111,7 +114,10 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err) {
+        if (err)
+          throw err;
+      });
     }
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);

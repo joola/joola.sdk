@@ -138,7 +138,7 @@ var BarTable = module.exports = function (options, callback) {
                   '<div class="subcaption"></div>' +
                   '</td>');
 
-                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],20));
+                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],23));
                 $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
                 $tr.append($td);
               });
@@ -289,6 +289,22 @@ var BarTable = module.exports = function (options, callback) {
         joola.viz.onscreen.push(self);
 
         joola.events.emit('bartable.init.finish', self);
+        
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+
+          //subscribe to default events
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.destroy();
+            self.draw(self.options);
+          });
+        }
+        
         if (typeof callback === 'function')
           return callback(null, self);
       });

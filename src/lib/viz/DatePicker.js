@@ -192,11 +192,11 @@ var DatePicker = module.exports = function (options, callback) {
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-    '<tr>' +
-    '<td class="dates"></td>' +
-    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
-    '</tr>' +
-    '</table></div></div>');
+      '<tr>' +
+      '<td class="dates"></td>' +
+      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
+      '</tr>' +
+      '</table></div></div>');
 
     $container.append($table);
 
@@ -214,54 +214,54 @@ var DatePicker = module.exports = function (options, callback) {
     var $item = $('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-    '<td class="calendars"></td>' +
-    '<td class="control"><div class="optionscontainer"></div></td>' +
-    '</tr></table>');
+      '<td class="calendars"></td>' +
+      '<td class="control"><div class="optionscontainer"></div></td>' +
+      '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-    '</div>');
+      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+      '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-    ' - ' +
-    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-    '</div>');
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-    '</div>');
+      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+      '</div>');
 
     $optionscontainer.append('<div class="daterange comparerange"">' +
-    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-    ' - ' +
-    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-    '</div>');
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
 
     $optionscontainer.append('' +
-    '<hr class="divider">' +
-    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-    '<span class="cancel">Cancel</span></div>');
+      '<hr class="divider">' +
+      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+      '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $('<div class="datepicker"></div>');
 
     $item = $('<table><tr valign=top>' +
-    '<td class="datetable-prev unselectable"></td>' +
-    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-    '<td class="datetable-next unselectable"></td>' +
-    '</tr></table>');
+      '<td class="datetable-prev unselectable"></td>' +
+      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+      '<td class="datetable-next unselectable"></td>' +
+      '</tr></table>');
     $calendars.append($item);
 
     $('.datetable-prev').append('<div class="prev">' +
-    '<div class="inline-block prev">' +
-    '</div>' +
-    '</div>');
+      '<div class="inline-block prev">' +
+      '</div>' +
+      '</div>');
     $('.datetable-prev .prev').off('click');
     $('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -285,9 +285,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $('.datetable-next').append('<div class="next">' +
-    '<div class="inline-block next">' +
-    '</div>' +
-    '</div>');
+      '<div class="inline-block next">' +
+      '</div>' +
+      '</div>');
     $('.datetable-next .next').off('click');
     $('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -631,11 +631,9 @@ var DatePicker = module.exports = function (options, callback) {
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
-        self.options.canvas.emit('datechange', self);
+      //if (self.options.canvas)
+      //  self.options.canvas.emit('datechange', self);
 
-      if (self.options.onUpdate)
-        window[self.options.onUpdate](self.container, self);
 
       self.DateUpdate();
     });
@@ -648,7 +646,7 @@ var DatePicker = module.exports = function (options, callback) {
 
     if (self.options.onAfterDraw)
       window[self.options.onAfterDraw](self.options.container, self);
-    
+
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
   };
@@ -667,6 +665,13 @@ var DatePicker = module.exports = function (options, callback) {
       compare_todate: this.applied_compare_todate,
       compare: this.comparePeriod
     };
+
+    var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
+    var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
+    
+    $fromdate.text(self.formatDate(_this.applied_base_fromdate));
+    todate.text(self.formatDate(_this.applied_base_todate));
+
     $(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
     });
@@ -676,6 +681,9 @@ var DatePicker = module.exports = function (options, callback) {
     }
     $(self).trigger("datechange", options);
     $(joola).trigger("datechange", options);
+
+    if (self.options.onUpdate)
+      window[self.options.onUpdate](self.container, self);
   };
 
   this.formatDate = function (date) {

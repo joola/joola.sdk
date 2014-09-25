@@ -151,7 +151,7 @@ var Timeline = module.exports = function (options, callback) {
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
         if (self.options.onDraw)
-          window[self.options.onDraw](self);
+          window[self.options.onDraw](self.options.container, self);
 
         if (typeof callback === 'function')
           return callback(null);
@@ -238,6 +238,30 @@ var Timeline = module.exports = function (options, callback) {
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
+            self.destroy();
+            self.draw(self.options);
+          });
+          self.options.canvas.on('addplot', function (sender, filter) {
+            self.options.query.metrics.forEach(function (m) {
+              if (!m.filter) {
+                var _m = joola.common.extend({}, m);
+                //_m.dependsOn = _m.key;
+                //_m.key = 'addplot_' + _m.key;
+                _m.filter = filter;
+                _m.reason = 'added_plot';
+                self.options.query.metrics.push(_m);
+              }
+            });
+
+            self.destroy();
+            self.draw(self.options);
+          });
+          self.options.canvas.on('removeplot', function (sender, filter) {
+            self.options.query.metrics = joola.common._.filter(self.options.query.metrics, function (m) {
+              return JSON.stringify(m.filter) !== JSON.stringify(filter);
+            });
+
+            self.destroy();
             self.draw(self.options);
           });
         }

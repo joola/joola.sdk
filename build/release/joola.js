@@ -20283,7 +20283,7 @@ function toArray(list, index) {
 }).call(this);
 
 },{}],94:[function(require,module,exports){
-module.exports={
+module.exports=module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
   "version": "0.7.13",
@@ -20990,9 +20990,17 @@ common.hash = function (string) {
 };
 
 common.ensureLength = function (string, length) {
-  while (string.length > length) {
-    string = string.replace('...');
+  if (!string)
+    return string;
+  if (typeof string !== 'string')
+    return string;
+  if (string === '')
+    return;
+  var counter = 0;
+  while (string.length > length && counter < 100) {
+    string = string.replace('...', '');
     string = string.substring(0, string.length - 1) + '...';
+    counter++;
   }
   return string;
 };
@@ -21726,7 +21734,7 @@ var BarTable = module.exports = function (options, callback) {
                   '<div class="subcaption"></div>' +
                   '</td>');
 
-                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],20));
+                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],23));
                 $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
                 $tr.append($td);
               });
@@ -21877,6 +21885,22 @@ var BarTable = module.exports = function (options, callback) {
         joola.viz.onscreen.push(self);
 
         joola.events.emit('bartable.init.finish', self);
+        
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+
+          //subscribe to default events
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.destroy();
+            self.draw(self.options);
+          });
+        }
+        
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -22033,7 +22057,10 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
     if (self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker();
+      var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
+        if (err)
+          throw err;
+      });
       _query.timeframe = {};
       _query.timeframe.start = _datepicker.base_fromdate;
       _query.timeframe.end = _datepicker.base_todate;
@@ -22054,7 +22081,10 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker);
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err) {
+        if (err)
+          throw err;
+      });
     }
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);
@@ -22370,11 +22400,11 @@ var DatePicker = module.exports = function (options, callback) {
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-    '<tr>' +
-    '<td class="dates"></td>' +
-    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
-    '</tr>' +
-    '</table></div></div>');
+      '<tr>' +
+      '<td class="dates"></td>' +
+      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
+      '</tr>' +
+      '</table></div></div>');
 
     $container.append($table);
 
@@ -22392,54 +22422,54 @@ var DatePicker = module.exports = function (options, callback) {
     var $item = $('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-    '<td class="calendars"></td>' +
-    '<td class="control"><div class="optionscontainer"></div></td>' +
-    '</tr></table>');
+      '<td class="calendars"></td>' +
+      '<td class="control"><div class="optionscontainer"></div></td>' +
+      '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-    '</div>');
+      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+      '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-    ' - ' +
-    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-    '</div>');
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-    '</div>');
+      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+      '</div>');
 
     $optionscontainer.append('<div class="daterange comparerange"">' +
-    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-    ' - ' +
-    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-    '</div>');
+      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+      ' - ' +
+      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+      '</div>');
 
     $optionscontainer.append('' +
-    '<hr class="divider">' +
-    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-    '<span class="cancel">Cancel</span></div>');
+      '<hr class="divider">' +
+      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+      '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $('<div class="datepicker"></div>');
 
     $item = $('<table><tr valign=top>' +
-    '<td class="datetable-prev unselectable"></td>' +
-    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-    '<td class="datetable-next unselectable"></td>' +
-    '</tr></table>');
+      '<td class="datetable-prev unselectable"></td>' +
+      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+      '<td class="datetable-next unselectable"></td>' +
+      '</tr></table>');
     $calendars.append($item);
 
     $('.datetable-prev').append('<div class="prev">' +
-    '<div class="inline-block prev">' +
-    '</div>' +
-    '</div>');
+      '<div class="inline-block prev">' +
+      '</div>' +
+      '</div>');
     $('.datetable-prev .prev').off('click');
     $('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -22463,9 +22493,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $('.datetable-next').append('<div class="next">' +
-    '<div class="inline-block next">' +
-    '</div>' +
-    '</div>');
+      '<div class="inline-block next">' +
+      '</div>' +
+      '</div>');
     $('.datetable-next .next').off('click');
     $('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -22809,11 +22839,9 @@ var DatePicker = module.exports = function (options, callback) {
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
-        self.options.canvas.emit('datechange', self);
+      //if (self.options.canvas)
+      //  self.options.canvas.emit('datechange', self);
 
-      if (self.options.onUpdate)
-        window[self.options.onUpdate](self.container, self);
 
       self.DateUpdate();
     });
@@ -22826,7 +22854,7 @@ var DatePicker = module.exports = function (options, callback) {
 
     if (self.options.onAfterDraw)
       window[self.options.onAfterDraw](self.options.container, self);
-    
+
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
   };
@@ -22845,6 +22873,13 @@ var DatePicker = module.exports = function (options, callback) {
       compare_todate: this.applied_compare_todate,
       compare: this.comparePeriod
     };
+
+    var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
+    var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
+    
+    $fromdate.text(self.formatDate(_this.applied_base_fromdate));
+    todate.text(self.formatDate(_this.applied_base_todate));
+
     $(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
     });
@@ -22854,6 +22889,9 @@ var DatePicker = module.exports = function (options, callback) {
     }
     $(self).trigger("datechange", options);
     $(joola).trigger("datechange", options);
+
+    if (self.options.onUpdate)
+      window[self.options.onUpdate](self.container, self);
   };
 
   this.formatDate = function (date) {
@@ -23440,8 +23478,14 @@ var Metric = module.exports = function (options, callback) {
           self.options.canvas.addVisualization(self);
           
           //subscribe to default events
-          self.options.canvas.on('datechange', function (e) {
-            console.log('metric', 'datechange', e);
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.destroy();
+            self.draw(self.options);
           });
         }
 
@@ -25195,12 +25239,15 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<table class="jio table">' +
-    '<thead>' +
-    '</thead>' +
-    '<tbody>' +
-    '</tbody>' +
-    '</table>');
+    var $html = $('' +
+      '<div class="jio jtable breadcrumbs"></div>' +
+      '<div class="jio jtable controls"></div>' +
+      '<table class="jio table sort">' +
+      ' <thead>' +
+      ' </thead>' +
+      ' <tbody>' +
+      ' </tbody>' +
+      '</table>');
     return $html;
   };
 
@@ -25238,8 +25285,20 @@ var Table = module.exports = function (options, callback) {
         var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
 
-        message.dimensions.forEach(function (d) {
-          var $th = $('<th class="jio tbl caption dimension"></th>');
+        var $th = $('<th class="jio tbl caption check"></th>');
+        $th.text('');
+        $head_tr.append($th);
+
+        $th = $('<th class="jio tbl caption id no-sort"></th>');
+        $th.text('');
+        //$head_tr.append($th);
+
+
+        message.dimensions.forEach(function (d, i) {
+          if (i === 2)
+            $th = $('<th class="jio tbl caption dimension sort-default"></th>');
+          else
+            $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
           $head_tr.append($th);
         });
@@ -25250,21 +25309,43 @@ var Table = module.exports = function (options, callback) {
         });
 
         $thead.append($head_tr);
-        $html.append($thead);
+        $html.find('table').append($thead);
 
         var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
-          ser.data.forEach(function (point) {
+          ser.data.forEach(function (point, pointIndex) {
             var $tr = $('<tr></tr>');
+            var $td = $('<td class="jio tbl value check"></td>');
+            var $check = $('<input type="checkbox"/>');
+            $check.on('click', function () {
+              var $this = $(this);
+              if ($this.is(':checked')) {
+                if (self.options.canvas)
+                  self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+              }
+              else if (self.options.canvas)
+                self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+              $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+            });
+            $td.append($check);
+            $tr.append($td);
+            $td = $('<td class="jio tbl value id"></td>');
+            $td.text(pointIndex + 1 + '.');
+            //$tr.append($td);
 
             var index = 0;
+            var dataDimensions = [];
             message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio tbl value dimension"></td>');
+              $td = $('<td class="jio tbl value dimension dimensionvalue"></td>');
               $td.text(point[index++]);
+              dataDimensions.push(d.key, 'eq', $td.text());
               $tr.append($td);
             });
+            dataDimensions = [dataDimensions];
+            $check.attr('data-filter', JSON.stringify(dataDimensions));
             message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio tbl value metric"></td>');
+              $td = $('<td class="jio tbl value metric metricvalue"></td>');
               $td.text(point[index++]);
               $tr.append($td);
             });
@@ -25272,17 +25353,15 @@ var Table = module.exports = function (options, callback) {
             $tbody.append($tr);
           });
         });
-        $html.append($tbody);
+        $html.find('table').append($tbody);
         self.options.$container.append($html);
-
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
+        self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
+          descending: true
         });
-
+        self.tablesort.sortTable(self.options.$container.find('th')[2]);
         if (self.options.onDraw)
-          window[self.options.onDraw](self);
-        
+          window[self.options.onDraw](self.options.container, self);
+
         if (typeof callback === 'function')
           return callback(null);
       }
@@ -25475,7 +25554,7 @@ Table.meta = {
   title: 'Table',
   tagline: '',
   description: '' +
-  'Plot powerful and customizable data tables.',
+    'Plot powerful and customizable data tables.',
   longDescription: '',
   example: {
     //css: 'height:250px;width:100%',
@@ -25722,7 +25801,7 @@ var Timeline = module.exports = function (options, callback) {
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
         if (self.options.onDraw)
-          window[self.options.onDraw](self);
+          window[self.options.onDraw](self.options.container, self);
 
         if (typeof callback === 'function')
           return callback(null);
@@ -25809,6 +25888,30 @@ var Timeline = module.exports = function (options, callback) {
             self.options.query.timeframe.start = new Date(dates.base_fromdate);
             self.options.query.timeframe.end = new Date(dates.base_todate);
 
+            self.destroy();
+            self.draw(self.options);
+          });
+          self.options.canvas.on('addplot', function (sender, filter) {
+            self.options.query.metrics.forEach(function (m) {
+              if (!m.filter) {
+                var _m = joola.common.extend({}, m);
+                //_m.dependsOn = _m.key;
+                //_m.key = 'addplot_' + _m.key;
+                _m.filter = filter;
+                _m.reason = 'added_plot';
+                self.options.query.metrics.push(_m);
+              }
+            });
+
+            self.destroy();
+            self.draw(self.options);
+          });
+          self.options.canvas.on('removeplot', function (sender, filter) {
+            self.options.query.metrics = joola.common._.filter(self.options.query.metrics, function (m) {
+              return JSON.stringify(m.filter) !== JSON.stringify(filter);
+            });
+
+            self.destroy();
             self.draw(self.options);
           });
         }
@@ -26014,6 +26117,8 @@ proto.destroy = function (container, obj) {
       joola.query.stop(q);
     });
   }
+  this.chartDrawn = false;
+  this.drawn = false;
   this.options.$container.empty();
 };
 
@@ -26118,8 +26223,15 @@ proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
   }
 
   metrics.forEach(function (metric, index) {
+    var metric_name = metric.name;
+    if (metric.filter) {
+      metric.filter.forEach(function(f){
+      metric_name = f[2] + ': ' + metric_name;
+      });
+    }
+
     series[index] = {
-      name: metric.name,
+      name: metric_name,
       data: []
     };
 

@@ -44,12 +44,15 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<table class="jio table">' +
-    '<thead>' +
-    '</thead>' +
-    '<tbody>' +
-    '</tbody>' +
-    '</table>');
+    var $html = $('' +
+      '<div class="jio jtable breadcrumbs"></div>' +
+      '<div class="jio jtable controls"></div>' +
+      '<table class="jio table sort">' +
+      ' <thead>' +
+      ' </thead>' +
+      ' <tbody>' +
+      ' </tbody>' +
+      '</table>');
     return $html;
   };
 
@@ -87,8 +90,20 @@ var Table = module.exports = function (options, callback) {
         var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
 
-        message.dimensions.forEach(function (d) {
-          var $th = $('<th class="jio tbl caption dimension"></th>');
+        var $th = $('<th class="jio tbl caption check"></th>');
+        $th.text('');
+        $head_tr.append($th);
+
+        $th = $('<th class="jio tbl caption id no-sort"></th>');
+        $th.text('');
+        //$head_tr.append($th);
+
+
+        message.dimensions.forEach(function (d, i) {
+          if (i === 2)
+            $th = $('<th class="jio tbl caption dimension sort-default"></th>');
+          else
+            $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
           $head_tr.append($th);
         });
@@ -99,21 +114,43 @@ var Table = module.exports = function (options, callback) {
         });
 
         $thead.append($head_tr);
-        $html.append($thead);
+        $html.find('table').append($thead);
 
         var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
-          ser.data.forEach(function (point) {
+          ser.data.forEach(function (point, pointIndex) {
             var $tr = $('<tr></tr>');
+            var $td = $('<td class="jio tbl value check"></td>');
+            var $check = $('<input type="checkbox"/>');
+            $check.on('click', function () {
+              var $this = $(this);
+              if ($this.is(':checked')) {
+                if (self.options.canvas)
+                  self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+              }
+              else if (self.options.canvas)
+                self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+              $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+            });
+            $td.append($check);
+            $tr.append($td);
+            $td = $('<td class="jio tbl value id"></td>');
+            $td.text(pointIndex + 1 + '.');
+            //$tr.append($td);
 
             var index = 0;
+            var dataDimensions = [];
             message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio tbl value dimension"></td>');
+              $td = $('<td class="jio tbl value dimension dimensionvalue"></td>');
               $td.text(point[index++]);
+              dataDimensions.push(d.key, 'eq', $td.text());
               $tr.append($td);
             });
+            dataDimensions = [dataDimensions];
+            $check.attr('data-filter', JSON.stringify(dataDimensions));
             message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio tbl value metric"></td>');
+              $td = $('<td class="jio tbl value metric metricvalue"></td>');
               $td.text(point[index++]);
               $tr.append($td);
             });
@@ -121,17 +158,15 @@ var Table = module.exports = function (options, callback) {
             $tbody.append($tr);
           });
         });
-        $html.append($tbody);
+        $html.find('table').append($tbody);
         self.options.$container.append($html);
-
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
+        self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
+          descending: true
         });
-
+        self.tablesort.sortTable(self.options.$container.find('th')[2]);
         if (self.options.onDraw)
-          window[self.options.onDraw](self);
-        
+          window[self.options.onDraw](self.options.container, self);
+
         if (typeof callback === 'function')
           return callback(null);
       }
@@ -324,7 +359,7 @@ Table.meta = {
   title: 'Table',
   tagline: '',
   description: '' +
-  'Plot powerful and customizable data tables.',
+    'Plot powerful and customizable data tables.',
   longDescription: '',
   example: {
     //css: 'height:250px;width:100%',
