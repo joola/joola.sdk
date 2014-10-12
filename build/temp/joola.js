@@ -11059,7 +11059,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":40,"component-bind":43,"component-emitter":44,"debug":45,"has-binary":70,"indexof":72,"socket.io-parser":76,"to-array":80}],42:[function(require,module,exports){
+},{"./on":40,"component-bind":43,"component-emitter":44,"debug":45,"has-binary":70,"indexof":72,"socket.io-parser":76,"to-array":82}],42:[function(require,module,exports){
 (function (global){
 
 /**
@@ -14995,7 +14995,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":77,"isarray":78}],76:[function(require,module,exports){
+},{"./is-buffer":77,"isarray":80}],76:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -15393,7 +15393,7 @@ function error(data){
   };
 }
 
-},{"./binary":75,"./is-buffer":77,"component-emitter":44,"debug":45,"isarray":78,"json3":79}],77:[function(require,module,exports){
+},{"./binary":75,"./is-buffer":77,"component-emitter":78,"debug":79,"isarray":80,"json3":81}],77:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -15411,8 +15411,12 @@ function isBuf(obj) {
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],78:[function(require,module,exports){
-module.exports=require(71)
+module.exports=require(44)
 },{}],79:[function(require,module,exports){
+module.exports=require(45)
+},{}],80:[function(require,module,exports){
+module.exports=require(71)
+},{}],81:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -16275,7 +16279,7 @@ module.exports=require(71)
   }
 }(this));
 
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -16290,7 +16294,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],81:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -17568,7 +17572,7 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
@@ -17628,7 +17632,7 @@ module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /**
  *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
@@ -17640,8 +17644,8 @@ module.exports={
 
 var
   joola = require('../index'),
-  
-  
+
+
   http = require('http'),
   https = require('https'),
   querystring = require('querystring');
@@ -17819,17 +17823,17 @@ api.getJSON = function (options, objOptions, callback) {
             return callback(null, obj);
           }
           else if (res.statusCode == 302) {
-            return callback(new Error('Failed to execute request: Authentication Failed'));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: Authentication Failed'));
           }
           else if (res.statusCode == 401) {
             //let's redirect to login
             if (joola.options.logouturl)
               location.href = joola.options.logouturl;
 
-            return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
           else {
-            return callback(new Error('Failed to execute request: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
           }
         });
       });
@@ -17913,7 +17917,7 @@ api.getJSON = function (options, objOptions, callback) {
     joola.io.socket.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-    
+
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
       joola.io.socket.on(routeID + ':done', processResponse);
     }
@@ -17934,7 +17938,7 @@ joola.events.on('rpc:done', function () {
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
 });
-},{"../index":90,"http":11,"https":15,"querystring":21,"url":30}],84:[function(require,module,exports){
+},{"../index":92,"http":11,"https":15,"querystring":21,"url":30}],86:[function(require,module,exports){
 /**
  *  joola
  *
@@ -18060,7 +18064,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"../index":90,"cloneextend":33,"url":30}],85:[function(require,module,exports){
+},{"../index":92,"cloneextend":33,"url":30}],87:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18080,7 +18084,7 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"../index":90,"eventemitter2":35}],86:[function(require,module,exports){
+},{"../index":92,"eventemitter2":35}],88:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -18109,7 +18113,7 @@ joola.timezone = function (tz) {
   return offset;
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../index":90}],87:[function(require,module,exports){
+},{"../index":92}],89:[function(require,module,exports){
 (function (Buffer){
 /*jshint -W083 */
 
@@ -18294,7 +18298,7 @@ common.ensureLength = function (string, length) {
   return string;
 };
 }).call(this,require("buffer").Buffer)
-},{"../index":90,"./modifiers":89,"buffer":1,"cloneextend":33,"crypto":5,"deep-extend":34,"underscore":81,"util":32}],88:[function(require,module,exports){
+},{"../index":92,"./modifiers":91,"buffer":1,"cloneextend":33,"crypto":5,"deep-extend":34,"underscore":83,"util":32}],90:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18365,7 +18369,7 @@ logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
 
-},{"../index":90}],89:[function(require,module,exports){
+},{"../index":92}],91:[function(require,module,exports){
 /**
  *  @title joola/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola
@@ -18520,7 +18524,7 @@ Array.prototype.equals = function (array) {
   return true;
 };  
 
-},{}],90:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -18885,7 +18889,7 @@ joola.get = function (key) {
   return joola.options[key];
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":82,"./common/api":83,"./common/dispatch":84,"./common/events":85,"./common/globals":86,"./common/index":87,"./common/logger":88,"./viz/index":105,"querystring":21,"socket.io-client":37,"url":30}],91:[function(require,module,exports){
+},{"./../../package.json":84,"./common/api":85,"./common/dispatch":86,"./common/events":87,"./common/globals":88,"./common/index":89,"./common/logger":90,"./viz/index":107,"querystring":21,"socket.io-client":37,"url":30}],93:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18958,7 +18962,8 @@ var BarTable = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -18973,7 +18978,7 @@ var BarTable = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        
+
         if (self.options.headers) {
           var $thead = $($html.find('thead'));
           var $head_tr = $('<tr class="jio bartable captions"></tr>');
@@ -19026,7 +19031,7 @@ var BarTable = module.exports = function (options, callback) {
                   '<div class="subcaption"></div>' +
                   '</td>');
 
-                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],23));
+                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0], 23));
                 $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
                 $tr.append($td);
               });
@@ -19068,7 +19073,7 @@ var BarTable = module.exports = function (options, callback) {
 
         if (self.options.caption)
           self.options.$container.find('.bartable-caption').text(self.options.caption);
-        
+
         if (self.options.onDraw)
           window[self.options.onDraw](self.options.container, self);
 
@@ -19177,7 +19182,7 @@ var BarTable = module.exports = function (options, callback) {
         joola.viz.onscreen.push(self);
 
         joola.events.emit('bartable.init.finish', self);
-        
+
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
 
@@ -19192,7 +19197,7 @@ var BarTable = module.exports = function (options, callback) {
             self.draw(self.options);
           });
         }
-        
+
         if (typeof callback === 'function')
           return callback(null, self);
       });
@@ -19256,7 +19261,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],92:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],94:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -19497,7 +19502,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"cloneextend":33,"eventemitter2":35,"underscore":81}],93:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"cloneextend":33,"eventemitter2":35,"underscore":83}],95:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20495,7 +20500,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],94:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],96:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20892,7 +20897,7 @@ DimensionPicker.meta = {
     }
   }
 };
-},{"./_proto":104,"cloneextend":33,"eventemitter2":35}],95:[function(require,module,exports){
+},{"./_proto":106,"cloneextend":33,"eventemitter2":35}],97:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21032,7 +21037,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104}],96:[function(require,module,exports){
+},{"../index":92,"./_proto":106}],98:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21090,7 +21095,8 @@ var Metric = module.exports = function (options, callback) {
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -21370,7 +21376,7 @@ Metric.meta = {
     }
   }
 };
-},{"../index":90,"./_proto":104,"cloneextend":33}],97:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"cloneextend":33}],99:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21766,7 +21772,7 @@ MetricPicker.meta = {
     }
   }
 };
-},{"./_proto":104,"cloneextend":33,"eventemitter2":35}],98:[function(require,module,exports){
+},{"./_proto":106,"cloneextend":33,"eventemitter2":35}],100:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21833,7 +21839,8 @@ var MiniTable = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -22068,7 +22075,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],99:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],101:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22401,7 +22408,7 @@ Pie.meta = {
     }
   }
 };
-},{"../index":90,"./_proto":104,"underscore":81}],100:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],102:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -22628,7 +22635,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":90,"./_proto":104,"underscore":81}],101:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],103:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22890,7 +22897,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104}],102:[function(require,module,exports){
+},{"../index":92,"./_proto":106}],104:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22972,7 +22979,8 @@ var Table = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -23396,7 +23404,7 @@ Table.meta = {
     }
   }
 };
-},{"../index":90,"./_proto":104,"underscore":81}],103:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"underscore":83}],105:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23465,6 +23473,10 @@ var Timeline = module.exports = function (options, callback) {
           if (typeof callback === 'function')
             return callback(err);
           return;
+        }
+
+        if (!Array.isArray(message)) {
+          message = [message];
         }
 
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
@@ -23926,7 +23938,7 @@ Timeline.meta = {
   chartProvider: 'highcharts',
   license: 'MIT'
 };
-},{"../index":90,"./_proto":104,"moment":36,"underscore":81}],104:[function(require,module,exports){
+},{"../index":92,"./_proto":106,"moment":36,"underscore":83}],106:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24221,7 +24233,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":90,"cloneextend":33,"moment":36,"underscore":81}],105:[function(require,module,exports){
+},{"../index":92,"cloneextend":33,"moment":36,"underscore":83}],107:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24263,4 +24275,4 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"../index":90,"./BarTable":91,"./Canvas":92,"./DatePicker":93,"./DimensionPicker":94,"./Geo":95,"./Metric":96,"./MetricPicker":97,"./MiniTable":98,"./Pie":99,"./PunchCard":100,"./Sparkline":101,"./Table":102,"./Timeline":103}]},{},[90])
+},{"../index":92,"./BarTable":93,"./Canvas":94,"./DatePicker":95,"./DimensionPicker":96,"./Geo":97,"./Metric":98,"./MetricPicker":99,"./MiniTable":100,"./Pie":101,"./PunchCard":102,"./Sparkline":103,"./Table":104,"./Timeline":105}]},{},[92])
