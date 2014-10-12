@@ -8,7 +8,7 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var 
+var
   joola = require('../index'),
   ce = require('cloneextend');
 
@@ -34,11 +34,12 @@ var Metric = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    allowSelect: true
   };
   this.drawn = false;
   this.realtimeQueries = [];
-  
+
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -54,6 +55,7 @@ var Metric = module.exports = function (options, callback) {
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
+      message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -61,7 +63,7 @@ var Metric = module.exports = function (options, callback) {
       }
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      
+
       var value;
       if (message.documents && message.documents.length > 0)
         value = message.documents[0].fvalues[message.metrics[0].key];
@@ -78,15 +80,31 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
+        self.options.$container.data(self);
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
 
+        if (self.options.onDraw)
+          window[self.options.onDraw](self.options.$container, self);
+
+
+        if (self.options.allowSelect)
+          self.options.$container.css('cursor', 'pointer');
+        if (self.options.allowSelect && self.options.onSelect)
+          self.options.$container.on('click', window[self.options.onSelect]);
+        if (self.options.allowSelect && self.options.canvas) {
+          self.options.$container.on('click', function () {
+            self.options.canvas.emit('metricselect', self, self.options.query.metrics[0]);
+          });
+        }
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
 
         self.options.$container.find('.value').text(value);
@@ -104,7 +122,8 @@ var Metric = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'metric'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -120,8 +139,16 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (e) {
-            console.log('metric', 'datechange', e);
+
+          //subscribe to default events
+          self.options.canvas.on('datechange', function (dates) {
+            //let's change our query and fetch again
+            self.options.query.timeframe = {};
+            self.options.query.timeframe.start = new Date(dates.base_fromdate);
+            self.options.query.timeframe.end = new Date(dates.base_todate);
+
+            self.destroy();
+            self.draw(self.options);
           });
         }
 
@@ -219,8 +246,10 @@ joola.events.on('core.init.finish', function () {
 
 Metric.template = function (options) {
   var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
+    ' <div class="jio metricbox wrapper">\n' +
+    '   <div class="jio metricbox caption"></div>\n' +
+    '   <div class="jio metricbox value"></div>\n' +
+    ' </div>\n' +
     '</div>';
   return html;
 };
@@ -255,9 +284,9 @@ Metric.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     caption: {

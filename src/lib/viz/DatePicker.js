@@ -186,12 +186,15 @@ var DatePicker = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
+
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
       '<td class="dates"></td>' +
-      '<td><div class="dropdownmarker"></div></td>' +
+      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
       '</tr>' +
       '</table></div></div>');
 
@@ -604,7 +607,10 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
-        $picker.offset({top: $picker.offset().top, left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()});
+        $picker.offset({
+          top: $picker.offset().top,
+          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
+        });
       }
     });
     $table.click(function (e) {
@@ -625,8 +631,9 @@ var DatePicker = module.exports = function (options, callback) {
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
 
-      if (self.options.canvas)
-        self.options.canvas.emit('datechange', self);
+      //if (self.options.canvas)
+      //  self.options.canvas.emit('datechange', self);
+
 
       self.DateUpdate();
     });
@@ -636,6 +643,9 @@ var DatePicker = module.exports = function (options, callback) {
 
     if (this.disableCompare)
       $('.compareoption .checker').attr('disabled', 'disabled');
+
+    if (self.options.onAfterDraw)
+      window[self.options.onAfterDraw](self.options.container, self);
 
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
@@ -648,7 +658,20 @@ var DatePicker = module.exports = function (options, callback) {
     _this.applied_base_todate = this.base_todate;
     _this.applied_compare_fromdate = this.compare_fromdate;
     _this.applied_compare_todate = this.compare_todate;
-    options = {base_fromdate: this.applied_base_fromdate, base_todate: this.applied_base_todate, compare_fromdate: this.applied_compare_fromdate, compare_todate: this.applied_compare_todate, compare: this.comparePeriod};
+    options = {
+      base_fromdate: this.applied_base_fromdate,
+      base_todate: this.applied_base_todate,
+      compare_fromdate: this.applied_compare_fromdate,
+      compare_todate: this.applied_compare_todate,
+      compare: this.comparePeriod
+    };
+
+    var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
+    var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
+    
+    $fromdate.text(self.formatDate(_this.applied_base_fromdate));
+    todate.text(self.formatDate(_this.applied_base_todate));
+
     $(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
     });
@@ -658,6 +681,9 @@ var DatePicker = module.exports = function (options, callback) {
     }
     $(self).trigger("datechange", options);
     $(joola).trigger("datechange", options);
+
+    if (self.options.onUpdate)
+      window[self.options.onUpdate](self.container, self);
   };
 
   this.formatDate = function (date) {
@@ -900,7 +926,7 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   try {
-    joola.common.mixin(self.options, options, true);
+    joola.common._extend(self.options, options, true);
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
@@ -908,20 +934,19 @@ var DatePicker = module.exports = function (options, callback) {
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'datepicker'},
-        {'uuid': self.uuid}
+        {'uuid': self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
 
         joola.viz.onscreen.push(self);
-
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
           if (elem.attr('jio-type') == 'canvas') {
             self.options.canvas = $(elem).Canvas();
           }
         }
-
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
@@ -952,7 +977,7 @@ joola.events.on('core.init.finish', function () {
         options.container = this.get(0);
         result = new joola.viz.DatePicker(options, function (err, datepicker) {
           if (err)
-            throw err;
+            return callback(err);
           datepicker.draw(options, callback);
         }).options.$container;
       }

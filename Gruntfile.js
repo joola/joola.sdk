@@ -172,6 +172,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watchify']);
+  grunt.registerTask('css', ['concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);
   grunt.registerTask('sauce', ['default', 'connect', 'saucelabs-mocha']);
