@@ -55,7 +55,8 @@ var Metric = module.exports = function (options, callback) {
     this.options.query.dimensions = [];
     this.options.query.metrics = this.options.query.metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);

@@ -68,6 +68,10 @@ var Timeline = module.exports = function (options, callback) {
           return;
         }
 
+        if (!Array.isArray(message)) {
+          message = [message];
+        }
+
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
           self.realtimeQueries.push(message[0].realtime);
         var series = self._super.makeChartTimelineSeries(message);

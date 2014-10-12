@@ -70,7 +70,8 @@ var BarTable = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -85,7 +86,7 @@ var BarTable = module.exports = function (options, callback) {
 
         var $html = self.template();
 
-        
+
         if (self.options.headers) {
           var $thead = $($html.find('thead'));
           var $head_tr = $('<tr class="jio bartable captions"></tr>');
@@ -138,7 +139,7 @@ var BarTable = module.exports = function (options, callback) {
                   '<div class="subcaption"></div>' +
                   '</td>');
 
-                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0],23));
+                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0], 23));
                 $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
                 $tr.append($td);
               });
@@ -180,7 +181,7 @@ var BarTable = module.exports = function (options, callback) {
 
         if (self.options.caption)
           self.options.$container.find('.bartable-caption').text(self.options.caption);
-        
+
         if (self.options.onDraw)
           window[self.options.onDraw](self.options.container, self);
 
@@ -289,7 +290,7 @@ var BarTable = module.exports = function (options, callback) {
         joola.viz.onscreen.push(self);
 
         joola.events.emit('bartable.init.finish', self);
-        
+
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
 
@@ -304,7 +305,7 @@ var BarTable = module.exports = function (options, callback) {
             self.draw(self.options);
           });
         }
-        
+
         if (typeof callback === 'function')
           return callback(null, self);
       });
