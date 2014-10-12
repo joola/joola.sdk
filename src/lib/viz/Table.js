@@ -34,7 +34,15 @@ var Table = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    row: {
+      checkbox: false,
+      id: false
+    },
+    pickers: {
+      main: {enabled: false},
+      secondary: {enabled: false}
+    }
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -46,7 +54,9 @@ var Table = module.exports = function (options, callback) {
   this.template = function () {
     var $html = $('' +
       '<div class="jio jtable breadcrumbs"></div>' +
-      '<div class="jio jtable controls"></div>' +
+      '<div class="jio jtable controls">' +
+      ' <div class="jio jtable primary-dimension-picker"></div>' +
+      '</div>' +
       '<table class="jio table sort">' +
       ' <thead>' +
       ' </thead>' +
@@ -89,15 +99,18 @@ var Table = module.exports = function (options, callback) {
 
         var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        var $th;
 
-        var $th = $('<th class="jio tbl caption check"></th>');
-        $th.text('');
-        $head_tr.append($th);
-
-        $th = $('<th class="jio tbl caption id no-sort"></th>');
-        $th.text('');
-        //$head_tr.append($th);
-
+        if (self.options.row.checkbox) {
+          $th = $('<th class="jio tbl caption check"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
+        if (self.options.row.id) {
+          $th = $('<th class="jio tbl caption id no-sort"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
 
         message.dimensions.forEach(function (d, i) {
           if (i === 2)
@@ -120,24 +133,31 @@ var Table = module.exports = function (options, callback) {
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (point, pointIndex) {
             var $tr = $('<tr></tr>');
-            var $td = $('<td class="jio tbl value check"></td>');
-            var $check = $('<input type="checkbox"/>');
-            $check.on('click', function () {
-              var $this = $(this);
-              if ($this.is(':checked')) {
-                if (self.options.canvas)
-                  self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
-                $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
-              }
-              else if (self.options.canvas)
-                self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
-              $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
-            });
-            $td.append($check);
-            $tr.append($td);
-            $td = $('<td class="jio tbl value id"></td>');
-            $td.text(pointIndex + 1 + '.');
-            //$tr.append($td);
+            var $td;
+            var $check;
+            if (self.options.row.checkbox) {
+              $td = $('<td class="jio tbl value check"></td>');
+              $check = $('<input type="checkbox"/>');
+              $check.on('click', function () {
+                var $this = $(this);
+                if ($this.is(':checked')) {
+                  if (self.options.canvas)
+                    self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                  $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+                }
+                else if (self.options.canvas)
+                  self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+              });
+              $td.append($check);
+              $tr.append($td);
+            }
+
+            if (self.options.row.id) {
+              $td = $('<td class="jio tbl value id"></td>');
+              $td.text(pointIndex + 1 + '.');
+              $tr.append($td);
+            }
 
             var index = 0;
             var dataDimensions = [];
@@ -148,7 +168,9 @@ var Table = module.exports = function (options, callback) {
               $tr.append($td);
             });
             dataDimensions = [dataDimensions];
-            $check.attr('data-filter', JSON.stringify(dataDimensions));
+            if ($check)
+              $check.attr('data-filter', JSON.stringify(dataDimensions));
+
             message.metrics.forEach(function (m) {
               $td = $('<td class="jio tbl value metric metricvalue"></td>');
               $td.text(point[index++]);
@@ -160,6 +182,35 @@ var Table = module.exports = function (options, callback) {
         });
         $html.find('table').append($tbody);
         self.options.$container.append($html);
+
+        if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
+          var $primary_dimension_container;
+          if (self.options.pickers.main.container)
+            $primary_dimension_container = $(self.options.pickers.main.container);
+          else
+            $primary_dimension_container = $(self.options.$container.find('.primary-dimension-picker')[0]);
+
+          if ($primary_dimension_container) {
+            $primary_dimension_container.DimensionPicker({canvas: self.options.canvas}, function (err, _picker) {
+              if (err)
+                throw err;
+              _picker.on('change', function (dimension) {
+                if (Array.isArray(self.options.query)) {
+                  self.options.query.forEach(function (query) {
+                    query.dimensions[0] = dimension;
+                  });
+                }
+                else
+                  self.options.query.dimensions[0] = dimension;
+
+                self.destroy();
+                self.draw(self.options);
+              });
+            });
+          }
+        }
+
+
         self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
           descending: true
         });

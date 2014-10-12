@@ -84,7 +84,7 @@ var Canvas = module.exports = function (options, callback) {
           var exist = _.find(self.options.metrics, function (m) {
             return m.key === key;
           });
-          if (exist)
+          if (exist) 
             _query.metrics[i] = exist;
         }
       });

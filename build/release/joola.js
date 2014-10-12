@@ -20283,7 +20283,7 @@ function toArray(list, index) {
 }).call(this);
 
 },{}],94:[function(require,module,exports){
-module.exports=module.exports={
+module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
   "version": "0.7.13",
@@ -21593,7 +21593,7 @@ joola.set = function (key, value, callback) {
 joola.get = function (key) {
   return joola.options[key];
 };
-},{"./../../package.json":94,"./common/api":95,"./common/dispatch":96,"./common/events":97,"./common/globals":98,"./common/index":99,"./common/logger":100,"./viz/index":116,"querystring":13,"socket.io-client":49,"url":17}],103:[function(require,module,exports){
+},{"./../../package.json":94,"./common/api":95,"./common/dispatch":96,"./common/events":97,"./common/globals":98,"./common/index":99,"./common/logger":100,"./viz/index":117,"querystring":13,"socket.io-client":49,"url":17}],103:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21964,7 +21964,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115,"underscore":93}],104:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],104:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22051,7 +22051,7 @@ var Canvas = module.exports = function (options, callback) {
           var exist = _.find(self.options.metrics, function (m) {
             return m.key === key;
           });
-          if (exist)
+          if (exist) 
             _query.metrics[i] = exist;
         }
       });
@@ -22205,7 +22205,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115,"cloneextend":1,"eventemitter2":3,"underscore":93}],105:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"cloneextend":1,"eventemitter2":3,"underscore":93}],105:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23203,7 +23203,404 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115,"underscore":93}],106:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],106:[function(require,module,exports){
+/**
+ *  @title joola
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
+var ce = require('cloneextend');
+var
+  EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+var DimensionPicker = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joola.events.emit('dimensionpicker.init.start');
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = ce.clone(require('./_proto')[x]);
+    this._super[x] = ce.clone(require('./_proto')[x]);
+  }
+
+  var self = this;
+  self.events = new EventEmitter2({wildcard: true, newListener: true});
+
+  self.on = self.events.on;
+  self.emit = self.events.emit;
+
+  this._id = 'dimensionpicker';
+  this.uuid = joola.common.uuid();
+  this.options = {
+    canvas: null,
+    container: null,
+    $container: null,
+    dimensions: [],
+    selected: null
+  };
+  this.drawn = false;
+
+  this.verify = function (options, callback) {
+    return this._super.verify(options, callback);
+  };
+
+  this.template = function () {
+    var $html = $('' +
+      '<div class="jio-dimensionpicker-wrapper">\n' +
+      '  <button class="btn jio-dimensionpicker-button"></button>' +
+      '  <button class="close">×</button>' +
+      '  <div class="jio-dimensionpicker-container">' +
+      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+      '    <div class="clear"></div>' +
+      '  </div>' +
+      '  <div class="clear"></div>' +
+      '</div>\n');
+
+    if (this.options.fixed) {
+      $html.find('.close').remove();
+    }
+
+    return $html;
+  };
+
+  this.draw = function (options, callback) {
+    if (!self.drawn) {
+      self.options.$container.append(self.options.template || self.template());
+      var $ul = $(self.options.$container.find('.jio-dimensionpicker-container'));
+      var $btn = $(self.options.$container.find('.jio-dimensionpicker-button'));
+      var $close = $(self.options.$container.find('.close'));
+      var $search = $(self.options.$container.find('.quicksearch'));
+      if (self.options.dimensions.length === 0)
+        joola.dimensions.list(function (err, list) {
+          console.log('done', err, list);
+          if (err)
+            throw err;
+
+          var mOpen = false;
+          var mSkipOne = false;
+          var mlasttarget = null;
+
+          list.forEach(function (dimension) {
+            var collection = {key: dimension.collection};
+
+            var $li = $('<div class="dimensionOption" data-member="' + collection.key + '.' + dimension.key + '">' + dimension.name + '</div>');
+            $li.off('click');
+            $li.on('click', function (e) {
+              var $this = $(this);
+              e.stopPropagation();
+
+              if ($this.hasClass('disabled'))
+                return;
+
+              self.options.selected = dimension;
+              var $content = dimension.name;
+              $btn.html($content);
+              $btn.removeClass('active');
+              $ul.removeClass('active');
+              mOpen = false;
+              mlasttarget = null;
+
+              self.markSelected();
+
+              self.emit('change', dimension);
+            });
+            $ul.append($li);
+          });
+
+          $close.on('click', function (e) {
+            self.options.selected = null;
+            self.markSelected();
+            self.emit('change', null);
+          });
+
+          $search.keyup(function () {
+            var $this = $(this);
+            var val = $this.val();
+            if (val.length >= 2) {
+              $ul.find('div[data-member]').hide();
+              $ul.find('div[data-member*="' + val + '"]').show();
+            }
+            else
+              $ul.find('div[data-member]').show();
+          });
+
+          $btn.on('click', function (e) {
+            var $this = $(this);
+            e.stopPropagation();
+
+            if (mOpen && mlasttarget == this.id) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+            }
+            else if (mSkipOne) {
+              $ul.removeClass('active');
+              mlasttarget = null;
+              mOpen = false;
+              mSkipOne = false;
+            }
+            else {
+              $ul.addClass('active');
+              mlasttarget = this.id;
+              mOpen = true;
+            }
+            var offset = $btn.position();
+            $ul.css('top', offset.top + $btn.outerHeight() - 1);
+            $ul.css('left', offset.left);
+            $ul.find('ul.active').removeClass('active');
+
+            $ul.attr('data-target', this.id);
+
+            //set selected
+            self.markSelected();
+          });
+
+          $ul.on('click', function (e) {
+            e.stopPropagation();
+          });
+          $('body').on('click', function () {
+            $btn.removeClass('active');
+            $ul.removeClass('active');
+            mlasttarget = null;
+            mOpen = false;
+          });
+
+          $btn.on('click', function () {
+            var $this = $(this);
+            $this.toggleClass('active');
+          });
+
+          if (typeof callback === 'function')
+            return callback(null, self);
+        });
+      else {
+        if (typeof callback === 'function')
+          return callback(null, self);
+      }
+    }
+    else {
+
+    }
+
+    self.markSelected = function () {
+      $ul.find('div').removeClass('active');
+      if (self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
+        self.options.$container.find('.jio-dimensionpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.close').show();
+      }
+      else {
+        self.options.$container.find('.jio-dimensionpicker-button').html('Choose a dimension...' + '');
+        self.options.$container.find('.close').hide();
+      }
+
+      $ul.find('div[data-member]').removeClass('disabled');
+      if (self.options.disabled) {
+        if (!Array.isArray(self.options.disabled))
+          self.options.disabled = [self.options.disabled];
+
+        self.options.disabled.forEach(function (disable) {
+          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+        });
+      }
+    };
+    self.markSelected();
+  };
+
+  //here we go
+  try {
+    joola.common.mixin(self.options, options, true);
+    self.verify(self.options, function (err) {
+      if (err)
+        return callback(err);
+
+      self.options.$container = $(self.options.container);
+      self.markContainer(self.options.$container, {
+        attr: [
+          {'type': 'dimensionpicker'},
+          {'uuid': self.uuid}
+        ],
+        css: self.options.css
+      }, function (err) {
+        if (err)
+          return callback(err);
+        joola.viz.onscreen.push(self);
+
+        if (!self.options.canvas) {
+          var elem = self.options.$container.parent();
+          if (elem.attr('jio-type') == 'canvas') {
+            self.options.canvas = $(elem).Canvas();
+          }
+        }
+
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+        }
+
+        joola.events.emit('dimensionpicker.init.finish', self);
+        if (typeof callback === 'function')
+          return callback(null, self);
+      });
+    });
+  }
+  catch (err) {
+    callback(err);
+    return self.onError(err, callback);
+  }
+
+  //callback(null, self);
+  return self;
+};
+
+joola.events.on('core.init.finish', function () {
+  var found;
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.DimensionPicker = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || (options && options.force)) {
+        if (options && options.force && uuid) {
+          var existing = null;
+          found = false;
+          joola.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joola.viz.DimensionPicker(options, function (err, dimensionpicker) {
+          if (err)
+            throw err;
+          dimensionpicker.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        found = false;
+        joola.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+DimensionPicker.template = function (options) {
+  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
+    '  <div class="jio dimensionbox caption"></div>\n' +
+    '  <div class="jio dimensionbox value"></div>\n' +
+    '</div>';
+  return html;
+};
+
+DimensionPicker.meta = {
+  key: 'dimensionpicker',
+  jQueryTag: 'Metric',
+  title: 'Metric Box',
+  tagline: '',
+  description: '' +
+    'Metric Boxes...',
+  longDescription: '',
+  example: {
+    css: 'width:100%',
+    options: {
+      caption: 'Mouse moves (last month)',
+      template: '<div class="jio dimensionbox value"></div><div class="jio dimensionbox caption"></div>',
+      query: {
+        timeframe: 'last_month',
+        interval: 'day',
+        dimensions: ['mousemoves'],
+        collection: 'demo-mousemoves',
+        "realtime": true
+      }
+    },
+    draw: '$("#example").Metric(options);'
+  },
+  template: DimensionPicker.template(),
+  metaOptions: {
+    container: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
+    },
+    template: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` Specify the HTML template to use instead of the default one.'
+    },
+    caption: {
+      datatype: 'string',
+      defaultValue: null,
+      description: '`optional` the caption for the dimension.'
+    },
+    query: {
+      datatype: 'object',
+      defaultValue: null,
+      description: '`required` contains the <a href="/data/query">query</a> object.'
+    }
+  },
+  metaMethods: {
+    init: {
+      signature: '.init(options)',
+      description: 'Initialize the visualization with a set of `options`.',
+      example: '$(\'#visualization\').init(options);'
+    },
+    update: {
+      signature: '.update(options)',
+      description: 'Update an existing visualization with a set of `options`.',
+      example: '$(\'#visualization\').update(options);'
+    },
+    destroy: {
+      signature: '.destroy()',
+      description: 'Destroy the visualization.',
+      example: '$(\'#visualization\').destroy();'
+    }
+  },
+  metaEvents: {
+    load: {
+      description: 'Visualization loaded.'
+    },
+    draw: {
+      description: 'The visualization HTML frame has been drawn on screen.'
+    },
+    destroy: {
+      description: 'Visualization destroyed.'
+    },
+    update: {
+      description: 'The underlying data has changed.'
+    },
+    select: {
+      description: 'Selection changed, dimension box clicked.'
+    }
+  }
+};
+},{"./_proto":116,"cloneextend":1,"eventemitter2":3}],107:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23343,7 +23740,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115}],107:[function(require,module,exports){
+},{"../index":102,"./_proto":116}],108:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23426,15 +23823,24 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
-        if (self.options.onDraw)
-          window[self.options.onDraw](self);
+        self.options.$container.data(self);
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
 
+        if (self.options.onDraw)
+          window[self.options.onDraw](self.options.$container, self);
+
+
+        if (self.options.allowSelect)
+          self.options.$container.css('cursor', 'pointer');
         if (self.options.allowSelect && self.options.onSelect)
           self.options.$container.on('click', window[self.options.onSelect]);
-
+        if (self.options.allowSelect && self.options.canvas) {
+          self.options.$container.on('click', function () {
+            self.options.canvas.emit('metricselect', self, self.options.query.metrics[0]);
+          });
+        }
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
@@ -23476,7 +23882,7 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          
+
           //subscribe to default events
           self.options.canvas.on('datechange', function (dates) {
             //let's change our query and fetch again
@@ -23672,7 +24078,7 @@ Metric.meta = {
     }
   }
 };
-},{"../index":102,"./_proto":115,"cloneextend":1}],108:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"cloneextend":1}],109:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24068,7 +24474,7 @@ MetricPicker.meta = {
     }
   }
 };
-},{"./_proto":115,"cloneextend":1,"eventemitter2":3}],109:[function(require,module,exports){
+},{"./_proto":116,"cloneextend":1,"eventemitter2":3}],110:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24370,7 +24776,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115,"underscore":93}],110:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],111:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24703,7 +25109,7 @@ Pie.meta = {
     }
   }
 };
-},{"../index":102,"./_proto":115,"underscore":93}],111:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],112:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -24930,7 +25336,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":102,"./_proto":115,"underscore":93}],112:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],113:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -25192,7 +25598,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":102,"./_proto":115}],113:[function(require,module,exports){
+},{"../index":102,"./_proto":116}],114:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -25229,7 +25635,15 @@ var Table = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    row: {
+      checkbox: false,
+      id: false
+    },
+    pickers: {
+      main: {enabled: false},
+      secondary: {enabled: false}
+    }
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -25241,7 +25655,9 @@ var Table = module.exports = function (options, callback) {
   this.template = function () {
     var $html = $('' +
       '<div class="jio jtable breadcrumbs"></div>' +
-      '<div class="jio jtable controls"></div>' +
+      '<div class="jio jtable controls">' +
+      ' <div class="jio jtable primary-dimension-picker"></div>' +
+      '</div>' +
       '<table class="jio table sort">' +
       ' <thead>' +
       ' </thead>' +
@@ -25284,15 +25700,18 @@ var Table = module.exports = function (options, callback) {
 
         var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        var $th;
 
-        var $th = $('<th class="jio tbl caption check"></th>');
-        $th.text('');
-        $head_tr.append($th);
-
-        $th = $('<th class="jio tbl caption id no-sort"></th>');
-        $th.text('');
-        //$head_tr.append($th);
-
+        if (self.options.row.checkbox) {
+          $th = $('<th class="jio tbl caption check"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
+        if (self.options.row.id) {
+          $th = $('<th class="jio tbl caption id no-sort"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
 
         message.dimensions.forEach(function (d, i) {
           if (i === 2)
@@ -25315,24 +25734,31 @@ var Table = module.exports = function (options, callback) {
         series.forEach(function (ser, serIndex) {
           ser.data.forEach(function (point, pointIndex) {
             var $tr = $('<tr></tr>');
-            var $td = $('<td class="jio tbl value check"></td>');
-            var $check = $('<input type="checkbox"/>');
-            $check.on('click', function () {
-              var $this = $(this);
-              if ($this.is(':checked')) {
-                if (self.options.canvas)
-                  self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
-                $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
-              }
-              else if (self.options.canvas)
-                self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
-              $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
-            });
-            $td.append($check);
-            $tr.append($td);
-            $td = $('<td class="jio tbl value id"></td>');
-            $td.text(pointIndex + 1 + '.');
-            //$tr.append($td);
+            var $td;
+            var $check;
+            if (self.options.row.checkbox) {
+              $td = $('<td class="jio tbl value check"></td>');
+              $check = $('<input type="checkbox"/>');
+              $check.on('click', function () {
+                var $this = $(this);
+                if ($this.is(':checked')) {
+                  if (self.options.canvas)
+                    self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                  $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+                }
+                else if (self.options.canvas)
+                  self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+              });
+              $td.append($check);
+              $tr.append($td);
+            }
+
+            if (self.options.row.id) {
+              $td = $('<td class="jio tbl value id"></td>');
+              $td.text(pointIndex + 1 + '.');
+              $tr.append($td);
+            }
 
             var index = 0;
             var dataDimensions = [];
@@ -25343,7 +25769,9 @@ var Table = module.exports = function (options, callback) {
               $tr.append($td);
             });
             dataDimensions = [dataDimensions];
-            $check.attr('data-filter', JSON.stringify(dataDimensions));
+            if ($check)
+              $check.attr('data-filter', JSON.stringify(dataDimensions));
+
             message.metrics.forEach(function (m) {
               $td = $('<td class="jio tbl value metric metricvalue"></td>');
               $td.text(point[index++]);
@@ -25355,6 +25783,35 @@ var Table = module.exports = function (options, callback) {
         });
         $html.find('table').append($tbody);
         self.options.$container.append($html);
+
+        if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
+          var $primary_dimension_container;
+          if (self.options.pickers.main.container)
+            $primary_dimension_container = $(self.options.pickers.main.container);
+          else
+            $primary_dimension_container = $(self.options.$container.find('.primary-dimension-picker')[0]);
+
+          if ($primary_dimension_container) {
+            $primary_dimension_container.DimensionPicker({canvas: self.options.canvas}, function (err, _picker) {
+              if (err)
+                throw err;
+              _picker.on('change', function (dimension) {
+                if (Array.isArray(self.options.query)) {
+                  self.options.query.forEach(function (query) {
+                    query.dimensions[0] = dimension;
+                  });
+                }
+                else
+                  self.options.query.dimensions[0] = dimension;
+
+                self.destroy();
+                self.draw(self.options);
+              });
+            });
+          }
+        }
+
+
         self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
           descending: true
         });
@@ -25647,7 +26104,7 @@ Table.meta = {
     }
   }
 };
-},{"../index":102,"./_proto":115,"underscore":93}],114:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"underscore":93}],115:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -25664,272 +26121,370 @@ var
   _ = require('underscore');
 
 var Timeline = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joola.events.emit('timeline.init.start');
+    if (!callback)
+      callback = function () {
+      };
+    joola.events.emit('timeline.init.start');
 
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
+    //mixin
+    this._super = {};
+    for (var x in require('./_proto')) {
+      this[x] = require('./_proto')[x];
+      this._super[x] = require('./_proto')[x];
+    }
 
-  var self = this;
+    var self = this;
 
-  this._id = '_timeline';
-  this.uuid = joola.common.uuid();
-  this.options = {
-    legend: true,
-    canvas: null,
-    container: null,
-    $container: null,
-    query: null
-  };
-  this.chartDrawn = false;
-  this.realtimeQueries = [];
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper"><div class="jio timeline thechart" style="width:100%;margin:0 auto"></div></div>');
-    return $html;
-  };
-
-  this.draw = function (options, callback) {
-    self.stop();
-    return this._super.fetch(self, this.options.query, function (err, message) {
-      if (err) {
-        if (typeof callback === 'function')
-          return callback(err);
-        return;
+    this._id = '_timeline';
+    this.uuid = joola.common.uuid();
+    this.options = {
+      legend: true,
+      canvas: null,
+      container: null,
+      $container: null,
+      query: null,
+      pickers: {
+        main: {enabled: false},
+        secondary: {enabled: false}
       }
-      message = message[0];
-      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
-        self.realtimeQueries.push(message.realtime);
-      var series = self._super.makeChartTimelineSeries(message.dimensions, message.metrics, message.documents);
-      var linear = (message.dimensions && message.dimensions.length > 0 && message.dimensions[0].datatype == 'date');
-      if (!self.chartDrawn) {
-        var chartOptions = joola.common._mixin({
-          title: {
-            text: null
-          },
-          chart: {
-            backgroundColor: 'transparent',
-            /*marginTop: 0,
-             marginBottom: 0,
-             marginLeft: 0,
-             marginRight: 0,
-             spacingTop: 0,
-             spacingBottom: 0,
-             spacingLeft: 0,
-             spacingRight: 0,*/
-            borderWidth: 0,
-            plotBorderWidth: 0,
-            type: 'area',
-            height: self.options.height || self.options.$container.height() || 250
-          },
-          lang: {
-            noData: 'No data to display'
-          },
-          noData: {
-            style: {
-              fontWeight: 'bold',
-              fontSize: '15px',
-              color: '#303030'
-            }
-          },
-          series: series,
-          xAxis: {
-            type: (linear ? 'datetime' : 'category'),
-            endOnTick: false,
-            tickWidth: 0,
-            dateTimeLabelFormats: {
-              day: '%B %e'
-            },
-            labels: {
-              enabled: true,
-              style: {
-                color: '#b3b3b1'
-              }
-            }
-          },
-          yAxis: {
-            endOnTick: false,
+    };
+    this.chartDrawn = false;
+    this.realtimeQueries = [];
+
+    this.verify = function (options, callback) {
+      return this._super.verify(options, callback);
+    };
+
+    this.template = function () {
+      var $html = $('<div class="jio timeline caption"></div>' +
+        '<div class="jio timeline chartwrapper">' +
+        ' <div class="jio timeline controls">' +
+        '     <div class="jio timeline primary-metric-picker"></div>' +
+        '     <div class="jio timeline secondary-metric-picker"></div>' +
+        '   </div>' +
+        '<div class="jio timeline thechart" style="width:100%;margin:0 auto"></div> </div > ');
+      return $html;
+    };
+
+    this.draw = function (options, callback) {
+      self.stop();
+      return this._super.fetch(self, this.options.query, function (err, message) {
+        if (err) {
+          if (typeof callback === 'function')
+            return callback(err);
+          return;
+        }
+
+        if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
+          self.realtimeQueries.push(message[0].realtime);
+        var series = self._super.makeChartTimelineSeries(message);
+        var linear = (message[0].dimensions && message[0].dimensions.length > 0 && message[0].dimensions[0].datatype == 'date');
+        if (!self.chartDrawn) {
+          var chartOptions = joola.common._mixin({
             title: {
               text: null
             },
-            labels: {
-              enabled: true,
+            chart: {
+              backgroundColor: 'transparent',
+              /*marginTop: 0,
+               marginBottom: 0,
+               marginLeft: 0,
+               marginRight: 0,
+               spacingTop: 0,
+               spacingBottom: 0,
+               spacingLeft: 0,
+               spacingRight: 0,*/
+              borderWidth: 0,
+              plotBorderWidth: 0,
+              type: 'area',
+              height: self.options.height || self.options.$container.height() || 250
+            },
+            lang: {
+              noData: 'No data to display'
+            },
+            noData: {
               style: {
-                color: '#b3b3b1'
+                fontWeight: 'bold',
+                fontSize: '15px',
+                color: '#303030'
               }
             },
-            gridLineDashStyle: 'Dot'
-          },
-          legend: {enabled: false},
-          credits: {enabled: false},
-          exporting: {enabled: true},
-          plotOptions: {
-            column: {allowPointSelect: true},
-            line: {
-              turboThreshold: message.documents ? message.documents.length + 1000 : 0,
-              color: '#333333',
-              fillOpacity: 0.1,
-              lineWidth: 3,
-              connectNulls: true,
-              marker: {
-                enabled: false,
-                symbol: 'circle',
-                states: {
-                  hover: {
-                    enabled: true
+            series: series,
+            xAxis: {
+              type: (linear ? 'datetime' : 'category'),
+              endOnTick: false,
+              tickWidth: 0,
+              dateTimeLabelFormats: {
+                day: '%B %e'
+              },
+              labels: {
+                enabled: true,
+                style: {
+                  color: '#b3b3b1'
+                }
+              }
+            },
+            yAxis: {
+              endOnTick: false,
+              title: {
+                text: null
+              },
+              labels: {
+                enabled: true,
+                style: {
+                  color: '#b3b3b1'
+                }
+              },
+              gridLineDashStyle: 'Dot'
+            },
+            legend: {enabled: false},
+            credits: {enabled: false},
+            exporting: {enabled: true},
+            plotOptions: {
+              column: {allowPointSelect: true},
+              line: {
+                turboThreshold: message.documents ? message.documents.length + 1000 : 0,
+                color: '#333333',
+                fillOpacity: 0.1,
+                lineWidth: 3,
+                connectNulls: true,
+                marker: {
+                  enabled: false,
+                  symbol: 'circle',
+                  states: {
+                    hover: {
+                      enabled: true
+                    }
                   }
                 }
               }
             }
-          }
-        }, self.options.chart);
-        self.options.$container.append(self.options.template || self.template());
-        self.options.$container.find('.caption').text(self.options.caption || '');
-        self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
+          }, self.options.chart);
+          self.options.$container.append(self.options.template || self.template());
+          self.options.$container.find('.caption').text(self.options.caption || '');
 
-        self.chart = self.chart.highcharts();
-        self.chartDrawn = true;
-        if (self.options.onDraw)
-          window[self.options.onDraw](self.options.container, self);
+          //pickers
+          if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
+            var $primary_metric_container;
+            if (self.options.pickers.main.container)
+              $primary_metric_container = $(self.options.pickers.main.container);
+            else
+              $primary_metric_container = $(self.options.$container.find('.primary-metric-picker')[0]);
 
-        if (typeof callback === 'function')
-          return callback(null);
-      }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
-        series.forEach(function (ser, serIndex) {
-          ser.data.forEach(function (datapoint) {
-            var found = false;
-            var nameBased = false;
-            var y;
-            self.chart.series[serIndex].points.forEach(function (point, pIndex) {
-              if (point) {
-                if (datapoint.x) {
-                  if (point.x.getTime() == datapoint.x.getTime()) {
-                    y = self.chart.series[serIndex].data[pIndex].y;
-                    found = true;
-                    if (y != datapoint.y)
-                      self.chart.series[serIndex].data[pIndex].update(datapoint.y);
+            if ($primary_metric_container) {
+              $primary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
+                if (err)
+                  throw err;
+                _picker.on('change', function (metric) {
+                  if (Array.isArray(self.options.query)) {
+                    self.options.query.forEach(function (query) {
+                      query.metrics[0] = metric;
+                    });
                   }
-                }
-                else {
-                  nameBased = true;
-                  if (point.name == datapoint.name) {
-                    y = self.chart.series[serIndex].data[pIndex].y;
-                    found = true;
-                    if (y != datapoint.y)
-                      self.chart.series[serIndex].data[pIndex].update(datapoint.y);
-                  }
-                }
-              }
-            });
-            if (!found) {
-              if (nameBased)
-                self.chart.series[serIndex].addPoint({name: datapoint.name, y: datapoint.y}, true);
-              else
-                self.chart.series[serIndex].addPoint({x: datapoint.x, y: datapoint.y}, true, true);
+                  else
+                    self.options.query.metrics[0] = metric;
+
+                  self.destroy();
+                  self.draw(self.options);
+                });
+              });
             }
-          });
-        });
-      }
-      if (self.options.onUpdate)
-        window[self.options.onUpdate](self.options.container, self, series);
-
-    });
-  };
-
-
-  this.hasData = function () {
-    var self = this;
-    return self.chart.hasData();
-  };
-
-  //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
-
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'timeline'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
-
-        joola.viz.onscreen.push(self);
-
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
           }
+          if (self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled) {
+            var $secondary_metric_container;
+            if (self.options.pickers.secondary.container)
+              $secondary_metric_container = $(self.options.pickers.secondary.container);
+            else
+              $secondary_metric_container = $(self.options.$container.find('.secondary-metric-picker')[0]);
+
+            if ($secondary_metric_container) {
+              $secondary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
+                if (err)
+                  throw err;
+                _picker.on('change', function (metric) {
+                  if (Array.isArray(self.options.query)) {
+                    self.options.query.forEach(function (query) {
+                      query.metrics[1] = metric;
+                    });
+                  }
+                  else
+                    self.options.query.metrics[1] = metric;
+
+                  self.destroy();
+                  self.draw(self.options);
+                });
+              });
+            }
+          }
+
+
+          self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
+
+          self.chart = self.chart.highcharts();
+
+          var extremes_0 = self.chart.yAxis[0].getExtremes();
+          if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+            extremes_0.min = 0;
+            extremes_0.max = 1;
+          }
+          self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+          if (self.chart.yAxis.length > 1) {
+            var extremes_1 = self.chart.yAxis[1].getExtremes();
+
+            if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+              extremes_1.min = 0;
+              extremes_1.max = 1;
+              if (extremes_1.min)
+                self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+            }
+          }
+          self.chartDrawn = true;
+          if (self.options.onDraw)
+            window[self.options.onDraw](self.options.container, self);
+
+          if (typeof callback === 'function')
+            return callback(null);
         }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-          self.options.canvas.on('datechange', function (dates) {
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            self.destroy();
-            self.draw(self.options);
-          });
-          self.options.canvas.on('addplot', function (sender, filter) {
-            self.options.query.metrics.forEach(function (m) {
-              if (!m.filter) {
-                var _m = joola.common.extend({}, m);
-                //_m.dependsOn = _m.key;
-                //_m.key = 'addplot_' + _m.key;
-                _m.filter = filter;
-                _m.reason = 'added_plot';
-                self.options.query.metrics.push(_m);
+        else if (self.options.query.realtime) {
+          //we're dealing with realtime
+          series.forEach(function (ser, serIndex) {
+            ser.data.forEach(function (datapoint) {
+              var found = false;
+              var nameBased = false;
+              var y;
+              self.chart.series[serIndex].points.forEach(function (point, pIndex) {
+                if (point) {
+                  if (datapoint.x) {
+                    if (point.x.getTime() == datapoint.x.getTime()) {
+                      y = self.chart.series[serIndex].data[pIndex].y;
+                      found = true;
+                      if (y != datapoint.y)
+                        self.chart.series[serIndex].data[pIndex].update(datapoint.y);
+                    }
+                  }
+                  else {
+                    nameBased = true;
+                    if (point.name == datapoint.name) {
+                      y = self.chart.series[serIndex].data[pIndex].y;
+                      found = true;
+                      if (y != datapoint.y)
+                        self.chart.series[serIndex].data[pIndex].update(datapoint.y);
+                    }
+                  }
+                }
+              });
+              if (!found) {
+                if (nameBased)
+                  self.chart.series[serIndex].addPoint({name: datapoint.name, y: datapoint.y}, true);
+                else
+                  self.chart.series[serIndex].addPoint({x: datapoint.x, y: datapoint.y}, true, true);
               }
             });
-
-            self.destroy();
-            self.draw(self.options);
-          });
-          self.options.canvas.on('removeplot', function (sender, filter) {
-            self.options.query.metrics = joola.common._.filter(self.options.query.metrics, function (m) {
-              return JSON.stringify(m.filter) !== JSON.stringify(filter);
-            });
-
-            self.destroy();
-            self.draw(self.options);
           });
         }
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self.options.container, self, series);
 
-        joola.events.emit('timeline.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
       });
-    });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+    };
 
-  //callback(null, self);
-  return self;
-};
+
+    this.hasData = function () {
+      var self = this;
+      return self.chart.hasData();
+    };
+
+    //here we go
+    try {
+      joola.common.mixin(self.options, options, true);
+      self.verify(self.options, function (err) {
+          if (err)
+            return callback(err);
+
+          self.options.$container = $(self.options.container);
+          self.markContainer(self.options.$container, [
+            {'type': 'timeline'},
+            {'uuid': self.uuid},
+            {css: self.options.css}
+          ], function (err) {
+            if (err)
+              return callback(err);
+
+            joola.viz.onscreen.push(self);
+
+            if (!self.options.canvas) {
+              var elem = self.options.$container.parent();
+              if (elem.attr('jio-type') == 'canvas') {
+                self.options.canvas = $(elem).Canvas();
+              }
+            }
+
+            if (self.options.canvas) {
+              self.options.canvas.addVisualization(self);
+              self.options.canvas.on('datechange', function (dates) {
+                //let's change our query and fetch again
+                self.options.query.timeframe = {};
+                self.options.query.timeframe.start = new Date(dates.base_fromdate);
+                self.options.query.timeframe.end = new Date(dates.base_todate);
+
+                self.destroy();
+                self.draw(self.options);
+              });
+              self.options.canvas.on('addplot', function (sender, filter) {
+                if (!Array.isArray(self.options.query))
+                  self.options.query = [self.options.query];
+
+                var query = joola.common.extend({}, self.options.query[0]);
+                self.options.query.push(query);
+                query.reason = 'added_plot';
+                query.abc = 'abc';
+                query.filter = filter;
+                self.destroy();
+                self.draw(self.options);
+              });
+              self.options.canvas.on('removeplot', function (sender, filter) {
+                var _queries = [];
+                self.options.query.forEach(function (query) {
+                  if (query.filter) {
+                    if (_.isEqual(query.filter, filter)) {
+                      //console.log('removing filter');
+                    }
+                    else
+                      _queries.push(query);
+                  }
+                  else
+                    _queries.push(query);
+                });
+                self.options.query = _queries;
+                self.destroy();
+                self.draw(self.options);
+              });
+              self.options.canvas.on('metricselect', function (sender, metric) {
+
+
+                self.destroy();
+                self.draw(self.options);
+              });
+            }
+
+            joola.events.emit('timeline.init.finish', self);
+            if (typeof callback === 'function')
+              return callback(null, self);
+          });
+        }
+      )
+      ;
+    }
+    catch
+      (err) {
+      callback(err);
+      return self.onError(err, callback);
+    }
+
+//callback(null, self);
+    return self;
+  }
+  ;
 
 joola.events.on('core.init.finish', function () {
   var found;
@@ -26079,7 +26634,7 @@ Timeline.meta = {
   chartProvider: 'highcharts',
   license: 'MIT'
 };
-},{"../index":102,"./_proto":115,"moment":48,"underscore":93}],115:[function(require,module,exports){
+},{"../index":102,"./_proto":116,"moment":48,"underscore":93}],116:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -26170,12 +26725,18 @@ proto.fetch = function (context, query, callback) {
     query = context;
   }
   var _query = ce.clone(query);
-
-  if (context && context.options && context.options.canvas) {
-    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
-    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+  if (!Array.isArray(_query)) {
+    if (context && context.options && context.options.canvas) {
+      context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+      context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+    }
   }
-
+  else {
+    if (context && context.options && context.options.canvas) {
+      context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
+      context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
+    }
+  }
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
     _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
@@ -26199,62 +26760,85 @@ proto.fetch = function (context, query, callback) {
   joola.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
+proto.makeChartTimelineSeries = function (message) {
+  if (message[0].metrics.length === 0) {
+    return [
+      {
+        type: 'line',
+        name: 'no data',
+        data: []
+      }
+    ];
+  }
+
+  /*
+   function fixOffset(date) {
+   var _date = new Date(date);
+   _date.setHours(_date.getHours() + (2 * moment().zone() / 60));
+   return new Date(_date);
+   }
+
+   var exist = _.find(dimensions, function (d) {
+   return d.datatype === 'date';
+   });
+   */
+  var yAxis = [null, null];
   var series = [];
-  if (!metrics)
-    return series;
+  var seriesIndex = -1;
+  message.forEach(function (result, resultIndex) {
+    var dimensions = result.dimensions;
+    var metrics = result.metrics;
+    var documents = result.documents;
+    if (!metrics)
+      return series;
+    metrics.forEach(function (metric, index) {
+      var _yaxis = 0;
+      yAxis[index % 2] = yAxis [index % 2] || metric._key || metric.key;
+      if (yAxis[0] === (yAxis [index % 2] || metric._key || metric.key))
+        _yaxis = 0;
+      else
+        _yaxis = 1;
+      var metric_name = metric.name;
+      if (result.query.filter) {
+        result.query.filter.forEach(function (f) {
+          metric_name = f[2] + ': ' + metric_name;
+        });
+      }
+      series[++seriesIndex] = {
+        name: metric_name,
+        data: [],
+        yAxis: _yaxis
+      };
+      console.log('y', _yaxis, index, metric._key);
+      documents.forEach(function (document, docIndex) {
+        var x = document.fvalues[dimensions[0].key];
+        var nameBased = true;
+        if (dimensions[0].datatype === 'date') {
+          x = new Date(document.fvalues[dimensions[0].key]);
+          nameBased = false;
+        }
 
-  function fixOffset(date) {
-    var _date = new Date(date);
-    _date.setHours(_date.getHours() + (2 * moment().zone() / 60));
-    return new Date(_date);
-  }
-
-  var exist = _.find(dimensions, function (d) {
-    return d.datatype === 'date';
-  });
-
-  if (metrics.length === 0) {
-    series[0] = {
-      type: 'line',
-      name: 'no data',
-      data: []
-    };
-  }
-
-  metrics.forEach(function (metric, index) {
-    var metric_name = metric.name;
-    if (metric.filter) {
-      metric.filter.forEach(function(f){
-      metric_name = f[2] + ': ' + metric_name;
+        if (nameBased) {
+          series[seriesIndex].data.push({
+            name: x,
+            y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+          });
+        }
+        else {
+          if (seriesIndex === 0) {
+            series[seriesIndex].data.push({
+              x: x,
+              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+            });
+          }
+          else {
+            series[seriesIndex].data.push({
+              x: series[0].data[docIndex].x,
+              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+            });
+          }
+        }
       });
-    }
-
-    series[index] = {
-      name: metric_name,
-      data: []
-    };
-
-    documents.forEach(function (document) {
-      var x = document.fvalues[dimensions[0].key];
-      var nameBased = true;
-      if (dimensions[0].datatype === 'date') {
-        x = new Date(document.fvalues[dimensions[0].key]);
-        nameBased = false;
-      }
-
-      if (nameBased) {
-        series[index].data.push({
-          name: x,
-          y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-        });
-      }
-      else {
-        series[index].data.push({
-          x: x,
-          y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-        });
-      }
     });
   });
 
@@ -26345,7 +26929,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":102,"cloneextend":1,"moment":48,"underscore":93}],116:[function(require,module,exports){
+},{"../index":102,"cloneextend":1,"moment":48,"underscore":93}],117:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -26364,6 +26948,7 @@ viz._id = 'viz';
 //pickers
 viz.DatePicker = require('./DatePicker');
 viz.MetricPicker = require('./MetricPicker');
+viz.DimensionPicker = require('./DimensionPicker');
 
 //panels
 viz.Canvas = require('./Canvas');
@@ -26386,5 +26971,5 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"../index":102,"./BarTable":103,"./Canvas":104,"./DatePicker":105,"./Geo":106,"./Metric":107,"./MetricPicker":108,"./MiniTable":109,"./Pie":110,"./PunchCard":111,"./Sparkline":112,"./Table":113,"./Timeline":114}]},{},[102])
+},{"../index":102,"./BarTable":103,"./Canvas":104,"./DatePicker":105,"./DimensionPicker":106,"./Geo":107,"./Metric":108,"./MetricPicker":109,"./MiniTable":110,"./Pie":111,"./PunchCard":112,"./Sparkline":113,"./Table":114,"./Timeline":115}]},{},[102])
 ;

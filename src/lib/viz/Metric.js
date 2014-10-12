@@ -80,15 +80,24 @@ var Metric = module.exports = function (options, callback) {
        value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
        */
       if (!self.drawn) {
-        if (self.options.onDraw)
-          window[self.options.onDraw](self);
+        self.options.$container.data(self);
         self.options.$container.append(self.options.template || self.template());
         self.options.$container.find('.caption').text(self.options.caption || '');
         self.drawn = true;
 
+        if (self.options.onDraw)
+          window[self.options.onDraw](self.options.$container, self);
+
+
+        if (self.options.allowSelect)
+          self.options.$container.css('cursor', 'pointer');
         if (self.options.allowSelect && self.options.onSelect)
           self.options.$container.on('click', window[self.options.onSelect]);
-
+        if (self.options.allowSelect && self.options.canvas) {
+          self.options.$container.on('click', function () {
+            self.options.canvas.emit('metricselect', self, self.options.query.metrics[0]);
+          });
+        }
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
@@ -130,7 +139,7 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
-          
+
           //subscribe to default events
           self.options.canvas.on('datechange', function (dates) {
             //let's change our query and fetch again
