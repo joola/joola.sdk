@@ -34,21 +34,34 @@ var Table = module.exports = function (options, callback) {
     legend: true,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    row: {
+      checkbox: false,
+      id: false
+    },
+    pickers: {
+      main: {enabled: false},
+      secondary: {enabled: false}
+    }
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
-  
+
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
   this.template = function () {
-    var $html = $('<table class="jio table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
+    var $html = $('' +
+      '<div class="jio jtable breadcrumbs"></div>' +
+      '<div class="jio jtable controls">' +
+      ' <div class="jio jtable primary-dimension-picker"></div>' +
+      '</div>' +
+      '<table class="jio table sort">' +
+      ' <thead>' +
+      ' </thead>' +
+      ' <tbody>' +
+      ' </tbody>' +
       '</table>');
     return $html;
   };
@@ -66,6 +79,7 @@ var Table = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
+      message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
@@ -75,20 +89,34 @@ var Table = module.exports = function (options, callback) {
 
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      
-      var $col, $tr, trs;
 
+      var $col, $tr, trs;
       var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
-      if (!self.drawn) {
-        self.drawn = true;
+      if (!self.chartDrawn) {
+        self.chartDrawn = true;
 
         var $html = self.template();
 
         var $thead = $($html.find('thead'));
         var $head_tr = $('<tr class="jio tbl captions"></tr>');
+        var $th;
 
-        message.dimensions.forEach(function (d) {
-          var $th = $('<th class="jio tbl caption dimension"></th>');
+        if (self.options.row.checkbox) {
+          $th = $('<th class="jio tbl caption check"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
+        if (self.options.row.id) {
+          $th = $('<th class="jio tbl caption id no-sort"></th>');
+          $th.text('');
+          $head_tr.append($th);
+        }
+
+        message.dimensions.forEach(function (d, i) {
+          if (i === 2)
+            $th = $('<th class="jio tbl caption dimension sort-default"></th>');
+          else
+            $th = $('<th class="jio tbl caption dimension"></th>');
           $th.text(d.name);
           $head_tr.append($th);
         });
@@ -99,21 +127,52 @@ var Table = module.exports = function (options, callback) {
         });
 
         $thead.append($head_tr);
-        $html.append($thead);
+        $html.find('table').append($thead);
 
         var $tbody = $($html.find('tbody'));
         series.forEach(function (ser, serIndex) {
-          ser.data.forEach(function (point) {
+          ser.data.forEach(function (point, pointIndex) {
             var $tr = $('<tr></tr>');
+            var $td;
+            var $check;
+            if (self.options.row.checkbox) {
+              $td = $('<td class="jio tbl value check"></td>');
+              $check = $('<input type="checkbox"/>');
+              $check.on('click', function () {
+                var $this = $(this);
+                if ($this.is(':checked')) {
+                  if (self.options.canvas)
+                    self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                  $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+                }
+                else if (self.options.canvas)
+                  self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+              });
+              $td.append($check);
+              $tr.append($td);
+            }
+
+            if (self.options.row.id) {
+              $td = $('<td class="jio tbl value id"></td>');
+              $td.text(pointIndex + 1 + '.');
+              $tr.append($td);
+            }
 
             var index = 0;
+            var dataDimensions = [];
             message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio tbl value dimension"></td>');
+              $td = $('<td class="jio tbl value dimension dimensionvalue"></td>');
               $td.text(point[index++]);
+              dataDimensions.push(d.key, 'eq', $td.text());
               $tr.append($td);
             });
+            dataDimensions = [dataDimensions];
+            if ($check)
+              $check.attr('data-filter', JSON.stringify(dataDimensions));
+
             message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio tbl value metric"></td>');
+              $td = $('<td class="jio tbl value metric metricvalue"></td>');
               $td.text(point[index++]);
               $tr.append($td);
             });
@@ -121,18 +180,50 @@ var Table = module.exports = function (options, callback) {
             $tbody.append($tr);
           });
         });
-        $html.append($tbody);
+        $html.find('table').append($tbody);
         self.options.$container.append($html);
 
-        self.tablesort = new Tablesort($html.get(0), {
-          descending: true,
-          current: $html.find('th')[1]
+        if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
+          var $primary_dimension_container;
+          if (self.options.pickers.main.container)
+            $primary_dimension_container = $(self.options.pickers.main.container);
+          else
+            $primary_dimension_container = $(self.options.$container.find('.primary-dimension-picker')[0]);
+
+          if ($primary_dimension_container) {
+            $primary_dimension_container.DimensionPicker({canvas: self.options.canvas}, function (err, _picker) {
+              if (err)
+                throw err;
+              _picker.on('change', function (dimension) {
+                if (Array.isArray(self.options.query)) {
+                  self.options.query.forEach(function (query) {
+                    query.dimensions[0] = dimension;
+                  });
+                }
+                else
+                  self.options.query.dimensions[0] = dimension;
+
+                self.destroy();
+                self.draw(self.options);
+              });
+            });
+          }
+        }
+
+
+        self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
+          descending: true
         });
+        self.tablesort.sortTable(self.options.$container.find('th')[2]);
+        if (self.options.onDraw)
+          window[self.options.onDraw](self.options.container, self);
 
         if (typeof callback === 'function')
           return callback(null);
       }
       else if (self.options.query.realtime) {
+        if (self.options.onUpdate)
+          window[self.options.onUpdate](self);
         //we're dealing with realtime
         trs = self.options.$container.find('tbody').find('tr');
         var existingkeys = [];
@@ -227,8 +318,9 @@ var Table = module.exports = function (options, callback) {
 
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, [
-        {'type': 'table'},
-        {'uuid': self.uuid}
+        {type: 'table'},
+        {uuid: self.uuid},
+        {css: self.options.css}
       ], function (err) {
         if (err)
           return callback(err);
@@ -330,7 +422,7 @@ Table.meta = {
         dimensions: ['browser'],
         metrics: [
           {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix:" clk.", collection: 'demo-clicks'},
+          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
           {key: 'visits', collection: 'demo-visits'}
         ],
         collection: 'demo-mousemoves',
@@ -360,9 +452,9 @@ Table.meta = {
       defaultValue: null,
       description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
     },
-    template:{
-      datatype:'string',
-      defaultValue:null,
+    template: {
+      datatype: 'string',
+      defaultValue: null,
       description: '`optional` Specify the HTML template to use instead of the default one.'
     },
     query: {

@@ -21,13 +21,34 @@ var
 
 var common = util;
 common._id = 'common';
-
 module.exports = exports = common;
 common.extend = common._extend;
+common._ = _;
 
 require('./modifiers');
 
-common.mixin = function (destination, source) {
+common.mixin = function (origin, add, overwrite) {
+  // Don't do anything if add isn't an object
+  if (!add || typeof add !== 'object') return origin;
+
+  var keys = Object.keys(add);
+  var i = 0;//keys.length;
+  while (i < keys.length) {
+    if (origin.hasOwnProperty(keys[i])) {
+      if (overwrite)
+        origin[keys[i]] = add[keys[i]];
+      //else
+      //common.extend(origin[keys[i]], add[keys[i]]);
+
+    }
+    else
+      origin[keys[i]] = add[keys[i]];
+    i++;
+  }
+  return origin;
+};
+
+common._mixin = function (destination, source) {
   if (arguments.length < 1 || typeof arguments[0] !== 'object') {
     return false;
   }
@@ -45,18 +66,18 @@ common.mixin = function (destination, source) {
     if (typeof obj !== 'object') return;
 
     for (var key in obj) {
-      if ( ! (key in obj)) continue;
+      if (!(key in obj)) continue;
 
       src = target[key];
       val = obj[key];
 
       if (val === target) continue;
 
-      if (typeof val === 'object' && key==='container'){
+      if (typeof val === 'object' && key === 'container') {
         target[key] = val;
         continue;
       }
-      
+
       if (typeof val !== 'object' || val === null) {
         target[key] = val;
         continue;
@@ -69,7 +90,7 @@ common.mixin = function (destination, source) {
 
       if (typeof src !== 'object' || src === null) {
         clone = (Array.isArray(val)) ? [] : {};
-        target[key] = common.mixin (clone, val);
+        target[key] = common._mixin(clone, val);
         continue;
       }
 
@@ -79,11 +100,10 @@ common.mixin = function (destination, source) {
         clone = (!Array.isArray(src)) ? src : {};
       }
 
-      target[key] = common.mixin (clone, val);
+      target[key] = common._mixin(clone, val);
     }
   });
   return target;
- 
 };
 
 //hook functions for timings
@@ -143,4 +163,20 @@ common.parse = function (string, callback) {
 
 common.hash = function (string) {
   return require('crypto').createHash('md5').update(string).digest("hex");
+};
+
+common.ensureLength = function (string, length) {
+  if (!string)
+    return string;
+  if (typeof string !== 'string')
+    return string;
+  if (string === '')
+    return;
+  var counter = 0;
+  while (string.length > length && counter < 100) {
+    string = string.replace('...', '');
+    string = string.substring(0, string.length - 1) + '...';
+    counter++;
+  }
+  return string;
 };

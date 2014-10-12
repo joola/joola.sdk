@@ -15,6 +15,8 @@ viz._id = 'viz';
 
 //pickers
 viz.DatePicker = require('./DatePicker');
+viz.MetricPicker = require('./MetricPicker');
+viz.DimensionPicker = require('./DimensionPicker');
 
 //panels
 viz.Canvas = require('./Canvas');
@@ -25,6 +27,7 @@ viz.Metric = require('./Metric');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
+viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');
 viz.Table = require('./Table');
 viz.Timeline = require('./Timeline');

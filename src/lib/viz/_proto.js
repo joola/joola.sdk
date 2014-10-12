@@ -11,7 +11,7 @@
 
 var
   joola = require('../index'),
-  
+
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -35,6 +35,8 @@ proto.destroy = function (container, obj) {
       joola.query.stop(q);
     });
   }
+  this.chartDrawn = false;
+  this.drawn = false;
   this.options.$container.empty();
 };
 
@@ -45,10 +47,13 @@ proto.markContainer = function (container, attr, callback) {
 
   try {
     container.attr('jio-domain', 'joola');
-
+    attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
-        container.attr('jio-' + key, a[key]);
+        if (key === 'css')
+          container.addClass(a[key]);
+        else
+          container.attr('jio-' + key, a[key]);
       });
     });
   }
@@ -68,11 +73,11 @@ proto.set = function (key, value) {
 
 proto.verify = function (options, callback) {
   if (!options.container)
-    return callback(new Error('no container specified for timeline.'));
+    return callback(new Error('no container specified.'));
 
   var $container = $(options.container);
   if ($container === null)
-    return callback(new Error('cannot find container for the timeline.'));
+    return callback(new Error('cannot find container [' + options.container + '].'));
 
   return callback(null);
 };
@@ -83,12 +88,18 @@ proto.fetch = function (context, query, callback) {
     query = context;
   }
   var _query = ce.clone(query);
-
-  if (context && context.options && context.options.canvas) {
-    context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
-    context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+  if (!Array.isArray(_query)) {
+    if (context && context.options && context.options.canvas) {
+      context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+      context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+    }
   }
-
+  else {
+    if (context && context.options && context.options.canvas) {
+      context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
+      context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
+    }
+  }
   //adjust offset
   if (_query.timeframe && typeof _query.timeframe === 'object') {
     _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
@@ -112,55 +123,85 @@ proto.fetch = function (context, query, callback) {
   joola.query.fetch.apply(this, args);
 };
 
-proto.makeChartTimelineSeries = function (dimensions, metrics, documents) {
+proto.makeChartTimelineSeries = function (message) {
+  if (message[0].metrics.length === 0) {
+    return [
+      {
+        type: 'line',
+        name: 'no data',
+        data: []
+      }
+    ];
+  }
+
+  /*
+   function fixOffset(date) {
+   var _date = new Date(date);
+   _date.setHours(_date.getHours() + (2 * moment().zone() / 60));
+   return new Date(_date);
+   }
+
+   var exist = _.find(dimensions, function (d) {
+   return d.datatype === 'date';
+   });
+   */
+  var yAxis = [null, null];
   var series = [];
-  if (!metrics)
-    return series;
-
-  function fixOffset(date) {
-    var _date = new Date(date);
-    _date.setHours(_date.getHours() + (2 * moment().zone() / 60));
-    return new Date(_date);
-  }
-
-  var exist = _.find(dimensions, function (d) {
-    return d.datatype === 'date';
-  });
-
-  if (metrics.length === 0) {
-    series[0] = {
-      type: 'line',
-      name: 'no data',
-      data: []
-    };
-  }
-
-  metrics.forEach(function (metric, index) {
-    series[index] = {
-      name: metric.name,
-      data: []
-    };
-
-    documents.forEach(function (document) {
-      var x = document.fvalues[dimensions[0].key];
-      var nameBased = true;
-      if (dimensions[0].datatype === 'date') {
-        x = new Date(document.fvalues[dimensions[0].key]);
-        nameBased = false;
-      }
-
-      if (nameBased) {
-        series[index].data.push({
-          name: x,
-          y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+  var seriesIndex = -1;
+  message.forEach(function (result, resultIndex) {
+    var dimensions = result.dimensions;
+    var metrics = result.metrics;
+    var documents = result.documents;
+    if (!metrics)
+      return series;
+    metrics.forEach(function (metric, index) {
+      var _yaxis = 0;
+      yAxis[index % 2] = yAxis [index % 2] || metric._key || metric.key;
+      if (yAxis[0] === (yAxis [index % 2] || metric._key || metric.key))
+        _yaxis = 0;
+      else
+        _yaxis = 1;
+      var metric_name = metric.name;
+      if (result.query.filter) {
+        result.query.filter.forEach(function (f) {
+          metric_name = f[2] + ': ' + metric_name;
         });
       }
-      else {
-        series[index].data.push({
-          x: x,
-          y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
-        });
-      }
+      series[++seriesIndex] = {
+        name: metric_name,
+        data: [],
+        yAxis: _yaxis
+      };
+      console.log('y', _yaxis, index, metric._key);
+      documents.forEach(function (document, docIndex) {
+        var x = document.fvalues[dimensions[0].key];
+        var nameBased = true;
+        if (dimensions[0].datatype === 'date') {
+          x = new Date(document.fvalues[dimensions[0].key]);
+          nameBased = false;
+        }
+
+        if (nameBased) {
+          series[seriesIndex].data.push({
+            name: x,
+            y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+          });
+        }
+        else {
+          if (seriesIndex === 0) {
+            series[seriesIndex].data.push({
+              x: x,
+              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+            });
+          }
+          else {
+            series[seriesIndex].data.push({
+              x: series[0].data[docIndex].x,
+              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+            });
+          }
+        }
+      });
     });
   });
 
