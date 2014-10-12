@@ -9,8 +9,8 @@
 
 var
   joola = require('../index'),
-  
-  
+
+
   http = require('http'),
   https = require('https'),
   querystring = require('querystring');
@@ -188,17 +188,17 @@ api.getJSON = function (options, objOptions, callback) {
             return callback(null, obj);
           }
           else if (res.statusCode == 302) {
-            return callback(new Error('Failed to execute request: Authentication Failed'));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: Authentication Failed'));
           }
           else if (res.statusCode == 401) {
             //let's redirect to login
             if (joola.options.logouturl)
               location.href = joola.options.logouturl;
 
-            return callback(new Error('Failed to execute request: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: ' + (obj && obj.message !== 'undefined' ? obj.message : 'Unauthorized')));
           }
           else {
-            return callback(new Error('Failed to execute request: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
+            return callback(new Error('Failed to execute request [' + res.statusCode + ']: ' + (obj && obj.message ? obj.message : obj || 'n/a')));
           }
         });
       });
@@ -282,7 +282,7 @@ api.getJSON = function (options, objOptions, callback) {
     joola.io.socket.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-    
+
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
       joola.io.socket.on(routeID + ':done', processResponse);
     }

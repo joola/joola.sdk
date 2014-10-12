@@ -64,7 +64,8 @@ var MiniTable = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      message = message[0];
+      if (Array.isArray(message))
+        message = message[0];
       if (err) {
         if (typeof callback === 'function')
           return callback(err);
