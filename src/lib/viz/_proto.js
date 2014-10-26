@@ -172,7 +172,6 @@ proto.makeChartTimelineSeries = function (message) {
         data: [],
         yAxis: _yaxis
       };
-      console.log('y', _yaxis, index, metric._key);
       documents.forEach(function (document, docIndex) {
         var x = document.fvalues[dimensions[0].key];
         var nameBased = true;
