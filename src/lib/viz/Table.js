@@ -215,7 +215,8 @@ var Table = module.exports = function (options, callback) {
         self.tablesort = new Tablesort(self.options.$container.find('table').get(0), {
           descending: true
         });
-        self.tablesort.sortTable(self.options.$container.find('th')[2]);
+        if (self.options.$container.find('th')[2] > 0)
+          self.tablesort.sortTable(self.options.$container.find('th')[2]);
         if (self.options.onDraw)
           window[self.options.onDraw](self.options.container, self);
 
