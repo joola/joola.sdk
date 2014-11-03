@@ -39,7 +39,7 @@ var Pie = module.exports = function (options, callback) {
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
-  
+
   this.verify = function (options, callback) {
     return this._super.verify(options, callback);
   };
@@ -56,24 +56,26 @@ var Pie = module.exports = function (options, callback) {
 
       if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
         self.realtimeQueries.push(message.realtime);
-      
+
       var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
       if (!self.chartDrawn) {
         if (self.options.onDraw)
           window[self.options.onDraw](self);
-        var chartOptions = joola.common.mixin({
+        self.options.$container.append(self.options.template || Pie.template());
+        self.options.$container.find('.caption').text(self.options.caption || '');
+        var chartOptions = joola.common._mixin({
           title: {
             text: null
           },
           chart: {
             /*marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            spacingTop: 0,
-            spacingBottom: 0,
-            spacingLeft: 0,
-            spacingRight: 0,*/
+             marginBottom: 0,
+             marginLeft: 0,
+             marginRight: 0,
+             spacingTop: 0,
+             spacingBottom: 0,
+             spacingLeft: 0,
+             spacingRight: 0,*/
             borderWidth: 0,
             plotBorderWidth: 0,
             type: 'pie',
@@ -81,7 +83,7 @@ var Pie = module.exports = function (options, callback) {
           },
           series: series,
 
-          legend: {enabled: true},
+          legend: {enabled: self.options.legend},
           credits: {enabled: false},
           exporting: {enabled: true},
           plotOptions: {
@@ -98,7 +100,9 @@ var Pie = module.exports = function (options, callback) {
             }
           }
         }, self.options.chart);
-        self.chart = self.options.$container.highcharts(chartOptions);
+        if (self.options.caption)
+          self.options.$container.find('.jio-pie-caption').text(self.options.caption);
+        self.chart = self.options.$container.find('.jio-pie-chart').highcharts(chartOptions);
 
         self.chart = self.chart.highcharts();
         self.chartDrawn = true;
@@ -138,7 +142,7 @@ var Pie = module.exports = function (options, callback) {
     self.verify(self.options, function (err) {
       if (err)
         return callback(err);
- 
+
       self.options.$container = $(self.options.container);
       self.markContainer(self.options.$container, {
         attr: [
@@ -218,7 +222,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 Pie.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="pie" jio-uuid="25TnLNzFe">\n' +
+  var html = '<div jio-domain="joola" jio-type="pie">\n' +
     '  <div class="jio-pie-caption"></div>\n' +
     '  <div class="jio-pie-chart"></div>\n' +
     '</div>';

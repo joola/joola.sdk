@@ -13,8 +13,9 @@
 var joola = exports;
 
 //try injecting global
-if (!global.joola)
+if (!global.joola){
   global.joola = joola;
+}
 
 //base options
 joola.options = {

@@ -155,6 +155,9 @@ var Canvas = module.exports = function (options, callback) {
             case 'bartable':
               $(viz.container).BarTable(viz);
               break;
+            case 'pie':
+              $(viz.container).Pie(viz);
+              break;
             default:
               break;
           }
