@@ -114,6 +114,11 @@ dispatch.buildstub = function (callback) {
             joola[endpoints][fn] = dispatch[endpoints][fn];
         });
       });
+
+      //map aliases
+      joola.insert = joola.beacon.insert;
+      joola.query = joola.query.fetch;
+
       return callback(null);
     });
   }
