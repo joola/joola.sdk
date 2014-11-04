@@ -170,7 +170,8 @@ proto.makeChartTimelineSeries = function (message) {
       series[++seriesIndex] = {
         name: metric_name,
         data: [],
-        yAxis: _yaxis
+        yAxis: _yaxis,
+        color: joola.colors[seriesIndex ]
       };
       documents.forEach(function (document, docIndex) {
         var x = document.fvalues[dimensions[0].key];

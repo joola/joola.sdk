@@ -108,30 +108,47 @@ var Timeline = module.exports = function (options, callback) {
             xAxis: {
               type: (linear ? 'datetime' : 'category'),
               endOnTick: false,
+
               tickWidth: 0,
               dateTimeLabelFormats: {
                 day: '%B %e'
               },
               labels: {
                 enabled: true,
+                staggerLines: 1,
                 style: {
                   color: '#b3b3b1'
                 }
               }
             },
-            yAxis: {
-              endOnTick: false,
-              title: {
-                text: null
+            yAxis: [
+              {
+                endOnTick: false,
+                title: {
+                  text: null
+                },
+                labels: {
+                  enabled: true,
+                  style: {
+                    color: '#b3b3b1'
+                  }
+                },
+                gridLineDashStyle: 'Dot'
               },
-              labels: {
-                enabled: true,
-                style: {
-                  color: '#b3b3b1'
-                }
-              },
-              gridLineDashStyle: 'Dot'
-            },
+              {
+                endOnTick: false,
+                title: {
+                  text: null
+                },
+                labels: {
+                  enabled: true,
+                  style: {
+                    color: '#b3b3b1'
+                  }
+                },
+                gridLineDashStyle: 'Dot'
+              }
+            ],
             legend: {enabled: false},
             credits: {enabled: false},
             exporting: {enabled: true},

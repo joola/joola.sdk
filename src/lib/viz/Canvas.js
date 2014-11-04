@@ -89,7 +89,7 @@ var Canvas = module.exports = function (options, callback) {
         }
       });
     }
-    if (self.options.datepicker && self.options.datepicker.container) {
+    if (!query.timeframe && self.options.datepicker && self.options.datepicker.container) {
       var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
         if (err)
           throw err;
@@ -157,6 +157,9 @@ var Canvas = module.exports = function (options, callback) {
               break;
             case 'pie':
               $(viz.container).Pie(viz);
+              break;
+            case 'geo':
+              $(viz.container).Geo(viz);
               break;
             default:
               break;
