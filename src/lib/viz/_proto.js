@@ -120,7 +120,7 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
-  joola.query.fetch.apply(this, args);
+  joola.query.apply(this, args);
 };
 
 proto.makeChartTimelineSeries = function (message) {
@@ -170,7 +170,8 @@ proto.makeChartTimelineSeries = function (message) {
       series[++seriesIndex] = {
         name: metric_name,
         data: [],
-        yAxis: _yaxis
+        yAxis: _yaxis,
+        color: joola.colors[seriesIndex ]
       };
       documents.forEach(function (document, docIndex) {
         var x = document.fvalues[dimensions[0].key];
