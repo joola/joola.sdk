@@ -67,11 +67,9 @@ var Timeline = module.exports = function (options, callback) {
             return callback(err);
           return;
         }
-
         if (!Array.isArray(message)) {
           message = [message];
         }
-
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
           self.realtimeQueries.push(message[0].realtime);
         var series = self._super.makeChartTimelineSeries(message);
@@ -110,30 +108,47 @@ var Timeline = module.exports = function (options, callback) {
             xAxis: {
               type: (linear ? 'datetime' : 'category'),
               endOnTick: false,
+
               tickWidth: 0,
               dateTimeLabelFormats: {
                 day: '%B %e'
               },
               labels: {
                 enabled: true,
+                staggerLines: 1,
                 style: {
                   color: '#b3b3b1'
                 }
               }
             },
-            yAxis: {
-              endOnTick: false,
-              title: {
-                text: null
+            yAxis: [
+              {
+                endOnTick: false,
+                title: {
+                  text: null
+                },
+                labels: {
+                  enabled: true,
+                  style: {
+                    color: '#b3b3b1'
+                  }
+                },
+                gridLineDashStyle: 'Dot'
               },
-              labels: {
-                enabled: true,
-                style: {
-                  color: '#b3b3b1'
-                }
-              },
-              gridLineDashStyle: 'Dot'
-            },
+              {
+                endOnTick: false,
+                title: {
+                  text: null
+                },
+                labels: {
+                  enabled: true,
+                  style: {
+                    color: '#b3b3b1'
+                  }
+                },
+                gridLineDashStyle: 'Dot'
+              }
+            ],
             legend: {enabled: false},
             credits: {enabled: false},
             exporting: {enabled: true},

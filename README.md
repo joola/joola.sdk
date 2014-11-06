@@ -6,7 +6,7 @@
 |-------------------------------------|-------------------------------|-------------------------------------|---------------------------------------------|-------------------------------------|
 | [![i2] [roadmap-image]] [apidocs] | [![i1] [techdocs-image]] [techdocs] | [![i6] [issues-image]] [issues] | [![i4] [contributing-image]] [contributing] | [![i5] [about-image]] [about] |
 
-<img src="http://i.imgur.com/Kx6l8s3.png" alt="joola logo" title="joola" align="right" />
+<img src="https://joo.la/img/logo-profile.png" alt="joola logo" title="joola" align="right" />
 
 **joola.sdk** is a Software Development Kit (SDK) responsible for communication between a client using the SDK and the joola server. If you don't have a [joola][joola] server running yet, [get one up and running in minutes][joola] or open a free account with [free.joola][free.joola].
 

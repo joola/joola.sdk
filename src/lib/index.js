@@ -13,8 +13,9 @@
 var joola = exports;
 
 //try injecting global
-if (!global.joola)
+if (!global.joola){
   global.joola = joola;
+}
 
 //base options
 joola.options = {
@@ -140,6 +141,7 @@ joola.init = function (options, callback) {
       if (typeof (jQuery) === 'undefined') {
         script = document.createElement('script');
         expected++;
+
         script.onload = function () {
           //jQuery.noConflict(true);
 
@@ -155,23 +157,23 @@ joola.init = function (options, callback) {
               script.onload = function () {
                 done('highcharts-nodata');
               };
-              script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+              script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
               document.head.appendChild(script);
 
               done('highcharts');
             };
-            script.src = '//code.highcharts.com/highcharts.js';
+            script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
             document.head.appendChild(script);
 
 
             done('jquery-ui');
           };
-          script.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
           document.head.appendChild(script);
 
           done('jquery');
         };
-        script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
+        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
         document.head.appendChild(script);
       }
       else if (typeof (Highcharts) === 'undefined') {
@@ -183,12 +185,12 @@ joola.init = function (options, callback) {
           script.onload = function () {
             done('highcharts-nodata-2');
           };
-          script.src = '//code.highcharts.com/modules/no-data-to-display.js';
+          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
           document.head.appendChild(script);
 
           done('highcharts-2');
         };
-        script.src = '//code.highcharts.com/highcharts.js';
+        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
         document.head.appendChild(script);
       }
 
@@ -198,7 +200,7 @@ joola.init = function (options, callback) {
         script.onload = function () {
           done('tablesort');
         };
-        script.src = '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
+        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
         document.head.appendChild(script);
       }
 
