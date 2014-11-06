@@ -362,3 +362,4 @@ joola.set = function (key, value, callback) {
 joola.get = function (key) {
   return joola.options[key];
 };
+
