@@ -17576,7 +17576,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.16",
+  "version": "0.7.17",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -18895,6 +18895,8 @@ joola.set = function (key, value, callback) {
 joola.get = function (key) {
   return joola.options[key];
 };
+
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./../../package.json":84,"./common/api":85,"./common/dispatch":86,"./common/events":87,"./common/globals":88,"./common/index":89,"./common/logger":90,"./viz/index":107,"querystring":21,"socket.io-client":37,"url":30}],93:[function(require,module,exports){
 /**
