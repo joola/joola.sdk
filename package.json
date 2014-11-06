@@ -1,7 +1,7 @@
 {
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.18",
+  "version": "0.7.19",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
