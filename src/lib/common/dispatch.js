@@ -117,7 +117,7 @@ dispatch.buildstub = function (callback) {
 
       //map aliases
       joola.insert = joola.beacon.insert;
-      joola.query = joola.query.fetch;
+      joola.fetch = joola.query.fetch;
 
       return callback(null);
     });
