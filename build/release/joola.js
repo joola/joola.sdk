@@ -17572,7 +17572,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.19",
+  "version": "0.7.20",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -18054,7 +18054,7 @@ dispatch.buildstub = function (callback) {
 
       //map aliases
       joola.insert = joola.beacon.insert;
-      joola.query = joola.query.fetch;
+      joola.fetch = joola.query.fetch;
 
       return callback(null);
     });
@@ -24102,7 +24102,7 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
-  joola.query.apply(this, args);
+  joola.query.fetch.apply(this, args);
 };
 
 proto.makeChartTimelineSeries = function (message) {

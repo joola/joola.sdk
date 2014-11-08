@@ -120,7 +120,7 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
-  joola.query.apply(this, args);
+  joola.query.fetch.apply(this, args);
 };
 
 proto.makeChartTimelineSeries = function (message) {
