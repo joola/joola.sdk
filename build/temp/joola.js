@@ -17572,7 +17572,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.20",
+  "version": "0.7.21",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
