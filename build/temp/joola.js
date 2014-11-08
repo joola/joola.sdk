@@ -18134,10 +18134,11 @@ var
   util = require('util'),
   _ = require('underscore'),
   de = require('deep-extend'),
+  crypto = require('crypto'),
   ce = require('cloneextend');//,
 //JSONStream = require('JSONStream');
 
-var common = util;
+var common = ce.clone(util);
 common._id = 'common';
 module.exports = exports = common;
 common.extend = common._extend;
@@ -18261,14 +18262,21 @@ common.hookEvents = function (obj) {
   }
 };
 
-common.uuid = function () {
-  var uuid = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+common.uuid = function (length) {
+  // http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+  function randomString(length, chars) {
+    var charsLength = chars.length;
+    var randomBytes = crypto.randomBytes(length);
+    var result = new Array(length);
+    var cursor = 0;
+    for (var i = 0; i < length; i++) {
+      cursor += randomBytes[i];
+      result[i] = chars[cursor % charsLength];
+    }
+    return result.join('');
+  }
 
-  for (var i = 0; i < 9; i++)
-    uuid += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return uuid;
+  return randomString(length || 32, 'abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789');
 };
 
 common.stringify = function (obj, callback) {
