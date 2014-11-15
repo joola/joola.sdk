@@ -61,6 +61,19 @@ module.exports = function (grunt) {
       }
     },
 
+    http: {
+      joola_meta: {
+        options: {
+          url: 'https://localhost:8081/meta',
+          headers: {
+            'content-type': 'application/json'
+          },
+          strictSSL: false
+        },
+        dest: 'build/temp/meta.json'
+      }
+    },
+
     jshint: {
       all: ['src/lib/**/*.js']
     },
@@ -170,7 +183,7 @@ module.exports = function (grunt) {
       grunt.loadNpmTasks(key);
   }
 
-  grunt.registerTask('default', ['clean', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
+  grunt.registerTask('default', ['http', 'clean', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('dev', ['connect', 'watchify']);
   grunt.registerTask('css', ['concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
