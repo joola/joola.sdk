@@ -1,7 +1,7 @@
 {
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.21",
+  "version": "0.7.22",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -35,6 +35,7 @@
     "eventemitter2": "~0.4.13",
     "moment": "~2.5.1",
     "socket.io-client": "^1.0.2",
+    "twix": "^0.5.1",
     "underscore": "~1.5.2"
   },
   "devDependencies": {

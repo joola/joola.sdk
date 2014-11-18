@@ -72,7 +72,7 @@ var Timeline = module.exports = function (options, callback) {
         }
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
           self.realtimeQueries.push(message[0].realtime);
-        var series = self._super.makeChartTimelineSeries(message);
+        var series = self._super.makeChartTimelineSeries.call(self, message);
         var linear = (message[0].dimensions && message[0].dimensions.length > 0 && message[0].dimensions[0].datatype == 'date');
         if (!self.chartDrawn) {
           var chartOptions = joola.common._mixin({
