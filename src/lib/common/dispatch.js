@@ -17,40 +17,8 @@ var dispatch = exports;
 dispatch._id = 'dispatch';
 
 dispatch.fetchMeta = function (callback) {
-  try {
-    try {
-      var meta = require('../../../build/temp/meta.json');
-      return callback(null, meta);
-    }
-    catch (ex) {
-      //do nothing
-    }
-    var parts = require('url').parse(joola.options.host);
-    var port = parts.port;
-    if (!port)
-      port = parts.protocol === 'http:' ? 80 : 443;
-    var options = {
-      host: parts.hostname,
-      port: port,
-      secure: parts.protocol !== 'http:',
-      path: '/meta',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      ajax: true
-    };
-
-    joola.api.getJSON(options, {}, function (err, result) {
-      if (err)
-        return callback(err);
-
-      return callback(null, result);
-    });
-  }
-  catch (ex) {
-    return callback(ex);
-  }
+  var meta = require('../../../build/temp/meta.json');
+  return callback(null, meta);
 };
 
 dispatch.buildstub = function (callback) {

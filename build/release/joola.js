@@ -10210,6 +10210,7 @@ var on = require('./on');
 var bind = require('component-bind');
 var object = require('object-component');
 var debug = require('debug')('socket.io-client:manager');
+var indexOf = require('indexof');
 
 /**
  * Module exports
@@ -10244,7 +10245,7 @@ function Manager(uri, opts){
   this.timeout(null == opts.timeout ? 20000 : opts.timeout);
   this.readyState = 'closed';
   this.uri = uri;
-  this.connected = 0;
+  this.connected = [];
   this.attempts = 0;
   this.encoding = false;
   this.packetBuffer = [];
@@ -10377,6 +10378,7 @@ Manager.prototype.connect = function(fn){
   var socket = this.engine;
   var self = this;
   this.readyState = 'opening';
+  this.skipReconnect = false;
 
   // emit `open`
   var openSub = on(socket, 'open', function() {
@@ -10495,7 +10497,9 @@ Manager.prototype.socket = function(nsp){
     this.nsps[nsp] = socket;
     var self = this;
     socket.on('connect', function(){
-      self.connected++;
+      if (!~indexOf(self.connected, socket)) {
+        self.connected.push(socket);
+      }
     });
   }
   return socket;
@@ -10508,7 +10512,11 @@ Manager.prototype.socket = function(nsp){
  */
 
 Manager.prototype.destroy = function(socket){
-  --this.connected || this.close();
+  var index = indexOf(this.connected, socket);
+  if (~index) this.connected.splice(index, 1);
+  if (this.connected.length) return;
+
+  this.close();
 };
 
 /**
@@ -10576,7 +10584,8 @@ Manager.prototype.cleanup = function(){
 Manager.prototype.close =
 Manager.prototype.disconnect = function(){
   this.skipReconnect = true;
-  this.engine.close();
+  this.readyState = 'closed';
+  this.engine && this.engine.close();
 };
 
 /**
@@ -10602,7 +10611,7 @@ Manager.prototype.onclose = function(reason){
  */
 
 Manager.prototype.reconnect = function(){
-  if (this.reconnecting) return this;
+  if (this.reconnecting || this.skipReconnect) return this;
 
   var self = this;
   this.attempts++;
@@ -10618,9 +10627,15 @@ Manager.prototype.reconnect = function(){
 
     this.reconnecting = true;
     var timer = setTimeout(function(){
+      if (self.skipReconnect) return;
+
       debug('attempting reconnect');
       self.emitAll('reconnect_attempt', self.attempts);
       self.emitAll('reconnecting', self.attempts);
+
+      // check again for the case socket closed in above events
+      if (self.skipReconnect) return;
+
       self.open(function(err){
         if (err) {
           debug('reconnect attempt error');
@@ -10655,7 +10670,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":41,"./socket":42,"./url":43,"component-bind":44,"component-emitter":45,"debug":46,"engine.io-client":47,"object-component":74,"socket.io-parser":77}],41:[function(require,module,exports){
+},{"./on":41,"./socket":42,"./url":43,"component-bind":44,"component-emitter":45,"debug":46,"engine.io-client":47,"indexof":73,"object-component":74,"socket.io-parser":77}],41:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -10694,7 +10709,6 @@ var on = require('./on');
 var bind = require('component-bind');
 var debug = require('debug')('socket.io-client:socket');
 var hasBin = require('has-binary');
-var indexOf = require('indexof');
 
 /**
  * Module exports.
@@ -10745,7 +10759,6 @@ function Socket(io, nsp){
   this.sendBuffer = [];
   this.connected = false;
   this.disconnected = true;
-  this.subEvents();
 }
 
 /**
@@ -10761,6 +10774,8 @@ Emitter(Socket.prototype);
  */
 
 Socket.prototype.subEvents = function() {
+  if (this.subs) return;
+
   var io = this.io;
   this.subs = [
     on(io, 'open', bind(this, 'onopen')),
@@ -10770,15 +10785,16 @@ Socket.prototype.subEvents = function() {
 };
 
 /**
- * Called upon engine `open`.
+ * "Opens" the socket.
  *
- * @api private
+ * @api public
  */
 
 Socket.prototype.open =
 Socket.prototype.connect = function(){
   if (this.connected) return this;
 
+  this.subEvents();
   this.io.open(); // ensure open
   if ('open' == this.io.readyState) this.onopen();
   return this;
@@ -10847,7 +10863,7 @@ Socket.prototype.packet = function(packet){
 };
 
 /**
- * "Opens" the socket.
+ * Called upon engine `open`.
  *
  * @api private
  */
@@ -11031,9 +11047,12 @@ Socket.prototype.ondisconnect = function(){
  */
 
 Socket.prototype.destroy = function(){
-  // clean subscriptions to avoid reconnections
-  for (var i = 0; i < this.subs.length; i++) {
-    this.subs[i].destroy();
+  if (this.subs) {
+    // clean subscriptions to avoid reconnections
+    for (var i = 0; i < this.subs.length; i++) {
+      this.subs[i].destroy();
+    }
+    this.subs = null;
   }
 
   this.io.destroy(this);
@@ -11048,20 +11067,22 @@ Socket.prototype.destroy = function(){
 
 Socket.prototype.close =
 Socket.prototype.disconnect = function(){
-  if (!this.connected) return this;
-
-  debug('performing disconnect (%s)', this.nsp);
-  this.packet({ type: parser.DISCONNECT });
+  if (this.connected) {
+    debug('performing disconnect (%s)', this.nsp);
+    this.packet({ type: parser.DISCONNECT });
+  }
 
   // remove socket from pool
   this.destroy();
 
-  // fire events
-  this.onclose('io client disconnect');
+  if (this.connected) {
+    // fire events
+    this.onclose('io client disconnect');
+  }
   return this;
 };
 
-},{"./on":41,"component-bind":44,"component-emitter":45,"debug":46,"has-binary":71,"indexof":73,"socket.io-parser":77,"to-array":81}],43:[function(require,module,exports){
+},{"./on":41,"component-bind":44,"component-emitter":45,"debug":46,"has-binary":71,"socket.io-parser":77,"to-array":81}],43:[function(require,module,exports){
 (function (global){
 
 /**
@@ -11096,7 +11117,9 @@ function url(uri, loc){
   // relative path support
   if ('string' == typeof uri) {
     if ('/' == uri.charAt(0)) {
-      if ('undefined' != typeof loc) {
+      if ('/' == uri.charAt(1)) {
+        uri = loc.protocol + uri;
+      } else {
         uri = loc.hostname + uri;
       }
     }
@@ -11749,14 +11772,13 @@ Socket.prototype.probe = function (name) {
         debug('probe transport "%s" pong', name);
         self.upgrading = true;
         self.emit('upgrading', transport);
+        if (!transport) return;
         Socket.priorWebsocketSuccess = 'websocket' == transport.name;
 
         debug('pausing current transport "%s"', self.transport.name);
         self.transport.pause(function () {
           if (failed) return;
-          if ('closed' == self.readyState || 'closing' == self.readyState) {
-            return;
-          }
+          if ('closed' == self.readyState) return;
           debug('changing transport and sending upgrade packet');
 
           cleanup();
@@ -12038,6 +12060,10 @@ Socket.prototype.send = function (msg, fn) {
  */
 
 Socket.prototype.sendPacket = function (type, data, fn) {
+  if ('closing' == this.readyState || 'closed' == this.readyState) {
+    return;
+  }
+
   var packet = { type: type, data: data };
   this.emit('packetCreate', packet);
   this.writeBuffer.push(packet);
@@ -12053,9 +12079,41 @@ Socket.prototype.sendPacket = function (type, data, fn) {
 
 Socket.prototype.close = function () {
   if ('opening' == this.readyState || 'open' == this.readyState) {
-    this.onClose('forced close');
-    debug('socket closing - telling transport to close');
-    this.transport.close();
+    this.readyState = 'closing';
+
+    var self = this;
+
+    function close() {
+      self.onClose('forced close');
+      debug('socket closing - telling transport to close');
+      self.transport.close();
+    }
+
+    function cleanupAndClose() {
+      self.removeListener('upgrade', cleanupAndClose);
+      self.removeListener('upgradeError', cleanupAndClose);
+      close();
+    }
+
+    function waitForUpgrade() {
+      // wait for upgrade to finish since we can't send packets while pausing a transport
+      self.once('upgrade', cleanupAndClose);
+      self.once('upgradeError', cleanupAndClose);
+    }
+
+    if (this.writeBuffer.length) {
+      this.once('drain', function() {
+        if (this.upgrading) {
+          waitForUpgrade();
+        } else {
+          close();
+        }
+      });
+    } else if (this.upgrading) {
+      waitForUpgrade();
+    } else {
+      close();
+    }
   }
 
   return this;
@@ -12081,7 +12139,7 @@ Socket.prototype.onError = function (err) {
  */
 
 Socket.prototype.onClose = function (reason, desc) {
-  if ('opening' == this.readyState || 'open' == this.readyState) {
+  if ('opening' == this.readyState || 'open' == this.readyState || 'closing' == this.readyState) {
     debug('socket close with reason: "%s"', reason);
     var self = this;
 
@@ -12451,6 +12509,7 @@ JSONPPolling.prototype.doClose = function () {
   if (this.form) {
     this.form.parentNode.removeChild(this.form);
     this.form = null;
+    this.iframe = null;
   }
 
   Polling.prototype.doClose.call(this);
@@ -12870,7 +12929,7 @@ Request.prototype.onLoad = function(){
   try {
     var contentType;
     try {
-      contentType = this.xhr.getResponseHeader('Content-Type');
+      contentType = this.xhr.getResponseHeader('Content-Type').split(';')[0];
     } catch (e) {}
     if (contentType === 'application/octet-stream') {
       data = this.xhr.response;
@@ -12957,7 +13016,7 @@ module.exports = Polling;
 
 var hasXHR2 = (function() {
   var XMLHttpRequest = require('xmlhttprequest');
-  var xhr = new XMLHttpRequest({ agent: this.agent, xdomain: false });
+  var xhr = new XMLHttpRequest({ xdomain: false });
   return null != xhr.responseType;
 })();
 
@@ -13427,19 +13486,19 @@ module.exports = function(opts) {
   // https://github.com/Automattic/engine.io-client/pull/217
   var enablesXDR = opts.enablesXDR;
 
+  // XMLHttpRequest can be disabled on IE
+  try {
+    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
+      return new XMLHttpRequest();
+    }
+  } catch (e) { }
+
   // Use XDomainRequest for IE8 if enablesXDR is true
   // because loading bar keeps flashing when using jsonp-polling
   // https://github.com/yujiosaka/socke.io-ie8-loading-example
   try {
     if ('undefined' != typeof XDomainRequest && !xscheme && enablesXDR) {
       return new XDomainRequest();
-    }
-  } catch (e) { }
-
-  // XMLHttpRequest can be disabled on IE
-  try {
-    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
-      return new XMLHttpRequest();
     }
   } catch (e) { }
 
@@ -17957,40 +18016,8 @@ var dispatch = exports;
 dispatch._id = 'dispatch';
 
 dispatch.fetchMeta = function (callback) {
-  try {
-    try {
-      var meta = require('../../../build/temp/meta.json');
-      return callback(null, meta);
-    }
-    catch (ex) {
-      //do nothing
-    }
-    var parts = require('url').parse(joola.options.host);
-    var port = parts.port;
-    if (!port)
-      port = parts.protocol === 'http:' ? 80 : 443;
-    var options = {
-      host: parts.hostname,
-      port: port,
-      secure: parts.protocol !== 'http:',
-      path: '/meta',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      ajax: true
-    };
-
-    joola.api.getJSON(options, {}, function (err, result) {
-      if (err)
-        return callback(err);
-
-      return callback(null, result);
-    });
-  }
-  catch (ex) {
-    return callback(ex);
-  }
+  var meta = require('../../../build/temp/meta.json');
+  return callback(null, meta);
 };
 
 dispatch.buildstub = function (callback) {
@@ -18082,7 +18109,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"../../../build/temp/meta.json":1,"../index":91,"cloneextend":34,"url":31}],86:[function(require,module,exports){
+},{"../../../build/temp/meta.json":1,"../index":91,"cloneextend":34}],86:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
