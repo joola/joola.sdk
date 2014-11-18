@@ -18804,7 +18804,6 @@ dispatch.buildstub = function (callback) {
   var self = this;
 
   dispatch.fetchMeta(function (err, result) {
-
     joola.api.describe = {};
     Object.keys(result).forEach(function (endpoints) {
       dispatch[endpoints] = {};
@@ -18829,6 +18828,12 @@ dispatch.buildstub = function (callback) {
           callback = emptyfunc;
           if (typeof args[Object.keys(args).length - 1] === 'function') {
             callback = args[Object.keys(args).length - 1];
+          }
+          if (fn !== 'verifyAPIToken') {
+            if (!joola.connected)
+              return callback(new Error('Joola not connected.'));
+            if (!joola.USER)
+              return callback(new Error('Joola not connected, invalid user.'));
           }
           var argCounter = 0;
           var _args = {};
@@ -18907,6 +18912,7 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
+
 },{"../index":93,"eventemitter2":36}],89:[function(require,module,exports){
 (function (global){
 /**
@@ -19369,10 +19375,14 @@ Array.prototype.equals = function (array) {
 
 
 //THE OBJECT
+var
+  util = require('util'),
+  EventEmitter = require('events').EventEmitter;
+
 var joola = exports;
 
 //try injecting global
-if (!global.joola){
+if (!global.joola) {
   global.joola = joola;
 }
 
@@ -19401,7 +19411,7 @@ joola.options = {
   timezoneOffset: null
 
 };
-
+joola.connected = false;
 //libraries
 joola.globals = require('./common/globals');
 joola.logger = require('./common/logger');
@@ -19409,8 +19419,12 @@ joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
 joola.events.setMaxListeners(1000);
-joola.on = joola.events.on;
-
+joola.on = function (event, cb) {
+  joola.events.on(event, cb);
+};
+joola.emit = function (event, message) {
+  joola.events.emit(event, message);
+};
 joola.api = require('./common/api');
 joola.state = {};
 joola.viz = require('./viz/index');
@@ -19461,7 +19475,12 @@ if (isBrowser()) {
     if (scr.src) {
       if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joola.options.host = parts.protocol + '//' + parts.host;
+        var protocol = parts.protocol;
+        var host = parts.host;
+        var port = 443;
+        if (protocol !== 'https:')
+          port = 80;
+        joola.options.host = parts.protocol + '//' + host + ':' + port;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
@@ -19471,13 +19490,21 @@ if (isBrowser()) {
             joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joola.options.host = qs.host;
+            parts = require('url').parse(qs.host);
+            protocol = parts.protocol;
+            host = parts.host;
+            port = 443;
+            if (protocol !== 'https:')
+              port = 80;
+            joola.options.host = parts.protocol + '//' + host + ':' + port;
           }
         }
       }
     }
   });
 }
+
+joola.dispatch.buildstub();
 
 //init procedure
 joola.init = function (options, callback) {
@@ -19572,7 +19599,7 @@ joola.init = function (options, callback) {
           //done('css');
         };
         css.rel = 'stylesheet';
-        css.href = joola.options.host + '/joola.css';
+        css.href = joola.options.host + '/joola.min.css';
         document.head.appendChild(css);
         done('css');
       }
@@ -19583,101 +19610,99 @@ joola.init = function (options, callback) {
       return done('not browser');
     }
   }
+  if (options.token) {
+    joola._token = options.token;
+  }
+  else {
+    if (typeof location !== 'undefined') {
+      var qs = require('querystring');
+      var parts = qs.parse(location.search.substring(1, location.search.length));
+      if (parts.token)
+        joola._token = parts.token;
+    }
+  }
+  joola.events.emit('core.init.start');
+  joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
+  //else if (joola.options.isBrowser) {
+  if (!joola.options.host && joola.options.isBrowser) {
+    joola.options.host = location.protocol + '//' + location.host;
+  }
+
+  if (!joola.options.host)
+    throw new Error('joola host not specified');
+
+  //var io = require('socket.io-browserify');
+  var io = require('socket.io-client');
+  joola.io = io;
+  joola.io.socket = joola.io.connect(joola.options.host);
+
+  joola.io.socket.on('SIG_HUP', function () {
+    console.log('SIG_HUP');
+  });
+
+  //}
+  //joola.config.init(function (err) {
+  // if (err)
+  //   return callback(err);
+  //joola.dispatch.buildstub(function (err) {
+  //  if (err)
+  //    return callback(err);
   browser3rd(function () {
-    if (options.token) {
-      joola._token = options.token;
-    }
-    else {
-      if (typeof location !== 'undefined') {
-        var qs = require('querystring');
-        var parts = qs.parse(location.search.substring(1, location.search.length));
-        if (parts.token)
-          joola._token = parts.token;
-      }
-    }
-    joola.events.emit('core.init.start');
-    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
-
-    //else if (joola.options.isBrowser) {
-    if (!joola.options.host && joola.options.isBrowser) {
-      joola.options.host = location.protocol + '//' + location.host;
-    }
-
-    if (!joola.options.host)
-      throw new Error('joola host not specified');
-
-    //var io = require('socket.io-browserify');
-    var io = require('socket.io-client');
-    joola.io = io;
-    joola.io.socket = joola.io.connect(joola.options.host);
-
-    joola.io.socket.on('SIG_HUP', function () {
-      console.log('SIG_HUP');
-    });
-
-    //}
-    //joola.config.init(function (err) {
-    // if (err)
-    //   return callback(err);
-
-    joola.dispatch.buildstub(function (err) {
+  });
+  if (joola.options.token) {
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
       if (err)
         return callback(err);
 
-      if (joola.options.token) {
-        joola.dispatch.users.getByToken(joola._token, function (err, user) {
-          if (err)
-            return callback(err);
+      joola.USER = user;
+      joola.TOKEN = joola._token;
+      joola.events.emit('core.init.finish');
+      if (callback)
+        return callback(null, joola);
 
-          joola.USER = user;
-          joola.TOKEN = joola._token;
-          joola.events.emit('core.init.finish');
-          if (callback)
-            return callback(null, joola);
-
-        });
-      }
-      else if (joola.options.APIToken) {
-        joola._apitoken = joola.options.APIToken;
-        joola.USER = null;
-        joola._token = null;
-
-        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
-          if (err)
-            return callback(err);
-          joola.USER = user;
-          joola.events.emit('core.init.finish');
-          joola.events.emit('ready');
-          if (typeof callback === 'function')
-            return callback(null, joola);
-        });
-      }
-      else {
-        joola.events.emit('core.init.finish');
-        joola.events.emit('ready');
-        if (typeof callback === 'function')
-          return callback(null, joola);
-      }
     });
-    //});
+  }
+  else if (joola.options.APIToken) {
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
 
-    //global function hook (for debug)
-    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
-      [joola].forEach(function (obj) {
-        joola.common.hookEvents(obj, function (event) {
-        });
-      });
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      joola.USER = user;
+      joola.events.emit('core.init.finish');
+      joola.events.emit('ready');
+      if (typeof callback === 'function')
+        return callback(null, joola);
+    });
+  }
+  else {
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
+    if (typeof callback === 'function')
+      return callback(null, joola);
+  }
+  //});
+  //});
 
-    //global event catcher (for debug)
-    if (joola.options.debug.enabled && joola.options.debug.events)
-      joola.events.onAny(function () {
-        if (joola.options.debug.events.enabled)
-          joola.logger.debug('Event raised: ' + this.event);
-        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
-          console.trace();
+  //global function hook (for debug)
+  if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+    [joola].forEach(function (obj) {
+      joola.common.hookEvents(obj, function (event) {
       });
-  });
+    });
+
+  //global event catcher (for debug)
+  if (joola.options.debug.enabled && joola.options.debug.events)
+    joola.events.onAny(function () {
+      if (joola.options.debug.events.enabled)
+        joola.logger.debug('Event raised: ' + this.event);
+      if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
+        console.trace();
+    });
+  //});
 };
 
 if (joola.options.APIToken || joola.options.token) {
@@ -19725,8 +19750,15 @@ joola.get = function (key) {
 joola.colors = ['#058DC7', '#50B432', '#ED7E17', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
 joola.offcolors = ['#AADFF3', '#C9E7BE', '#F2D5BD', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE', '#EEEEEE'];
 
+var start = new Date().getTime();
+joola.on('ready', function () {
+  joola.connected = true;
+  var end = new Date().getTime();
+  console.log('loaded in ', end - start, 'ms.');
+});
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":85,"./common/api":86,"./common/dispatch":87,"./common/events":88,"./common/globals":89,"./common/index":90,"./common/logger":91,"./viz/index":108,"querystring":22,"socket.io-client":38,"url":31}],94:[function(require,module,exports){
+},{"./../../package.json":85,"./common/api":86,"./common/dispatch":87,"./common/events":88,"./common/globals":89,"./common/index":90,"./common/logger":91,"./viz/index":108,"events":11,"querystring":22,"socket.io-client":38,"url":31,"util":33}],94:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21659,87 +21691,6 @@ DimensionPicker.template = function (options) {
   return html;
 };
 
-DimensionPicker.meta = {
-  key: 'dimensionpicker',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio dimensionbox value"></div><div class="jio dimensionbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: DimensionPicker.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the dimension.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, dimension box clicked.'
-    }
-  }
-};
 },{"./_proto":107,"cloneextend":34,"eventemitter2":36}],98:[function(require,module,exports){
 /**
  *  @title joola
@@ -22138,87 +22089,6 @@ Metric.template = function (options) {
   return html;
 };
 
-Metric.meta = {
-  key: 'metricbox',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: Metric.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, metric box clicked.'
-    }
-  }
-};
 },{"../index":93,"./_proto":107,"cloneextend":34}],100:[function(require,module,exports){
 /**
  *  @title joola
@@ -22534,87 +22404,6 @@ MetricPicker.template = function (options) {
   return html;
 };
 
-MetricPicker.meta = {
-  key: 'metricpicker',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: MetricPicker.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, metric box clicked.'
-    }
-  }
-};
 },{"./_proto":107,"cloneextend":34,"eventemitter2":36}],101:[function(require,module,exports){
 /**
  *  @title joola
@@ -23150,111 +22939,6 @@ Pie.template = function (options) {
   return html;
 };
 
-Pie.meta = {
-  key: 'pie-chart',
-  jQueryTag: 'Pie',
-  title: 'Pie Chart',
-  tagline: '',
-  description: '' +
-    'Pie Charts are mainly used to provide a high-level overview of metrics based on categories. ' +
-    'For example, how many visitors a site had based on their browser.',
-  longDescription: '',
-  example: {
-    css: 'height:250px;width:100%',
-    options: {
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['browser'],
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Pie(options);',
-    external: [
-      {
-        title: 'Change Pie Limits',
-        src: 'http://jsfiddle.com'
-      },
-      {
-        title: 'Another example',
-        src: 'http://jsfiddle.com'
-      },
-      {
-        title: 'And yet another',
-        src: 'http://jsfiddle.com'
-      }
-    ]
-  },
-  template: Pie.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    },
-    chart: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`optional` Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
-    },
-    limit: {
-      datatype: 'number',
-      defaultValue: '5',
-      description: '`optional` The number of items to show.'
-    },
-    legend: {
-      datatype: 'bool',
-      defaultValue: 'true',
-      description: '`optional` Show the Pie Chart legend.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, pie chart slice clicked.'
-    }
-  }
-};
 },{"../index":93,"./_proto":107,"underscore":84}],103:[function(require,module,exports){
 /*jshint -W083 */
 
@@ -24153,105 +23837,6 @@ Table.template = function (options) {
   return html;
 };
 
-Table.meta = {
-  key: 'table',
-  jQueryTag: 'Table',
-  title: 'Table',
-  tagline: '',
-  description: '' +
-    'Plot powerful and customizable data tables.',
-  longDescription: '',
-  example: {
-    //css: 'height:250px;width:100%',
-    options: {
-      limit: 5,
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['browser'],
-        metrics: [
-          {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
-          {key: 'visits', collection: 'demo-visits'}
-        ],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Table(options);'/*,
-     external: [
-     {
-     title: 'Change Pie Limits',
-     src: 'http://jsfiddle.com'
-     },
-     {
-     title: 'Another example',
-     src: 'http://jsfiddle.com'
-     },
-     {
-     title: 'And yet another',
-     src: 'http://jsfiddle.com'
-     }
-     ]*/
-  },
-  template: Table.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    },
-    limit: {
-      datatype: 'number',
-      defaultValue: '5',
-      description: 'The number of items to show.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, table row clicked.'
-    }
-  }
-};
 },{"../index":93,"./_proto":107,"underscore":84}],106:[function(require,module,exports){
 /**
  *  @title joola
@@ -24711,96 +24296,6 @@ Timeline.template = function (options) {
   return html;
 };
 
-Timeline.meta = {
-  key: 'timeline',
-  title: 'Timeline',
-  tagline: '',
-  jQueryTag: 'Timeline',
-  description: '' +
-    'Timelines are a great way to show metrics over time.' +
-    '',
-  example: {
-    css: 'height:250px;',
-    options: {
-      caption: 'Mouse moves (last 30 seconds)',
-      chart: {
-        chart: {
-          spacing: 0,
-          backgroundColor: 'transparent',
-          type: 'column'
-        },
-        plotOptions: {
-          column: {
-            color: 'rgba(240,95,104,1)'
-          }
-        }
-      },
-      query: {
-        timeframe: 'last_30_seconds',
-        interval: 'second',
-        dimensions: ['timestamp'],
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        realtime: true
-      }
-    },
-    draw: '$("#example").Timeline(options)',
-    more: [
-      'http://jsfiddle.com/'
-    ]
-  },
-  template: Timeline.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the `query` object.'
-    },
-    chart: {
-      datatype: 'object',
-      defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, data point clicked.'
-    }
-  },
-  html: '',
-  css: {
-
-  },
-  chartProvider: 'highcharts',
-  license: 'MIT'
-};
 },{"../index":93,"./_proto":107,"moment":37,"underscore":84}],107:[function(require,module,exports){
 /**
  *  @title joola
@@ -24943,36 +24438,51 @@ proto.makeChartTimelineSeries = function (message) {
   var yAxis = [null, null];
   var series = [];
   var seriesIndex = -1;
+  var interval = self.options.query.interval;
+  var checkExists = function (timestampDimension, documents, date) {
+    return _.find(documents, function (document) {
+      switch (interval) {
+        case 'month':
+        case 'day':
+          date.setHours(date.getHours() - (date.getTimezoneOffset() / 60));
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+        default:
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+      }
+    });
+  };
+  var fill = function (resultRow, row, timestampDimension) {
+    Object.keys(resultRow).forEach(function (key) {
+      if (key !== timestampDimension.key) {
+        row.values[key] = 0;
+        row.fvalues[key] = 0;
+      }
+    });
+  };
+
   message.forEach(function (result, resultIndex) {
     var dimensions = result.dimensions;
     var metrics = result.metrics;
-    var documents = result.documents;
-
+    var documents = ce.clone(result.documents);
     //should we fill the date range
-    console.log('dimensions', result.dimensions);
-    console.log('query', self.options.query);
-    var query = self.options.query;
-    var timestampDimension = _.filter(result.dimensions, function (item) {
+    var query = ce.clone(result.query);
+
+    var timestampDimension = _.find(result.dimensions, function (item) {
       return item.datatype === 'date';
     });
     if (timestampDimension) {
       //validate and fill the date range;
-      console.log('validating', result);
-      var interval = query.interval === 'ddate' ? 'day' : interval;
+      interval = interval === 'ddate' ? 'day' : interval;
       if (!query.timeframe) {
         query.timeframe = {};
         query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
         query.timeframe.end = result.documents[0].values.timestamp;
       }
 
-      var checkExists = function (timestampDimension, documents, date) {
-        return _.find(documents, function (document) {
-          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
-        });
-      };
-
+      var counter = 0;
+      var fixed = [];
       var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
-      while (itr.hasNext()) {
+      while (itr.hasNext() && counter++ < 1000) {
         var _d = new Date(itr.next()._d.getTime());
         var exists;
         if (['day', 'month', 'year'].indexOf(interval) > -1)
@@ -24980,13 +24490,21 @@ proto.makeChartTimelineSeries = function (message) {
         else
           exists = checkExists(timestampDimension, result.documents, _d);
 
-        if (exists) {
-          console.log('exists');
+        if (!exists) {
+          exists = {values: {}, fvalues: {}};
+          exists.values[timestampDimension.key] = _d.toISOString();
+          exists.fvalues[timestampDimension.key] = _d.toISOString();
+          fill(result.documents[0].values, exists, timestampDimension);
+          /*Object.keys(result.documents[0].values).forEach(function (key) {
+           if (key !== timestampDimension.key) {
+           exists.values[key] = 0;
+           exists.fvalues[key] = 0;
+           }
+           });*/
         }
-        else {
-          console.log('not exist');
-        }
+        fixed.push(exists);
       }
+      documents = fixed;
     }
 
     if (!metrics)

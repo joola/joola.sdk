@@ -1,3 +1,8 @@
+[jio-domain="joola"] {
+  margin: 0;
+  padding: 0;
+}
+
 [jio-domain="joola"] .btn-group, .btn-group-vertical {
   position: relative;
   display: inline-block;
@@ -567,8 +572,4 @@
   color: #333;
   text-align: center;
   margin-bottom: 20px;
-}
-[jio-domain="joola"] {
-  margin: 0;
-  padding: 0;
 }
