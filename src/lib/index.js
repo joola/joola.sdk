@@ -50,8 +50,12 @@ joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
 joola.events.setMaxListeners(1000);
-joola.on = joola.events.on;
-
+joola.on = function (event, cb) {
+  joola.events.on(event, cb);
+};
+joola.emit = function (event, message) {
+  joola.events.emit(event, message);
+};
 joola.api = require('./common/api');
 joola.state = {};
 joola.viz = require('./viz/index');
