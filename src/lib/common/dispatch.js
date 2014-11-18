@@ -27,7 +27,6 @@ dispatch.buildstub = function (callback) {
   var self = this;
 
   dispatch.fetchMeta(function (err, result) {
-
     joola.api.describe = {};
     Object.keys(result).forEach(function (endpoints) {
       dispatch[endpoints] = {};
@@ -52,6 +51,12 @@ dispatch.buildstub = function (callback) {
           callback = emptyfunc;
           if (typeof args[Object.keys(args).length - 1] === 'function') {
             callback = args[Object.keys(args).length - 1];
+          }
+          if (fn !== 'verifyAPIToken') {
+            if (!joola.connected)
+              return callback(new Error('Joola not connected.'));
+            if (!joola.USER)
+              return callback(new Error('Joola not connected, invalid user.'));
           }
           var argCounter = 0;
           var _args = {};
