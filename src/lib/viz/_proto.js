@@ -139,13 +139,35 @@ proto.makeChartTimelineSeries = function (message) {
   var yAxis = [null, null];
   var series = [];
   var seriesIndex = -1;
+  var interval = self.options.query.interval;
+  var checkExists = function (timestampDimension, documents, date) {
+    return _.find(documents, function (document) {
+      switch (interval) {
+        case 'month':
+        case 'day':
+          date.setHours(date.getHours() - (date.getTimezoneOffset() / 60));
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+        default:
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+      }
+    });
+  };
+  var fill = function (resultRow, row, timestampDimension) {
+    Object.keys(resultRow).forEach(function (key) {
+      if (key !== timestampDimension.key) {
+        row.values[key] = 0;
+        row.fvalues[key] = 0;
+      }
+    });
+  };
+
   message.forEach(function (result, resultIndex) {
     var dimensions = result.dimensions;
     var metrics = result.metrics;
     var documents = ce.clone(result.documents);
     //should we fill the date range
     var query = ce.clone(result.query);
-    var interval = self.options.query.interval;
+
     var timestampDimension = _.find(result.dimensions, function (item) {
       return item.datatype === 'date';
     });
@@ -157,18 +179,6 @@ proto.makeChartTimelineSeries = function (message) {
         query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
         query.timeframe.end = result.documents[0].values.timestamp;
       }
-      var checkExists = function (timestampDimension, documents, date) {
-        return _.find(documents, function (document) {
-          switch (interval) {
-            case 'month':
-            case 'day':
-              date.setHours(date.getHours() - (date.getTimezoneOffset() / 60));
-              return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
-            default:
-              return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
-          }
-        });
-      };
 
       var counter = 0;
       var fixed = [];
@@ -185,17 +195,19 @@ proto.makeChartTimelineSeries = function (message) {
           exists = {values: {}, fvalues: {}};
           exists.values[timestampDimension.key] = _d.toISOString();
           exists.fvalues[timestampDimension.key] = _d.toISOString();
-          Object.keys(result.documents[0].values).forEach(function (key) {
-            if (key !== timestampDimension.key) {
-              exists.values[key] = 0;
-              exists.fvalues[key] = 0;
-            }
-          });
+          fill(result.documents[0].values, exists, timestampDimension);
+          /*Object.keys(result.documents[0].values).forEach(function (key) {
+           if (key !== timestampDimension.key) {
+           exists.values[key] = 0;
+           exists.fvalues[key] = 0;
+           }
+           });*/
         }
         fixed.push(exists);
       }
+      documents = fixed;
     }
-    documents = fixed;
+
     if (!metrics)
       return series;
     metrics.forEach(function (metric, index) {
