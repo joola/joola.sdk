@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+},{}],2:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -1109,7 +1111,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":2,"ieee754":3}],2:[function(require,module,exports){
+},{"base64-js":3,"ieee754":4}],3:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -1231,7 +1233,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -1317,7 +1319,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -1354,7 +1356,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":1}],5:[function(require,module,exports){
+},{"buffer":2}],6:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -1453,7 +1455,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":6,"./rng":7,"./sha":8,"./sha256":9,"buffer":1}],6:[function(require,module,exports){
+},{"./md5":7,"./rng":8,"./sha":9,"./sha256":10,"buffer":2}],7:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -1618,7 +1620,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":4}],7:[function(require,module,exports){
+},{"./helpers":5}],8:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -1651,7 +1653,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -1754,7 +1756,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":4}],9:[function(require,module,exports){
+},{"./helpers":5}],10:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -1835,7 +1837,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":4}],10:[function(require,module,exports){
+},{"./helpers":5}],11:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2138,7 +2140,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -2277,7 +2279,7 @@ http.STATUS_CODES = {
     510 : 'Not Extended',               // RFC 2774
     511 : 'Network Authentication Required' // RFC 6585
 };
-},{"./lib/request":12,"events":10,"url":30}],12:[function(require,module,exports){
+},{"./lib/request":13,"events":11,"url":31}],13:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -2468,7 +2470,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":13,"Base64":14,"inherits":16,"stream":23}],13:[function(require,module,exports){
+},{"./response":14,"Base64":15,"inherits":17,"stream":24}],14:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -2590,7 +2592,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":23,"util":32}],14:[function(require,module,exports){
+},{"stream":24,"util":33}],15:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -2652,7 +2654,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -2667,7 +2669,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":11}],16:[function(require,module,exports){
+},{"http":12}],17:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2692,7 +2694,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2757,7 +2759,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -3268,7 +3270,7 @@ process.chdir = function (dir) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3354,7 +3356,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3441,13 +3443,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":19,"./encode":20}],22:[function(require,module,exports){
+},{"./decode":20,"./encode":21}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3521,7 +3523,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":26,"./writable.js":28,"inherits":16,"process/browser.js":24}],23:[function(require,module,exports){
+},{"./readable.js":27,"./writable.js":29,"inherits":17,"process/browser.js":25}],24:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3650,7 +3652,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":22,"./passthrough.js":25,"./readable.js":26,"./transform.js":27,"./writable.js":28,"events":10,"inherits":16}],24:[function(require,module,exports){
+},{"./duplex.js":23,"./passthrough.js":26,"./readable.js":27,"./transform.js":28,"./writable.js":29,"events":11,"inherits":17}],25:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3705,7 +3707,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3748,7 +3750,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":27,"inherits":16}],26:[function(require,module,exports){
+},{"./transform.js":28,"inherits":17}],27:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4685,7 +4687,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require("FWaASH"))
-},{"./index.js":23,"FWaASH":17,"buffer":1,"events":10,"inherits":16,"process/browser.js":24,"string_decoder":29}],27:[function(require,module,exports){
+},{"./index.js":24,"FWaASH":18,"buffer":2,"events":11,"inherits":17,"process/browser.js":25,"string_decoder":30}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4891,7 +4893,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":22,"inherits":16}],28:[function(require,module,exports){
+},{"./duplex.js":23,"inherits":17}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5279,7 +5281,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":23,"buffer":1,"inherits":16,"process/browser.js":24}],29:[function(require,module,exports){
+},{"./index.js":24,"buffer":2,"inherits":17,"process/browser.js":25}],30:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5472,7 +5474,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":1}],30:[function(require,module,exports){
+},{"buffer":2}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6181,14 +6183,14 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":18,"querystring":21}],31:[function(require,module,exports){
+},{"punycode":19,"querystring":22}],32:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6778,7 +6780,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require("FWaASH"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":31,"FWaASH":17,"inherits":16}],33:[function(require,module,exports){
+},{"./support/isBuffer":32,"FWaASH":18,"inherits":17}],34:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -7029,7 +7031,7 @@ function foreach(object, block, context)
       return value;
  }
  */
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (Buffer){
 /*!
  * Node.JS module "Deep Extend"
@@ -7123,7 +7125,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":1}],35:[function(require,module,exports){
+},{"buffer":2}],36:[function(require,module,exports){
 /*!
  * EventEmitter2
  * https://github.com/hij1nx/EventEmitter2
@@ -7698,7 +7700,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
   }
 }();
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -10100,11 +10102,11 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
     }
 }).call(this);
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":38}],38:[function(require,module,exports){
+},{"./lib/":39}],39:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10193,7 +10195,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":39,"./socket":41,"./url":42,"debug":45,"socket.io-parser":76}],39:[function(require,module,exports){
+},{"./manager":40,"./socket":42,"./url":43,"debug":46,"socket.io-parser":77}],40:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10208,6 +10210,7 @@ var on = require('./on');
 var bind = require('component-bind');
 var object = require('object-component');
 var debug = require('debug')('socket.io-client:manager');
+var indexOf = require('indexof');
 
 /**
  * Module exports
@@ -10242,7 +10245,7 @@ function Manager(uri, opts){
   this.timeout(null == opts.timeout ? 20000 : opts.timeout);
   this.readyState = 'closed';
   this.uri = uri;
-  this.connected = 0;
+  this.connected = [];
   this.attempts = 0;
   this.encoding = false;
   this.packetBuffer = [];
@@ -10375,6 +10378,7 @@ Manager.prototype.connect = function(fn){
   var socket = this.engine;
   var self = this;
   this.readyState = 'opening';
+  this.skipReconnect = false;
 
   // emit `open`
   var openSub = on(socket, 'open', function() {
@@ -10493,7 +10497,9 @@ Manager.prototype.socket = function(nsp){
     this.nsps[nsp] = socket;
     var self = this;
     socket.on('connect', function(){
-      self.connected++;
+      if (!~indexOf(self.connected, socket)) {
+        self.connected.push(socket);
+      }
     });
   }
   return socket;
@@ -10506,7 +10512,11 @@ Manager.prototype.socket = function(nsp){
  */
 
 Manager.prototype.destroy = function(socket){
-  --this.connected || this.close();
+  var index = indexOf(this.connected, socket);
+  if (~index) this.connected.splice(index, 1);
+  if (this.connected.length) return;
+
+  this.close();
 };
 
 /**
@@ -10574,7 +10584,8 @@ Manager.prototype.cleanup = function(){
 Manager.prototype.close =
 Manager.prototype.disconnect = function(){
   this.skipReconnect = true;
-  this.engine.close();
+  this.readyState = 'closed';
+  this.engine && this.engine.close();
 };
 
 /**
@@ -10600,7 +10611,7 @@ Manager.prototype.onclose = function(reason){
  */
 
 Manager.prototype.reconnect = function(){
-  if (this.reconnecting) return this;
+  if (this.reconnecting || this.skipReconnect) return this;
 
   var self = this;
   this.attempts++;
@@ -10616,9 +10627,15 @@ Manager.prototype.reconnect = function(){
 
     this.reconnecting = true;
     var timer = setTimeout(function(){
+      if (self.skipReconnect) return;
+
       debug('attempting reconnect');
       self.emitAll('reconnect_attempt', self.attempts);
       self.emitAll('reconnecting', self.attempts);
+
+      // check again for the case socket closed in above events
+      if (self.skipReconnect) return;
+
       self.open(function(err){
         if (err) {
           debug('reconnect attempt error');
@@ -10653,7 +10670,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":40,"./socket":41,"./url":42,"component-bind":43,"component-emitter":44,"debug":45,"engine.io-client":46,"object-component":73,"socket.io-parser":76}],40:[function(require,module,exports){
+},{"./on":41,"./socket":42,"./url":43,"component-bind":44,"component-emitter":45,"debug":46,"engine.io-client":47,"indexof":73,"object-component":74,"socket.io-parser":77}],41:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -10679,7 +10696,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -10692,7 +10709,6 @@ var on = require('./on');
 var bind = require('component-bind');
 var debug = require('debug')('socket.io-client:socket');
 var hasBin = require('has-binary');
-var indexOf = require('indexof');
 
 /**
  * Module exports.
@@ -10743,7 +10759,6 @@ function Socket(io, nsp){
   this.sendBuffer = [];
   this.connected = false;
   this.disconnected = true;
-  this.subEvents();
 }
 
 /**
@@ -10759,6 +10774,8 @@ Emitter(Socket.prototype);
  */
 
 Socket.prototype.subEvents = function() {
+  if (this.subs) return;
+
   var io = this.io;
   this.subs = [
     on(io, 'open', bind(this, 'onopen')),
@@ -10768,15 +10785,16 @@ Socket.prototype.subEvents = function() {
 };
 
 /**
- * Called upon engine `open`.
+ * "Opens" the socket.
  *
- * @api private
+ * @api public
  */
 
 Socket.prototype.open =
 Socket.prototype.connect = function(){
   if (this.connected) return this;
 
+  this.subEvents();
   this.io.open(); // ensure open
   if ('open' == this.io.readyState) this.onopen();
   return this;
@@ -10845,7 +10863,7 @@ Socket.prototype.packet = function(packet){
 };
 
 /**
- * "Opens" the socket.
+ * Called upon engine `open`.
  *
  * @api private
  */
@@ -11029,9 +11047,12 @@ Socket.prototype.ondisconnect = function(){
  */
 
 Socket.prototype.destroy = function(){
-  // clean subscriptions to avoid reconnections
-  for (var i = 0; i < this.subs.length; i++) {
-    this.subs[i].destroy();
+  if (this.subs) {
+    // clean subscriptions to avoid reconnections
+    for (var i = 0; i < this.subs.length; i++) {
+      this.subs[i].destroy();
+    }
+    this.subs = null;
   }
 
   this.io.destroy(this);
@@ -11046,20 +11067,22 @@ Socket.prototype.destroy = function(){
 
 Socket.prototype.close =
 Socket.prototype.disconnect = function(){
-  if (!this.connected) return this;
-
-  debug('performing disconnect (%s)', this.nsp);
-  this.packet({ type: parser.DISCONNECT });
+  if (this.connected) {
+    debug('performing disconnect (%s)', this.nsp);
+    this.packet({ type: parser.DISCONNECT });
+  }
 
   // remove socket from pool
   this.destroy();
 
-  // fire events
-  this.onclose('io client disconnect');
+  if (this.connected) {
+    // fire events
+    this.onclose('io client disconnect');
+  }
   return this;
 };
 
-},{"./on":40,"component-bind":43,"component-emitter":44,"debug":45,"has-binary":70,"indexof":72,"socket.io-parser":76,"to-array":80}],42:[function(require,module,exports){
+},{"./on":41,"component-bind":44,"component-emitter":45,"debug":46,"has-binary":71,"socket.io-parser":77,"to-array":81}],43:[function(require,module,exports){
 (function (global){
 
 /**
@@ -11094,7 +11117,9 @@ function url(uri, loc){
   // relative path support
   if ('string' == typeof uri) {
     if ('/' == uri.charAt(0)) {
-      if ('undefined' != typeof loc) {
+      if ('/' == uri.charAt(1)) {
+        uri = loc.protocol + uri;
+      } else {
         uri = loc.hostname + uri;
       }
     }
@@ -11134,7 +11159,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":45,"parseuri":74}],43:[function(require,module,exports){
+},{"debug":46,"parseuri":75}],44:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -11159,7 +11184,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -11325,7 +11350,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -11464,11 +11489,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":47}],47:[function(require,module,exports){
+},{"./lib/":48}],48:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -11480,7 +11505,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":48,"engine.io-parser":57}],48:[function(require,module,exports){
+},{"./socket":49,"engine.io-parser":58}],49:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -11747,14 +11772,13 @@ Socket.prototype.probe = function (name) {
         debug('probe transport "%s" pong', name);
         self.upgrading = true;
         self.emit('upgrading', transport);
+        if (!transport) return;
         Socket.priorWebsocketSuccess = 'websocket' == transport.name;
 
         debug('pausing current transport "%s"', self.transport.name);
         self.transport.pause(function () {
           if (failed) return;
-          if ('closed' == self.readyState || 'closing' == self.readyState) {
-            return;
-          }
+          if ('closed' == self.readyState) return;
           debug('changing transport and sending upgrade packet');
 
           cleanup();
@@ -12036,6 +12060,10 @@ Socket.prototype.send = function (msg, fn) {
  */
 
 Socket.prototype.sendPacket = function (type, data, fn) {
+  if ('closing' == this.readyState || 'closed' == this.readyState) {
+    return;
+  }
+
   var packet = { type: type, data: data };
   this.emit('packetCreate', packet);
   this.writeBuffer.push(packet);
@@ -12051,9 +12079,41 @@ Socket.prototype.sendPacket = function (type, data, fn) {
 
 Socket.prototype.close = function () {
   if ('opening' == this.readyState || 'open' == this.readyState) {
-    this.onClose('forced close');
-    debug('socket closing - telling transport to close');
-    this.transport.close();
+    this.readyState = 'closing';
+
+    var self = this;
+
+    function close() {
+      self.onClose('forced close');
+      debug('socket closing - telling transport to close');
+      self.transport.close();
+    }
+
+    function cleanupAndClose() {
+      self.removeListener('upgrade', cleanupAndClose);
+      self.removeListener('upgradeError', cleanupAndClose);
+      close();
+    }
+
+    function waitForUpgrade() {
+      // wait for upgrade to finish since we can't send packets while pausing a transport
+      self.once('upgrade', cleanupAndClose);
+      self.once('upgradeError', cleanupAndClose);
+    }
+
+    if (this.writeBuffer.length) {
+      this.once('drain', function() {
+        if (this.upgrading) {
+          waitForUpgrade();
+        } else {
+          close();
+        }
+      });
+    } else if (this.upgrading) {
+      waitForUpgrade();
+    } else {
+      close();
+    }
   }
 
   return this;
@@ -12079,7 +12139,7 @@ Socket.prototype.onError = function (err) {
  */
 
 Socket.prototype.onClose = function (reason, desc) {
-  if ('opening' == this.readyState || 'open' == this.readyState) {
+  if ('opening' == this.readyState || 'open' == this.readyState || 'closing' == this.readyState) {
     debug('socket close with reason: "%s"', reason);
     var self = this;
 
@@ -12132,7 +12192,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":49,"./transports":50,"component-emitter":44,"debug":45,"engine.io-parser":57,"indexof":72,"parsejson":66,"parseqs":67,"parseuri":68}],49:[function(require,module,exports){
+},{"./transport":50,"./transports":51,"component-emitter":45,"debug":46,"engine.io-parser":58,"indexof":73,"parsejson":67,"parseqs":68,"parseuri":69}],50:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -12284,7 +12344,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":44,"engine.io-parser":57}],50:[function(require,module,exports){
+},{"component-emitter":45,"engine.io-parser":58}],51:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -12341,7 +12401,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":51,"./polling-xhr":52,"./websocket":54,"xmlhttprequest":55}],51:[function(require,module,exports){
+},{"./polling-jsonp":52,"./polling-xhr":53,"./websocket":55,"xmlhttprequest":56}],52:[function(require,module,exports){
 (function (global){
 
 /**
@@ -12449,6 +12509,7 @@ JSONPPolling.prototype.doClose = function () {
   if (this.form) {
     this.form.parentNode.removeChild(this.form);
     this.form = null;
+    this.iframe = null;
   }
 
   Polling.prototype.doClose.call(this);
@@ -12577,7 +12638,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":53,"component-inherit":56}],52:[function(require,module,exports){
+},{"./polling":54,"component-inherit":57}],53:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -12868,7 +12929,7 @@ Request.prototype.onLoad = function(){
   try {
     var contentType;
     try {
-      contentType = this.xhr.getResponseHeader('Content-Type');
+      contentType = this.xhr.getResponseHeader('Content-Type').split(';')[0];
     } catch (e) {}
     if (contentType === 'application/octet-stream') {
       data = this.xhr.response;
@@ -12932,7 +12993,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":53,"component-emitter":44,"component-inherit":56,"debug":45,"xmlhttprequest":55}],53:[function(require,module,exports){
+},{"./polling":54,"component-emitter":45,"component-inherit":57,"debug":46,"xmlhttprequest":56}],54:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -12955,7 +13016,7 @@ module.exports = Polling;
 
 var hasXHR2 = (function() {
   var XMLHttpRequest = require('xmlhttprequest');
-  var xhr = new XMLHttpRequest({ agent: this.agent, xdomain: false });
+  var xhr = new XMLHttpRequest({ xdomain: false });
   return null != xhr.responseType;
 })();
 
@@ -13179,7 +13240,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":49,"component-inherit":56,"debug":45,"engine.io-parser":57,"parseqs":67,"xmlhttprequest":55}],54:[function(require,module,exports){
+},{"../transport":50,"component-inherit":57,"debug":46,"engine.io-parser":58,"parseqs":68,"xmlhttprequest":56}],55:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -13410,7 +13471,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":49,"component-inherit":56,"debug":45,"engine.io-parser":57,"parseqs":67,"ws":69}],55:[function(require,module,exports){
+},{"../transport":50,"component-inherit":57,"debug":46,"engine.io-parser":58,"parseqs":68,"ws":70}],56:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -13425,19 +13486,19 @@ module.exports = function(opts) {
   // https://github.com/Automattic/engine.io-client/pull/217
   var enablesXDR = opts.enablesXDR;
 
+  // XMLHttpRequest can be disabled on IE
+  try {
+    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
+      return new XMLHttpRequest();
+    }
+  } catch (e) { }
+
   // Use XDomainRequest for IE8 if enablesXDR is true
   // because loading bar keeps flashing when using jsonp-polling
   // https://github.com/yujiosaka/socke.io-ie8-loading-example
   try {
     if ('undefined' != typeof XDomainRequest && !xscheme && enablesXDR) {
       return new XDomainRequest();
-    }
-  } catch (e) { }
-
-  // XMLHttpRequest can be disabled on IE
-  try {
-    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
-      return new XMLHttpRequest();
     }
   } catch (e) { }
 
@@ -13448,7 +13509,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":64}],56:[function(require,module,exports){
+},{"has-cors":65}],57:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -13456,7 +13517,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -14026,7 +14087,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":58,"after":59,"arraybuffer.slice":60,"base64-arraybuffer":61,"blob":62,"utf8":63}],58:[function(require,module,exports){
+},{"./keys":59,"after":60,"arraybuffer.slice":61,"base64-arraybuffer":62,"blob":63,"utf8":64}],59:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -14047,7 +14108,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -14077,7 +14138,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -14108,7 +14169,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -14169,7 +14230,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -14222,7 +14283,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -14465,7 +14526,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14490,7 +14551,7 @@ try {
   module.exports = false;
 }
 
-},{"global":65}],65:[function(require,module,exports){
+},{"global":66}],66:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -14500,7 +14561,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -14535,7 +14596,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -14574,7 +14635,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -14615,7 +14676,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -14660,7 +14721,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 (function (global){
 
 /*
@@ -14722,12 +14783,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":71}],71:[function(require,module,exports){
+},{"isarray":72}],72:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -14738,7 +14799,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -14823,7 +14884,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -14850,7 +14911,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -14995,7 +15056,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":77,"isarray":78}],76:[function(require,module,exports){
+},{"./is-buffer":78,"isarray":79}],77:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -15393,7 +15454,7 @@ function error(data){
   };
 }
 
-},{"./binary":75,"./is-buffer":77,"component-emitter":44,"debug":45,"isarray":78,"json3":79}],77:[function(require,module,exports){
+},{"./binary":76,"./is-buffer":78,"component-emitter":45,"debug":46,"isarray":79,"json3":80}],78:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -15410,9 +15471,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],78:[function(require,module,exports){
-module.exports=require(71)
 },{}],79:[function(require,module,exports){
+module.exports=require(72)
+},{}],80:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -16275,7 +16336,7 @@ module.exports=require(71)
   }
 }(this));
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -16290,7 +16351,784 @@ function toArray(list, index) {
     return array
 }
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
+// Generated by CoffeeScript 1.7.1
+(function() {
+  var lang;
+
+  lang = function(moment, Twix) {
+    var before;
+    before = moment.lang();
+    Twix.registerLang("fr", {
+      twentyFourHour: true,
+      allDayMonth: {
+        fn: function(options) {
+          return function(date) {
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
+          };
+        },
+        slot: 3
+      },
+      month: {
+        slot: 3
+      },
+      date: {
+        slot: 2
+      }
+    });
+    Twix.registerLang("fr-ca", {
+      twentyFourHour: true,
+      allDayMonth: {
+        fn: function(options) {
+          return function(date) {
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
+          };
+        },
+        slot: 3
+      },
+      month: {
+        slot: 3
+      },
+      date: {
+        slot: 2
+      }
+    });
+    return moment.lang(before);
+  };
+
+  if ((typeof module !== "undefined" && module !== null) && (module.exports != null)) {
+    module.exports = lang;
+  }
+
+  if (typeof define === "function" && define.amd) {
+    define(["moment", "twix"], function(moment, Twix) {
+      return lang(moment, Twix);
+    });
+  }
+
+  if (this.Twix && this.moment) {
+    lang(this.moment, this.Twix);
+  }
+
+}).call(this);
+
+},{}],83:[function(require,module,exports){
+// Generated by CoffeeScript 1.7.1
+(function() {
+  var deprecate, hasModule, makeTwix,
+    __slice = [].slice;
+
+  hasModule = (typeof module !== "undefined" && module !== null) && (module.exports != null);
+
+  deprecate = function(name, instead, fn) {
+    var alreadyDone;
+    alreadyDone = false;
+    return function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (!alreadyDone) {
+        if ((typeof console !== "undefined" && console !== null) && (console.warn != null)) {
+          console.warn("#" + name + " is deprecated. Use #" + instead + " instead.");
+        }
+      }
+      alreadyDone = true;
+      return fn.apply(this, args);
+    };
+  };
+
+  makeTwix = function(moment) {
+    var Twix, getPrototypeOf, languagesLoaded;
+    if (moment == null) {
+      throw "Can't find moment";
+    }
+    languagesLoaded = false;
+    Twix = (function() {
+      function Twix(start, end, parseFormat, options) {
+        var _ref;
+        if (options == null) {
+          options = {};
+        }
+        if (typeof parseFormat !== "string") {
+          options = parseFormat != null ? parseFormat : {};
+          parseFormat = null;
+        }
+        if (typeof options === "boolean") {
+          options = {
+            allDay: options
+          };
+        }
+        this.start = moment(start, parseFormat, options.parseStrict);
+        this.end = moment(end, parseFormat, options.parseStrict);
+        this.allDay = (_ref = options.allDay) != null ? _ref : false;
+      }
+
+      Twix._extend = function() {
+        var attr, first, other, others, _i, _len;
+        first = arguments[0], others = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        for (_i = 0, _len = others.length; _i < _len; _i++) {
+          other = others[_i];
+          for (attr in other) {
+            if (typeof other[attr] !== "undefined") {
+              first[attr] = other[attr];
+            }
+          }
+        }
+        return first;
+      };
+
+      Twix.defaults = {
+        twentyFourHour: false,
+        allDaySimple: {
+          fn: function(options) {
+            return function() {
+              return options.allDay;
+            };
+          },
+          slot: 0,
+          pre: " "
+        },
+        dayOfWeek: {
+          fn: function(options) {
+            return function(date) {
+              return date.format(options.weekdayFormat);
+            };
+          },
+          slot: 1,
+          pre: " "
+        },
+        allDayMonth: {
+          fn: function(options) {
+            return function(date) {
+              return date.format("" + options.monthFormat + " " + options.dayFormat);
+            };
+          },
+          slot: 2,
+          pre: " "
+        },
+        month: {
+          fn: function(options) {
+            return function(date) {
+              return date.format(options.monthFormat);
+            };
+          },
+          slot: 2,
+          pre: " "
+        },
+        date: {
+          fn: function(options) {
+            return function(date) {
+              return date.format(options.dayFormat);
+            };
+          },
+          slot: 3,
+          pre: " "
+        },
+        year: {
+          fn: function(options) {
+            return function(date) {
+              return date.format(options.yearFormat);
+            };
+          },
+          slot: 4,
+          pre: ", "
+        },
+        time: {
+          fn: function(options) {
+            return function(date) {
+              var str;
+              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format("" + options.hourFormat + ":" + options.minuteFormat);
+              if (!options.groupMeridiems && !options.twentyFourHour) {
+                if (options.spaceBeforeMeridiem) {
+                  str += " ";
+                }
+                str += date.format(options.meridiemFormat);
+              }
+              return str;
+            };
+          },
+          slot: 5,
+          pre: ", "
+        },
+        meridiem: {
+          fn: function(options) {
+            return (function(_this) {
+              return function(t) {
+                return t.format(options.meridiemFormat);
+              };
+            })(this);
+          },
+          slot: 6,
+          pre: function(options) {
+            if (options.spaceBeforeMeridiem) {
+              return " ";
+            } else {
+              return "";
+            }
+          }
+        }
+      };
+
+      Twix.registerLang = function(name, options) {
+        return moment.lang(name, {
+          twix: Twix._extend({}, Twix.defaults, options)
+        });
+      };
+
+      Twix.prototype.isSame = function(period) {
+        return this.start.isSame(this.end, period);
+      };
+
+      Twix.prototype.length = function(period) {
+        return this._trueEnd(true).diff(this._trueStart(), period);
+      };
+
+      Twix.prototype.count = function(period) {
+        var end, start;
+        start = this.start.clone().startOf(period);
+        end = this.end.clone().startOf(period);
+        return end.diff(start, period) + 1;
+      };
+
+      Twix.prototype.countInner = function(period) {
+        var end, start, _ref;
+        _ref = this._inner(period), start = _ref[0], end = _ref[1];
+        if (start >= end) {
+          return 0;
+        }
+        return end.diff(start, period);
+      };
+
+      Twix.prototype.iterate = function(intervalAmount, period, minHours) {
+        var end, hasNext, start, _ref;
+        if (intervalAmount == null) {
+          intervalAmount = 1;
+        }
+        _ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = _ref[0], period = _ref[1], minHours = _ref[2];
+        start = this.start.clone().startOf(period);
+        end = this.end.clone().startOf(period);
+        hasNext = (function(_this) {
+          return function() {
+            return start <= end && (!minHours || start.valueOf() !== end.valueOf() || _this.end.hours() > minHours || _this.allDay);
+          };
+        })(this);
+        return this._iterateHelper(period, start, hasNext, intervalAmount);
+      };
+
+      Twix.prototype.iterateInner = function(intervalAmount, period) {
+        var end, hasNext, start, _ref, _ref1;
+        if (intervalAmount == null) {
+          intervalAmount = 1;
+        }
+        _ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = _ref[0], period = _ref[1];
+        _ref1 = this._inner(period, intervalAmount), start = _ref1[0], end = _ref1[1];
+        hasNext = function() {
+          return start < end;
+        };
+        return this._iterateHelper(period, start, hasNext, intervalAmount);
+      };
+
+      Twix.prototype.humanizeLength = function() {
+        if (this.allDay) {
+          if (this.isSame("day")) {
+            return "all day";
+          } else {
+            return this.start.from(this.end.clone().add(1, "day"), true);
+          }
+        } else {
+          return this.start.from(this.end, true);
+        }
+      };
+
+      Twix.prototype.asDuration = function(units) {
+        var diff;
+        diff = this.end.diff(this.start);
+        return moment.duration(diff);
+      };
+
+      Twix.prototype.isPast = function() {
+        if (this.allDay) {
+          return this.end.clone().endOf("day") < moment();
+        } else {
+          return this.end < moment();
+        }
+      };
+
+      Twix.prototype.isFuture = function() {
+        if (this.allDay) {
+          return this.start.clone().startOf("day") > moment();
+        } else {
+          return this.start > moment();
+        }
+      };
+
+      Twix.prototype.isCurrent = function() {
+        return !this.isPast() && !this.isFuture();
+      };
+
+      Twix.prototype.contains = function(mom) {
+        mom = moment(mom);
+        return this._trueStart() <= mom && this._trueEnd() >= mom;
+      };
+
+      Twix.prototype.isEmpty = function() {
+        return this._trueStart().valueOf() === this._trueEnd().valueOf();
+      };
+
+      Twix.prototype.overlaps = function(other) {
+        return this._trueEnd().isAfter(other._trueStart()) && this._trueStart().isBefore(other._trueEnd());
+      };
+
+      Twix.prototype.engulfs = function(other) {
+        return this._trueStart() <= other._trueStart() && this._trueEnd() >= other._trueEnd();
+      };
+
+      Twix.prototype.union = function(other) {
+        var allDay, newEnd, newStart;
+        allDay = this.allDay && other.allDay;
+        if (allDay) {
+          newStart = this.start < other.start ? this.start : other.start;
+          newEnd = this.end > other.end ? this.end : other.end;
+        } else {
+          newStart = this._trueStart() < other._trueStart() ? this._trueStart() : other._trueStart();
+          newEnd = this._trueEnd() > other._trueEnd() ? this._trueEnd() : other._trueEnd();
+        }
+        return new Twix(newStart, newEnd, allDay);
+      };
+
+      Twix.prototype.intersection = function(other) {
+        var allDay, end, newEnd, newStart;
+        newStart = this.start > other.start ? this.start : other.start;
+        if (this.allDay) {
+          end = moment(this.end);
+          end.add(1, "day");
+          end.subtract(1, "millisecond");
+          if (other.allDay) {
+            newEnd = end < other.end ? this.end : other.end;
+          } else {
+            newEnd = end < other.end ? end : other.end;
+          }
+        } else {
+          newEnd = this.end < other.end ? this.end : other.end;
+        }
+        allDay = this.allDay && other.allDay;
+        return new Twix(newStart, newEnd, allDay);
+      };
+
+      Twix.prototype.isValid = function() {
+        return this._trueStart() <= this._trueEnd();
+      };
+
+      Twix.prototype.equals = function(other) {
+        return (other instanceof Twix) && this.allDay === other.allDay && this.start.valueOf() === other.start.valueOf() && this.end.valueOf() === other.end.valueOf();
+      };
+
+      Twix.prototype.toString = function() {
+        var _ref;
+        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((_ref = this.allDay) != null ? _ref : {
+          "true": "false"
+        }) + "}";
+      };
+
+      Twix.prototype.simpleFormat = function(momentOpts, inopts) {
+        var options, s;
+        options = {
+          allDay: "(all day)",
+          template: Twix.formatTemplate
+        };
+        Twix._extend(options, inopts || {});
+        s = options.template(this.start.format(momentOpts), this.end.format(momentOpts));
+        if (this.allDay && options.allDay) {
+          s += " " + options.allDay;
+        }
+        return s;
+      };
+
+      Twix.prototype.format = function(inopts) {
+        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, needDate, options, process, start_bucket, together, _i, _len;
+        this._lazyLang();
+        if (this.isEmpty()) {
+          return "";
+        }
+        options = {
+          groupMeridiems: true,
+          spaceBeforeMeridiem: true,
+          showDate: true,
+          showDayOfWeek: false,
+          twentyFourHour: this.langData.twentyFourHour,
+          implicitMinutes: true,
+          implicitYear: true,
+          yearFormat: "YYYY",
+          monthFormat: "MMM",
+          weekdayFormat: "ddd",
+          dayFormat: "D",
+          meridiemFormat: "A",
+          hourFormat: "h",
+          minuteFormat: "mm",
+          allDay: "all day",
+          explicitAllDay: false,
+          lastNightEndsAt: 0,
+          template: Twix.formatTemplate
+        };
+        Twix._extend(options, inopts || {});
+        fs = [];
+        if (options.twentyFourHour) {
+          options.hourFormat = options.hourFormat.replace("h", "H");
+        }
+        goesIntoTheMorning = options.lastNightEndsAt > 0 && !this.allDay && this.end.clone().startOf("day").valueOf() === this.start.clone().add(1, "day").startOf("day").valueOf() && this.start.hours() > 12 && this.end.hours() < options.lastNightEndsAt;
+        needDate = options.showDate || (!this.isSame("day") && !goesIntoTheMorning);
+        if (this.allDay && this.isSame("day") && (!options.showDate || options.explicitAllDay)) {
+          fs.push({
+            name: "all day simple",
+            fn: this._formatFn('allDaySimple', options),
+            pre: this._formatPre('allDaySimple', options),
+            slot: this._formatSlot('allDaySimple')
+          });
+        }
+        if (needDate && (!options.implicitYear || this.start.year() !== moment().year() || !this.isSame("year"))) {
+          fs.push({
+            name: "year",
+            fn: this._formatFn('year', options),
+            pre: this._formatPre('year', options),
+            slot: this._formatSlot('year')
+          });
+        }
+        if (!this.allDay && needDate) {
+          fs.push({
+            name: "all day month",
+            fn: this._formatFn('allDayMonth', options),
+            ignoreEnd: function() {
+              return goesIntoTheMorning;
+            },
+            pre: this._formatPre('allDayMonth', options),
+            slot: this._formatSlot('allDayMonth')
+          });
+        }
+        if (this.allDay && needDate) {
+          fs.push({
+            name: "month",
+            fn: this._formatFn('month', options),
+            pre: this._formatPre('month', options),
+            slot: this._formatSlot('month')
+          });
+        }
+        if (this.allDay && needDate) {
+          fs.push({
+            name: "date",
+            fn: this._formatFn('date', options),
+            pre: this._formatPre('date', options),
+            slot: this._formatSlot('date')
+          });
+        }
+        if (needDate && options.showDayOfWeek) {
+          fs.push({
+            name: "day of week",
+            fn: this._formatFn('dayOfWeek', options),
+            pre: this._formatPre('dayOfWeek', options),
+            slot: this._formatSlot('dayOfWeek')
+          });
+        }
+        if (options.groupMeridiems && !options.twentyFourHour && !this.allDay) {
+          fs.push({
+            name: "meridiem",
+            fn: this._formatFn('meridiem', options),
+            pre: this._formatPre('meridiem', options),
+            slot: this._formatSlot('meridiem')
+          });
+        }
+        if (!this.allDay) {
+          fs.push({
+            name: "time",
+            fn: this._formatFn('time', options),
+            pre: this._formatPre('time', options),
+            slot: this._formatSlot('time')
+          });
+        }
+        start_bucket = [];
+        end_bucket = [];
+        common_bucket = [];
+        together = true;
+        process = (function(_this) {
+          return function(format) {
+            var end_str, start_group, start_str;
+            start_str = format.fn(_this.start);
+            end_str = format.ignoreEnd && format.ignoreEnd() ? start_str : format.fn(_this.end);
+            start_group = {
+              format: format,
+              value: function() {
+                return start_str;
+              }
+            };
+            if (end_str === start_str && together) {
+              return common_bucket.push(start_group);
+            } else {
+              if (together) {
+                together = false;
+                common_bucket.push({
+                  format: {
+                    slot: format.slot,
+                    pre: ""
+                  },
+                  value: function() {
+                    return options.template(fold(start_bucket), fold(end_bucket, true).trim());
+                  }
+                });
+              }
+              start_bucket.push(start_group);
+              return end_bucket.push({
+                format: format,
+                value: function() {
+                  return end_str;
+                }
+              });
+            }
+          };
+        })(this);
+        for (_i = 0, _len = fs.length; _i < _len; _i++) {
+          format = fs[_i];
+          process(format);
+        }
+        global_first = true;
+        fold = (function(_this) {
+          return function(array, skip_pre) {
+            var local_first, section, str, _j, _len1, _ref;
+            local_first = true;
+            str = "";
+            _ref = array.sort(function(a, b) {
+              return a.format.slot - b.format.slot;
+            });
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              section = _ref[_j];
+              if (!global_first) {
+                if (local_first && skip_pre) {
+                  str += " ";
+                } else {
+                  str += section.format.pre;
+                }
+              }
+              str += section.value();
+              global_first = false;
+              local_first = false;
+            }
+            return str;
+          };
+        })(this);
+        return fold(common_bucket);
+      };
+
+      Twix.prototype._trueStart = function() {
+        if (this.allDay) {
+          return this.start.clone().startOf("day");
+        } else {
+          return this.start.clone();
+        }
+      };
+
+      Twix.prototype._trueEnd = function(diffableEnd) {
+        if (diffableEnd == null) {
+          diffableEnd = false;
+        }
+        if (this.allDay) {
+          if (diffableEnd) {
+            return this.end.clone().add(1, "day");
+          } else {
+            return this.end.clone().endOf("day");
+          }
+        } else {
+          return this.end.clone();
+        }
+      };
+
+      Twix.prototype._iterateHelper = function(period, iter, hasNext, intervalAmount) {
+        if (intervalAmount == null) {
+          intervalAmount = 1;
+        }
+        return {
+          next: (function(_this) {
+            return function() {
+              var val;
+              if (!hasNext()) {
+                return null;
+              } else {
+                val = iter.clone();
+                iter.add(intervalAmount, period);
+                return val;
+              }
+            };
+          })(this),
+          hasNext: hasNext
+        };
+      };
+
+      Twix.prototype._prepIterateInputs = function() {
+        var inputs, intervalAmount, minHours, period, _ref, _ref1;
+        inputs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        if (typeof inputs[0] === 'number') {
+          return inputs;
+        }
+        if (typeof inputs[0] === 'string') {
+          period = inputs.shift();
+          intervalAmount = (_ref = inputs.pop()) != null ? _ref : 1;
+          if (inputs.length) {
+            minHours = (_ref1 = inputs[0]) != null ? _ref1 : false;
+          }
+        }
+        if (moment.isDuration(inputs[0])) {
+          period = 'milliseconds';
+          intervalAmount = inputs[0].as(period);
+        }
+        return [intervalAmount, period, minHours];
+      };
+
+      Twix.prototype._inner = function(period, intervalAmount) {
+        var durationCount, durationPeriod, end, modulus, start;
+        if (period == null) {
+          period = "milliseconds";
+        }
+        if (intervalAmount == null) {
+          intervalAmount = 1;
+        }
+        start = this._trueStart();
+        end = this._trueEnd(true);
+        if (start > start.clone().startOf(period)) {
+          start.startOf(period).add(intervalAmount, period);
+        }
+        if (end < end.clone().endOf(period)) {
+          end.startOf(period);
+        }
+        durationPeriod = start.twix(end).asDuration(period);
+        durationCount = durationPeriod.get(period);
+        modulus = durationCount % intervalAmount;
+        end.subtract(modulus, period);
+        return [start, end];
+      };
+
+      Twix.prototype._lazyLang = function() {
+        var e, langData, languages, _ref;
+        langData = this.start.lang();
+        if ((langData != null) && this.end.lang()._abbr !== langData._abbr) {
+          this.end.lang(langData._abbr);
+        }
+        if ((this.langData != null) && this.langData._abbr === langData._abbr) {
+          return;
+        }
+        if (hasModule && !(languagesLoaded || langData._abbr === "en")) {
+          try {
+            languages = require("./lang");
+            languages(moment, Twix);
+          } catch (_error) {
+            e = _error;
+          }
+          languagesLoaded = true;
+        }
+        return this.langData = (_ref = langData != null ? langData._twix : void 0) != null ? _ref : Twix.defaults;
+      };
+
+      Twix.prototype._formatFn = function(name, options) {
+        return this.langData[name].fn(options);
+      };
+
+      Twix.prototype._formatSlot = function(name) {
+        return this.langData[name].slot;
+      };
+
+      Twix.prototype._formatPre = function(name, options) {
+        if (typeof this.langData[name].pre === "function") {
+          return this.langData[name].pre(options);
+        } else {
+          return this.langData[name].pre;
+        }
+      };
+
+      Twix.prototype.sameDay = deprecate("sameDay", "isSame('day')", function() {
+        return this.isSame("day");
+      });
+
+      Twix.prototype.sameYear = deprecate("sameYear", "isSame('year')", function() {
+        return this.isSame("year");
+      });
+
+      Twix.prototype.countDays = deprecate("countDays", "countOuter('days')", function() {
+        return this.countOuter("days");
+      });
+
+      Twix.prototype.daysIn = deprecate("daysIn", "iterate('days' [,minHours])", function(minHours) {
+        return this.iterate('days', minHours);
+      });
+
+      Twix.prototype.past = deprecate("past", "isPast()", function() {
+        return this.isPast();
+      });
+
+      Twix.prototype.duration = deprecate("duration", "humanizeLength()", function() {
+        return this.humanizeLength();
+      });
+
+      Twix.prototype.merge = deprecate("merge", "union(other)", function(other) {
+        return this.union(other);
+      });
+
+      return Twix;
+
+    })();
+    getPrototypeOf = function(o) {
+      if (typeof Object.getPrototypeOf === "function") {
+        return Object.getPrototypeOf(o);
+      } else if ("".__proto__ === String.prototype) {
+        return o.__proto__;
+      } else {
+        return o.constructor.prototype;
+      }
+    };
+    Twix._extend(moment._locale || getPrototypeOf(moment.fn._lang), {
+      _twix: Twix.defaults
+    });
+    Twix.formatTemplate = function(leftSide, rightSide) {
+      return "" + leftSide + " - " + rightSide;
+    };
+    moment.twix = function() {
+      return (function(func, args, ctor) {
+        ctor.prototype = func.prototype;
+        var child = new ctor, result = func.apply(child, args);
+        return Object(result) === result ? result : child;
+      })(Twix, arguments, function(){});
+    };
+    moment.fn.twix = function() {
+      return (function(func, args, ctor) {
+        ctor.prototype = func.prototype;
+        var child = new ctor, result = func.apply(child, args);
+        return Object(result) === result ? result : child;
+      })(Twix, [this].concat(__slice.call(arguments)), function(){});
+    };
+    moment.fn.forDuration = function(duration, allDay) {
+      return new Twix(this, this.clone().add(duration), allDay);
+    };
+    moment.duration.fn.afterMoment = function(startingTime, allDay) {
+      return new Twix(startingTime, moment(startingTime).clone().add(this), allDay);
+    };
+    moment.duration.fn.beforeMoment = function(startingTime, allDay) {
+      return new Twix(moment(startingTime).clone().subtract(this), startingTime, allDay);
+    };
+    moment.twixClass = Twix;
+    return Twix;
+  };
+
+  if (hasModule) {
+    module.exports = makeTwix(require("moment"));
+  }
+
+  if (typeof define === "function") {
+    define("twix", ["moment"], function(moment) {
+      return makeTwix(moment);
+    });
+  }
+
+  if (this.moment != null) {
+    this.Twix = makeTwix(this.moment);
+  }
+
+}).call(this);
+
+},{"./lang":82,"moment":37}],84:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -17568,11 +18406,11 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.21",
+  "version": "0.7.22",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -17606,29 +18444,31 @@ module.exports={
     "eventemitter2": "~0.4.13",
     "moment": "~2.5.1",
     "socket.io-client": "^1.0.2",
+    "twix": "^0.5.1",
     "underscore": "~1.5.2"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-css": "~0.5.4",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-browserify": "~2.0.8",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-uglify": "~0.4.0",
-    "grunt-contrib-connect": "~0.7.1",
-    "grunt-saucelabs": "~5.1.3",
-    "grunt-mocha": "~0.4.10",
-    "mocha": "~1.19.0",
     "chai": "~1.9.1",
-    "sinon": "~1.10.0",
+    "grunt-browserify": "~2.0.8",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-css": "~0.5.4",
+    "grunt-http": "^1.4.2",
+    "grunt-mocha": "~0.4.10",
+    "grunt-saucelabs": "~5.1.3",
     "grunt-watchify": "~0.1.0",
-    "mocha-phantom-coverage-reporter": "~0.1.0"
+    "mocha": "~1.19.0",
+    "mocha-phantom-coverage-reporter": "~0.1.0",
+    "sinon": "~1.10.0"
   },
   "license": "GPL-3.0"
 }
 
-},{}],83:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /**
  *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
@@ -17934,7 +18774,7 @@ joola.events.on('rpc:done', function () {
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
 });
-},{"../index":90,"http":11,"https":15,"querystring":21,"url":30}],84:[function(require,module,exports){
+},{"../index":93,"http":12,"https":16,"querystring":22,"url":31}],87:[function(require,module,exports){
 /**
  *  joola
  *
@@ -17953,119 +18793,106 @@ var
 var dispatch = exports;
 dispatch._id = 'dispatch';
 
+dispatch.fetchMeta = function (callback) {
+  var meta = require('../../../build/temp/meta.json');
+  return callback(null, meta);
+};
+
 dispatch.buildstub = function (callback) {
   callback = callback || emptyfunc;
 
   var self = this;
 
-  try {
-    var parts = require('url').parse(joola.options.host);
-    var port = parts.port;
-    if (!port)
-      port = parts.protocol === 'http:' ? 80 : 443;
-    var options = {
-      host: parts.hostname,
-      port: port,
-      secure: parts.protocol !== 'http:',
-      path: '/meta',
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      ajax: true
-    };
+  dispatch.fetchMeta(function (err, result) {
+    joola.api.describe = {};
+    Object.keys(result).forEach(function (endpoints) {
+      dispatch[endpoints] = {};
+      Object.keys(result[endpoints]).forEach(function (fn) {
+        if (!joola.api.describe[endpoints])
+          joola.api.describe[endpoints] = {};
+        joola.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
 
-    joola.api.getJSON(options, {}, function (err, result) {
-      if (err)
-        return callback(err);
-
-      joola.api.describe = {};
-      Object.keys(result).forEach(function (endpoints) {
-        dispatch[endpoints] = {};
-        Object.keys(result[endpoints]).forEach(function (fn) {
-          if (!joola.api.describe[endpoints])
-            joola.api.describe[endpoints] = {};
-          joola.api.describe[endpoints][fn] = ce.cloneextend(result[endpoints][fn]);
-
-          var _fn = result[endpoints][fn];
-          dispatch[endpoints][fn] = function () {
-            var tokens = {
-              _: null,
-              __: null
-            };
-            var args = Array.prototype.slice.call(arguments);
-            if (args && args.length > 0 && args[0] && (args[0]._ || args[0].__)) {
-              tokens._ = args[0]._;
-              tokens.__ = args[0].__;
-              args.splice(0, 1);
-            }
-
-            callback = emptyfunc;
-            if (typeof args[Object.keys(args).length - 1] === 'function') {
-              callback = args[Object.keys(args).length - 1];
-            }
-            var argCounter = 0;
-            var _args = {};
-            if (_fn.inputs.required)
-              _fn.inputs = _fn.inputs.required.concat(_fn.inputs.optional);
-
-            var shouldAppendWorkspace = 0;
-
-            //if ((args.length - 1 == _fn.inputs.length - 1 || (args.length - 1 == _fn.inputs.length - 2 && _fn.inputs[_fn.inputs.length - 1] == 'options')) && _fn.inputs[0] && (_fn.inputs[0] === 'workspace')) {
-            if (_fn.inputs[0] === 'workspace' && args.length - 1 < _fn.inputs.length) {
-              shouldAppendWorkspace = 1;
-            }
-            if (shouldAppendWorkspace > 0)
-              _args[_fn.inputs[0]] = joola.USER.workspace;
-            Object.keys(args).forEach(function (arg) {
-              if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
-                args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
-                _args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
-              }
-
-              delete args[arg];
-              argCounter++;
-            });
-
-            args = _args;
-            joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
-
-            var _callback = ce.clone(callback);//.clone();
-            try {
-              joola.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
-                if (result) {
-                  return _callback(err, result, headers);
-                }
-                else {
-                  return _callback(err);
-                }
-              });
-            }
-            catch (ex) {
-              return _callback(ex);
-            }
+        var _fn = result[endpoints][fn];
+        dispatch[endpoints][fn] = function () {
+          var tokens = {
+            _: null,
+            __: null
           };
-          if (!joola[endpoints])
-            joola[endpoints] = {};
-          if (!joola[endpoints][fn])
-            joola[endpoints][fn] = dispatch[endpoints][fn];
-        });
+          var args = Array.prototype.slice.call(arguments);
+          if (args && args.length > 0 && args[0] && (args[0]._ || args[0].__)) {
+            tokens._ = args[0]._;
+            tokens.__ = args[0].__;
+            args.splice(0, 1);
+          }
+
+          callback = emptyfunc;
+          if (typeof args[Object.keys(args).length - 1] === 'function') {
+            callback = args[Object.keys(args).length - 1];
+          }
+          if (fn !== 'verifyAPIToken') {
+            if (!joola.connected)
+              return callback(new Error('Joola not connected.'));
+            if (!joola.USER)
+              return callback(new Error('Joola not connected, invalid user.'));
+          }
+          var argCounter = 0;
+          var _args = {};
+          if (_fn.inputs.required)
+            _fn.inputs = _fn.inputs.required.concat(_fn.inputs.optional);
+
+          var shouldAppendWorkspace = 0;
+
+          //if ((args.length - 1 == _fn.inputs.length - 1 || (args.length - 1 == _fn.inputs.length - 2 && _fn.inputs[_fn.inputs.length - 1] == 'options')) && _fn.inputs[0] && (_fn.inputs[0] === 'workspace')) {
+          if (_fn.inputs[0] === 'workspace' && args.length - 1 < _fn.inputs.length) {
+            shouldAppendWorkspace = 1;
+          }
+          if (shouldAppendWorkspace > 0)
+            _args[_fn.inputs[0]] = joola.USER.workspace;
+          Object.keys(args).forEach(function (arg) {
+            if (argCounter < _fn.inputs.length - shouldAppendWorkspace) {
+              args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
+              _args[_fn.inputs[argCounter + shouldAppendWorkspace]] = args[arg];
+            }
+
+            delete args[arg];
+            argCounter++;
+          });
+
+          args = _args;
+          joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+
+          var _callback = ce.clone(callback);//.clone();
+          try {
+            joola.api.fetch(tokens, _fn.name, args, function (err, result, headers) {
+              if (result) {
+                return _callback(err, result, headers);
+              }
+              else {
+                return _callback(err);
+              }
+            });
+          }
+          catch (ex) {
+            return _callback(ex);
+          }
+        };
+        if (!joola[endpoints])
+          joola[endpoints] = {};
+        if (!joola[endpoints][fn])
+          joola[endpoints][fn] = dispatch[endpoints][fn];
       });
-
-      //map aliases
-      joola.insert = joola.beacon.insert;
-      joola.fetch = joola.query.fetch;
-
-      return callback(null);
     });
-  }
-  catch (ex) {
-    return callback(ex);
-  }
+
+    //map aliases
+    joola.insert = joola.beacon.insert;
+    joola.fetch = joola.query.fetch;
+
+    return callback(null);
+  });
 };
 
 
-},{"../index":90,"cloneextend":33,"url":30}],85:[function(require,module,exports){
+},{"../../../build/temp/meta.json":1,"../index":93,"cloneextend":34}],88:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18085,7 +18912,8 @@ var _events = new EventEmitter2({wildcard: true, newListener: true});
 _events._id = 'events';
 
 module.exports = exports = _events;
-},{"../index":90,"eventemitter2":35}],86:[function(require,module,exports){
+
+},{"../index":93,"eventemitter2":36}],89:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -18114,7 +18942,7 @@ joola.timezone = function (tz) {
   return offset;
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../index":90}],87:[function(require,module,exports){
+},{"../index":93}],90:[function(require,module,exports){
 (function (Buffer){
 /*jshint -W083 */
 
@@ -18307,7 +19135,7 @@ common.ensureLength = function (string, length) {
   return string;
 };
 }).call(this,require("buffer").Buffer)
-},{"../index":90,"./modifiers":89,"buffer":1,"cloneextend":33,"crypto":5,"deep-extend":34,"underscore":81,"util":32}],88:[function(require,module,exports){
+},{"../index":93,"./modifiers":92,"buffer":2,"cloneextend":34,"crypto":6,"deep-extend":35,"underscore":84,"util":33}],91:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -18378,7 +19206,7 @@ logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
 
-},{"../index":90}],89:[function(require,module,exports){
+},{"../index":93}],92:[function(require,module,exports){
 /**
  *  @title joola/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola
@@ -18533,7 +19361,7 @@ Array.prototype.equals = function (array) {
   return true;
 };  
 
-},{}],90:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -18547,10 +19375,14 @@ Array.prototype.equals = function (array) {
 
 
 //THE OBJECT
+var
+  util = require('util'),
+  EventEmitter = require('events').EventEmitter;
+
 var joola = exports;
 
 //try injecting global
-if (!global.joola){
+if (!global.joola) {
   global.joola = joola;
 }
 
@@ -18579,7 +19411,7 @@ joola.options = {
   timezoneOffset: null
 
 };
-
+joola.connected = false;
 //libraries
 joola.globals = require('./common/globals');
 joola.logger = require('./common/logger');
@@ -18587,8 +19419,12 @@ joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
 joola.events.setMaxListeners(1000);
-joola.on = joola.events.on;
-
+joola.on = function (event, cb) {
+  joola.events.on(event, cb);
+};
+joola.emit = function (event, message) {
+  joola.events.emit(event, message);
+};
 joola.api = require('./common/api');
 joola.state = {};
 joola.viz = require('./viz/index');
@@ -18639,7 +19475,12 @@ if (isBrowser()) {
     if (scr.src) {
       if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joola.options.host = parts.protocol + '//' + parts.host;
+        var protocol = parts.protocol;
+        var host = parts.host;
+        var port = 443;
+        if (protocol !== 'https:')
+          port = 80;
+        joola.options.host = parts.protocol + '//' + host + ':' + port;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
@@ -18649,13 +19490,21 @@ if (isBrowser()) {
             joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joola.options.host = qs.host;
+            parts = require('url').parse(qs.host);
+            protocol = parts.protocol;
+            host = parts.host;
+            port = 443;
+            if (protocol !== 'https:')
+              port = 80;
+            joola.options.host = parts.protocol + '//' + host + ':' + port;
           }
         }
       }
     }
   });
 }
+
+joola.dispatch.buildstub();
 
 //init procedure
 joola.init = function (options, callback) {
@@ -18750,7 +19599,7 @@ joola.init = function (options, callback) {
           //done('css');
         };
         css.rel = 'stylesheet';
-        css.href = joola.options.host + '/joola.css';
+        css.href = joola.options.host + '/joola.min.css';
         document.head.appendChild(css);
         done('css');
       }
@@ -18761,101 +19610,99 @@ joola.init = function (options, callback) {
       return done('not browser');
     }
   }
+  if (options.token) {
+    joola._token = options.token;
+  }
+  else {
+    if (typeof location !== 'undefined') {
+      var qs = require('querystring');
+      var parts = qs.parse(location.search.substring(1, location.search.length));
+      if (parts.token)
+        joola._token = parts.token;
+    }
+  }
+  joola.events.emit('core.init.start');
+  joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
+  //else if (joola.options.isBrowser) {
+  if (!joola.options.host && joola.options.isBrowser) {
+    joola.options.host = location.protocol + '//' + location.host;
+  }
+
+  if (!joola.options.host)
+    throw new Error('joola host not specified');
+
+  //var io = require('socket.io-browserify');
+  var io = require('socket.io-client');
+  joola.io = io;
+  joola.io.socket = joola.io.connect(joola.options.host);
+
+  joola.io.socket.on('SIG_HUP', function () {
+    console.log('SIG_HUP');
+  });
+
+  //}
+  //joola.config.init(function (err) {
+  // if (err)
+  //   return callback(err);
+  //joola.dispatch.buildstub(function (err) {
+  //  if (err)
+  //    return callback(err);
   browser3rd(function () {
-    if (options.token) {
-      joola._token = options.token;
-    }
-    else {
-      if (typeof location !== 'undefined') {
-        var qs = require('querystring');
-        var parts = qs.parse(location.search.substring(1, location.search.length));
-        if (parts.token)
-          joola._token = parts.token;
-      }
-    }
-    joola.events.emit('core.init.start');
-    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
-
-    //else if (joola.options.isBrowser) {
-    if (!joola.options.host && joola.options.isBrowser) {
-      joola.options.host = location.protocol + '//' + location.host;
-    }
-
-    if (!joola.options.host)
-      throw new Error('joola host not specified');
-
-    //var io = require('socket.io-browserify');
-    var io = require('socket.io-client');
-    joola.io = io;
-    joola.io.socket = joola.io.connect(joola.options.host);
-
-    joola.io.socket.on('SIG_HUP', function () {
-      console.log('SIG_HUP');
-    });
-
-    //}
-    //joola.config.init(function (err) {
-    // if (err)
-    //   return callback(err);
-
-    joola.dispatch.buildstub(function (err) {
+  });
+  if (joola.options.token) {
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
       if (err)
         return callback(err);
 
-      if (joola.options.token) {
-        joola.dispatch.users.getByToken(joola._token, function (err, user) {
-          if (err)
-            return callback(err);
+      joola.USER = user;
+      joola.TOKEN = joola._token;
+      joola.events.emit('core.init.finish');
+      if (callback)
+        return callback(null, joola);
 
-          joola.USER = user;
-          joola.TOKEN = joola._token;
-          joola.events.emit('core.init.finish');
-          if (callback)
-            return callback(null, joola);
-
-        });
-      }
-      else if (joola.options.APIToken) {
-        joola._apitoken = joola.options.APIToken;
-        joola.USER = null;
-        joola._token = null;
-
-        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
-          if (err)
-            return callback(err);
-          joola.USER = user;
-          joola.events.emit('core.init.finish');
-          joola.events.emit('ready');
-          if (typeof callback === 'function')
-            return callback(null, joola);
-        });
-      }
-      else {
-        joola.events.emit('core.init.finish');
-        joola.events.emit('ready');
-        if (typeof callback === 'function')
-          return callback(null, joola);
-      }
     });
-    //});
+  }
+  else if (joola.options.APIToken) {
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
 
-    //global function hook (for debug)
-    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
-      [joola].forEach(function (obj) {
-        joola.common.hookEvents(obj, function (event) {
-        });
-      });
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      joola.USER = user;
+      joola.events.emit('core.init.finish');
+      joola.events.emit('ready');
+      if (typeof callback === 'function')
+        return callback(null, joola);
+    });
+  }
+  else {
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
+    if (typeof callback === 'function')
+      return callback(null, joola);
+  }
+  //});
+  //});
 
-    //global event catcher (for debug)
-    if (joola.options.debug.enabled && joola.options.debug.events)
-      joola.events.onAny(function () {
-        if (joola.options.debug.events.enabled)
-          joola.logger.debug('Event raised: ' + this.event);
-        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
-          console.trace();
+  //global function hook (for debug)
+  if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+    [joola].forEach(function (obj) {
+      joola.common.hookEvents(obj, function (event) {
       });
-  });
+    });
+
+  //global event catcher (for debug)
+  if (joola.options.debug.enabled && joola.options.debug.events)
+    joola.events.onAny(function () {
+      if (joola.options.debug.events.enabled)
+        joola.logger.debug('Event raised: ' + this.event);
+      if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
+        console.trace();
+    });
+  //});
 };
 
 if (joola.options.APIToken || joola.options.token) {
@@ -18903,8 +19750,15 @@ joola.get = function (key) {
 joola.colors = ['#058DC7', '#50B432', '#ED7E17', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
 joola.offcolors = ['#AADFF3', '#C9E7BE', '#F2D5BD', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE', '#EEEEEE'];
 
+var start = new Date().getTime();
+joola.on('ready', function () {
+  joola.connected = true;
+  var end = new Date().getTime();
+  console.log('loaded in ', end - start, 'ms.');
+});
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":82,"./common/api":83,"./common/dispatch":84,"./common/events":85,"./common/globals":86,"./common/index":87,"./common/logger":88,"./viz/index":105,"querystring":21,"socket.io-client":37,"url":30}],91:[function(require,module,exports){
+},{"./../../package.json":85,"./common/api":86,"./common/dispatch":87,"./common/events":88,"./common/globals":89,"./common/index":90,"./common/logger":91,"./viz/index":108,"events":11,"querystring":22,"socket.io-client":38,"url":31,"util":33}],94:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -19276,7 +20130,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],92:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],95:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -19523,7 +20377,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"cloneextend":33,"eventemitter2":35,"underscore":81}],93:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"cloneextend":34,"eventemitter2":36,"underscore":84}],96:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20521,7 +21375,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],94:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],97:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -20837,88 +21691,7 @@ DimensionPicker.template = function (options) {
   return html;
 };
 
-DimensionPicker.meta = {
-  key: 'dimensionpicker',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio dimensionbox value"></div><div class="jio dimensionbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: DimensionPicker.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the dimension.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, dimension box clicked.'
-    }
-  }
-};
-},{"./_proto":104,"cloneextend":33,"eventemitter2":35}],95:[function(require,module,exports){
+},{"./_proto":107,"cloneextend":34,"eventemitter2":36}],98:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21058,7 +21831,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104}],96:[function(require,module,exports){
+},{"../index":93,"./_proto":107}],99:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21316,88 +22089,7 @@ Metric.template = function (options) {
   return html;
 };
 
-Metric.meta = {
-  key: 'metricbox',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: Metric.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, metric box clicked.'
-    }
-  }
-};
-},{"../index":90,"./_proto":104,"cloneextend":33}],97:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"cloneextend":34}],100:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -21712,88 +22404,7 @@ MetricPicker.template = function (options) {
   return html;
 };
 
-MetricPicker.meta = {
-  key: 'metricpicker',
-  jQueryTag: 'Metric',
-  title: 'Metric Box',
-  tagline: '',
-  description: '' +
-    'Metric Boxes...',
-  longDescription: '',
-  example: {
-    css: 'width:100%',
-    options: {
-      caption: 'Mouse moves (last month)',
-      template: '<div class="jio metricbox value"></div><div class="jio metricbox caption"></div>',
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Metric(options);'
-  },
-  template: MetricPicker.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, metric box clicked.'
-    }
-  }
-};
-},{"./_proto":104,"cloneextend":33,"eventemitter2":35}],98:[function(require,module,exports){
+},{"./_proto":107,"cloneextend":34,"eventemitter2":36}],101:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22096,7 +22707,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104,"underscore":81}],99:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],102:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22328,112 +22939,7 @@ Pie.template = function (options) {
   return html;
 };
 
-Pie.meta = {
-  key: 'pie-chart',
-  jQueryTag: 'Pie',
-  title: 'Pie Chart',
-  tagline: '',
-  description: '' +
-    'Pie Charts are mainly used to provide a high-level overview of metrics based on categories. ' +
-    'For example, how many visitors a site had based on their browser.',
-  longDescription: '',
-  example: {
-    css: 'height:250px;width:100%',
-    options: {
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['browser'],
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Pie(options);',
-    external: [
-      {
-        title: 'Change Pie Limits',
-        src: 'http://jsfiddle.com'
-      },
-      {
-        title: 'Another example',
-        src: 'http://jsfiddle.com'
-      },
-      {
-        title: 'And yet another',
-        src: 'http://jsfiddle.com'
-      }
-    ]
-  },
-  template: Pie.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    },
-    chart: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`optional` Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
-    },
-    limit: {
-      datatype: 'number',
-      defaultValue: '5',
-      description: '`optional` The number of items to show.'
-    },
-    legend: {
-      datatype: 'bool',
-      defaultValue: 'true',
-      description: '`optional` Show the Pie Chart legend.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, pie chart slice clicked.'
-    }
-  }
-};
-},{"../index":90,"./_proto":104,"underscore":81}],100:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],103:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -22660,7 +23166,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":90,"./_proto":104,"underscore":81}],101:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],104:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -22922,7 +23428,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":90,"./_proto":104}],102:[function(require,module,exports){
+},{"../index":93,"./_proto":107}],105:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23331,106 +23837,7 @@ Table.template = function (options) {
   return html;
 };
 
-Table.meta = {
-  key: 'table',
-  jQueryTag: 'Table',
-  title: 'Table',
-  tagline: '',
-  description: '' +
-    'Plot powerful and customizable data tables.',
-  longDescription: '',
-  example: {
-    //css: 'height:250px;width:100%',
-    options: {
-      limit: 5,
-      query: {
-        timeframe: 'last_month',
-        interval: 'day',
-        dimensions: ['browser'],
-        metrics: [
-          {key: 'mousemoves', name: "Mouse Moves", collection: 'demo-mousemoves'},
-          {key: 'clicks', suffix: " clk.", collection: 'demo-clicks'},
-          {key: 'visits', collection: 'demo-visits'}
-        ],
-        collection: 'demo-mousemoves',
-        "realtime": true
-      }
-    },
-    draw: '$("#example").Table(options);'/*,
-     external: [
-     {
-     title: 'Change Pie Limits',
-     src: 'http://jsfiddle.com'
-     },
-     {
-     title: 'Another example',
-     src: 'http://jsfiddle.com'
-     },
-     {
-     title: 'And yet another',
-     src: 'http://jsfiddle.com'
-     }
-     ]*/
-  },
-  template: Table.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the <a href="/data/query">query</a> object.'
-    },
-    limit: {
-      datatype: 'number',
-      defaultValue: '5',
-      description: 'The number of items to show.'
-    }
-  },
-  metaMethods: {
-    init: {
-      signature: '.init(options)',
-      description: 'Initialize the visualization with a set of `options`.',
-      example: '$(\'#visualization\').init(options);'
-    },
-    update: {
-      signature: '.update(options)',
-      description: 'Update an existing visualization with a set of `options`.',
-      example: '$(\'#visualization\').update(options);'
-    },
-    destroy: {
-      signature: '.destroy()',
-      description: 'Destroy the visualization.',
-      example: '$(\'#visualization\').destroy();'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, table row clicked.'
-    }
-  }
-};
-},{"../index":90,"./_proto":104,"underscore":81}],103:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"underscore":84}],106:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23505,7 +23912,7 @@ var Timeline = module.exports = function (options, callback) {
         }
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
           self.realtimeQueries.push(message[0].realtime);
-        var series = self._super.makeChartTimelineSeries(message);
+        var series = self._super.makeChartTimelineSeries.call(self, message);
         var linear = (message[0].dimensions && message[0].dimensions.length > 0 && message[0].dimensions[0].datatype == 'date');
         if (!self.chartDrawn) {
           var chartOptions = joola.common._mixin({
@@ -23889,97 +24296,7 @@ Timeline.template = function (options) {
   return html;
 };
 
-Timeline.meta = {
-  key: 'timeline',
-  title: 'Timeline',
-  tagline: '',
-  jQueryTag: 'Timeline',
-  description: '' +
-    'Timelines are a great way to show metrics over time.' +
-    '',
-  example: {
-    css: 'height:250px;',
-    options: {
-      caption: 'Mouse moves (last 30 seconds)',
-      chart: {
-        chart: {
-          spacing: 0,
-          backgroundColor: 'transparent',
-          type: 'column'
-        },
-        plotOptions: {
-          column: {
-            color: 'rgba(240,95,104,1)'
-          }
-        }
-      },
-      query: {
-        timeframe: 'last_30_seconds',
-        interval: 'second',
-        dimensions: ['timestamp'],
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        realtime: true
-      }
-    },
-    draw: '$("#example").Timeline(options)',
-    more: [
-      'http://jsfiddle.com/'
-    ]
-  },
-  template: Timeline.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the `query` object.'
-    },
-    chart: {
-      datatype: 'object',
-      defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, data point clicked.'
-    }
-  },
-  html: '',
-  css: {
-
-  },
-  chartProvider: 'highcharts',
-  license: 'MIT'
-};
-},{"../index":90,"./_proto":104,"moment":36,"underscore":81}],104:[function(require,module,exports){
+},{"../index":93,"./_proto":107,"moment":37,"underscore":84}],107:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -23997,6 +24314,8 @@ var
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
+
+require('twix');
 
 var proto = exports;
 proto._id = '_proto';
@@ -24115,25 +24434,79 @@ proto.makeChartTimelineSeries = function (message) {
       }
     ];
   }
-
-  /*
-   function fixOffset(date) {
-   var _date = new Date(date);
-   _date.setHours(_date.getHours() + (2 * moment().zone() / 60));
-   return new Date(_date);
-   }
-
-   var exist = _.find(dimensions, function (d) {
-   return d.datatype === 'date';
-   });
-   */
+  var self = this;
   var yAxis = [null, null];
   var series = [];
   var seriesIndex = -1;
+  var interval = self.options.query.interval;
+  var checkExists = function (timestampDimension, documents, date) {
+    return _.find(documents, function (document) {
+      switch (interval) {
+        case 'month':
+        case 'day':
+          date.setHours(date.getHours() - (date.getTimezoneOffset() / 60));
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+        default:
+          return new Date(document.values[timestampDimension.key]).getTime() === date.getTime();
+      }
+    });
+  };
+  var fill = function (resultRow, row, timestampDimension) {
+    Object.keys(resultRow).forEach(function (key) {
+      if (key !== timestampDimension.key) {
+        row.values[key] = 0;
+        row.fvalues[key] = 0;
+      }
+    });
+  };
+
   message.forEach(function (result, resultIndex) {
     var dimensions = result.dimensions;
     var metrics = result.metrics;
-    var documents = result.documents;
+    var documents = ce.clone(result.documents);
+    //should we fill the date range
+    var query = ce.clone(result.query);
+
+    var timestampDimension = _.find(result.dimensions, function (item) {
+      return item.datatype === 'date';
+    });
+    if (timestampDimension) {
+      //validate and fill the date range;
+      interval = interval === 'ddate' ? 'day' : interval;
+      if (!query.timeframe) {
+        query.timeframe = {};
+        query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
+        query.timeframe.end = result.documents[0].values.timestamp;
+      }
+
+      var counter = 0;
+      var fixed = [];
+      var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
+      while (itr.hasNext() && counter++ < 1000) {
+        var _d = new Date(itr.next()._d.getTime());
+        var exists;
+        if (['day', 'month', 'year'].indexOf(interval) > -1)
+          exists = checkExists(timestampDimension, result.documents, _d, true);
+        else
+          exists = checkExists(timestampDimension, result.documents, _d);
+
+        if (!exists) {
+          exists = {values: {}, fvalues: {}};
+          exists.values[timestampDimension.key] = _d.toISOString();
+          exists.fvalues[timestampDimension.key] = _d.toISOString();
+          fill(result.documents[0].values, exists, timestampDimension);
+          /*Object.keys(result.documents[0].values).forEach(function (key) {
+           if (key !== timestampDimension.key) {
+           exists.values[key] = 0;
+           exists.fvalues[key] = 0;
+           }
+           });*/
+        }
+        fixed.push(exists);
+      }
+      documents = fixed;
+    }
+
     if (!metrics)
       return series;
     metrics.forEach(function (metric, index) {
@@ -24274,7 +24647,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":90,"cloneextend":33,"moment":36,"underscore":81}],105:[function(require,module,exports){
+},{"../index":93,"cloneextend":34,"moment":37,"twix":83,"underscore":84}],108:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -24316,4 +24689,4 @@ viz.stam = function (callback) {
   return viz.pickers.init(callback);
 };
 
-},{"../index":90,"./BarTable":91,"./Canvas":92,"./DatePicker":93,"./DimensionPicker":94,"./Geo":95,"./Metric":96,"./MetricPicker":97,"./MiniTable":98,"./Pie":99,"./PunchCard":100,"./Sparkline":101,"./Table":102,"./Timeline":103}]},{},[90])
+},{"../index":93,"./BarTable":94,"./Canvas":95,"./DatePicker":96,"./DimensionPicker":97,"./Geo":98,"./Metric":99,"./MetricPicker":100,"./MiniTable":101,"./Pie":102,"./PunchCard":103,"./Sparkline":104,"./Table":105,"./Timeline":106}]},{},[93])

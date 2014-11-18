@@ -13,7 +13,7 @@
 var joola = exports;
 
 //try injecting global
-if (!global.joola){
+if (!global.joola) {
   global.joola = joola;
 }
 
@@ -42,7 +42,7 @@ joola.options = {
   timezoneOffset: null
 
 };
-
+joola.connected = false;
 //libraries
 joola.globals = require('./common/globals');
 joola.logger = require('./common/logger');
@@ -50,8 +50,12 @@ joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
 joola.events.setMaxListeners(1000);
-joola.on = joola.events.on;
-
+joola.on = function (event, cb) {
+  joola.events.on(event, cb);
+};
+joola.emit = function (event, message) {
+  joola.events.emit(event, message);
+};
 joola.api = require('./common/api');
 joola.state = {};
 joola.viz = require('./viz/index');
@@ -102,7 +106,12 @@ if (isBrowser()) {
     if (scr.src) {
       if (scr.src.indexOf('joola.js') > -1 || scr.src.indexOf('joola.min.js') > -1) {
         var parts = require('url').parse(scr.src);
-        joola.options.host = parts.protocol + '//' + parts.host;
+        var protocol = parts.protocol;
+        var host = parts.host;
+        var port = 443;
+        if (protocol !== 'https:')
+          port = 80;
+        joola.options.host = parts.protocol + '//' + host + ':' + port;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
@@ -112,13 +121,21 @@ if (isBrowser()) {
             joola.options.token = qs.token;
           }
           if (qs && qs.host) {
-            joola.options.host = qs.host;
+            parts = require('url').parse(qs.host);
+            protocol = parts.protocol;
+            host = parts.host;
+            port = 443;
+            if (protocol !== 'https:')
+              port = 80;
+            joola.options.host = parts.protocol + '//' + host + ':' + port;
           }
         }
       }
     }
   });
 }
+
+joola.dispatch.buildstub();
 
 //init procedure
 joola.init = function (options, callback) {
@@ -213,7 +230,7 @@ joola.init = function (options, callback) {
           //done('css');
         };
         css.rel = 'stylesheet';
-        css.href = joola.options.host + '/joola.css';
+        css.href = joola.options.host + '/joola.min.css';
         document.head.appendChild(css);
         done('css');
       }
@@ -224,101 +241,99 @@ joola.init = function (options, callback) {
       return done('not browser');
     }
   }
+  if (options.token) {
+    joola._token = options.token;
+  }
+  else {
+    if (typeof location !== 'undefined') {
+      var qs = require('querystring');
+      var parts = qs.parse(location.search.substring(1, location.search.length));
+      if (parts.token)
+        joola._token = parts.token;
+    }
+  }
+  joola.events.emit('core.init.start');
+  joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
+  //else if (joola.options.isBrowser) {
+  if (!joola.options.host && joola.options.isBrowser) {
+    joola.options.host = location.protocol + '//' + location.host;
+  }
+
+  if (!joola.options.host)
+    throw new Error('joola host not specified');
+
+  //var io = require('socket.io-browserify');
+  var io = require('socket.io-client');
+  joola.io = io;
+  joola.io.socket = joola.io.connect(joola.options.host);
+
+  joola.io.socket.on('SIG_HUP', function () {
+    console.log('SIG_HUP');
+  });
+
+  //}
+  //joola.config.init(function (err) {
+  // if (err)
+  //   return callback(err);
+  //joola.dispatch.buildstub(function (err) {
+  //  if (err)
+  //    return callback(err);
   browser3rd(function () {
-    if (options.token) {
-      joola._token = options.token;
-    }
-    else {
-      if (typeof location !== 'undefined') {
-        var qs = require('querystring');
-        var parts = qs.parse(location.search.substring(1, location.search.length));
-        if (parts.token)
-          joola._token = parts.token;
-      }
-    }
-    joola.events.emit('core.init.start');
-    joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
-
-    //else if (joola.options.isBrowser) {
-    if (!joola.options.host && joola.options.isBrowser) {
-      joola.options.host = location.protocol + '//' + location.host;
-    }
-
-    if (!joola.options.host)
-      throw new Error('joola host not specified');
-
-    //var io = require('socket.io-browserify');
-    var io = require('socket.io-client');
-    joola.io = io;
-    joola.io.socket = joola.io.connect(joola.options.host);
-
-    joola.io.socket.on('SIG_HUP', function () {
-      console.log('SIG_HUP');
-    });
-
-    //}
-    //joola.config.init(function (err) {
-    // if (err)
-    //   return callback(err);
-
-    joola.dispatch.buildstub(function (err) {
+  });
+  if (joola.options.token) {
+    joola.dispatch.users.getByToken(joola._token, function (err, user) {
       if (err)
         return callback(err);
 
-      if (joola.options.token) {
-        joola.dispatch.users.getByToken(joola._token, function (err, user) {
-          if (err)
-            return callback(err);
+      joola.USER = user;
+      joola.TOKEN = joola._token;
+      joola.events.emit('core.init.finish');
+      if (callback)
+        return callback(null, joola);
 
-          joola.USER = user;
-          joola.TOKEN = joola._token;
-          joola.events.emit('core.init.finish');
-          if (callback)
-            return callback(null, joola);
-
-        });
-      }
-      else if (joola.options.APIToken) {
-        joola._apitoken = joola.options.APIToken;
-        joola.USER = null;
-        joola._token = null;
-
-        joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
-          if (err)
-            return callback(err);
-          joola.USER = user;
-          joola.events.emit('core.init.finish');
-          joola.events.emit('ready');
-          if (typeof callback === 'function')
-            return callback(null, joola);
-        });
-      }
-      else {
-        joola.events.emit('core.init.finish');
-        joola.events.emit('ready');
-        if (typeof callback === 'function')
-          return callback(null, joola);
-      }
     });
-    //});
+  }
+  else if (joola.options.APIToken) {
+    joola._apitoken = joola.options.APIToken;
+    joola.USER = null;
+    joola._token = null;
 
-    //global function hook (for debug)
-    if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
-      [joola].forEach(function (obj) {
-        joola.common.hookEvents(obj, function (event) {
-        });
-      });
+    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+      if (err)
+        return callback(err);
+      joola.USER = user;
+      joola.events.emit('core.init.finish');
+      joola.events.emit('ready');
+      if (typeof callback === 'function')
+        return callback(null, joola);
+    });
+  }
+  else {
+    joola.events.emit('core.init.finish');
+    joola.events.emit('ready');
+    if (typeof callback === 'function')
+      return callback(null, joola);
+  }
+  //});
+  //});
 
-    //global event catcher (for debug)
-    if (joola.options.debug.enabled && joola.options.debug.events)
-      joola.events.onAny(function () {
-        if (joola.options.debug.events.enabled)
-          joola.logger.debug('Event raised: ' + this.event);
-        if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
-          console.trace();
+  //global function hook (for debug)
+  if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
+    [joola].forEach(function (obj) {
+      joola.common.hookEvents(obj, function (event) {
       });
-  });
+    });
+
+  //global event catcher (for debug)
+  if (joola.options.debug.enabled && joola.options.debug.events)
+    joola.events.onAny(function () {
+      if (joola.options.debug.events.enabled)
+        joola.logger.debug('Event raised: ' + this.event);
+      if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
+        console.trace();
+    });
+  //});
 };
 
 if (joola.options.APIToken || joola.options.token) {
@@ -365,3 +380,10 @@ joola.get = function (key) {
 
 joola.colors = ['#058DC7', '#50B432', '#ED7E17', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
 joola.offcolors = ['#AADFF3', '#C9E7BE', '#F2D5BD', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE', '#EEEEEE'];
+
+var start = new Date().getTime();
+joola.on('ready', function () {
+  joola.connected = true;
+  var end = new Date().getTime();
+  console.log('loaded in ', end - start, 'ms.');
+});
