@@ -18410,7 +18410,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.22",
+  "version": "0.7.23",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -19375,10 +19375,6 @@ Array.prototype.equals = function (array) {
 
 
 //THE OBJECT
-var
-  util = require('util'),
-  EventEmitter = require('events').EventEmitter;
-
 var joola = exports;
 
 //try injecting global
@@ -19758,7 +19754,7 @@ joola.on('ready', function () {
 });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":85,"./common/api":86,"./common/dispatch":87,"./common/events":88,"./common/globals":89,"./common/index":90,"./common/logger":91,"./viz/index":108,"events":11,"querystring":22,"socket.io-client":38,"url":31,"util":33}],94:[function(require,module,exports){
+},{"./../../package.json":85,"./common/api":86,"./common/dispatch":87,"./common/events":88,"./common/globals":89,"./common/index":90,"./common/logger":91,"./viz/index":108,"querystring":22,"socket.io-client":38,"url":31}],94:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
