@@ -72,7 +72,7 @@ var Timeline = module.exports = function (options, callback) {
         }
         if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
           self.realtimeQueries.push(message[0].realtime);
-        var series = self._super.makeChartTimelineSeries(message);
+        var series = self._super.makeChartTimelineSeries.call(self, message);
         var linear = (message[0].dimensions && message[0].dimensions.length > 0 && message[0].dimensions[0].datatype == 'date');
         if (!self.chartDrawn) {
           var chartOptions = joola.common._mixin({
@@ -454,95 +454,4 @@ Timeline.template = function (options) {
     '  </div>\n' +
     '</div>';
   return html;
-};
-
-Timeline.meta = {
-  key: 'timeline',
-  title: 'Timeline',
-  tagline: '',
-  jQueryTag: 'Timeline',
-  description: '' +
-    'Timelines are a great way to show metrics over time.' +
-    '',
-  example: {
-    css: 'height:250px;',
-    options: {
-      caption: 'Mouse moves (last 30 seconds)',
-      chart: {
-        chart: {
-          spacing: 0,
-          backgroundColor: 'transparent',
-          type: 'column'
-        },
-        plotOptions: {
-          column: {
-            color: 'rgba(240,95,104,1)'
-          }
-        }
-      },
-      query: {
-        timeframe: 'last_30_seconds',
-        interval: 'second',
-        dimensions: ['timestamp'],
-        metrics: ['mousemoves'],
-        collection: 'demo-mousemoves',
-        realtime: true
-      }
-    },
-    draw: '$("#example").Timeline(options)',
-    more: [
-      'http://jsfiddle.com/'
-    ]
-  },
-  template: Timeline.template(),
-  metaOptions: {
-    container: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` if using jQuery plugin. contains the Id of the HTML container.'
-    },
-    template: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` Specify the HTML template to use instead of the default one.'
-    },
-    caption: {
-      datatype: 'string',
-      defaultValue: null,
-      description: '`optional` the caption for the metric.'
-    },
-    query: {
-      datatype: 'object',
-      defaultValue: null,
-      description: '`required` contains the `query` object.'
-    },
-    chart: {
-      datatype: 'object',
-      defaultValue: null,
-      description: 'Options for the <a href="http://api.highcharts.com/highcharts">charting</a> provider.'
-    }
-  },
-  metaEvents: {
-    load: {
-      description: 'Visualization loaded.'
-    },
-    draw: {
-      description: 'The visualization HTML frame has been drawn on screen.'
-    },
-    destroy: {
-      description: 'Visualization destroyed.'
-    },
-    update: {
-      description: 'The underlying data has changed.'
-    },
-    select: {
-      description: 'Selection changed, data point clicked.'
-    }
-  },
-  html: '',
-  css: {
-
-  },
-  chartProvider: 'highcharts',
-  license: 'MIT'
 };
