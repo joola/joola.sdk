@@ -282,7 +282,6 @@ api.getJSON = function (options, objOptions, callback) {
     joola.io.socket.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-
     if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.realtime))) {
       joola.io.socket.on(routeID + ':done', processResponse);
     }
