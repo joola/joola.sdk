@@ -334,7 +334,7 @@ var Table = module.exports = function (options, callback) {
           }
 
           if (existingkeys.indexOf(_key) == -1) {
-            console.log('remove', _key)
+            console.log('remove', _key);
             $tr.remove();
           }
         }
