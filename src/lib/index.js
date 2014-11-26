@@ -20,7 +20,8 @@ if (!global.joola) {
 joola.options = {
   token: null,
   host: null,
-  skipcss: false,
+  includecss: true,
+  theme: 'default',
   cssHost: '',
   APIToken: null,
   logouturl: null,
@@ -295,7 +296,7 @@ joola.browser3rd = function (callback) {
     }
 
     //css
-    if (!joola.options.skipcss) {
+    if (joola.options.includecss) {
       var css = document.createElement('link');
       expected++;
       css.onload = function () {
