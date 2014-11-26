@@ -33,7 +33,7 @@
     "cloneextend": "^0.0.3",
     "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
-    "moment": "~2.5.1",
+    "moment": "^2.8.4",
     "socket.io-client": "^1.0.2",
     "twix": "^0.5.1",
     "underscore": "~1.5.2"

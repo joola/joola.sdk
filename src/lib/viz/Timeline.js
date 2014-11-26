@@ -61,6 +61,12 @@ var Timeline = module.exports = function (options, callback) {
 
     this.draw = function (options, callback) {
       self.stop();
+      var extremes_0, extremes_1;
+      if (!self.options.query.dimensions)
+        self.options.query.dimensions = [];
+      if (self.options.query.dimensions.length === 0)
+        self.options.query.dimensions.push('timestamp');
+
       return this._super.fetch(self, this.options.query, function (err, message) {
         if (err) {
           if (typeof callback === 'function')
@@ -146,7 +152,9 @@ var Timeline = module.exports = function (options, callback) {
                     color: '#b3b3b1'
                   }
                 },
-                gridLineDashStyle: 'Dot'
+                gridLineDashStyle: 'Dot',
+                gridLineWidth: 0,
+                opposite: true
               }
             ],
             legend: {enabled: false},
@@ -202,6 +210,7 @@ var Timeline = module.exports = function (options, callback) {
               });
             }
           }
+
           if (self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled) {
             var $secondary_metric_container;
             if (self.options.pickers.secondary.container)
@@ -228,27 +237,27 @@ var Timeline = module.exports = function (options, callback) {
               });
             }
           }
-
-
           self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
-
           self.chart = self.chart.highcharts();
 
-          var extremes_0 = self.chart.yAxis[0].getExtremes();
+          extremes_0 = self.chart.yAxis[0].getExtremes();
+          extremes_0.min = 0;
+          extremes_0.max = extremes_0.dataMax * 1.1;
           if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
             extremes_0.min = 0;
             extremes_0.max = 1;
           }
+
           self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
           if (self.chart.yAxis.length > 1) {
-            var extremes_1 = self.chart.yAxis[1].getExtremes();
-
+            extremes_1 = self.chart.yAxis[1].getExtremes();
+            extremes_1.min = 0;
+            extremes_1.max = extremes_1.dataMax * 1.1;
             if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
               extremes_1.min = 0;
               extremes_1.max = 1;
-              if (extremes_1.min)
-                self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
             }
+            self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
           }
           self.chartDrawn = true;
           if (self.options.onDraw)
@@ -293,6 +302,26 @@ var Timeline = module.exports = function (options, callback) {
               }
             });
           });
+        }
+
+        extremes_0 = self.chart.yAxis[0].getExtremes();
+        extremes_0.min = 0;
+        extremes_0.max = extremes_0.dataMax * 1.1;
+        if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+          extremes_0.min = 0;
+          extremes_0.max = 1;
+        }
+
+        self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+        if (self.chart.yAxis.length > 1) {
+          extremes_1 = self.chart.yAxis[1].getExtremes();
+          extremes_1.min = 0;
+          extremes_1.max = extremes_1.dataMax * 1.1;
+          if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+            extremes_1.min = 0;
+            extremes_1.max = 1;
+          }
+          self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
         }
         if (self.options.onUpdate)
           window[self.options.onUpdate](self.options.container, self, series);
@@ -342,15 +371,22 @@ var Timeline = module.exports = function (options, callback) {
                 self.destroy();
                 self.draw(self.options);
               });
+              self.options.canvas.on('intervalchange', function (interval) {
+                //let's change our query and fetch again
+                self.options.query.interval = interval;
+
+                self.destroy();
+                self.draw(self.options);
+              });
               self.options.canvas.on('addplot', function (sender, filter) {
                 if (!Array.isArray(self.options.query))
                   self.options.query = [self.options.query];
-
                 var query = joola.common.extend({}, self.options.query[0]);
                 self.options.query.push(query);
                 query.reason = 'added_plot';
                 query.abc = 'abc';
                 query.filter = filter;
+                console.log(query);
                 self.destroy();
                 self.draw(self.options);
               });
@@ -372,8 +408,7 @@ var Timeline = module.exports = function (options, callback) {
                 self.draw(self.options);
               });
               self.options.canvas.on('metricselect', function (sender, metric) {
-
-
+                self.options.query.metrics[0] = metric;
                 self.destroy();
                 self.draw(self.options);
               });
@@ -384,8 +419,7 @@ var Timeline = module.exports = function (options, callback) {
               return callback(null, self);
           });
         }
-      )
-      ;
+      );
     }
     catch
       (err) {

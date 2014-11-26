@@ -102,7 +102,8 @@ var DatePicker = module.exports = function (options, callback) {
     canvas: null,
     container: null,
     $container: null,
-    comparePeriod: false
+    comparePeriod: false,
+    disableCompare: true
   };
 
   this.currentMode = 'base-from';
@@ -115,6 +116,10 @@ var DatePicker = module.exports = function (options, callback) {
   this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
   this.min_date.setMonth(this.min_date.getMonth() - 6);
   this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
+  this.max_date.setHours(23);
+  this.max_date.setMinutes(59);
+  this.max_date.setSeconds(59);
+  this.max_date.setMilliseconds(999);
 
   this.base_todate = new Date(this.max_date);
   this.base_fromdate = self.addDays(this.base_todate, -30);
@@ -234,7 +239,9 @@ var DatePicker = module.exports = function (options, callback) {
     $optionscontainer.append('<div class="compareoption visible"">' +
       '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
       '</div>');
-
+    if (self.options.disableCompare) {
+      $optionscontainer.find('.compareoption').removeClass('visible');
+    }
     $optionscontainer.append('<div class="daterange comparerange"">' +
       '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
       ' - ' +
@@ -316,16 +323,22 @@ var DatePicker = module.exports = function (options, callback) {
         return self.drawCell(date);
       },
       onSelect: function (dateText, inst) {
-
-
         $optionscontainer.find('.selector').val('custom');
-
         switch (self.currentMode) {
           case 'base-from':
 
             self.currentMode = 'base-to';
             self.base_fromdate = new Date(dateText);
+            self.base_fromdate.setHours(0);
+            self.base_fromdate.setMinutes(0);
+            self.base_fromdate.setSeconds(0);
+            self.base_fromdate.setMilliseconds(0);
+
             self.base_todate = new Date(dateText);
+            self.base_todate.setHours(23);
+            self.base_todate.setMinutes(59);
+            self.base_todate.setSeconds(59);
+            self.base_todate.setMilliseconds(999);
 
 
             var _checkLimit = new Date(self.min_date);
@@ -349,6 +362,10 @@ var DatePicker = module.exports = function (options, callback) {
             break;
           case 'base-to':
             self.base_todate = new Date(dateText);
+            self.base_todate.setHours(23);
+            self.base_todate.setMinutes(59);
+            self.base_todate.setSeconds(59);
+            self.base_todate.setMilliseconds(999);
             //$($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
             $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
             $($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
@@ -363,7 +380,16 @@ var DatePicker = module.exports = function (options, callback) {
             break;
           case 'compare-from':
             self.compare_fromdate = new Date(dateText);
+            self.compare_fromdate.setHours(0);
+            self.compare_fromdate.setMinutes(0);
+            self.compare_fromdate.setSeconds(0);
+            self.compare_fromdate.setMilliseconds(0);
+
             self.compare_todate = new Date(dateText);
+            self.compare_todate.setHours(23);
+            self.compare_todate.setMinutes(59);
+            self.compare_todate.setSeconds(59);
+            self.compare_todate.setMilliseconds(999);
             $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
             $($container.find('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
 
@@ -373,6 +399,10 @@ var DatePicker = module.exports = function (options, callback) {
             break;
           case 'compare-to':
             self.compare_todate = new Date(dateText);
+            self.compare_todate.setHours(23);
+            self.compare_todate.setMinutes(59);
+            self.compare_todate.setSeconds(59);
+            self.compare_todate.setMilliseconds(999);
             $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
             $($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'base-from';
@@ -544,27 +574,55 @@ var DatePicker = module.exports = function (options, callback) {
     $optionscontainer.find('.selector').change(function (e) {
       switch (this.value) {
         case 'today':
-          self.base_todate = self.fixDate(new Date(), true);
-          self.base_fromdate = self.addDays(self.base_todate, -0);
+          self.base_todate = new Date();
+          self.base_todate.setHours(23);
+          self.base_todate.setMinutes(59);
+          self.base_todate.setSeconds(59);
+          self.base_todate.setMilliseconds(999);
+          self.base_fromdate = new Date(self.base_todate);
+          self.base_fromdate.setHours(0);
+          self.base_fromdate.setMinutes(0);
+          self.base_fromdate.setSeconds(0);
+          self.base_fromdate.setMilliseconds(0);
           break;
         case 'yesterday':
-          self.base_todate = self.fixDate(new Date(), true);
-          self.base_todate = self.addDays(self.base_todate, -1);
-          self.base_fromdate = self.addDays(self.base_todate, -0);
+          self.base_todate = new Date();
+          self.base_todate.setDate(self.base_todate.getDate() - 1);
+          self.base_todate.setHours(23);
+          self.base_todate.setMinutes(59);
+          self.base_todate.setSeconds(59);
+          self.base_todate.setMilliseconds(999);
+          self.base_fromdate = new Date(self.base_todate);
+          self.base_fromdate.setHours(0);
+          self.base_fromdate.setMinutes(0);
+          self.base_fromdate.setSeconds(0);
+          self.base_fromdate.setMilliseconds(0);
           break;
         case 'lastweek':
-          self.base_fromdate = self.fixDate(new Date(), true);
-          self.base_fromdate = self.addDays(self.base_fromdate, -1 * (self.base_fromdate.getDay() + 7));
-          self.base_todate = self.addDays(self.base_fromdate, 6);
+          self.base_todate = new Date();
+          self.base_todate.setHours(23);
+          self.base_todate.setMinutes(59);
+          self.base_todate.setSeconds(59);
+          self.base_todate.setMilliseconds(999);
+          self.base_fromdate = new Date(self.base_todate);
+          self.base_fromdate.setDate(self.base_fromdate.getDate() - 6);
+          self.base_fromdate.setHours(0);
+          self.base_fromdate.setMinutes(0);
+          self.base_fromdate.setSeconds(0);
+          self.base_fromdate.setMilliseconds(0);
           break;
         case 'lastmonth':
-          var curr = self.fixDate(new Date(), true);
-          var last = self.addDays(curr, -1 * (curr.getDate()));
-          var first = self.addDays(last, -1 * (last.getDate() - 1));
-          self.base_todate = self.fixDate(new Date(), true);
-          self.base_todate = self.addDays(self.base_todate, -1 * (self.base_todate.getDate()));
-          self.base_fromdate = self.addDays(self.base_todate, -1 * (self.base_todate.getDate() - 1));
-
+          self.base_todate = new Date();
+          self.base_todate.setHours(23);
+          self.base_todate.setMinutes(59);
+          self.base_todate.setSeconds(59);
+          self.base_todate.setMilliseconds(999);
+          self.base_fromdate = new Date(self.base_todate);
+          self.base_fromdate.setDate(self.base_fromdate.getDate() - 30);
+          self.base_fromdate.setHours(0);
+          self.base_fromdate.setMinutes(0);
+          self.base_fromdate.setSeconds(0);
+          self.base_fromdate.setMilliseconds(0);
           break;
         default:
           break;
@@ -668,7 +726,7 @@ var DatePicker = module.exports = function (options, callback) {
 
     var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
     var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
-    
+
     $fromdate.text(self.formatDate(_this.applied_base_fromdate));
     todate.text(self.formatDate(_this.applied_base_todate));
 
@@ -897,7 +955,6 @@ var DatePicker = module.exports = function (options, callback) {
 
     $datebox.find('.optionscontainer .checker').off('click');
     $datebox.find('.optionscontainer .checker').on('click', function (e) {
-      console.log('aaaa');
       e.stopPropagation();
       self.isCompareChecked = !self.isCompareChecked;
       if (self.isCompareChecked)
