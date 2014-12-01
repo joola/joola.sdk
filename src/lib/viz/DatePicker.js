@@ -122,7 +122,7 @@ var DatePicker = module.exports = function (options, callback) {
   this.max_date.setMilliseconds(999);
 
   this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -30);
+  this.base_fromdate = self.addDays(this.base_todate, -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -277,7 +277,7 @@ var DatePicker = module.exports = function (options, callback) {
       if (currentLeftCellDate.setMonth(currentLeftCellDate.getMonth()) < self.min_date)
         return;
 
-      var currentRightCellDate = ($container.find('.datepicker')[2]).datepicker('getDate');
+      var currentRightCellDate = $($container.find('.datepicker')[2]).datepicker('getDate');
       currentRightCellDate = new Date(currentRightCellDate);
       currentRightCellDate.setMonth(currentRightCellDate.getMonth() - 1);
       var selectedDate = new Date(currentRightCellDate);

@@ -28,6 +28,7 @@ viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
+viz.BarTable = require('./BarTable2');
 viz.PunchCard = require('./PunchCard');
 viz.Table = require('./Table');
 viz.Timeline = require('./Timeline');

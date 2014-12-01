@@ -11,7 +11,7 @@
 
 var
   joola = require('../index'),
-
+  d3 = require('d3'),
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -52,8 +52,10 @@ proto.markContainer = function (container, attr, callback) {
     attr = attr.attr || attr;
     attr.forEach(function (a) {
       Object.keys(a).forEach(function (key) {
-        if (key === 'css')
-          container.addClass(a[key]);
+        if (key === 'css') {
+          var currentClasses = container.attr('class');
+          container.attr('class', currentClasses + ' ' + a[key]);
+        }
         else
           container.attr('jio-' + key, a[key]);
       });
@@ -124,6 +126,7 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
+  console.log(args);
   joola.query.fetch.apply(this, args);
 };
 

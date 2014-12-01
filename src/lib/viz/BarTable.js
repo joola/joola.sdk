@@ -106,11 +106,13 @@ var BarTable = module.exports = function (options, callback) {
           $html.find('table').append($thead);
         }
         var $tbody = $($html.find('tbody'));
+        var hasData = false;
         series.forEach(function (ser, serIndex) {
           var total = 0;
           var shown = 0;
           var notshown = 0;
           ser.data.forEach(function (point, i) {
+            hasData = true;
             total += point[1];
             if (i < (self.options.limit && self.options.limit < ser.data.length ? self.options.limit - 1 : self.options.limit ))
               shown += point[1];
@@ -176,6 +178,17 @@ var BarTable = module.exports = function (options, callback) {
             $tbody.append($tr);
           }
         });
+        if (!hasData) {
+          $tr = $('<tr></tr>');
+          message.dimensions.forEach(function (d) {
+            var $td = $('<td colspan="2" class="jio bartable nodata">' +
+              'No data available.' +
+              '</td>');
+            $tr.append($td);
+          });
+
+          $tbody.append($tr);
+        }
         $html.find('table').append($tbody);
         self.options.$container.append($html);
 

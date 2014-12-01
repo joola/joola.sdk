@@ -34,14 +34,14 @@ module.exports = function (grunt) {
     },
 
     browserify: {
-      /*vendor: {
-       src: [],
-       dest: 'build/temp/vendor.js',
-       options: {
-       require: [],
-       alias: []
-       }
-       },*/
+      vendor: {
+        src: ['src/lib/vendor'],
+        dest: 'build/temp/vendor.js',
+        options: {
+          require: [],
+          alias: []
+        }
+      },
       client: {
         src: ['src/lib/index.js'],
         dest: 'build/temp/joola.js',

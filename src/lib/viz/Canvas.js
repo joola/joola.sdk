@@ -73,6 +73,7 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
     if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
+      
       _query.metrics.forEach(function (metric, i) {
         var key;
         if (typeof metric === 'string')
@@ -101,12 +102,12 @@ var Canvas = module.exports = function (options, callback) {
       if (self.options.datepicker && self.options.datepicker._interval)
         _query.interval = self.options.datepicker._interval;
     }
-    if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
-      _query.realtime = true;
-      _query.timeframe.end = null;
-    }
-    else
-      _query.realtime = false;
+    //if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
+    //  _query.realtime = true;
+    //  _query.timeframe.end = null;
+    //}
+    //else
+    //  _query.realtime = false;
     return _query;
   };
 
