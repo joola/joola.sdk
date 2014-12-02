@@ -25604,12 +25604,13 @@ proto.makeChartTimelineSeries = function (message) {
             _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
             return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
           default:
-            console.log(dimension, document.values[timestampDimension.key], _date);
+            console.log(timestampDimension, document.values[timestampDimension.key], _date);
             return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
         }
       }
       catch (ex) {
-        //console.log('exception while checkExists', ex);
+        console.log('exception while checkExists', ex);
+        return;
         //console.log('details', interval, document, documents);
       }
     });
