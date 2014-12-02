@@ -149,10 +149,10 @@ proto.makeChartTimelineSeries = function (message) {
         return;
 
       try {
+        var _date = new Date(date);
         switch (interval) {
           case 'month':
           case 'day':
-            var _date = new Date(date);
             _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
             return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
           default:
@@ -162,8 +162,6 @@ proto.makeChartTimelineSeries = function (message) {
       }
       catch (ex) {
         console.log('exception while checkExists', ex);
-        return;
-        //console.log('details', interval, document, documents);
       }
     });
   };
@@ -224,12 +222,6 @@ proto.makeChartTimelineSeries = function (message) {
           exists.values[timestampDimension.key] = _d.toISOString();
           exists.fvalues[timestampDimension.key] = _d.toISOString();
           fill(result.documents[0].values, exists, timestampDimension);
-          /*Object.keys(result.documents[0].values).forEach(function (key) {
-           if (key !== timestampDimension.key) {
-           exists.values[key] = 0;
-           exists.fvalues[key] = 0;
-           }
-           });*/
         }
         fixed.push(exists);
       }
