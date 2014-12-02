@@ -25598,14 +25598,20 @@ proto.makeChartTimelineSeries = function (message) {
 
       try {
         var _date = new Date(date);
+        var _basedate = new Date(document.values[timestampDimension.key]);
         switch (interval) {
           case 'month':
           case 'day':
             _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-            return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+            return _basedate.getTime() === _date.getTime();
+          case 'minute':
+            _basedate.setSeconds(0);
+            _basedate.setMilliseconds(0);
+            return _basedate.getTime() === _date.getTime();
           default:
-            console.log(new Date(document.values[timestampDimension.key]).toISOString(), _date.toISOString());
-            return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+            _basedate.setMilliseconds(0);
+            console.log(_basedate.toISOString(), _date.toISOString());
+            return _basedate.getTime() === _date.getTime();
         }
       }
       catch (ex) {
