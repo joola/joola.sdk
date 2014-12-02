@@ -25593,14 +25593,23 @@ proto.makeChartTimelineSeries = function (message) {
 
   var checkExists = function (timestampDimension, documents, date) {
     return _.find(documents, function (document) {
-      switch (interval) {
-        case 'month':
-        case 'day':
-          var _date = new Date(date);
-          _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
-        default:
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+      if (!document.values[timestampDimension.key])
+        return;
+
+      try {
+        switch (interval) {
+          case 'month':
+          case 'day':
+            var _date = new Date(date);
+            _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+            return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+          default:
+            return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+        }
+      }
+      catch (ex) {
+        console.log('exception while checkExists', ex);
+        console.log('details', interval, document, documents);
       }
     });
   };
