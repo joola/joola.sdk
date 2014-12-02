@@ -25599,20 +25599,20 @@ proto.makeChartTimelineSeries = function (message) {
       try {
         var _date = new Date(date);
         var _basedate = new Date(document.values[timestampDimension.key]);
-        switch (interval) {
-          case 'month':
-          case 'day':
-            _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-            return _basedate.getTime() === _date.getTime();
-          case 'minute':
-            _basedate.setSeconds(0);
-            _basedate.setMilliseconds(0);
-            return _basedate.getTime() === _date.getTime();
-          default:
-            _basedate.setMilliseconds(0);
-            console.log(_basedate.toISOString(), _date.toISOString());
-            return _basedate.getTime() === _date.getTime();
-        }
+        //switch (interval) {
+        //case 'month':
+        //case 'day':
+        //  _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+        //  return _basedate.getTime() === _date.getTime();
+        //case 'minute':
+        //  _basedate.setSeconds(0);
+        //  _basedate.setMilliseconds(0);
+        //  return _basedate.getTime() === _date.getTime();
+        //default:
+        //  _basedate.setMilliseconds(0);
+        console.log(_basedate.toISOString(), _date.toISOString());
+        return _basedate.getTime() === _date.getTime();
+        // }
       }
       catch (ex) {
         console.log('exception while checkExists', ex);
@@ -25666,10 +25666,28 @@ proto.makeChartTimelineSeries = function (message) {
       while (itr.hasNext() && counter++ < 1000) {
         var _d = new Date(itr.next()._d.getTime());
         var exists;
-        if (['day', 'month', 'year'].indexOf(interval) > -1)
-          exists = checkExists(timestampDimension, result.documents, _d, true);
-        else
-          exists = checkExists(timestampDimension, result.documents, _d);
+
+        switch (interval) {
+          case 'day':
+            _d.setHours(0);
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'minute':
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'second':
+            _d.setMilliseconds(0);
+            break;
+          default:
+            break;
+        }
+
+        //if (['day', 'month', 'year'].indexOf(interval) > -1)
+        exists = checkExists(timestampDimension, result.documents, _d, true);
+        //else
+        //  exists = checkExists(timestampDimension, result.documents, _d);
 
         if (!exists) {
           exists = {values: {}, fvalues: {}};
