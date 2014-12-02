@@ -25601,6 +25601,7 @@ proto.makeChartTimelineSeries = function (message) {
         switch (interval) {
           default:
             _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+            console.log(new Date(document.values[timestampDimension.key]).toISOString(), _date.toISOString());
             return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
         }
       }
