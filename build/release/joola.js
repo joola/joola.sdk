@@ -1,6 +1,2880 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports=module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports=module.exports={
+  "users": {
+    "list": {
+      "name": "/users/list",
+      "description": "I list all available users",
+      "inputs": ["workspace"],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:list"],
+      "_dispatch": {
+        "message": "users:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/users/get",
+      "description": "I get a specific users by username",
+      "inputs": [
+        "workspace",
+        "username"
+      ],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:get"],
+      "_dispatch": {
+        "message": "users:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "getByToken": {
+      "name": "/users/getByToken",
+      "description": "I get a specific user by token",
+      "inputs": ["token"],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["guest"],
+      "_dispatch": {
+        "message": "users:getByToken",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/users/add",
+      "description": "I add a new user",
+      "inputs": [
+        "workspace",
+        "user"
+      ],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:add"],
+      "_dispatch": {
+        "message": "users:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/users/patch",
+      "description": "I patch an existing user",
+      "inputs": [
+        "workspace",
+        "username",
+        "user"
+      ],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:patch"],
+      "_dispatch": {
+        "message": "users:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/users/delete",
+      "description": "I delete an existing user",
+      "inputs": [
+        "workspace",
+        "user"
+      ],
+      "_proto": null,
+      "_outputExample": {},
+      "_permission": ["users:delete"],
+      "_dispatch": {
+        "message": "users:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "authenticate": {
+      "name": "/users/authenticate",
+      "description": "I authenticate users",
+      "inputs": [
+        "workspace",
+        "username",
+        "password"
+      ],
+      "_outputExample": {},
+      "_permission": ["guest"],
+      "_dispatch": {
+        "message": "users:authenticate",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "verifyAPIToken": {
+      "name": "/users/verifyAPIToken",
+      "description": "I verify API tokens",
+      "inputs": ["token"],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["guest"],
+      "_dispatch": {
+        "message": "users:verifyAPIToken",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "generateToken": {
+      "name": "/users/generateToken",
+      "description": "I generate tokens for users",
+      "inputs": ["user"],
+      "_proto": {
+        "user": {
+          "name": "user",
+          "description": "The user assosicated with the token",
+          "type": "object",
+          "required": true,
+          "private": true
+        },
+        "token": {
+          "name": "token",
+          "description": "The token itself",
+          "required": true
+        },
+        "_": {
+          "name": "_",
+          "description": "The token itself",
+          "required": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "description": "The token generation timestamp",
+          "required": true
+        },
+        "last": {
+          "name": "last",
+          "description": "The token last usage timestamp",
+          "required": true
+        },
+        "expires": {
+          "name": "expires",
+          "description": "The token expiry timestamp",
+          "type": "int",
+          "required": true
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:generateToken"],
+      "_dispatch": {
+        "message": "users:generateToken",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "validateToken": {
+      "name": "/users/validateToken",
+      "description": "I validate tokens for users",
+      "inputs": ["token"],
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["users:validateToken"],
+      "_dispatch": {
+        "message": "users:validateToken",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "expireToken": {
+      "name": "/users/expireToken",
+      "description": "I expire tokens for users",
+      "inputs": ["token"],
+      "_outputExample": {},
+      "_permission": ["users:expireToken"],
+      "_dispatch": {
+        "message": "users:expireToken",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "permissions": {
+      "name": "/users/permissions",
+      "description": "I get the user's permissions",
+      "inputs": [
+        "workspace",
+        "user"
+      ],
+      "_outputExample": {},
+      "_permission": ["users:permissions"],
+      "_dispatch": {
+        "message": "users:permissions",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "workspaces": {
+    "list": {
+      "name": "/workspaces/list",
+      "description": "I list all available workspaces",
+      "inputs": [],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The key of the workspace",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the workspace",
+          "type": "string",
+          "required": false
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the workspace",
+          "type": "string",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["workspaces:list"],
+      "_dispatch": {
+        "message": "workspaces:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/workspaces/get",
+      "description": "I get a specific workspace by key`",
+      "inputs": ["key"],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The key of the workspace",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the workspace",
+          "type": "string",
+          "required": false
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the workspace",
+          "type": "string",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["workspaces:get"],
+      "_dispatch": {
+        "message": "workspaces:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/workspaces/add",
+      "description": "I add a new user",
+      "inputs": ["workspace"],
+      "_outputExample": {},
+      "_permission": ["workspaces:add"],
+      "_dispatch": {
+        "message": "workspaces:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/workspaces/patch",
+      "description": "I patch an existing workspace",
+      "inputs": [
+        "workspace",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["workspaces:patch"],
+      "_dispatch": {
+        "message": "workspaces:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/workspaces/delete",
+      "description": "I delete an existing workspace",
+      "inputs": ["workspace"],
+      "_outputExample": {},
+      "_permission": ["workspaces:delete"],
+      "_dispatch": {
+        "message": "workspaces:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "roles": {
+    "list": {
+      "name": "/roles/list",
+      "description": "I list all available roles",
+      "inputs": ["workspace"],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The key of the role",
+          "type": "string",
+          "required": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "description": "List of permissions assosciated with this role",
+          "required": true,
+          "default": [],
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "List of filters for the specified role",
+          "required": false,
+          "default": [],
+          "private": true
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["roles:list"],
+      "_dispatch": {
+        "message": "roles:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/roles/get",
+      "description": "I get a specific role by name`",
+      "inputs": [
+        "workspace",
+        "name"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The key of the role",
+          "type": "string",
+          "required": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "description": "List of permissions assosciated with this role",
+          "required": true,
+          "default": [],
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "List of filters for the specified role",
+          "required": false,
+          "default": [],
+          "private": true
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["roles:get"],
+      "_dispatch": {
+        "message": "roles:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/roles/add",
+      "description": "I add a new user",
+      "inputs": [
+        "workspace",
+        "role"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The key of the role",
+          "type": "string",
+          "required": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "description": "List of permissions assosciated with this role",
+          "required": true,
+          "default": [],
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "List of filters for the specified role",
+          "required": false,
+          "default": [],
+          "private": true
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["roles:add"],
+      "_dispatch": {
+        "message": "roles:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/roles/patch",
+      "description": "I patch an existing role",
+      "inputs": [
+        "workspace",
+        "role",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["roles:patch"],
+      "_dispatch": {
+        "message": "roles:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/roles/delete",
+      "description": "I delete an existing role",
+      "inputs": [
+        "workspace",
+        "role"
+      ],
+      "_outputExample": {},
+      "_permission": ["roles:delete"],
+      "_dispatch": {
+        "message": "roles:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "permissions": {
+    "list": {
+      "name": "/permissions/list",
+      "description": "I list all available permissions",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["permissions:list"],
+      "_dispatch": {
+        "message": "permissions:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/permissions/get",
+      "description": "I get a specific permission by name`",
+      "inputs": ["name"],
+      "_outputExample": {},
+      "_permission": ["permissions:get"],
+      "_dispatch": {
+        "message": "permissions:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "system": {
+    "version": {
+      "name": "/system/version",
+      "description": "I print out the version",
+      "verb": "GET",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["system:version"],
+      "_dispatch": {
+        "message": "system:version",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "nodeUID": {
+      "name": "/system/nodeUID",
+      "description": "I print out the node uuid",
+      "verb": "GET",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["system:nodeuid"],
+      "_dispatch": {
+        "message": "system:nodeuid",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "whoami": {
+      "name": "/api/system/whoami",
+      "description": "I print out the user details",
+      "_proto": {
+        "username": {
+          "name": "username",
+          "description": "The user's username",
+          "type": "string",
+          "required": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "description": "The displayname of the user",
+          "required": false
+        },
+        "password": {
+          "name": "password",
+          "description": "The user's password",
+          "required": false,
+          "private": true,
+          "hidden": true
+        },
+        "roles": {
+          "name": "roles",
+          "description": "The user's roles",
+          "required": true,
+          "private": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The user's filter",
+          "type": "array",
+          "default": [],
+          "required": false,
+          "private": true
+        },
+        "APIToken": {
+          "name": "APIToken",
+          "description": "The user's API Token",
+          "required": false,
+          "private": true
+        },
+        "workspace": {
+          "name": "workspace",
+          "description": "The user's Workspace",
+          "required": false
+        },
+        "token": {
+          "name": "token",
+          "description": "The user's current security token",
+          "required": false
+        }
+      },
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["system:whoami"],
+      "_dispatch": {
+        "message": "system:whoami",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "blacklist": {
+      "name": "/system/blacklist",
+      "description": "I blacklist an IP",
+      "inputs": {
+        "required": [
+          "ip",
+          "blacklist"
+        ],
+        "optional": ["ttl"]
+      },
+      "_outputExample": {},
+      "_permission": ["system:blacklist"],
+      "_dispatch": {
+        "message": "system:blacklist",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "nodeDetails": {
+      "name": "/system/nodeDetails",
+      "description": "I print details on this node",
+      "inputs": {
+        "required": [],
+        "optional": ["uid"]
+      },
+      "_outputExample": {},
+      "_permission": ["system:nodedetails"],
+      "_dispatch": {
+        "message": "system:nodedetails",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "connectedClients": {
+      "name": "/system/connectedClients",
+      "description": "I print details on all connected clients to this node",
+      "inputs": {
+        "required": [],
+        "optional": ["uid"]
+      },
+      "_outputExample": {},
+      "_permission": ["system:connectedclients"],
+      "_dispatch": {
+        "message": "system:connectedclients",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "nodeList": {
+      "name": "/system/nodeList",
+      "description": "I list all registered nodes",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["system:nodelist"],
+      "_dispatch": {
+        "message": "system:nodelist",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "roundTrip": {
+      "name": "/system/roundTrip",
+      "description": "I execute a roundtrip of a payload and return the time in ms",
+      "inputs": ["start"],
+      "_outputExample": {},
+      "_permission": ["system:roundtrip"],
+      "_dispatch": {
+        "message": "roundtrip",
+        "criteria": "notme",
+        "limit": 1
+      },
+      "_route": null
+    },
+    "terminate": {
+      "name": "/system/terminate",
+      "description": "I terminate a node",
+      "inputs": {
+        "required": [],
+        "optional": ["uid"]
+      },
+      "_outputExample": {},
+      "_permission": ["system:terminate"],
+      "_dispatch": {
+        "message": "terminate",
+        "limit": -1,
+        "criteria": "notme"
+      },
+      "_route": null
+    },
+    "startWebServer": {
+      "name": "/system/startWebServer",
+      "description": "I start a WebServer on a node",
+      "inputs": ["node"],
+      "_outputExample": {},
+      "_permission": ["system:startWebServer"],
+      "_dispatch": {
+        "message": "startWebServer",
+        "criteria": "notme",
+        "limit": 1
+      },
+      "_route": null
+    },
+    "purgeCache": {
+      "name": "/system/purgeCache",
+      "description": "I purge the cache",
+      "inputs": {
+        "required": [],
+        "optional": []
+      },
+      "_outputExample": {},
+      "_permission": ["system:purgeCache"],
+      "_dispatch": {
+        "message": "purgeCache",
+        "limit": -1,
+        "criteria": "notme"
+      },
+      "_route": null
+    }
+  },
+  "beacon": {
+    "insert": {
+      "name": "/beacon/insert",
+      "description": "",
+      "inputs": {
+        "required": [
+          "workspace",
+          "collection",
+          "document"
+        ],
+        "optional": ["options"]
+      },
+      "_outputExample": {},
+      "_permission": ["beacon:insert"],
+      "_dispatch": {
+        "message": "beacon:insert",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "query": {
+    "stop": {
+      "name": "/query/stop",
+      "description": "",
+      "inputs": ["querytoken"],
+      "_outputExample": {},
+      "_permission": ["query:stop"],
+      "_dispatch": {
+        "message": "query:stop",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "fetch": {
+      "name": "/query/fetch",
+      "description": "",
+      "inputs": ["options"],
+      "_outputExample": {},
+      "_permission": ["query:fetch"],
+      "_dispatch": {
+        "message": "query:fetch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "collections": {
+    "list": {
+      "name": "/collections/list",
+      "description": "I list all available collections",
+      "inputs": ["workspace"],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the collection",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the collection",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "strongTyped": {
+          "name": "strongTyped",
+          "description": "Is the collection strong typed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "description": "The collection's dimensions",
+          "type": "array",
+          "required": false,
+          "default": []
+        },
+        "metrics": {
+          "name": "metrics",
+          "description": "The collection's metrics",
+          "type": "array",
+          "required": false,
+          "default": []
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["collections:list"],
+      "_dispatch": {
+        "message": "collections:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/collections/get",
+      "description": "I get a specific collection by id`",
+      "inputs": [
+        "workspace",
+        "id"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the collection",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the collection",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "strongTyped": {
+          "name": "strongTyped",
+          "description": "Is the collection strong typed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "description": "The collection's dimensions",
+          "type": "array",
+          "required": false,
+          "default": []
+        },
+        "metrics": {
+          "name": "metrics",
+          "description": "The collection's metrics",
+          "type": "array",
+          "required": false,
+          "default": []
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["collections:get"],
+      "_dispatch": {
+        "message": "collections:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/collections/add",
+      "description": "I add a new collection",
+      "inputs": [
+        "workspace",
+        "collection"
+      ],
+      "_outputExample": {},
+      "_permission": ["collections:add"],
+      "_dispatch": {
+        "message": "collections:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/collections/patch",
+      "description": "I patch an existing collection",
+      "inputs": [
+        "workspace",
+        "collection",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["collections:patch"],
+      "_dispatch": {
+        "message": "collections:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/collections/delete",
+      "description": "I delete an existing collection",
+      "inputs": [
+        "workspace",
+        "id"
+      ],
+      "_outputExample": {},
+      "_permission": ["collections:delete"],
+      "_dispatch": {
+        "message": "collections:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "stats": {
+      "name": "/collections/stats",
+      "description": "I provide stats about a collection",
+      "inputs": [
+        "workspace",
+        "id"
+      ],
+      "_outputExample": {},
+      "_permission": ["collections:stats"],
+      "_dispatch": {
+        "message": "collections:stats",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "metadata": {
+      "name": "/collections/metadata",
+      "description": "I provide metadata information for a document",
+      "inputs": {
+        "required": [
+          "workspace",
+          "document"
+        ],
+        "optional": ["collection"]
+      },
+      "_outputExample": {},
+      "_permission": ["collections:metadata"],
+      "_dispatch": {
+        "message": "collections:metadata",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "dimensions": {
+    "list": {
+      "name": "/dimensions/list",
+      "description": "I list all available dimensions",
+      "inputs": {
+        "required": ["workspace"],
+        "optional": ["collection"]
+      },
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the dimension",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the dimension",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the dimension",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the dimension",
+          "type": "string",
+          "required": true,
+          "private": true,
+          "hidden": true
+        },
+        "datatype": {
+          "name": "datatype",
+          "description": "The datatype of the dimension",
+          "type": "string",
+          "required": false,
+          "default": "string"
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["dimensions:list"],
+      "_dispatch": {
+        "message": "dimensions:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/dimensions/get",
+      "description": "I get a specific dimension by key`",
+      "inputs": [
+        "workspace",
+        "collection",
+        "key"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the dimension",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the dimension",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the dimension",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the dimension",
+          "type": "string",
+          "required": true,
+          "private": true,
+          "hidden": true
+        },
+        "datatype": {
+          "name": "datatype",
+          "description": "The datatype of the dimension",
+          "type": "string",
+          "required": false,
+          "default": "string"
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["dimensions:get"],
+      "_dispatch": {
+        "message": "dimensions:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/dimensions/add",
+      "description": "I add a new dimension",
+      "inputs": [
+        "workspace",
+        "collection",
+        "dimension"
+      ],
+      "_outputExample": {},
+      "_permission": ["dimensions:add"],
+      "_dispatch": {
+        "message": "dimensions:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/dimensions/patch",
+      "description": "I patch an existing dimension",
+      "inputs": [
+        "workspace",
+        "collection",
+        "dimension",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["dimensions:patch"],
+      "_dispatch": {
+        "message": "dimensions:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/dimensions/delete",
+      "description": "I delete an existing dimension",
+      "inputs": [
+        "workspace",
+        "collection",
+        "dimension"
+      ],
+      "_outputExample": {},
+      "_permission": ["dimensions:delete"],
+      "_dispatch": {
+        "message": "dimensions:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "metrics": {
+    "list": {
+      "name": "/metrics/list",
+      "description": "I list all available metrics",
+      "inputs": {
+        "required": ["workspace"],
+        "optional": ["collection"]
+      },
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the metric",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the metric",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the metric",
+          "type": "string",
+          "required": true,
+          "private": true,
+          "hidden": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The filter of the metric",
+          "type": "array",
+          "required": false,
+          "default": ""
+        },
+        "datatype": {
+          "name": "datatype",
+          "description": "The datatype of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "aggregation": {
+          "name": "aggregation",
+          "description": "The aggregation of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "prefix": {
+          "name": "prefix",
+          "description": "The prefix of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "suffix": {
+          "name": "suffix",
+          "description": "The suffix of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "decimals": {
+          "name": "decimals",
+          "description": "The number of decimal places to show",
+          "type": "int",
+          "required": false,
+          "default": 0
+        },
+        "formula": {
+          "name": "formula",
+          "description": "The formula of the metric",
+          "type": "object",
+          "required": false
+        },
+        "collection": {
+          "name": "collection",
+          "description": "The collection of the metric",
+          "type": "string",
+          "required": false
+        },
+        "category": {
+          "name": "category",
+          "description": "The category of the metric",
+          "type": "string",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["metrics:list"],
+      "_dispatch": {
+        "message": "metrics:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/metrics/get",
+      "description": "I get a specific metric by key`",
+      "inputs": [
+        "workspace",
+        "collection",
+        "key"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the metric",
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the metric",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the metric",
+          "type": "string",
+          "required": true,
+          "private": true,
+          "hidden": true
+        },
+        "filter": {
+          "name": "filter",
+          "description": "The filter of the metric",
+          "type": "array",
+          "required": false,
+          "default": ""
+        },
+        "datatype": {
+          "name": "datatype",
+          "description": "The datatype of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "aggregation": {
+          "name": "aggregation",
+          "description": "The aggregation of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "prefix": {
+          "name": "prefix",
+          "description": "The prefix of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "suffix": {
+          "name": "suffix",
+          "description": "The suffix of the metric",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "decimals": {
+          "name": "decimals",
+          "description": "The number of decimal places to show",
+          "type": "int",
+          "required": false,
+          "default": 0
+        },
+        "formula": {
+          "name": "formula",
+          "description": "The formula of the metric",
+          "type": "object",
+          "required": false
+        },
+        "collection": {
+          "name": "collection",
+          "description": "The collection of the metric",
+          "type": "string",
+          "required": false
+        },
+        "category": {
+          "name": "category",
+          "description": "The category of the metric",
+          "type": "string",
+          "required": false
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["metrics:get"],
+      "_dispatch": {
+        "message": "metrics:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/metrics/add",
+      "description": "I add a new metric",
+      "inputs": [
+        "workspace",
+        "collection",
+        "metric"
+      ],
+      "_outputExample": {},
+      "_permission": ["metrics:add"],
+      "_dispatch": {
+        "message": "metrics:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/metrics/patch",
+      "description": "I patch an existing metric",
+      "inputs": [
+        "workspace",
+        "collection",
+        "metric",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["metrics:patch"],
+      "_dispatch": {
+        "message": "metrics:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/metrics/delete",
+      "description": "I delete an existing metric",
+      "inputs": [
+        "workspace",
+        "collection",
+        "metric"
+      ],
+      "_outputExample": {},
+      "_permission": ["metrics:delete"],
+      "_dispatch": {
+        "message": "metrics:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "config": {
+    "get": {
+      "name": "/config/get",
+      "description": "I get a specific config by name`",
+      "inputs": ["key"],
+      "_outputExample": {},
+      "_permission": ["config:get"],
+      "_dispatch": {
+        "message": "config:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "set": {
+      "name": "/config/set",
+      "description": "I set a new config key",
+      "inputs": [
+        "key",
+        "val"
+      ],
+      "_outputExample": {},
+      "_permission": ["config:set"],
+      "_dispatch": {
+        "message": "config:set",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "alerts": {},
+  "canvases": {
+    "list": {
+      "name": "/canvases/list",
+      "description": "I list all available canvases",
+      "inputs": ["workspace"],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "version": {
+          "name": "version",
+          "description": "The version of the canvas",
+          "type": "string",
+          "required": false
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the canvas",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "datepicker": {
+          "name": "datepicker",
+          "description": "The datepicker of the canvas",
+          "type": "string"
+        },
+        "visualizations": {
+          "name": "visualizations",
+          "description": "The visualizations of the canvas",
+          "type": "array"
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "description": "The dimensions of the canvas",
+          "type": "array"
+        },
+        "metrics": {
+          "name": "metrics",
+          "description": "The metrics of the canvas",
+          "type": "array"
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["canvases:list"],
+      "_dispatch": {
+        "message": "canvases:list",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "get": {
+      "name": "/canvases/get",
+      "description": "I get a specific canvas by key",
+      "inputs": [
+        "workspace",
+        "key"
+      ],
+      "_proto": {
+        "key": {
+          "name": "key",
+          "description": "The id of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "version": {
+          "name": "version",
+          "description": "The version of the canvas",
+          "type": "string",
+          "required": false
+        },
+        "name": {
+          "name": "name",
+          "description": "The name of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "name": "description",
+          "description": "The description of the canvas",
+          "type": "string",
+          "required": false,
+          "default": ""
+        },
+        "type": {
+          "name": "type",
+          "description": "The type of the canvas",
+          "type": "string",
+          "required": true
+        },
+        "datepicker": {
+          "name": "datepicker",
+          "description": "The datepicker of the canvas",
+          "type": "string"
+        },
+        "visualizations": {
+          "name": "visualizations",
+          "description": "The visualizations of the canvas",
+          "type": "array"
+        },
+        "dimensions": {
+          "name": "dimensions",
+          "description": "The dimensions of the canvas",
+          "type": "array"
+        },
+        "metrics": {
+          "name": "metrics",
+          "description": "The metrics of the canvas",
+          "type": "array"
+        }
+      },
+      "_outputExample": {},
+      "_permission": ["canvases:get"],
+      "_dispatch": {
+        "message": "canvases:get",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "add": {
+      "name": "/canvases/add",
+      "description": "I add a new canvas",
+      "inputs": [
+        "workspace",
+        "canvas"
+      ],
+      "_outputExample": {},
+      "_permission": ["canvases:add"],
+      "_dispatch": {
+        "message": "canvases:add",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "patch": {
+      "name": "/canvases/patch",
+      "description": "I patch an existing canvas",
+      "inputs": [
+        "workspace",
+        "canvas",
+        "payload"
+      ],
+      "_outputExample": {},
+      "_permission": ["canvases:patch"],
+      "_dispatch": {
+        "message": "canvases:patch",
+        "criteria": "notme",
+        "limit": 1
+      }
+    },
+    "delete": {
+      "name": "/canvases/delete",
+      "description": "I delete an existing canvas",
+      "inputs": [
+        "workspace",
+        "canvas"
+      ],
+      "_outputExample": {},
+      "_permission": ["canvases:delete"],
+      "_dispatch": {
+        "message": "canvases:delete",
+        "criteria": "notme",
+        "limit": 1
+      }
+    }
+  },
+  "test": {
+    "withpermission": {
+      "name": "/test/withpermission",
+      "description": "I make sure that tests run fine",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["guest"]
+    },
+    "nopermission": {
+      "name": "/test/nopermission",
+      "description": "I make sure that tests run fine",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": ["manage_system"]
+    },
+    "createtesterror": {
+      "name": "/test/createtesterror",
+      "description": "I make sure that tests run fine",
+      "inputs": [],
+      "_outputExample": {},
+      "_permission": []
+    }
+  }
+}
 },{}],2:[function(require,module,exports){
+/*!
+ * tablesort v2.0.1 (2014-11-06)
+ * http://tristen.ca/tablesort/demo
+ * Copyright (c) 2014 ; Licensed MIT
+ */!function(){function a(a,b){if(!a)throw new Error("Element not found");if("TABLE"!==a.tagName)throw new Error("Element must be a table");this.init(a,b||{})}a.prototype={init:function(a,d){var e,f=this;if(this.thead=!1,this.options=d,a.rows&&a.rows.length>0&&(a.tHead&&a.tHead.rows.length>0?(e=a.tHead.rows[a.tHead.rows.length-1],f.thead=!0):e=a.rows[0]),e){for(var g,h=function(){f.current&&f.current!==this&&(f.current.classList.contains(b)?f.current.classList.remove(b):f.current.classList.contains(c)&&f.current.classList.remove(c)),f.current=this,f.sortTable(this)},i=0;i<e.cells.length;i++){var j=e.cells[i];j.classList.contains("no-sort")||(j.classList.add("sort-header"),j.addEventListener("click",h,!1),j.classList.contains("sort-default")&&(g=j))}g&&(f.current=g,f.sortTable(g,!0))}},getFirstDataRowIndex:function(){return this.thead?0:1},sortTable:function(a,d){var e,f=this,m=a.cellIndex,n=i(a,"table"),o="",p=f.getFirstDataRowIndex();if(!(n.rows.length<=1)){for(;""===o&&p<n.tBodies[0].rows.length;)o=j(n.tBodies[0].rows[p].cells[m]),o=o.trim(),("<!--"===o.substr(0,4)||0===o.length)&&(o=""),p++;if(""!==o){var q=function(a,b){var c=j(a.cells[f.col]).toLowerCase(),d=j(b.cells[f.col]).toLowerCase();return c===d?0:d>c?1:-1},r=function(a,b){var c=j(a.cells[f.col]),d=j(b.cells[f.col]);return c=l(c),d=l(d),k(d,c)},s=function(a,b){var c=j(a.cells[f.col]).toLowerCase(),d=j(b.cells[f.col]).toLowerCase();return h(d)-h(c)};e=o.match(/^-?[£\x24Û¢´€]?\d+\s*([,\.]\d{0,2})/)||o.match(/^-?\d+\s*([,\.]\d{0,2})?[£\x24Û¢´€]/)||o.match(/^-?(\d)*-?([,\.]){0,1}-?(\d)+([E,e][\-+][\d]+)?%?$/)?r:g(o)?s:q,this.col=m;var t,u=[],v={},w=0;for(p=0;p<n.tBodies.length;p++)for(t=0;t<n.tBodies[p].rows.length;t++){var x=n.tBodies[p].rows[t];x.classList.contains("no-sort")?v[w]=x:u.push({tr:x,index:w}),w++}var y=f.options.descending?c:b,z=f.options.descending?b:c;d?a.classList.contains(y)||a.classList.contains(z)||a.classList.add(y):a.classList.contains(y)?(a.classList.remove(y),a.classList.add(z)):(a.classList.remove(z),a.classList.add(y));var A=function(a){return function(b,c){var d=a(b.tr,c.tr);return 0===d?b.index-c.index:d}},B=function(a){return function(b,c){var d=a(b.tr,c.tr);return 0===d?c.index-b.index:d}};a.classList.contains(c)?(u.sort(B(e)),u.reverse()):u.sort(A(e));var C=0;for(p=0;w>p;p++){var D;v[p]?(D=v[p],C++):D=u[p-C].tr,n.tBodies[0].appendChild(D)}}}},refresh:function(){void 0!==this.current&&this.sortTable(this.current,!0)}};var b="sort-up",c="sort-down",d=/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\.?\,?\s*/i,e=/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/,f=/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i,g=function(a){return-1!==(-1!==a.search(d)||-1!==a.search(e)||a.search(-1!==f))&&!isNaN(h(a))},h=function(a){return a=a.replace(/\-/g,"/"),a=a.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})/,"$1/$2/$3"),new Date(a).getTime()},i=function(a,b){return null===a?null:1===a.nodeType&&a.tagName.toLowerCase()===b.toLowerCase()?a:i(a.parentNode,b)},j=function(a){var b=this;if("string"==typeof a||"undefined"==typeof a)return a;var c=a.getAttribute("data-sort")||"";if(c)return c;if(a.textContent)return a.textContent;if(a.innerText)return a.innerText;for(var d=a.childNodes,e=d.length,f=0;e>f;f++)switch(d[f].nodeType){case 1:c+=b.getInnerText(d[f]);break;case 3:c+=d[f].nodeValue}return c},k=function(a,b){var c=parseFloat(a),d=parseFloat(b);return a=isNaN(c)?0:c,b=isNaN(d)?0:d,a-b},l=function(a){return a.replace(/[^\-?0-9.]/g,"")};"undefined"!=typeof module&&module.exports?module.exports=a:window.Tablesort=a}();
+},{}],3:[function(require,module,exports){
+var process=require("__browserify_process");/*global setImmediate: false, setTimeout: false, console: false */
+(function () {
+
+    var async = {};
+
+    // global on the server, window in the browser
+    var root, previous_async;
+
+    root = this;
+    if (root != null) {
+      previous_async = root.async;
+    }
+
+    async.noConflict = function () {
+        root.async = previous_async;
+        return async;
+    };
+
+    function only_once(fn) {
+        var called = false;
+        return function() {
+            if (called) throw new Error("Callback was already called.");
+            called = true;
+            fn.apply(root, arguments);
+        }
+    }
+
+    //// cross-browser compatiblity functions ////
+
+    var _each = function (arr, iterator) {
+        if (arr.forEach) {
+            return arr.forEach(iterator);
+        }
+        for (var i = 0; i < arr.length; i += 1) {
+            iterator(arr[i], i, arr);
+        }
+    };
+
+    var _map = function (arr, iterator) {
+        if (arr.map) {
+            return arr.map(iterator);
+        }
+        var results = [];
+        _each(arr, function (x, i, a) {
+            results.push(iterator(x, i, a));
+        });
+        return results;
+    };
+
+    var _reduce = function (arr, iterator, memo) {
+        if (arr.reduce) {
+            return arr.reduce(iterator, memo);
+        }
+        _each(arr, function (x, i, a) {
+            memo = iterator(memo, x, i, a);
+        });
+        return memo;
+    };
+
+    var _keys = function (obj) {
+        if (Object.keys) {
+            return Object.keys(obj);
+        }
+        var keys = [];
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                keys.push(k);
+            }
+        }
+        return keys;
+    };
+
+    //// exported async module functions ////
+
+    //// nextTick implementation with browser-compatible fallback ////
+    if (typeof process === 'undefined' || !(process.nextTick)) {
+        if (typeof setImmediate === 'function') {
+            async.nextTick = function (fn) {
+                // not a direct alias for IE10 compatibility
+                setImmediate(fn);
+            };
+            async.setImmediate = async.nextTick;
+        }
+        else {
+            async.nextTick = function (fn) {
+                setTimeout(fn, 0);
+            };
+            async.setImmediate = async.nextTick;
+        }
+    }
+    else {
+        async.nextTick = process.nextTick;
+        if (typeof setImmediate !== 'undefined') {
+            async.setImmediate = function (fn) {
+              // not a direct alias for IE10 compatibility
+              setImmediate(fn);
+            };
+        }
+        else {
+            async.setImmediate = async.nextTick;
+        }
+    }
+
+    async.each = function (arr, iterator, callback) {
+        callback = callback || function () {};
+        if (!arr.length) {
+            return callback();
+        }
+        var completed = 0;
+        _each(arr, function (x) {
+            iterator(x, only_once(function (err) {
+                if (err) {
+                    callback(err);
+                    callback = function () {};
+                }
+                else {
+                    completed += 1;
+                    if (completed >= arr.length) {
+                        callback(null);
+                    }
+                }
+            }));
+        });
+    };
+    async.forEach = async.each;
+
+    async.eachSeries = function (arr, iterator, callback) {
+        callback = callback || function () {};
+        if (!arr.length) {
+            return callback();
+        }
+        var completed = 0;
+        var iterate = function () {
+            iterator(arr[completed], function (err) {
+                if (err) {
+                    callback(err);
+                    callback = function () {};
+                }
+                else {
+                    completed += 1;
+                    if (completed >= arr.length) {
+                        callback(null);
+                    }
+                    else {
+                        iterate();
+                    }
+                }
+            });
+        };
+        iterate();
+    };
+    async.forEachSeries = async.eachSeries;
+
+    async.eachLimit = function (arr, limit, iterator, callback) {
+        var fn = _eachLimit(limit);
+        fn.apply(null, [arr, iterator, callback]);
+    };
+    async.forEachLimit = async.eachLimit;
+
+    var _eachLimit = function (limit) {
+
+        return function (arr, iterator, callback) {
+            callback = callback || function () {};
+            if (!arr.length || limit <= 0) {
+                return callback();
+            }
+            var completed = 0;
+            var started = 0;
+            var running = 0;
+
+            (function replenish () {
+                if (completed >= arr.length) {
+                    return callback();
+                }
+
+                while (running < limit && started < arr.length) {
+                    started += 1;
+                    running += 1;
+                    iterator(arr[started - 1], function (err) {
+                        if (err) {
+                            callback(err);
+                            callback = function () {};
+                        }
+                        else {
+                            completed += 1;
+                            running -= 1;
+                            if (completed >= arr.length) {
+                                callback();
+                            }
+                            else {
+                                replenish();
+                            }
+                        }
+                    });
+                }
+            })();
+        };
+    };
+
+
+    var doParallel = function (fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [async.each].concat(args));
+        };
+    };
+    var doParallelLimit = function(limit, fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [_eachLimit(limit)].concat(args));
+        };
+    };
+    var doSeries = function (fn) {
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return fn.apply(null, [async.eachSeries].concat(args));
+        };
+    };
+
+
+    var _asyncMap = function (eachfn, arr, iterator, callback) {
+        var results = [];
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        eachfn(arr, function (x, callback) {
+            iterator(x.value, function (err, v) {
+                results[x.index] = v;
+                callback(err);
+            });
+        }, function (err) {
+            callback(err, results);
+        });
+    };
+    async.map = doParallel(_asyncMap);
+    async.mapSeries = doSeries(_asyncMap);
+    async.mapLimit = function (arr, limit, iterator, callback) {
+        return _mapLimit(limit)(arr, iterator, callback);
+    };
+
+    var _mapLimit = function(limit) {
+        return doParallelLimit(limit, _asyncMap);
+    };
+
+    // reduce only has a series version, as doing reduce in parallel won't
+    // work in many situations.
+    async.reduce = function (arr, memo, iterator, callback) {
+        async.eachSeries(arr, function (x, callback) {
+            iterator(memo, x, function (err, v) {
+                memo = v;
+                callback(err);
+            });
+        }, function (err) {
+            callback(err, memo);
+        });
+    };
+    // inject alias
+    async.inject = async.reduce;
+    // foldl alias
+    async.foldl = async.reduce;
+
+    async.reduceRight = function (arr, memo, iterator, callback) {
+        var reversed = _map(arr, function (x) {
+            return x;
+        }).reverse();
+        async.reduce(reversed, memo, iterator, callback);
+    };
+    // foldr alias
+    async.foldr = async.reduceRight;
+
+    var _filter = function (eachfn, arr, iterator, callback) {
+        var results = [];
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        eachfn(arr, function (x, callback) {
+            iterator(x.value, function (v) {
+                if (v) {
+                    results.push(x);
+                }
+                callback();
+            });
+        }, function (err) {
+            callback(_map(results.sort(function (a, b) {
+                return a.index - b.index;
+            }), function (x) {
+                return x.value;
+            }));
+        });
+    };
+    async.filter = doParallel(_filter);
+    async.filterSeries = doSeries(_filter);
+    // select alias
+    async.select = async.filter;
+    async.selectSeries = async.filterSeries;
+
+    var _reject = function (eachfn, arr, iterator, callback) {
+        var results = [];
+        arr = _map(arr, function (x, i) {
+            return {index: i, value: x};
+        });
+        eachfn(arr, function (x, callback) {
+            iterator(x.value, function (v) {
+                if (!v) {
+                    results.push(x);
+                }
+                callback();
+            });
+        }, function (err) {
+            callback(_map(results.sort(function (a, b) {
+                return a.index - b.index;
+            }), function (x) {
+                return x.value;
+            }));
+        });
+    };
+    async.reject = doParallel(_reject);
+    async.rejectSeries = doSeries(_reject);
+
+    var _detect = function (eachfn, arr, iterator, main_callback) {
+        eachfn(arr, function (x, callback) {
+            iterator(x, function (result) {
+                if (result) {
+                    main_callback(x);
+                    main_callback = function () {};
+                }
+                else {
+                    callback();
+                }
+            });
+        }, function (err) {
+            main_callback();
+        });
+    };
+    async.detect = doParallel(_detect);
+    async.detectSeries = doSeries(_detect);
+
+    async.some = function (arr, iterator, main_callback) {
+        async.each(arr, function (x, callback) {
+            iterator(x, function (v) {
+                if (v) {
+                    main_callback(true);
+                    main_callback = function () {};
+                }
+                callback();
+            });
+        }, function (err) {
+            main_callback(false);
+        });
+    };
+    // any alias
+    async.any = async.some;
+
+    async.every = function (arr, iterator, main_callback) {
+        async.each(arr, function (x, callback) {
+            iterator(x, function (v) {
+                if (!v) {
+                    main_callback(false);
+                    main_callback = function () {};
+                }
+                callback();
+            });
+        }, function (err) {
+            main_callback(true);
+        });
+    };
+    // all alias
+    async.all = async.every;
+
+    async.sortBy = function (arr, iterator, callback) {
+        async.map(arr, function (x, callback) {
+            iterator(x, function (err, criteria) {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    callback(null, {value: x, criteria: criteria});
+                }
+            });
+        }, function (err, results) {
+            if (err) {
+                return callback(err);
+            }
+            else {
+                var fn = function (left, right) {
+                    var a = left.criteria, b = right.criteria;
+                    return a < b ? -1 : a > b ? 1 : 0;
+                };
+                callback(null, _map(results.sort(fn), function (x) {
+                    return x.value;
+                }));
+            }
+        });
+    };
+
+    async.auto = function (tasks, callback) {
+        callback = callback || function () {};
+        var keys = _keys(tasks);
+        if (!keys.length) {
+            return callback(null);
+        }
+
+        var results = {};
+
+        var listeners = [];
+        var addListener = function (fn) {
+            listeners.unshift(fn);
+        };
+        var removeListener = function (fn) {
+            for (var i = 0; i < listeners.length; i += 1) {
+                if (listeners[i] === fn) {
+                    listeners.splice(i, 1);
+                    return;
+                }
+            }
+        };
+        var taskComplete = function () {
+            _each(listeners.slice(0), function (fn) {
+                fn();
+            });
+        };
+
+        addListener(function () {
+            if (_keys(results).length === keys.length) {
+                callback(null, results);
+                callback = function () {};
+            }
+        });
+
+        _each(keys, function (k) {
+            var task = (tasks[k] instanceof Function) ? [tasks[k]]: tasks[k];
+            var taskCallback = function (err) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                if (args.length <= 1) {
+                    args = args[0];
+                }
+                if (err) {
+                    var safeResults = {};
+                    _each(_keys(results), function(rkey) {
+                        safeResults[rkey] = results[rkey];
+                    });
+                    safeResults[k] = args;
+                    callback(err, safeResults);
+                    // stop subsequent errors hitting callback multiple times
+                    callback = function () {};
+                }
+                else {
+                    results[k] = args;
+                    async.setImmediate(taskComplete);
+                }
+            };
+            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
+            var ready = function () {
+                return _reduce(requires, function (a, x) {
+                    return (a && results.hasOwnProperty(x));
+                }, true) && !results.hasOwnProperty(k);
+            };
+            if (ready()) {
+                task[task.length - 1](taskCallback, results);
+            }
+            else {
+                var listener = function () {
+                    if (ready()) {
+                        removeListener(listener);
+                        task[task.length - 1](taskCallback, results);
+                    }
+                };
+                addListener(listener);
+            }
+        });
+    };
+
+    async.waterfall = function (tasks, callback) {
+        callback = callback || function () {};
+        if (tasks.constructor !== Array) {
+          var err = new Error('First argument to waterfall must be an array of functions');
+          return callback(err);
+        }
+        if (!tasks.length) {
+            return callback();
+        }
+        var wrapIterator = function (iterator) {
+            return function (err) {
+                if (err) {
+                    callback.apply(null, arguments);
+                    callback = function () {};
+                }
+                else {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    var next = iterator.next();
+                    if (next) {
+                        args.push(wrapIterator(next));
+                    }
+                    else {
+                        args.push(callback);
+                    }
+                    async.setImmediate(function () {
+                        iterator.apply(null, args);
+                    });
+                }
+            };
+        };
+        wrapIterator(async.iterator(tasks))();
+    };
+
+    var _parallel = function(eachfn, tasks, callback) {
+        callback = callback || function () {};
+        if (tasks.constructor === Array) {
+            eachfn.map(tasks, function (fn, callback) {
+                if (fn) {
+                    fn(function (err) {
+                        var args = Array.prototype.slice.call(arguments, 1);
+                        if (args.length <= 1) {
+                            args = args[0];
+                        }
+                        callback.call(null, err, args);
+                    });
+                }
+            }, callback);
+        }
+        else {
+            var results = {};
+            eachfn.each(_keys(tasks), function (k, callback) {
+                tasks[k](function (err) {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    if (args.length <= 1) {
+                        args = args[0];
+                    }
+                    results[k] = args;
+                    callback(err);
+                });
+            }, function (err) {
+                callback(err, results);
+            });
+        }
+    };
+
+    async.parallel = function (tasks, callback) {
+        _parallel({ map: async.map, each: async.each }, tasks, callback);
+    };
+
+    async.parallelLimit = function(tasks, limit, callback) {
+        _parallel({ map: _mapLimit(limit), each: _eachLimit(limit) }, tasks, callback);
+    };
+
+    async.series = function (tasks, callback) {
+        callback = callback || function () {};
+        if (tasks.constructor === Array) {
+            async.mapSeries(tasks, function (fn, callback) {
+                if (fn) {
+                    fn(function (err) {
+                        var args = Array.prototype.slice.call(arguments, 1);
+                        if (args.length <= 1) {
+                            args = args[0];
+                        }
+                        callback.call(null, err, args);
+                    });
+                }
+            }, callback);
+        }
+        else {
+            var results = {};
+            async.eachSeries(_keys(tasks), function (k, callback) {
+                tasks[k](function (err) {
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    if (args.length <= 1) {
+                        args = args[0];
+                    }
+                    results[k] = args;
+                    callback(err);
+                });
+            }, function (err) {
+                callback(err, results);
+            });
+        }
+    };
+
+    async.iterator = function (tasks) {
+        var makeCallback = function (index) {
+            var fn = function () {
+                if (tasks.length) {
+                    tasks[index].apply(null, arguments);
+                }
+                return fn.next();
+            };
+            fn.next = function () {
+                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
+            };
+            return fn;
+        };
+        return makeCallback(0);
+    };
+
+    async.apply = function (fn) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return function () {
+            return fn.apply(
+                null, args.concat(Array.prototype.slice.call(arguments))
+            );
+        };
+    };
+
+    var _concat = function (eachfn, arr, fn, callback) {
+        var r = [];
+        eachfn(arr, function (x, cb) {
+            fn(x, function (err, y) {
+                r = r.concat(y || []);
+                cb(err);
+            });
+        }, function (err) {
+            callback(err, r);
+        });
+    };
+    async.concat = doParallel(_concat);
+    async.concatSeries = doSeries(_concat);
+
+    async.whilst = function (test, iterator, callback) {
+        if (test()) {
+            iterator(function (err) {
+                if (err) {
+                    return callback(err);
+                }
+                async.whilst(test, iterator, callback);
+            });
+        }
+        else {
+            callback();
+        }
+    };
+
+    async.doWhilst = function (iterator, test, callback) {
+        iterator(function (err) {
+            if (err) {
+                return callback(err);
+            }
+            if (test()) {
+                async.doWhilst(iterator, test, callback);
+            }
+            else {
+                callback();
+            }
+        });
+    };
+
+    async.until = function (test, iterator, callback) {
+        if (!test()) {
+            iterator(function (err) {
+                if (err) {
+                    return callback(err);
+                }
+                async.until(test, iterator, callback);
+            });
+        }
+        else {
+            callback();
+        }
+    };
+
+    async.doUntil = function (iterator, test, callback) {
+        iterator(function (err) {
+            if (err) {
+                return callback(err);
+            }
+            if (!test()) {
+                async.doUntil(iterator, test, callback);
+            }
+            else {
+                callback();
+            }
+        });
+    };
+
+    async.queue = function (worker, concurrency) {
+        if (concurrency === undefined) {
+            concurrency = 1;
+        }
+        function _insert(q, data, pos, callback) {
+          if(data.constructor !== Array) {
+              data = [data];
+          }
+          _each(data, function(task) {
+              var item = {
+                  data: task,
+                  callback: typeof callback === 'function' ? callback : null
+              };
+
+              if (pos) {
+                q.tasks.unshift(item);
+              } else {
+                q.tasks.push(item);
+              }
+
+              if (q.saturated && q.tasks.length === concurrency) {
+                  q.saturated();
+              }
+              async.setImmediate(q.process);
+          });
+        }
+
+        var workers = 0;
+        var q = {
+            tasks: [],
+            concurrency: concurrency,
+            saturated: null,
+            empty: null,
+            drain: null,
+            push: function (data, callback) {
+              _insert(q, data, false, callback);
+            },
+            unshift: function (data, callback) {
+              _insert(q, data, true, callback);
+            },
+            process: function () {
+                if (workers < q.concurrency && q.tasks.length) {
+                    var task = q.tasks.shift();
+                    if (q.empty && q.tasks.length === 0) {
+                        q.empty();
+                    }
+                    workers += 1;
+                    var next = function () {
+                        workers -= 1;
+                        if (task.callback) {
+                            task.callback.apply(task, arguments);
+                        }
+                        if (q.drain && q.tasks.length + workers === 0) {
+                            q.drain();
+                        }
+                        q.process();
+                    };
+                    var cb = only_once(next);
+                    worker(task.data, cb);
+                }
+            },
+            length: function () {
+                return q.tasks.length;
+            },
+            running: function () {
+                return workers;
+            }
+        };
+        return q;
+    };
+
+    async.cargo = function (worker, payload) {
+        var working     = false,
+            tasks       = [];
+
+        var cargo = {
+            tasks: tasks,
+            payload: payload,
+            saturated: null,
+            empty: null,
+            drain: null,
+            push: function (data, callback) {
+                if(data.constructor !== Array) {
+                    data = [data];
+                }
+                _each(data, function(task) {
+                    tasks.push({
+                        data: task,
+                        callback: typeof callback === 'function' ? callback : null
+                    });
+                    if (cargo.saturated && tasks.length === payload) {
+                        cargo.saturated();
+                    }
+                });
+                async.setImmediate(cargo.process);
+            },
+            process: function process() {
+                if (working) return;
+                if (tasks.length === 0) {
+                    if(cargo.drain) cargo.drain();
+                    return;
+                }
+
+                var ts = typeof payload === 'number'
+                            ? tasks.splice(0, payload)
+                            : tasks.splice(0);
+
+                var ds = _map(ts, function (task) {
+                    return task.data;
+                });
+
+                if(cargo.empty) cargo.empty();
+                working = true;
+                worker(ds, function () {
+                    working = false;
+
+                    var args = arguments;
+                    _each(ts, function (data) {
+                        if (data.callback) {
+                            data.callback.apply(null, args);
+                        }
+                    });
+
+                    process();
+                });
+            },
+            length: function () {
+                return tasks.length;
+            },
+            running: function () {
+                return working;
+            }
+        };
+        return cargo;
+    };
+
+    var _console_fn = function (name) {
+        return function (fn) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            fn.apply(null, args.concat([function (err) {
+                var args = Array.prototype.slice.call(arguments, 1);
+                if (typeof console !== 'undefined') {
+                    if (err) {
+                        if (console.error) {
+                            console.error(err);
+                        }
+                    }
+                    else if (console[name]) {
+                        _each(args, function (x) {
+                            console[name](x);
+                        });
+                    }
+                }
+            }]));
+        };
+    };
+    async.log = _console_fn('log');
+    async.dir = _console_fn('dir');
+    /*async.info = _console_fn('info');
+    async.warn = _console_fn('warn');
+    async.error = _console_fn('error');*/
+
+    async.memoize = function (fn, hasher) {
+        var memo = {};
+        var queues = {};
+        hasher = hasher || function (x) {
+            return x;
+        };
+        var memoized = function () {
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            var key = hasher.apply(null, args);
+            if (key in memo) {
+                callback.apply(null, memo[key]);
+            }
+            else if (key in queues) {
+                queues[key].push(callback);
+            }
+            else {
+                queues[key] = [callback];
+                fn.apply(null, args.concat([function () {
+                    memo[key] = arguments;
+                    var q = queues[key];
+                    delete queues[key];
+                    for (var i = 0, l = q.length; i < l; i++) {
+                      q[i].apply(null, arguments);
+                    }
+                }]));
+            }
+        };
+        memoized.memo = memo;
+        memoized.unmemoized = fn;
+        return memoized;
+    };
+
+    async.unmemoize = function (fn) {
+      return function () {
+        return (fn.unmemoized || fn).apply(null, arguments);
+      };
+    };
+
+    async.times = function (count, iterator, callback) {
+        var counter = [];
+        for (var i = 0; i < count; i++) {
+            counter.push(i);
+        }
+        return async.map(counter, iterator, callback);
+    };
+
+    async.timesSeries = function (count, iterator, callback) {
+        var counter = [];
+        for (var i = 0; i < count; i++) {
+            counter.push(i);
+        }
+        return async.mapSeries(counter, iterator, callback);
+    };
+
+    async.compose = function (/* functions... */) {
+        var fns = Array.prototype.reverse.call(arguments);
+        return function () {
+            var that = this;
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            async.reduce(fns, args, function (newargs, fn, cb) {
+                fn.apply(that, newargs.concat([function () {
+                    var err = arguments[0];
+                    var nextargs = Array.prototype.slice.call(arguments, 1);
+                    cb(err, nextargs);
+                }]))
+            },
+            function (err, results) {
+                callback.apply(that, [err].concat(results));
+            });
+        };
+    };
+
+    var _applyEach = function (eachfn, fns /*args...*/) {
+        var go = function () {
+            var that = this;
+            var args = Array.prototype.slice.call(arguments);
+            var callback = args.pop();
+            return eachfn(fns, function (fn, cb) {
+                fn.apply(that, args.concat([cb]));
+            },
+            callback);
+        };
+        if (arguments.length > 2) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return go.apply(this, args);
+        }
+        else {
+            return go;
+        }
+    };
+    async.applyEach = doParallel(_applyEach);
+    async.applyEachSeries = doSeries(_applyEach);
+
+    async.forever = function (fn, callback) {
+        function next(err) {
+            if (err) {
+                if (callback) {
+                    return callback(err);
+                }
+                throw err;
+            }
+            fn(next);
+        }
+        next();
+    };
+
+    // AMD / RequireJS
+    if (typeof define !== 'undefined' && define.amd) {
+        define([], function () {
+            return async;
+        });
+    }
+    // Node.js
+    else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = async;
+    }
+    // included directly via <script> tag
+    else {
+        root.async = async;
+    }
+
+}());
+
+},{"__browserify_process":51}],4:[function(require,module,exports){
 function replace(a, b)
 {
  if (!b)
@@ -251,7 +3125,7 @@ function foreach(object, block, context)
       return value;
  }
  */
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.4.13"
@@ -9467,7 +12341,7 @@ function foreach(object, block, context)
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;/*!
  * Node.JS module "Deep Extend"
  * @description Recursive object extending.
@@ -9559,7 +12433,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	return target;
 }
 
-},{"__browserify_Buffer":48}],5:[function(require,module,exports){
+},{"__browserify_Buffer":50}],7:[function(require,module,exports){
 /*!
  * EventEmitter2
  * https://github.com/hij1nx/EventEmitter2
@@ -10134,7 +13008,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
   }
 }();
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 
 //
@@ -10352,7 +13226,7 @@ if (typeof Object.getOwnPropertyDescriptor === 'function') {
   exports.getOwnPropertyDescriptor = valueObject;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10425,7 +13299,7 @@ function onend() {
   timers.setImmediate(shims.bind(this.end, this));
 }
 
-},{"_shims":6,"_stream_readable":9,"_stream_writable":11,"timers":18,"util":20}],8:[function(require,module,exports){
+},{"_shims":8,"_stream_readable":11,"_stream_writable":13,"timers":20,"util":22}],10:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10468,7 +13342,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"_stream_transform":10,"util":20}],9:[function(require,module,exports){
+},{"_stream_transform":12,"util":22}],11:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11389,7 +14263,7 @@ function endReadable(stream) {
   }
 }
 
-},{"__browserify_process":49,"_shims":6,"buffer":22,"events":13,"stream":16,"string_decoder":17,"timers":18,"util":20}],10:[function(require,module,exports){
+},{"__browserify_process":51,"_shims":8,"buffer":24,"events":15,"stream":18,"string_decoder":19,"timers":20,"util":22}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11595,7 +14469,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"_stream_duplex":7,"util":20}],11:[function(require,module,exports){
+},{"_stream_duplex":9,"util":22}],13:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11965,7 +14839,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"buffer":22,"stream":16,"timers":18,"util":20}],12:[function(require,module,exports){
+},{"buffer":24,"stream":18,"timers":20,"util":22}],14:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12282,7 +15156,7 @@ assert.doesNotThrow = function(block, /*optional*/message) {
 };
 
 assert.ifError = function(err) { if (err) {throw err;}};
-},{"_shims":6,"util":20}],13:[function(require,module,exports){
+},{"_shims":8,"util":22}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12563,7 +15437,7 @@ EventEmitter.listenerCount = function(emitter, type) {
     ret = emitter._events[type].length;
   return ret;
 };
-},{"util":20}],14:[function(require,module,exports){
+},{"util":22}],16:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -12577,7 +15451,7 @@ https.request = function (params, cb) {
     params.scheme = 'https';
     return http.request.call(this, params, cb);
 }
-},{"http":30}],15:[function(require,module,exports){
+},{"http":32}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12788,7 +15662,7 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
 
   return obj;
 };
-},{"_shims":6,"buffer":22,"util":20}],16:[function(require,module,exports){
+},{"_shims":8,"buffer":24,"util":22}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12917,7 +15791,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"_stream_duplex":7,"_stream_passthrough":8,"_stream_readable":9,"_stream_transform":10,"_stream_writable":11,"events":13,"util":20}],17:[function(require,module,exports){
+},{"_stream_duplex":9,"_stream_passthrough":10,"_stream_readable":11,"_stream_transform":12,"_stream_writable":13,"events":15,"util":22}],19:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13110,7 +15984,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":22}],18:[function(require,module,exports){
+},{"buffer":24}],20:[function(require,module,exports){
 try {
     // Old IE browsers that do not curry arguments
     if (!setTimeout.call) {
@@ -13229,7 +16103,7 @@ if (!exports.setImmediate) {
   };
 }
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13924,7 +16798,7 @@ Url.prototype.parseHost = function() {
   }
   if (host) this.hostname = host;
 };
-},{"_shims":6,"querystring":15,"util":20}],20:[function(require,module,exports){
+},{"_shims":8,"querystring":17,"util":22}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14469,7 +17343,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"_shims":6}],21:[function(require,module,exports){
+},{"_shims":8}],23:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -14555,7 +17429,7 @@ exports.writeIEEE754 = function(buffer, value, offset, isBE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var assert;
 exports.Buffer = Buffer;
 exports.SlowBuffer = Buffer;
@@ -15681,7 +18555,7 @@ Buffer.prototype.writeDoubleBE = function(value, offset, noAssert) {
   writeDouble(this, value, offset, true, noAssert);
 };
 
-},{"./buffer_ieee754":21,"assert":12,"base64-js":23}],23:[function(require,module,exports){
+},{"./buffer_ieee754":23,"assert":14,"base64-js":25}],25:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -15767,7 +18641,7 @@ Buffer.prototype.writeDoubleBE = function(value, offset, noAssert) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -15804,7 +18678,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":22}],25:[function(require,module,exports){
+},{"buffer":24}],27:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -15903,7 +18777,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":26,"./rng":27,"./sha":28,"./sha256":29,"buffer":22}],26:[function(require,module,exports){
+},{"./md5":28,"./rng":29,"./sha":30,"./sha256":31,"buffer":24}],28:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -16068,7 +18942,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":24}],27:[function(require,module,exports){
+},{"./helpers":26}],29:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -16101,7 +18975,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -16204,7 +19078,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":24}],29:[function(require,module,exports){
+},{"./helpers":26}],31:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -16285,7 +19159,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":24}],30:[function(require,module,exports){
+},{"./helpers":26}],32:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -16350,7 +19224,7 @@ var xhrHttp = (function () {
     }
 })();
 
-},{"./lib/request":31,"events":13}],31:[function(require,module,exports){
+},{"./lib/request":33,"events":15}],33:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var concatStream = require('concat-stream');
@@ -16484,7 +19358,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":32,"Base64":33,"concat-stream":34,"stream":16,"util":20}],32:[function(require,module,exports){
+},{"./response":34,"Base64":35,"concat-stream":36,"stream":18,"util":22}],34:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -16606,7 +19480,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":16,"util":20}],33:[function(require,module,exports){
+},{"stream":18,"util":22}],35:[function(require,module,exports){
 ;(function () {
 
   var
@@ -16663,7 +19537,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var stream = require('stream')
 var bops = require('bops')
 var util = require('util')
@@ -16714,7 +19588,7 @@ module.exports = function(cb) {
 
 module.exports.ConcatStream = ConcatStream
 
-},{"bops":35,"stream":16,"util":20}],35:[function(require,module,exports){
+},{"bops":37,"stream":18,"util":22}],37:[function(require,module,exports){
 var proto = {}
 module.exports = proto
 
@@ -16735,9 +19609,9 @@ function mix(from, into) {
   }
 }
 
-},{"./copy.js":38,"./create.js":39,"./from.js":40,"./is.js":41,"./join.js":42,"./read.js":44,"./subarray.js":45,"./to.js":46,"./write.js":47}],36:[function(require,module,exports){
-module.exports=require(23)
-},{}],37:[function(require,module,exports){
+},{"./copy.js":40,"./create.js":41,"./from.js":42,"./is.js":43,"./join.js":44,"./read.js":46,"./subarray.js":47,"./to.js":48,"./write.js":49}],38:[function(require,module,exports){
+module.exports=require(25)
+},{}],39:[function(require,module,exports){
 module.exports = to_utf8
 
 var out = []
@@ -16812,7 +19686,7 @@ function reduced(list) {
   return out
 }
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = copy
 
 var slice = [].slice
@@ -16866,12 +19740,12 @@ function slow_copy(from, to, j, i, jend) {
   }
 }
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = function(size) {
   return new Uint8Array(size)
 }
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = from
 
 var base64 = require('base64-js')
@@ -16931,13 +19805,13 @@ function from_base64(str) {
   return new Uint8Array(base64.toByteArray(str)) 
 }
 
-},{"base64-js":36}],41:[function(require,module,exports){
+},{"base64-js":38}],43:[function(require,module,exports){
 
 module.exports = function(buffer) {
   return buffer instanceof Uint8Array;
 }
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = join
 
 function join(targets, hint) {
@@ -16975,7 +19849,7 @@ function get_length(targets) {
   return size
 }
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var proto
   , map
 
@@ -16997,7 +19871,7 @@ function get(target) {
   return out
 }
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = {
     readUInt8:      read_uint8
   , readInt8:       read_int8
@@ -17086,14 +19960,14 @@ function read_double_be(target, at) {
   return dv.getFloat64(at + target.byteOffset, false)
 }
 
-},{"./mapped.js":43}],45:[function(require,module,exports){
+},{"./mapped.js":45}],47:[function(require,module,exports){
 module.exports = subarray
 
 function subarray(buf, from, to) {
   return buf.subarray(from || 0, to || buf.length)
 }
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = to
 
 var base64 = require('base64-js')
@@ -17131,7 +20005,7 @@ function to_base64(buf) {
 }
 
 
-},{"base64-js":36,"to-utf8":37}],47:[function(require,module,exports){
+},{"base64-js":38,"to-utf8":39}],49:[function(require,module,exports){
 module.exports = {
     writeUInt8:      write_uint8
   , writeInt8:       write_int8
@@ -17219,7 +20093,7 @@ function write_double_be(target, value, at) {
   return dv.setFloat64(at + target.byteOffset, value, false)
 }
 
-},{"./mapped.js":43}],48:[function(require,module,exports){
+},{"./mapped.js":45}],50:[function(require,module,exports){
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
@@ -19599,7 +22473,7 @@ function hasOwnProperty(obj, prop) {
 },{"_shims":5}]},{},[])
 ;;module.exports=require("buffer-browserify")
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -19654,7 +22528,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/
@@ -28846,7 +31720,7 @@ return jQuery;
 
 }));
 
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};//! moment.js
 //! version : 2.8.4
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -31784,11 +34658,11 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
     }
 }).call(this);
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":53}],53:[function(require,module,exports){
+},{"./lib/":55}],55:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -31877,7 +34751,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":54,"./socket":56,"./url":57,"debug":60,"socket.io-parser":94}],54:[function(require,module,exports){
+},{"./manager":56,"./socket":58,"./url":59,"debug":62,"socket.io-parser":96}],56:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32352,7 +35226,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":55,"./socket":56,"./url":57,"component-bind":58,"component-emitter":59,"debug":60,"engine.io-client":61,"indexof":90,"object-component":91,"socket.io-parser":94}],55:[function(require,module,exports){
+},{"./on":57,"./socket":58,"./url":59,"component-bind":60,"component-emitter":61,"debug":62,"engine.io-client":63,"indexof":92,"object-component":93,"socket.io-parser":96}],57:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -32378,7 +35252,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32764,7 +35638,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":55,"component-bind":58,"component-emitter":59,"debug":60,"has-binary":88,"socket.io-parser":94,"to-array":98}],57:[function(require,module,exports){
+},{"./on":57,"component-bind":60,"component-emitter":61,"debug":62,"has-binary":90,"socket.io-parser":96,"to-array":100}],59:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};
 /**
  * Module dependencies.
@@ -32839,7 +35713,7 @@ function url(uri, loc){
   return obj;
 }
 
-},{"debug":60,"parseuri":92}],58:[function(require,module,exports){
+},{"debug":62,"parseuri":94}],60:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -32864,7 +35738,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -33030,7 +35904,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -33169,11 +36043,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":62}],62:[function(require,module,exports){
+},{"./lib/":64}],64:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -33185,7 +36059,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":63,"engine.io-parser":75}],63:[function(require,module,exports){
+},{"./socket":65,"engine.io-parser":77}],65:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * Module dependencies.
  */
@@ -33870,7 +36744,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
   return filteredUpgrades;
 };
 
-},{"./transport":64,"./transports":65,"component-emitter":59,"debug":72,"engine.io-parser":75,"indexof":90,"parsejson":84,"parseqs":85,"parseuri":86}],64:[function(require,module,exports){
+},{"./transport":66,"./transports":67,"component-emitter":61,"debug":74,"engine.io-parser":77,"indexof":92,"parsejson":86,"parseqs":87,"parseuri":88}],66:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -34022,7 +36896,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":59,"engine.io-parser":75}],65:[function(require,module,exports){
+},{"component-emitter":61,"engine.io-parser":77}],67:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * Module dependencies
  */
@@ -34077,7 +36951,7 @@ function polling(opts){
   }
 }
 
-},{"./polling-jsonp":66,"./polling-xhr":67,"./websocket":69,"xmlhttprequest":70}],66:[function(require,module,exports){
+},{"./polling-jsonp":68,"./polling-xhr":69,"./websocket":71,"xmlhttprequest":72}],68:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};
 /**
  * Module requirements.
@@ -34312,7 +37186,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
   }
 };
 
-},{"./polling":68,"component-inherit":71}],67:[function(require,module,exports){
+},{"./polling":70,"component-inherit":73}],69:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * Module requirements.
  */
@@ -34665,7 +37539,7 @@ function unloadHandler() {
   }
 }
 
-},{"./polling":68,"component-emitter":59,"component-inherit":71,"debug":72,"xmlhttprequest":70}],68:[function(require,module,exports){
+},{"./polling":70,"component-emitter":61,"component-inherit":73,"debug":74,"xmlhttprequest":72}],70:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -34912,7 +37786,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":64,"component-inherit":71,"debug":72,"engine.io-parser":75,"parseqs":85,"xmlhttprequest":70}],69:[function(require,module,exports){
+},{"../transport":66,"component-inherit":73,"debug":74,"engine.io-parser":77,"parseqs":87,"xmlhttprequest":72}],71:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -35143,7 +38017,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":64,"component-inherit":71,"debug":72,"engine.io-parser":75,"parseqs":85,"ws":87}],70:[function(require,module,exports){
+},{"../transport":66,"component-inherit":73,"debug":74,"engine.io-parser":77,"parseqs":87,"ws":89}],72:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -35181,7 +38055,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":82}],71:[function(require,module,exports){
+},{"has-cors":84}],73:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -35189,7 +38063,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],72:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -35338,7 +38212,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":73}],73:[function(require,module,exports){
+},{"./debug":75}],75:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -35537,7 +38411,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":74}],74:[function(require,module,exports){
+},{"ms":76}],76:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -35650,7 +38524,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * Module dependencies.
  */
@@ -36218,7 +39092,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
   });
 };
 
-},{"./keys":76,"after":77,"arraybuffer.slice":78,"base64-arraybuffer":79,"blob":80,"utf8":81}],76:[function(require,module,exports){
+},{"./keys":78,"after":79,"arraybuffer.slice":80,"base64-arraybuffer":81,"blob":82,"utf8":83}],78:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -36239,7 +39113,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -36269,7 +39143,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -36300,7 +39174,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -36361,7 +39235,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * Create a blob builder even when vendor prefixes exist
  */
@@ -36412,7 +39286,7 @@ module.exports = (function() {
   }
 })();
 
-},{}],81:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
 
@@ -36653,7 +39527,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 }(this));
 
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -36678,7 +39552,7 @@ try {
   module.exports = false;
 }
 
-},{"global":83}],83:[function(require,module,exports){
+},{"global":85}],85:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -36688,7 +39562,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],84:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * JSON parse.
  *
@@ -36721,7 +39595,7 @@ module.exports = function parsejson(data) {
     return (new Function('return ' + data))();
   }
 };
-},{}],85:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -36760,7 +39634,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],86:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -36801,7 +39675,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],87:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -36846,7 +39720,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],88:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};
 /*
  * Module requirements.
@@ -36906,12 +39780,12 @@ function hasBinary(data) {
   return _hasBinary(data);
 }
 
-},{"isarray":89}],89:[function(require,module,exports){
+},{"isarray":91}],91:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],90:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -36922,7 +39796,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],91:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -37007,7 +39881,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],92:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -37034,7 +39908,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],93:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*global Blob,File*/
 
 /**
@@ -37177,7 +40051,7 @@ exports.removeBlobs = function(data, callback) {
   }
 };
 
-},{"./is-buffer":95,"isarray":96}],94:[function(require,module,exports){
+},{"./is-buffer":97,"isarray":98}],96:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -37575,7 +40449,7 @@ function error(data){
   };
 }
 
-},{"./binary":93,"./is-buffer":95,"component-emitter":59,"debug":60,"isarray":96,"json3":97}],95:[function(require,module,exports){
+},{"./binary":95,"./is-buffer":97,"component-emitter":61,"debug":62,"isarray":98,"json3":99}],97:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};
 module.exports = isBuf;
 
@@ -37590,9 +40464,9 @@ function isBuf(obj) {
          (global.ArrayBuffer && obj instanceof ArrayBuffer);
 }
 
-},{}],96:[function(require,module,exports){
-module.exports=require(89)
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
+module.exports=require(91)
+},{}],99:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -38455,7 +41329,7 @@ module.exports=require(89)
   }
 }(this));
 
-},{}],98:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -38470,7 +41344,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],99:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var lang;
@@ -38531,7 +41405,7 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{}],100:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var deprecate, hasModule, makeTwix,
@@ -39247,7 +42121,7 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{"./lang":99,"moment":51}],101:[function(require,module,exports){
+},{"./lang":101,"moment":53}],103:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -40525,11 +43399,11 @@ function toArray(list, index) {
 
 }).call(this);
 
-},{}],102:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 module.exports=module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.23",
+  "version": "0.7.24",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -40563,6 +43437,7 @@ module.exports=module.exports={
     "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
     "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5",
     "moment": "^2.8.4",
     "socket.io-client": "^1.0.2",
     "twix": "^0.5.1",
@@ -40589,7 +43464,7 @@ module.exports=module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],103:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 /**
  *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
@@ -40894,7 +43769,7 @@ joola.events.on('rpc:done', function () {
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
 });
-},{"../index":110,"http":30,"https":14,"querystring":15,"url":19}],104:[function(require,module,exports){
+},{"../index":112,"http":32,"https":16,"querystring":17,"url":21}],106:[function(require,module,exports){
 /**
  *  joola
  *
@@ -41014,7 +43889,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"../../../build/temp/meta.json":1,"../index":110,"cloneextend":2}],105:[function(require,module,exports){
+},{"../../../build/temp/meta.json":1,"../index":112,"cloneextend":4}],107:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41035,7 +43910,7 @@ _events._id = 'events';
 
 module.exports = exports = _events;
 
-},{"../index":110,"eventemitter2":5}],106:[function(require,module,exports){
+},{"../index":112,"eventemitter2":7}],108:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41062,7 +43937,7 @@ joola.timezone = function (tz) {
 
   return offset;
 };
-},{"../index":110}],107:[function(require,module,exports){
+},{"../index":112}],109:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;/*jshint -W083 */
 
 /**
@@ -41253,7 +44128,7 @@ common.ensureLength = function (string, length) {
   }
   return string;
 };
-},{"../index":110,"./modifiers":109,"__browserify_Buffer":48,"cloneextend":2,"crypto":25,"deep-extend":4,"underscore":101,"util":20}],108:[function(require,module,exports){
+},{"../index":112,"./modifiers":111,"__browserify_Buffer":50,"cloneextend":4,"crypto":27,"deep-extend":6,"underscore":103,"util":22}],110:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41324,7 +44199,7 @@ logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
 
-},{"../index":110}],109:[function(require,module,exports){
+},{"../index":112}],111:[function(require,module,exports){
 /**
  *  @title joola/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola
@@ -41479,7 +44354,7 @@ Array.prototype.equals = function (array) {
   return true;
 };  
 
-},{}],110:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41884,7 +44759,7 @@ joola.on('ready', function () {
   var end = new Date().getTime();
 });
 
-},{"./../../package.json":102,"./common/api":103,"./common/dispatch":104,"./common/events":105,"./common/globals":106,"./common/index":107,"./common/logger":108,"./viz/index":126,"querystring":15,"socket.io-client":52,"url":19}],111:[function(require,module,exports){
+},{"./../../package.json":104,"./common/api":105,"./common/dispatch":106,"./common/events":107,"./common/globals":108,"./common/index":109,"./common/logger":110,"./viz/index":128,"querystring":17,"socket.io-client":54,"url":21}],113:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42269,7 +45144,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],112:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],114:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42283,155 +45158,269 @@ joola.events.on('core.init.finish', function () {
 var
   joola = require('../index'),
   d3 = require('d3'),
-  _jquery = require('jquery'),
+  $ = require('jquery'),
   _ = require('underscore');
 
 var BarTable = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joola.events.emit('bartable.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-
   var self = this;
 
-  this._id = '_bartable2';
+  this.type = 'bartable';
   this.uuid = joola.common.uuid();
+  this.initialized = false;
+  this.data = [];
   this.options = {
-    legend: true,
     container: null,
-    $container: null,
+    template: '<div class="bartable-caption"></div>' +
+    '<table class="jio bartable table">' +
+    '<thead>' +
+    '</thead>' +
+    '<tbody>' +
+    '</tbody>' +
+    '</table>',
     query: null,
     strings: {
-      not_shown: 'No data available.'
+      nodata: 'No data available.',
+      not_shown: 'Not shown'
     },
+    legend: true,
     limit: 10,
-    headers: false
+    headers: true
   };
-  this.chartDrawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = _jquery('<div class="bartable-caption"></div>' +
-      '<table class="jio bartable table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
-      '</table>');
-    return $html;
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (self.options.dimensions.length === 0 || self.options.dimensions.length > 1)
+        return 'Please specify a single dimension.';
+      if (self.options.metrics.length === 0 || self.options.metrics.length > 1)
+        return 'Please specify a single metric.';
+    }
+    return null;
   };
 
-  this.sort = function (key, callback) {
-    if (typeof callback === 'function')
-      return callback(null);
+  this.enter = function (data, alldata) {
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+    var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
+    var metricname = _query.metrics[0].name || _query.metrics[0];
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+
+    function addRow(point, total, shown, notshown) {
+      var $table = $($(self.options.container).find('table')[0]);
+      var $tbody = $($table.find('tbody')[0]);
+      var percentage, $tr;
+      if (point.length === 1) {
+        point = point[0];
+        //we have a simple row
+        $tr = $('<tr></tr>');
+        var index = 0;
+        percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
+        _query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+
+        _query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
+          $td.find('.subcaption').text(point.metrics[metrickey] + ' ' + metricname);
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+      }
+      else {
+        //we have a comparison
+        var base = point[0];
+        var compare = point[1];
+        //we have a simple row
+        $tr = $('<tr></tr>');
+        if (compare.missing)
+          percentage = null;
+        else
+          percentage = ((compare.metrics[metrickey] - base.metrics[metrickey]) / base.metrics[metrickey] * 100);
+
+        _query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + (percentage ? percentage + '%' : 'N/A') + '"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+        _query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          var text;
+          if (percentage)
+            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + base.dimensions[dimensionkey], 23);
+          else
+            text = joola.common.ensureLength('N/A ' + base.dimensions[dimensionkey], 23);
+          $td.find('.caption').text(text);
+          if (!compare.missing)
+            $td.find('.subcaption').text(base.metrics[metrickey] + ' vs. ' + compare.metrics[metrickey]);
+          else
+            $td.find('.subcaption').text(base.metrics[metrickey] + ' vs. N/A');
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+      }
+    }
+
+    var total = [0, 0];
+    var shown = [0, 0];
+    var notshown = [0, 0];
+    data.forEach(function (point, index) {
+      alldata[index].forEach(function (point, i) {
+        total[index] += point.metrics[metrickey];
+        if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+          shown[index] += point.metrics[metrickey];
+        else
+          notshown[index] += point.metrics[metrickey];
+      });
+    });
+    addRow(data, total, shown, notshown);
+  };
+  this.exit = function (data) {
+    //console.log('exit', data);
+  };
+  this.update = function (data) {
+    //console.log('update', data);
   };
 
+  this.render = function (data) {
+    //console.log(data);
+    var $container = $(self.options.container);
+    var $table = $($container.find('table')[0]);
+    var $tbody = $($table.find('tbody')[0]);
+    if (data.length === 0) {
+      var $tr = $('<tr></tr>');
+      var $td = $('<td colspan="' + (self.options.query.dimensions.length + self.options.query.metrics.length + 1) + '" class="jio bartable nodata">' +
+      self.options.strings.nodata +
+      '</td>');
+      $tr.append($td);
+      $tbody.append($tr);
+      return;
+    }
+
+    var total = 0;
+    var shown = 0;
+    var notshown = 0;
+    var dimensionkey = self.options.query.dimensions[0].key || self.options.query.dimensions[0];
+    var metricname = self.options.query.metrics[0].name || self.options.query.metrics[0];
+    var metrickey = self.options.query.metrics[0].key || self.options.query.metrics[0];
+    data.forEach(function (point, i) {
+      total += point[metrickey];
+      if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+        shown += point[metrickey];
+      else
+        notshown += point[metrickey];
+    });
+    data.forEach(function (point, i) {
+      if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit )) {
+        var $tr = $('<tr></tr>');
+        var index = 0;
+        var percentage = parseFloat(point[metrickey]) / total * 100;
+        self.options.query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+
+        self.options.query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[dimensionkey], 23));
+          $td.find('.subcaption').text(point[metrickey] + ' ' + metricname);
+          $tr.append($td);
+        });
+
+        $tbody.append($tr);
+      }
+    });
+    if (self.options.limit && self.options.limit < data.length) {
+      var $tr = $('<tr></tr>');
+      var index = 0;
+      var percentage = parseFloat(notshown) / total * 100;
+      self.options.query.metrics.forEach(function (m) {
+        var $td = $('<td class="jio bartable value metric">' +
+        '<div class="barwrapper">' +
+        '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+        '</div>' +
+        '</td>');
+        $td.find('.tablebar').css({'background-color': joola.colors[11]});
+        $tr.append($td);
+      });
+
+      self.options.query.dimensions.forEach(function (d) {
+        var $td = $('<td class="jio bartable value dimension notshown">' +
+        '<div class="caption" title="Other"></div>' +
+        '<div class="subcaption"></div>' +
+        '</td>');
+
+        $td.find('.caption').text(percentage.toFixed(2) + '% ' + self.options.strings.not_shown || 'Not shown');
+        $td.find('.subcaption').text(notshown + ' ' + self.options.query.metrics[0].name);
+        $tr.append($td);
+      });
+
+      $tbody.append($tr);
+    }
+  };
   this.draw = function (options, callback) {
-    self.stop();
-    return this._super.fetch(this.options.query, function (err, message) {
-      console.log('done', message);
-      var get_key = function (d) {
-        console.log('get key', d);
-        return d.key;
-      };
-
-      var extract_row_data = function (d) {
-        console.log('extract', d);
-        return d;
-      };
-      var table = self.options.$container;
-      var values = [];
-      message.documents.forEach(function (d) {
-        values.push(d.values);
-      });
-      var rows = table.selectAll('tr').data(values);
-      //////////////////////////////////////////
-      // ROW ENTER SELECTION
-      // Add new rows
-      var cells_in_new_rows = rows.enter().append('tr')
-        .selectAll('td')
-        .data(extract_row_data);
-
-      cells_in_new_rows.enter().append('td')
-        .style('opacity', 0.0)
-        .attr('class', 'enter')
-        .transition()
-        .delay(900)
-        .duration(500)
-        .style('opacity', 1.0);
-
-      cells_in_new_rows.text('aaa');
-
-      /////////////////////////////////////////
-      // ROW EXIT SELECTION
-      // Remove old rows
-      rows.exit()
-        .attr('class', 'exit')
-        .transition()
-        .delay(200)
-        .duration(500)
-        .style('opacity', 0.0)
-        .remove();
-
-      table.selectAll('tr').select('td').classed('row-header', true);
-    });
+    return;
+    //return joola.viz.initialize(self, options || {},callback);
   };
 
-  //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
-
-      self.options.$container = d3.select(self.options.container);
-      self.markContainer(self.options.$container, [
-        {type: 'bartable'},
-        {uuid: self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
-        joola.viz.onscreen.push(self);
-
-        _jquery(self.options.container).append(self.template());
-
-        joola.events.emit('bartable.init.finish', self);
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-          //subscribe to default events
-          self.options.canvas.on('datechange', function (dates) {
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-            self.destroy();
-            self.draw(self.options);
-          });
-        }
-
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+  //we draw the template into the container
+  var $html = $(self.options.template);
+  $(self.options.container).html($html);
+  //visualization specific drawing
+  if (self.options.headers) {
+    var $thead = $($html.find('thead'));
+    var $head_tr = $('<tr class="jio bartable captions"></tr>');
+    self.options.query[0].metrics.forEach(function (m) {
+      var $th = $('<th class="jio bartable caption metric"></th>');
+      //$th.text(m.name || m.key || m);
+      $head_tr.append($th);
     });
+    self.options.query[0].dimensions.forEach(function (d) {
+      var $th = $('<th class="jio bartable caption dimension"></th>');
+      $th.text(d.name || d.key || d);
+      $head_tr.append($th);
+    });
+
+    $thead.append($head_tr);
+    $html.find('table').append($thead);
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
-},{"../index":110,"./_proto":125,"d3":3,"jquery":50,"underscore":101}],113:[function(require,module,exports){
+},{"../index":112,"d3":5,"jquery":52,"underscore":103}],115:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42489,8 +45478,10 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.query) {
       _query = joola.common.extend(self.options.query, _query);
     }
-    if (self.options.dimensions && self.options.dimensions.length > 0 && query.dimensions && query.dimensions.length > 0) {
-      _query.dimensions.forEach(function (dimension, i) {
+    if (!Array.isArray(_query))
+      _query = [_query];
+    if (_query[0].dimensions && _query[0].dimensions.length > 0 && _query[0].dimensions && _query[0].dimensions.length > 0) {
+      _query[0].dimensions.forEach(function (dimension, i) {
         var key;
         if (typeof dimension === 'string')
           key = dimension;
@@ -42498,17 +45489,16 @@ var Canvas = module.exports = function (options, callback) {
           key = dimension.key;
 
         if (key) {
-          var exist = _.find(self.options.dimensions, function (m) {
+          var exist = _.find(_query[0].dimensions, function (m) {
             return m.key === key;
           });
           if (exist)
-            _query.dimensions[i] = exist;
+            _query[0].dimensions[i] = exist;
         }
       });
     }
-    if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
-      
-      _query.metrics.forEach(function (metric, i) {
+    if (_query[0].metrics && _query[0].metrics.length > 0 && _query[0].metrics && _query[0].metrics.length > 0) {
+      _query[0].metrics.forEach(function (metric, i) {
         var key;
         if (typeof metric === 'string')
           key = metric;
@@ -42516,7 +45506,7 @@ var Canvas = module.exports = function (options, callback) {
           key = metric.key;
 
         if (key) {
-          var exist = _.find(self.options.metrics, function (m) {
+          var exist = _.find(_query[0].metrics, function (m) {
             return m.key === key;
           });
           if (exist)
@@ -42524,17 +45514,24 @@ var Canvas = module.exports = function (options, callback) {
         }
       });
     }
-    if (!query.timeframe && self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
-        if (err)
-          throw err;
-      });
-      _query.timeframe = {};
-      _query.timeframe.start = _datepicker.base_fromdate;
-      _query.timeframe.end = _datepicker.base_todate;
-      _query.interval = 'day';
+    _query[0].type = 'base';
+    _query[0].hash = '';
+    _query[0].dimensions.forEach(function (d) {
+      _query[0].hash += d.key || d;
+    });
+    _query[0].metrics.forEach(function (m) {
+      _query[0].hash += m.key || m;
+    });
+    _query[0].hash = joola.common.hash(_query[0].hash);
+    //self._datepicker = $(self.options.datepicker.container).DatePicker({});
+    console.log(self._datepicker.base_fromdate);
+    if (!_query[0].timeframe && self.options.datepicker && self.options.datepicker.container) {
+      _query[0].timeframe = {};
+      _query[0].timeframe.start = self._datepicker.base_fromdate;
+      _query[0].timeframe.end = self._datepicker.base_todate;
+      _query[0].interval = 'day';
       if (self.options.datepicker && self.options.datepicker._interval)
-        _query.interval = self.options.datepicker._interval;
+        _query[0].interval = self.options.datepicker._interval;
     }
     //if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
     //  _query.realtime = true;
@@ -42542,6 +45539,18 @@ var Canvas = module.exports = function (options, callback) {
     //}
     //else
     //  _query.realtime = false;
+    //console.log(_datepicker);
+    if (self._datepicker.comparePeriod) {
+      var cquery = ce.clone(_query[0]);
+      cquery.type = 'compare';
+      cquery.timeframe = {};
+      cquery.timeframe.start = self._datepicker.compare_fromdate;
+      cquery.timeframe.end = self._datepicker.compare_todate;
+      cquery.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        cquery.interval = self.options.datepicker._interval;
+      _query = [_query[0], cquery];
+    }
     return _query;
   };
 
@@ -42555,10 +45564,11 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err) {
+      self._datepicker = $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
       });
+      console.log(self._datepicker);
     }
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);
@@ -42685,7 +45695,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"cloneextend":2,"eventemitter2":5,"underscore":101}],114:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"cloneextend":4,"eventemitter2":7,"underscore":103}],116:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42791,7 +45801,7 @@ var DatePicker = module.exports = function (options, callback) {
     container: null,
     $container: null,
     comparePeriod: false,
-    disableCompare: true
+    disableCompare: false
   };
 
   this.currentMode = 'base-from';
@@ -42820,6 +45830,10 @@ var DatePicker = module.exports = function (options, callback) {
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
+  this.compare_todate.setHours(23);
+  this.compare_todate.setMinutes(59);
+  this.compare_todate.setSeconds(59);
+  this.compare_todate.setMilliseconds(999);
   this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
 
   this.original_base_fromdate = this.base_fromdate;
@@ -42885,11 +45899,11 @@ var DatePicker = module.exports = function (options, callback) {
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-      '<tr>' +
-      '<td class="dates"></td>' +
-      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
-      '</tr>' +
-      '</table></div></div>');
+    '<tr>' +
+    '<td class="dates"></td>' +
+    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
+    '</tr>' +
+    '</table></div></div>');
 
     $container.append($table);
 
@@ -42907,56 +45921,56 @@ var DatePicker = module.exports = function (options, callback) {
     var $item = $('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-      '<td class="calendars"></td>' +
-      '<td class="control"><div class="optionscontainer"></div></td>' +
-      '</tr></table>');
+    '<td class="calendars"></td>' +
+    '<td class="control"><div class="optionscontainer"></div></td>' +
+    '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $container.find('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-      '</div>');
+    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+    '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-      '</div>');
+    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+    '</div>');
     if (self.options.disableCompare) {
       $optionscontainer.find('.compareoption').removeClass('visible');
     }
     $optionscontainer.append('<div class="daterange comparerange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('' +
-      '<hr class="divider">' +
-      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-      '<span class="cancel">Cancel</span></div>');
+    '<hr class="divider">' +
+    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+    '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $('<div class="datepicker"></div>');
 
     $item = $('<table><tr valign=top>' +
-      '<td class="datetable-prev unselectable"></td>' +
-      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-      '<td class="datetable-next unselectable"></td>' +
-      '</tr></table>');
+    '<td class="datetable-prev unselectable"></td>' +
+    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+    '<td class="datetable-next unselectable"></td>' +
+    '</tr></table>');
     $calendars.append($item);
 
     $container.find('.datetable-prev').append('<div class="prev">' +
-      '<div class="inline-block prev">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block prev">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-prev .prev').off('click');
     $container.find('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -42980,9 +45994,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $container.find('.datetable-next').append('<div class="next">' +
-      '<div class="inline-block next">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block next">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-next .next').off('click');
     $container.find('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -43740,7 +46754,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],115:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],117:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44056,7 +47070,7 @@ DimensionPicker.template = function (options) {
   return html;
 };
 
-},{"./_proto":125,"cloneextend":2,"eventemitter2":5}],116:[function(require,module,exports){
+},{"./_proto":127,"cloneextend":4,"eventemitter2":7}],118:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44196,7 +47210,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125}],117:[function(require,module,exports){
+},{"../index":112,"./_proto":127}],119:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44453,7 +47467,7 @@ Metric.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"cloneextend":2}],118:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"cloneextend":4}],120:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44768,7 +47782,7 @@ MetricPicker.template = function (options) {
   return html;
 };
 
-},{"./_proto":125,"cloneextend":2,"eventemitter2":5}],119:[function(require,module,exports){
+},{"./_proto":127,"cloneextend":4,"eventemitter2":7}],121:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45071,7 +48085,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],120:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],122:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45303,7 +48317,7 @@ Pie.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"underscore":101}],121:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],123:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -45530,7 +48544,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":110,"./_proto":125,"underscore":101}],122:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],124:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45792,7 +48806,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125}],123:[function(require,module,exports){
+},{"../index":112,"./_proto":127}],125:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -46244,7 +49258,7 @@ Table.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"underscore":101}],124:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"underscore":103}],126:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -46737,7 +49751,7 @@ Timeline.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"moment":51,"underscore":101}],125:[function(require,module,exports){
+},{"../index":112,"./_proto":127,"moment":53,"underscore":103}],127:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -46888,14 +49902,33 @@ proto.makeChartTimelineSeries = function (message) {
 
   var checkExists = function (timestampDimension, documents, date) {
     return _.find(documents, function (document) {
-      switch (interval) {
-        case 'month':
-        case 'day':
-          var _date = new Date(date);
-          _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
-        default:
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+      if (!document.values[timestampDimension.key])
+        return;
+
+      try {
+        var _date = new Date(date);
+        var _basedate = new Date(document.values[timestampDimension.key]);
+        switch (interval) {
+          case 'month':
+          case 'day':
+            _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          case 'minute':
+            _basedate.setSeconds(0);
+            _basedate.setMilliseconds(0);
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          case 'second':
+            _basedate.setMilliseconds(0);
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          default:
+            return _basedate.getTime() === _date.getTime();
+        }
+      }
+      catch (ex) {
+        console.log('exception while checkExists', ex);
       }
     });
   };
@@ -46946,22 +49979,30 @@ proto.makeChartTimelineSeries = function (message) {
       while (itr.hasNext() && counter++ < 1000) {
         var _d = new Date(itr.next()._d.getTime());
         var exists;
-        if (['day', 'month', 'year'].indexOf(interval) > -1)
-          exists = checkExists(timestampDimension, result.documents, _d, true);
-        else
-          exists = checkExists(timestampDimension, result.documents, _d);
 
+        switch (interval) {
+          case 'day':
+            _d.setHours(0);
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'minute':
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'second':
+            _d.setMilliseconds(0);
+            break;
+          default:
+            break;
+        }
+
+        exists = checkExists(timestampDimension, result.documents, _d);
         if (!exists) {
           exists = {values: {}, fvalues: {}};
           exists.values[timestampDimension.key] = _d.toISOString();
           exists.fvalues[timestampDimension.key] = _d.toISOString();
           fill(result.documents[0].values, exists, timestampDimension);
-          /*Object.keys(result.documents[0].values).forEach(function (key) {
-           if (key !== timestampDimension.key) {
-           exists.values[key] = 0;
-           exists.fvalues[key] = 0;
-           }
-           });*/
         }
         fixed.push(exists);
       }
@@ -47108,7 +50149,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":110,"cloneextend":2,"d3":3,"moment":51,"twix":100,"underscore":101}],126:[function(require,module,exports){
+},{"../index":112,"cloneextend":4,"d3":5,"moment":53,"twix":102,"underscore":103}],128:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -47119,7 +50160,13 @@ proto.find = function (obj) {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var joola = require('../index');
+var
+  joola = require('../index'),
+  async = require('async'),
+  ce = require('cloneextend'),
+  d3 = require('d3'),
+  _ = require('underscore'),
+  $ = require('jquery');
 
 var viz = exports;
 viz._id = 'viz';
@@ -47147,9 +50194,208 @@ viz.Timeline = require('./Timeline');
 //onscreen
 viz.onscreen = [];
 
-viz.stam = function (callback) {
-  return viz.pickers.init(callback);
+viz.markContainer = function (container, attr) {
+  container = $(container);
+  container.attr('jio-domain', 'joola');
+  attr = attr.attr || attr;
+  attr.forEach(function (a) {
+    Object.keys(a).forEach(function (key) {
+      if (key === 'css') {
+        var currentClasses = container.attr('class');
+        container.attr('class', currentClasses + ' ' + a[key]);
+      }
+      else
+        container.attr('jio-' + key, a[key]);
+    });
+  });
 };
 
-},{"../index":110,"./BarTable":111,"./BarTable2":112,"./Canvas":113,"./DatePicker":114,"./DimensionPicker":115,"./Geo":116,"./Metric":117,"./MetricPicker":118,"./MiniTable":119,"./Pie":120,"./PunchCard":121,"./Sparkline":122,"./Table":123,"./Timeline":124}]},{},[110])
+viz.initialize = function (self, options, callback) {
+  joola.common.mixin(self.options, options, true);
+  if (!self.initialized) {
+    viz.markContainer(self.options.container, [
+      {type: self.type},
+      {uuid: self.uuid},
+      {css: self.options.css}
+    ]);
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+      //subscribe to default events
+      self.options.canvas.on('datechange', function (dates) {
+        //let's change our query and fetch again
+        console.log('self', self.options.query);
+        self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0]));
+        viz.destroy(self);
+        return viz.initialize(self, self.options);
+      });
+    }
+  }
+  if (self.options.query) {
+    viz.fetch(self, self.options.query, function () {
+      if (callback && typeof callback === 'function')
+        return callback(null, self);
+    });
+  }
+
+  return self;
+};
+
+viz.lookup = function (base, key) {
+  if (!base)
+    return null;
+  var result = _.filter(base, function (item) {
+    return item.key === key;
+  });
+  if (result.length === 0)
+    return null;
+  return result[0];
+};
+
+viz.fetch = function (context, query, callback) {
+  if (!context.realtimeQueries)
+    context.realtimeQueries = [];
+  if (!callback && context && query) {
+    callback = query;
+    query = context;
+  }
+  var _query = ce.clone(query);
+  if (!Array.isArray(_query)) {
+    if (context && context.options && context.options.canvas) {
+      context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+      context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
+    }
+  }
+  else {
+    if (context && context.options && context.options.canvas) {
+      console.log('ctx', context.options);
+      context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
+      context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
+    }
+  }
+  //adjust offset
+  if (_query.timeframe && typeof _query.timeframe === 'object') {
+    if (_query.timeframe.start)
+      _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
+    if (_query.timeframe.end)
+      _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
+  }
+  var args = [];
+  if (_query.authContext)
+    args.push(_query.authContext);
+  args.push(_query);
+  args.push(function (err, messages) {
+    if (err)
+      return callback(err);
+    if (!Array.isArray(messages))
+      messages = [messages];
+    messages.forEach(function (message, mindex) {
+      var _data = [];
+      if (context.data[mindex])
+        _data = context.data[mindex];
+
+      if (message && message.query && message.query.ts && message.query.ts.duration)
+        joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+      if (message.realtime && context.realtimeQueries.indexOf(message.realtime) == -1)
+        context.realtimeQueries.push(message.realtime);
+      message.documents.forEach(function (doc) {
+        doc = {
+          dimensions: {},
+          metrics: {},
+          meta: {},
+          raw: ce.clone(doc),
+          state: 'enter',
+          type: message.query.type
+        };
+        var key = '';
+        message.dimensions.forEach(function (d) {
+          key += doc.raw.values[d.key];
+          doc.dimensions[d.key] = doc.raw.fvalues[d.key];
+          doc.meta[d.key] = d;
+        });
+        message.metrics.forEach(function (m) {
+          doc.metrics[m.key] = doc.raw.fvalues[m.key];
+          doc.meta[m.key] = m;
+        });
+        doc.key = joola.common.hash(key);
+        //lookup key
+        var exist = viz.lookup(_data, doc.key);
+        if (exist) {
+          var dirty = false;
+          Object.keys(exist.metrics).forEach(function (key) {
+            if (exist.metrics[key] !== doc.metrics[key]) {
+              dirty = true;
+              exist.metrics[key] = doc.metrics[key];
+            }
+          });
+          if (dirty)
+            exist.state = 'update';
+        }
+        else {
+          _data.push(doc);
+        }
+      });
+      context.data[mindex] = _data;
+    });
+
+    context.data[0].forEach(function (data) {
+      var point = [data];
+      var paired = {
+        missing: true,
+        meta: point.meta
+      };
+      if (context.data.length === 2) {
+        //find the pair
+        paired = _.find(context.data[1], function (item) {
+          return item.key === data.key;
+        }) || paired;
+        if (paired || context.data.length > 1)
+          point = [data, paired];
+      }
+      if (data.state === 'enter' || paired.state === 'enter')
+        context.enter(point, context.data);
+      else if (data.state === 'update' || paired.state === 'update')
+        context.update(point, context.data);
+      else if (data.state === 'exit' || paired.state === 'exit')
+        context.update(point, context.data);
+    });
+    return callback(null, context.data);
+  });
+
+  viz.stop(context, function () {
+    joola.query.fetch.apply(context, args);
+  });
+};
+
+viz.stop = function (self, callback) {
+  if (self.realtimeQueries) {
+    async.map(self.realtimeQueries, function (q, callback) {
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q, callback);
+    }, function (err) {
+      if (err)
+        return callback(err);
+      return callback(null);
+    });
+  }
+  else
+    return callback(null);
+};
+
+viz.destroy = function (self) {
+  if (self.realtimeQueries) {
+    self.realtimeQueries.forEach(function (q) {
+      joola.logger.debug('Stopping realtime query [' + q + '].');
+      joola.query.stop(q);
+    });
+  }
+  self.initialized = false;
+  self.data = [];
+  $(self.options.container).empty();
+
+  var $html = $(self.options.template);
+  $(self.options.container).html($html);
+  self.initialized = true;
+};
+
+},{"../index":112,"./BarTable":113,"./BarTable2":114,"./Canvas":115,"./DatePicker":116,"./DimensionPicker":117,"./Geo":118,"./Metric":119,"./MetricPicker":120,"./MiniTable":121,"./Pie":122,"./PunchCard":123,"./Sparkline":124,"./Table":125,"./Timeline":126,"async":3,"cloneextend":4,"d3":5,"jquery":52,"underscore":103}]},{},[2,112])
 ;

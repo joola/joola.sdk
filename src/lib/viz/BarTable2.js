@@ -11,151 +11,265 @@
 var
   joola = require('../index'),
   d3 = require('d3'),
-  _jquery = require('jquery'),
+  $ = require('jquery'),
   _ = require('underscore');
 
 var BarTable = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joola.events.emit('bartable.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-
   var self = this;
 
-  this._id = '_bartable2';
+  this.type = 'bartable';
   this.uuid = joola.common.uuid();
+  this.initialized = false;
+  this.data = [];
   this.options = {
-    legend: true,
     container: null,
-    $container: null,
+    template: '<div class="bartable-caption"></div>' +
+    '<table class="jio bartable table">' +
+    '<thead>' +
+    '</thead>' +
+    '<tbody>' +
+    '</tbody>' +
+    '</table>',
     query: null,
     strings: {
-      not_shown: 'No data available.'
+      nodata: 'No data available.',
+      not_shown: 'Not shown'
     },
+    legend: true,
     limit: 10,
-    headers: false
+    headers: true
   };
-  this.chartDrawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = _jquery('<div class="bartable-caption"></div>' +
-      '<table class="jio bartable table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
-      '</table>');
-    return $html;
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (self.options.dimensions.length === 0 || self.options.dimensions.length > 1)
+        return 'Please specify a single dimension.';
+      if (self.options.metrics.length === 0 || self.options.metrics.length > 1)
+        return 'Please specify a single metric.';
+    }
+    return null;
   };
 
-  this.sort = function (key, callback) {
-    if (typeof callback === 'function')
-      return callback(null);
+  this.enter = function (data, alldata) {
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+    var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
+    var metricname = _query.metrics[0].name || _query.metrics[0];
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+
+    function addRow(point, total, shown, notshown) {
+      var $table = $($(self.options.container).find('table')[0]);
+      var $tbody = $($table.find('tbody')[0]);
+      var percentage, $tr;
+      if (point.length === 1) {
+        point = point[0];
+        //we have a simple row
+        $tr = $('<tr></tr>');
+        var index = 0;
+        percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
+        _query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+
+        _query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
+          $td.find('.subcaption').text(point.metrics[metrickey] + ' ' + metricname);
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+      }
+      else {
+        //we have a comparison
+        var base = point[0];
+        var compare = point[1];
+        //we have a simple row
+        $tr = $('<tr></tr>');
+        if (compare.missing)
+          percentage = null;
+        else
+          percentage = ((compare.metrics[metrickey] - base.metrics[metrickey]) / base.metrics[metrickey] * 100);
+
+        _query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + (percentage ? percentage + '%' : 'N/A') + '"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+        _query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          var text;
+          if (percentage)
+            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + base.dimensions[dimensionkey], 23);
+          else
+            text = joola.common.ensureLength('N/A ' + base.dimensions[dimensionkey], 23);
+          $td.find('.caption').text(text);
+          if (!compare.missing)
+            $td.find('.subcaption').text(base.metrics[metrickey] + ' vs. ' + compare.metrics[metrickey]);
+          else
+            $td.find('.subcaption').text(base.metrics[metrickey] + ' vs. N/A');
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+      }
+    }
+
+    var total = [0, 0];
+    var shown = [0, 0];
+    var notshown = [0, 0];
+    data.forEach(function (point, index) {
+      alldata[index].forEach(function (point, i) {
+        total[index] += point.metrics[metrickey];
+        if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+          shown[index] += point.metrics[metrickey];
+        else
+          notshown[index] += point.metrics[metrickey];
+      });
+    });
+    addRow(data, total, shown, notshown);
+  };
+  this.exit = function (data) {
+    //console.log('exit', data);
+  };
+  this.update = function (data) {
+    //console.log('update', data);
   };
 
+  this.render = function (data) {
+    //console.log(data);
+    var $container = $(self.options.container);
+    var $table = $($container.find('table')[0]);
+    var $tbody = $($table.find('tbody')[0]);
+    if (data.length === 0) {
+      var $tr = $('<tr></tr>');
+      var $td = $('<td colspan="' + (self.options.query.dimensions.length + self.options.query.metrics.length + 1) + '" class="jio bartable nodata">' +
+      self.options.strings.nodata +
+      '</td>');
+      $tr.append($td);
+      $tbody.append($tr);
+      return;
+    }
+
+    var total = 0;
+    var shown = 0;
+    var notshown = 0;
+    var dimensionkey = self.options.query.dimensions[0].key || self.options.query.dimensions[0];
+    var metricname = self.options.query.metrics[0].name || self.options.query.metrics[0];
+    var metrickey = self.options.query.metrics[0].key || self.options.query.metrics[0];
+    data.forEach(function (point, i) {
+      total += point[metrickey];
+      if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+        shown += point[metrickey];
+      else
+        notshown += point[metrickey];
+    });
+    data.forEach(function (point, i) {
+      if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit )) {
+        var $tr = $('<tr></tr>');
+        var index = 0;
+        var percentage = parseFloat(point[metrickey]) / total * 100;
+        self.options.query.metrics.forEach(function (m) {
+          var $td = $('<td class="jio bartable value">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+          '</div>' +
+          '</td>');
+          $tr.append($td);
+        });
+
+        self.options.query.dimensions.forEach(function (d) {
+          var $td = $('<td class="jio bartable value dimension">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
+
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[dimensionkey], 23));
+          $td.find('.subcaption').text(point[metrickey] + ' ' + metricname);
+          $tr.append($td);
+        });
+
+        $tbody.append($tr);
+      }
+    });
+    if (self.options.limit && self.options.limit < data.length) {
+      var $tr = $('<tr></tr>');
+      var index = 0;
+      var percentage = parseFloat(notshown) / total * 100;
+      self.options.query.metrics.forEach(function (m) {
+        var $td = $('<td class="jio bartable value metric">' +
+        '<div class="barwrapper">' +
+        '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+        '</div>' +
+        '</td>');
+        $td.find('.tablebar').css({'background-color': joola.colors[11]});
+        $tr.append($td);
+      });
+
+      self.options.query.dimensions.forEach(function (d) {
+        var $td = $('<td class="jio bartable value dimension notshown">' +
+        '<div class="caption" title="Other"></div>' +
+        '<div class="subcaption"></div>' +
+        '</td>');
+
+        $td.find('.caption').text(percentage.toFixed(2) + '% ' + self.options.strings.not_shown || 'Not shown');
+        $td.find('.subcaption').text(notshown + ' ' + self.options.query.metrics[0].name);
+        $tr.append($td);
+      });
+
+      $tbody.append($tr);
+    }
+  };
   this.draw = function (options, callback) {
-    self.stop();
-    return this._super.fetch(this.options.query, function (err, message) {
-      console.log('done', message);
-      var get_key = function (d) {
-        console.log('get key', d);
-        return d.key;
-      };
-
-      var extract_row_data = function (d) {
-        console.log('extract', d);
-        return d;
-      };
-      var table = self.options.$container;
-      var values = [];
-      message.documents.forEach(function (d) {
-        values.push(d.values);
-      });
-      var rows = table.selectAll('tr').data(values);
-      //////////////////////////////////////////
-      // ROW ENTER SELECTION
-      // Add new rows
-      var cells_in_new_rows = rows.enter().append('tr')
-        .selectAll('td')
-        .data(extract_row_data);
-
-      cells_in_new_rows.enter().append('td')
-        .style('opacity', 0.0)
-        .attr('class', 'enter')
-        .transition()
-        .delay(900)
-        .duration(500)
-        .style('opacity', 1.0);
-
-      cells_in_new_rows.text('aaa');
-
-      /////////////////////////////////////////
-      // ROW EXIT SELECTION
-      // Remove old rows
-      rows.exit()
-        .attr('class', 'exit')
-        .transition()
-        .delay(200)
-        .duration(500)
-        .style('opacity', 0.0)
-        .remove();
-
-      table.selectAll('tr').select('td').classed('row-header', true);
-    });
+    return;
+    //return joola.viz.initialize(self, options || {},callback);
   };
 
-  //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
-
-      self.options.$container = d3.select(self.options.container);
-      self.markContainer(self.options.$container, [
-        {type: 'bartable'},
-        {uuid: self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
-        joola.viz.onscreen.push(self);
-
-        _jquery(self.options.container).append(self.template());
-
-        joola.events.emit('bartable.init.finish', self);
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-          //subscribe to default events
-          self.options.canvas.on('datechange', function (dates) {
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-            self.destroy();
-            self.draw(self.options);
-          });
-        }
-
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+  //we draw the template into the container
+  var $html = $(self.options.template);
+  $(self.options.container).html($html);
+  //visualization specific drawing
+  if (self.options.headers) {
+    var $thead = $($html.find('thead'));
+    var $head_tr = $('<tr class="jio bartable captions"></tr>');
+    self.options.query[0].metrics.forEach(function (m) {
+      var $th = $('<th class="jio bartable caption metric"></th>');
+      //$th.text(m.name || m.key || m);
+      $head_tr.append($th);
     });
+    self.options.query[0].dimensions.forEach(function (d) {
+      var $th = $('<th class="jio bartable caption dimension"></th>');
+      $th.text(d.name || d.key || d);
+      $head_tr.append($th);
+    });
+
+    $thead.append($head_tr);
+    $html.find('table').append($thead);
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };

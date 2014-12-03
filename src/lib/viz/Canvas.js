@@ -55,8 +55,10 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.query) {
       _query = joola.common.extend(self.options.query, _query);
     }
-    if (self.options.dimensions && self.options.dimensions.length > 0 && query.dimensions && query.dimensions.length > 0) {
-      _query.dimensions.forEach(function (dimension, i) {
+    if (!Array.isArray(_query))
+      _query = [_query];
+    if (_query[0].dimensions && _query[0].dimensions.length > 0 && _query[0].dimensions && _query[0].dimensions.length > 0) {
+      _query[0].dimensions.forEach(function (dimension, i) {
         var key;
         if (typeof dimension === 'string')
           key = dimension;
@@ -64,17 +66,16 @@ var Canvas = module.exports = function (options, callback) {
           key = dimension.key;
 
         if (key) {
-          var exist = _.find(self.options.dimensions, function (m) {
+          var exist = _.find(_query[0].dimensions, function (m) {
             return m.key === key;
           });
           if (exist)
-            _query.dimensions[i] = exist;
+            _query[0].dimensions[i] = exist;
         }
       });
     }
-    if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
-      
-      _query.metrics.forEach(function (metric, i) {
+    if (_query[0].metrics && _query[0].metrics.length > 0 && _query[0].metrics && _query[0].metrics.length > 0) {
+      _query[0].metrics.forEach(function (metric, i) {
         var key;
         if (typeof metric === 'string')
           key = metric;
@@ -82,7 +83,7 @@ var Canvas = module.exports = function (options, callback) {
           key = metric.key;
 
         if (key) {
-          var exist = _.find(self.options.metrics, function (m) {
+          var exist = _.find(_query[0].metrics, function (m) {
             return m.key === key;
           });
           if (exist)
@@ -90,17 +91,24 @@ var Canvas = module.exports = function (options, callback) {
         }
       });
     }
-    if (!query.timeframe && self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
-        if (err)
-          throw err;
-      });
-      _query.timeframe = {};
-      _query.timeframe.start = _datepicker.base_fromdate;
-      _query.timeframe.end = _datepicker.base_todate;
-      _query.interval = 'day';
+    _query[0].type = 'base';
+    _query[0].hash = '';
+    _query[0].dimensions.forEach(function (d) {
+      _query[0].hash += d.key || d;
+    });
+    _query[0].metrics.forEach(function (m) {
+      _query[0].hash += m.key || m;
+    });
+    _query[0].hash = joola.common.hash(_query[0].hash);
+    //self._datepicker = $(self.options.datepicker.container).DatePicker({});
+    console.log(self._datepicker.base_fromdate);
+    if (!_query[0].timeframe && self.options.datepicker && self.options.datepicker.container) {
+      _query[0].timeframe = {};
+      _query[0].timeframe.start = self._datepicker.base_fromdate;
+      _query[0].timeframe.end = self._datepicker.base_todate;
+      _query[0].interval = 'day';
       if (self.options.datepicker && self.options.datepicker._interval)
-        _query.interval = self.options.datepicker._interval;
+        _query[0].interval = self.options.datepicker._interval;
     }
     //if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
     //  _query.realtime = true;
@@ -108,6 +116,18 @@ var Canvas = module.exports = function (options, callback) {
     //}
     //else
     //  _query.realtime = false;
+    //console.log(_datepicker);
+    if (self._datepicker.comparePeriod) {
+      var cquery = ce.clone(_query[0]);
+      cquery.type = 'compare';
+      cquery.timeframe = {};
+      cquery.timeframe.start = self._datepicker.compare_fromdate;
+      cquery.timeframe.end = self._datepicker.compare_todate;
+      cquery.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        cquery.interval = self.options.datepicker._interval;
+      _query = [_query[0], cquery];
+    }
     return _query;
   };
 
@@ -121,10 +141,11 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err) {
+      self._datepicker = $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
       });
+      console.log(self._datepicker);
     }
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);

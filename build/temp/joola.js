@@ -39060,6 +39060,7 @@ joola.browser3rd = function (callback) {
       document.head.appendChild(script);
     }
 
+    /*
     if (typeof (Tablesort) === 'undefined') {
       script = document.createElement('script');
       expected++;
@@ -39068,7 +39069,7 @@ joola.browser3rd = function (callback) {
       };
       script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
       document.head.appendChild(script);
-    }
+    }*/
 
     //css
     if (joola.options.includecss) {
@@ -39358,7 +39359,6 @@ var BarTable = module.exports = function (options, callback) {
             $tbody.append($tr);
           }
         });
-        console.log('test');
         if (!hasData) {
           $tr = $('<tr></tr>');
           message.dimensions.forEach(function (d) {
@@ -39633,7 +39633,7 @@ var BarTable = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
-      //console.log('done', message);
+      console.log('done', message);
       var get_key = function (d) {
         console.log('get key', d);
         return d.key;
@@ -39644,35 +39644,11 @@ var BarTable = module.exports = function (options, callback) {
         return d;
       };
       var table = self.options.$container;
-      var rows = table.selectAll('tr').data(message.documents, get_key);
-      //////////////////////////////////////////
-      // ROW UPDATE SELECTION
-
-      // Update cells in existing rows.
-      var cells = rows.selectAll('td').data(extract_row_data);
-
-      cells.attr('class', 'update');
-
-      // Cells enter selection
-      cells.enter().append('td')
-        .style('opacity', 0.0)
-        .attr('class', 'enter')
-        .transition()
-        .delay(900)
-        .duration(500)
-        .style('opacity', 1.0);
-
-      cells.text('bbbb');
-
-      // Cells exit selection
-      cells.exit()
-        .attr('class', 'exit')
-        .transition()
-        .delay(200)
-        .duration(500)
-        .style('opacity', 0.0)
-        .remove();
-
+      var values = [];
+      message.documents.forEach(function (d) {
+        values.push(d.values);
+      });
+      var rows = table.selectAll('tr').data(values);
       //////////////////////////////////////////
       // ROW ENTER SELECTION
       // Add new rows
@@ -39825,6 +39801,7 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
     if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
+      
       _query.metrics.forEach(function (metric, i) {
         var key;
         if (typeof metric === 'string')
@@ -39834,7 +39811,6 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(self.options.metrics, function (m) {
-            console.log('aaa', m.key, key);
             return m.key === key;
           });
           if (exist)
@@ -39912,7 +39888,6 @@ var Canvas = module.exports = function (options, callback) {
               $(viz.container).MiniTable(viz);
               break;
             case 'bartable':
-              console.log('viz', viz);
               $(viz.container).BarTable(viz);
               break;
             case 'pie':
@@ -40129,7 +40104,7 @@ var DatePicker = module.exports = function (options, callback) {
   this.max_date.setMilliseconds(999);
 
   this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -30);
+  this.base_fromdate = self.addDays(this.base_todate, -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -44185,6 +44160,7 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
+  console.log(args);
   joola.query.fetch.apply(this, args);
 };
 
