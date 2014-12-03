@@ -19409,7 +19409,7 @@ function toArray(list, index) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.23",
+  "version": "0.7.24",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
