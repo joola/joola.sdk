@@ -25603,16 +25603,16 @@ proto.makeChartTimelineSeries = function (message) {
           case 'month':
           case 'day':
             _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-            console.log(_basedate.getTime(), _date.getTime());
+            //console.log(_basedate.getTime(), _date.getTime());
             return _basedate.getTime() === _date.getTime();
           case 'minute':
             _basedate.setSeconds(0);
             _basedate.setMilliseconds(0);
-            console.log(_basedate.getTime(), _date.getTime());
+            //console.log(_basedate.getTime(), _date.getTime());
             return _basedate.getTime() === _date.getTime();
           case 'second':
             _basedate.setMilliseconds(0);
-            console.log(_basedate.getTime(), _date.getTime());
+            //console.log(_basedate.getTime(), _date.getTime());
             return _basedate.getTime() === _date.getTime();
           default:
             return _basedate.getTime() === _date.getTime();
