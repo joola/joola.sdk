@@ -148,14 +148,33 @@ proto.makeChartTimelineSeries = function (message) {
 
   var checkExists = function (timestampDimension, documents, date) {
     return _.find(documents, function (document) {
-      switch (interval) {
-        case 'month':
-        case 'day':
-          var _date = new Date(date);
-          _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
-        default:
-          return new Date(document.values[timestampDimension.key]).getTime() === _date.getTime();
+      if (!document.values[timestampDimension.key])
+        return;
+
+      try {
+        var _date = new Date(date);
+        var _basedate = new Date(document.values[timestampDimension.key]);
+        switch (interval) {
+          case 'month':
+          case 'day':
+            _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          case 'minute':
+            _basedate.setSeconds(0);
+            _basedate.setMilliseconds(0);
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          case 'second':
+            _basedate.setMilliseconds(0);
+            //console.log(_basedate.getTime(), _date.getTime());
+            return _basedate.getTime() === _date.getTime();
+          default:
+            return _basedate.getTime() === _date.getTime();
+        }
+      }
+      catch (ex) {
+        console.log('exception while checkExists', ex);
       }
     });
   };
@@ -206,22 +225,30 @@ proto.makeChartTimelineSeries = function (message) {
       while (itr.hasNext() && counter++ < 1000) {
         var _d = new Date(itr.next()._d.getTime());
         var exists;
-        if (['day', 'month', 'year'].indexOf(interval) > -1)
-          exists = checkExists(timestampDimension, result.documents, _d, true);
-        else
-          exists = checkExists(timestampDimension, result.documents, _d);
 
+        switch (interval) {
+          case 'day':
+            _d.setHours(0);
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'minute':
+            _d.setSeconds(0);
+            _d.setMilliseconds(0);
+            break;
+          case 'second':
+            _d.setMilliseconds(0);
+            break;
+          default:
+            break;
+        }
+
+        exists = checkExists(timestampDimension, result.documents, _d);
         if (!exists) {
           exists = {values: {}, fvalues: {}};
           exists.values[timestampDimension.key] = _d.toISOString();
           exists.fvalues[timestampDimension.key] = _d.toISOString();
           fill(result.documents[0].values, exists, timestampDimension);
-          /*Object.keys(result.documents[0].values).forEach(function (key) {
-           if (key !== timestampDimension.key) {
-           exists.values[key] = 0;
-           exists.fvalues[key] = 0;
-           }
-           });*/
         }
         fixed.push(exists);
       }
