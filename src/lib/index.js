@@ -8,7 +8,6 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-
 //THE OBJECT
 var joola = exports;
 
@@ -21,7 +20,8 @@ if (!global.joola) {
 joola.options = {
   token: null,
   host: null,
-  skipcss: false,
+  includecss: true,
+  theme: 'default',
   cssHost: '',
   APIToken: null,
   logouturl: null,
@@ -108,10 +108,13 @@ if (isBrowser()) {
         var parts = require('url').parse(scr.src);
         var protocol = parts.protocol;
         var host = parts.host;
-        var port = 443;
-        if (protocol !== 'https:')
-          port = 80;
-        joola.options.host = parts.protocol + '//' + host + ':' + port;
+        var port = parts.port;
+        if (!port) {
+          port = 443;
+          if (protocol !== 'https:')
+            port = 80;
+        }
+        joola.options.host = parts.protocol + '//' + parts.hostname + ':' + port;
         if (parts.query) {
           var qs = require('querystring').parse(parts.query);
           if (qs && qs.APIToken) {
@@ -127,7 +130,7 @@ if (isBrowser()) {
             port = 443;
             if (protocol !== 'https:')
               port = 80;
-            joola.options.host = parts.protocol + '//' + host + ':' + port;
+            joola.options.host = parts.protocol + '//' + parts.hostname + ':' + port;
           }
         }
       }
@@ -143,104 +146,6 @@ joola.init = function (options, callback) {
   joola.options = joola.common._mixin(joola.options, options);
   joola.options.isBrowser = isBrowser();
 
-  function browser3rd(callback) {
-    var expected = 0;
-
-    function done(which) {
-      expected--;
-      if (expected <= 0) {
-        return callback(null);
-      }
-    }
-
-    var script;
-    if (joola.options.isBrowser) {
-      if (typeof (jQuery) === 'undefined') {
-        script = document.createElement('script');
-        expected++;
-
-        script.onload = function () {
-          //jQuery.noConflict(true);
-
-          script = document.createElement('script');
-          expected++;
-          script.onload = function () {
-
-            var script = document.createElement('script');
-            expected++;
-            script.onload = function () {
-              var script = document.createElement('script');
-              expected++;
-              script.onload = function () {
-                done('highcharts-nodata');
-              };
-              script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
-              document.head.appendChild(script);
-
-              done('highcharts');
-            };
-            script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
-            document.head.appendChild(script);
-
-
-            done('jquery-ui');
-          };
-          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
-          document.head.appendChild(script);
-
-          done('jquery');
-        };
-        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
-        document.head.appendChild(script);
-      }
-      else if (typeof (Highcharts) === 'undefined') {
-        script = document.createElement('script');
-        expected++;
-        script.onload = function () {
-          var script = document.createElement('script');
-          expected++;
-          script.onload = function () {
-            done('highcharts-nodata-2');
-          };
-          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
-          document.head.appendChild(script);
-
-          done('highcharts-2');
-        };
-        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
-        document.head.appendChild(script);
-      }
-
-      if (typeof (Tablesort) === 'undefined') {
-        script = document.createElement('script');
-        expected++;
-        script.onload = function () {
-          done('tablesort');
-        };
-        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
-        document.head.appendChild(script);
-      }
-
-      //css
-      if (!joola.options.skipcss) {
-        var css = document.createElement('link');
-        expected++;
-        css.onload = function () {
-          //jQuery.noConflict(true);
-          //done('css');
-        };
-        css.rel = 'stylesheet';
-        css.href = joola.options.host + '/joola.min.css';
-        document.head.appendChild(css);
-        done('css');
-      }
-      if (expected === 0)
-        return done('none');
-    }
-    else {
-      return done('not browser');
-    }
-  }
   if (options.token) {
     joola._token = options.token;
   }
@@ -255,68 +160,41 @@ joola.init = function (options, callback) {
   joola.events.emit('core.init.start');
   joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
 
-  //else if (joola.options.isBrowser) {
   if (!joola.options.host && joola.options.isBrowser) {
     joola.options.host = location.protocol + '//' + location.host;
   }
-
   if (!joola.options.host)
     throw new Error('joola host not specified');
 
-  //var io = require('socket.io-browserify');
   var io = require('socket.io-client');
   joola.io = io;
   joola.io.socket = joola.io.connect(joola.options.host);
-
-  joola.io.socket.on('SIG_HUP', function () {
-    console.log('SIG_HUP');
+  joola.io.socket.on('event', function (data) {
   });
-
-  //}
-  //joola.config.init(function (err) {
-  // if (err)
-  //   return callback(err);
-  //joola.dispatch.buildstub(function (err) {
-  //  if (err)
-  //    return callback(err);
-  browser3rd(function () {
+  joola.io.socket.on('disconnect', function (reason) {
+    joola.connected = false;
+    joola.emit('disconnected', reason);
   });
-  if (joola.options.token) {
-    joola.dispatch.users.getByToken(joola._token, function (err, user) {
-      if (err)
-        return callback(err);
-
-      joola.USER = user;
-      joola.TOKEN = joola._token;
-      joola.events.emit('core.init.finish');
-      if (callback)
-        return callback(null, joola);
-
-    });
-  }
-  else if (joola.options.APIToken) {
-    joola._apitoken = joola.options.APIToken;
-    joola.USER = null;
-    joola._token = null;
-
-    joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
-      if (err)
-        return callback(err);
-      joola.USER = user;
-      joola.events.emit('core.init.finish');
-      joola.events.emit('ready');
-      if (typeof callback === 'function')
-        return callback(null, joola);
-    });
-  }
-  else {
-    joola.events.emit('core.init.finish');
-    joola.events.emit('ready');
-    if (typeof callback === 'function')
-      return callback(null, joola);
-  }
-  //});
-  //});
+  joola.io.socket.on('connect_error', function (err) {
+    joola.connected = false;
+    if (!joola.online)
+      throw new Error('Failed to connect to Joola engine: ' + err);
+    joola.emit('disconnected', err);
+  });
+  joola.io.socket.on('connect_timeout', function (err) {
+    joola.connected = false;
+    if (!joola.online)
+      throw new Error('Failed to connect to Joola engine: Timeout');
+    joola.emit('disconnected', 'timeout');
+  });
+  joola.io.socket.on('connect', function () {
+    joola.connected = true;
+    if (!joola.online) {
+      joola.online = true;
+      joola.bringOnline(callback);
+    }
+    joola.emit('connected');
+  });
 
   //global function hook (for debug)
   if (joola.options.debug && joola.options.debug.functions && joola.options.debug.functions.enabled)
@@ -333,13 +211,150 @@ joola.init = function (options, callback) {
       if (joola.options.debug.events.enabled && joola.options.debug.events.trace)
         console.trace();
     });
-  //});
 };
 
 if (joola.options.APIToken || joola.options.token) {
   joola.init({});
 }
 
+joola.browser3rd = function (callback) {
+  var expected = 0;
+
+  function done(which) {
+    expected--;
+    if (expected <= 0) {
+      return callback(null);
+    }
+  }
+
+  var script;
+  if (joola.options.isBrowser) {
+    if (typeof (jQuery) === 'undefined') {
+      script = document.createElement('script');
+      expected++;
+
+      script.onload = function () {
+        //jQuery.noConflict(true);
+
+        script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+
+          var script = document.createElement('script');
+          expected++;
+          script.onload = function () {
+            var script = document.createElement('script');
+            expected++;
+            script.onload = function () {
+              done('highcharts-nodata');
+            };
+            script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
+            document.head.appendChild(script);
+
+            done('highcharts');
+          };
+          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
+          document.head.appendChild(script);
+
+
+          done('jquery-ui');
+        };
+        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
+        document.head.appendChild(script);
+
+        done('jquery');
+      };
+      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
+      document.head.appendChild(script);
+    }
+    else if (typeof (Highcharts) === 'undefined') {
+      script = document.createElement('script');
+      expected++;
+      script.onload = function () {
+        var script = document.createElement('script');
+        expected++;
+        script.onload = function () {
+          done('highcharts-nodata-2');
+        };
+        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
+        document.head.appendChild(script);
+
+        done('highcharts-2');
+      };
+      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
+      document.head.appendChild(script);
+    }
+
+    if (typeof (Tablesort) === 'undefined') {
+      script = document.createElement('script');
+      expected++;
+      script.onload = function () {
+        done('tablesort');
+      };
+      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
+      document.head.appendChild(script);
+    }
+
+    //css
+    if (joola.options.includecss) {
+      var css = document.createElement('link');
+      expected++;
+      css.onload = function () {
+        //jQuery.noConflict(true);
+        //done('css');
+      };
+      css.rel = 'stylesheet';
+      css.href = joola.options.host + '/joola.css';
+      document.head.appendChild(css);
+      done('css');
+    }
+    if (expected === 0)
+      return done('none');
+  }
+  else {
+    return done('not browser');
+  }
+};
+
+joola.bringOnline = function (callback) {
+  joola.browser3rd(function () {
+    if (joola.options.token) {
+      joola.dispatch.users.getByToken(joola._token, function (err, user) {
+        if (err)
+          return callback(err);
+
+        joola.USER = user;
+        joola.TOKEN = joola._token;
+        joola.events.emit('core.init.finish');
+        joola.events.emit('ready');
+        if (callback)
+          return callback(null, joola);
+
+      });
+    }
+    else if (joola.options.APIToken) {
+      joola._apitoken = joola.options.APIToken;
+      joola.USER = null;
+      joola._token = null;
+
+      joola.dispatch.users.verifyAPIToken(joola._apitoken, function (err, user) {
+        if (err)
+          return callback(err);
+        joola.USER = user;
+        joola.events.emit('core.init.finish');
+        joola.events.emit('ready');
+        if (typeof callback === 'function')
+          return callback(null, joola);
+      });
+    }
+    else {
+      joola.events.emit('core.init.finish');
+      joola.events.emit('ready');
+      if (typeof callback === 'function')
+        return callback(null, joola);
+    }
+  });
+};
 
 joola.set = function (key, value, callback) {
   joola.options[key] = value;
@@ -383,7 +398,5 @@ joola.offcolors = ['#AADFF3', '#C9E7BE', '#F2D5BD', '#E1C9E8', '#F6F3B1', '#DADB
 
 var start = new Date().getTime();
 joola.on('ready', function () {
-  joola.connected = true;
   var end = new Date().getTime();
-  console.log('loaded in ', end - start, 'ms.');
 });

@@ -1,7 +1,7 @@
 {
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.23",
+  "version": "0.7.24",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -33,7 +33,7 @@
     "cloneextend": "^0.0.3",
     "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
-    "moment": "~2.5.1",
+    "moment": "^2.8.4",
     "socket.io-client": "^1.0.2",
     "twix": "^0.5.1",
     "underscore": "~1.5.2"

@@ -84,7 +84,7 @@ var Canvas = module.exports = function (options, callback) {
           var exist = _.find(self.options.metrics, function (m) {
             return m.key === key;
           });
-          if (exist) 
+          if (exist)
             _query.metrics[i] = exist;
         }
       });
@@ -101,6 +101,12 @@ var Canvas = module.exports = function (options, callback) {
       if (self.options.datepicker && self.options.datepicker._interval)
         _query.interval = self.options.datepicker._interval;
     }
+    if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
+      _query.realtime = true;
+      _query.timeframe.end = null;
+    }
+    else
+      _query.realtime = false;
     return _query;
   };
 
@@ -122,13 +128,13 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.datepicker && self.options.datepicker.interval) {
       self.options.datepicker.$interval = $(self.options.datepicker.interval);
       self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+      self.options.datepicker.$interval.find('.btn').on('click', function () {
+        var $this = $(this);
+        self.options.datepicker.$interval.find('.btn').removeClass('active');
+        $this.addClass('active');
 
-      self.options.datepicker.$interval.on('change', function (e, data) {
-        self.options.datepicker._interval = data.$container.attr('data-id');
-        self.emit('intervalchange', data.dataId);
-
-        self.options.datepicker.$interval.find('button').removeClass('active');
-        data.$container.addClass('active');
+        self.options.datepicker._interval = $this.attr('data-id');
+        self.emit('intervalchange', self.options.datepicker._interval);
       });
     }
 

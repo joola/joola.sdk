@@ -45,8 +45,8 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.template = function () {
-    var $html = $('<div class="jio metricbox caption"></div>' +
-      '<div class="jio metricbox value"></div>');
+    var $html = $('<div class="jio metricbox value"></div>' +
+      '<div class="jio metricbox caption"></div>');
     return $html;
   };
 
@@ -88,7 +88,6 @@ var Metric = module.exports = function (options, callback) {
 
         if (self.options.onDraw)
           window[self.options.onDraw](self.options.$container, self);
-
 
         if (self.options.allowSelect)
           self.options.$container.css('cursor', 'pointer');

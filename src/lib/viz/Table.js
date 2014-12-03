@@ -165,10 +165,9 @@ var Table = module.exports = function (options, callback) {
             message.dimensions.forEach(function (d) {
               $td = $('<td class="jio tbl value dimension dimensionvalue"></td>');
               $td.text(point[index++]);
-              dataDimensions.push(d.key, 'eq', $td.text());
+              dataDimensions.push([d.key, 'eq', $td.text()]);
               $tr.append($td);
             });
-            dataDimensions = [dataDimensions];
             if ($check)
               $check.attr('data-filter', JSON.stringify(dataDimensions));
 
@@ -238,39 +237,76 @@ var Table = module.exports = function (options, callback) {
           });
 
           existingkeys.push(key);
-
           for (var i = 0; i < trs.length; i++) {
             $tr = $(trs[i]);
             var cols = $tr.find('td');
 
             var _key = '';
             var j;
-            for (j = 0; j < message.dimensions.length; j++) {
+            var start = 0;
+            var end = message.dimensions.length;
+            if (self.options.row.checkbox) {
+              start++;
+              end++;
+            }
+            for (j = start; j < end; j++) {
               $col = $(cols[j]);
               _key += $col.text();
             }
-
-            if (_key == key) {
+            if (_key === key) {
+              found = true;
               for (; j < message.dimensions.length + message.metrics.length; j++) {
                 $col = $(cols[j]);
                 var value = $col.text();
-                if (value != point[j])
+                if (value != point[j]) {
                   $col.text(point[j]);
+                }
               }
-              found = true;
             }
           }
           if (!found) {
+            console.log('not found');
             //add
             var $tbody = $(self.options.$container.find('tbody')[0]);
             $tr = $('<tr></tr>');
+            var $td;
+            var $check;
+            if (self.options.row.checkbox) {
+              $td = $('<td class="jio tbl value check"></td>');
+              $check = $('<input type="checkbox"/>');
+              $check.on('click', function () {
+                var $this = $(this);
+                if ($this.is(':checked')) {
+                  if (self.options.canvas)
+                    self.options.canvas.emit('addplot', self, JSON.parse($this.attr('data-filter')));
+                  $(self).trigger('addplot', JSON.parse($this.attr('data-filter')));
+                }
+                else if (self.options.canvas)
+                  self.options.canvas.emit('removeplot', self, JSON.parse($this.attr('data-filter')));
+                $(self).trigger('removeplot', JSON.parse($this.attr('data-filter')));
+              });
+              $td.append($check);
+              $tr.append($td);
+            }
+
+            if (self.options.row.id) {
+              $td = $('<td class="jio tbl value id"></td>');
+              $td.text(pointIndex + 1 + '.');
+              $tr.append($td);
+            }
 
             index = 0;
+            var dataDimensions = [];
             message.dimensions.forEach(function (d) {
               var $td = $('<td class="jio tbl value dimension"></td>');
               $td.text(point[index++]);
+              dataDimensions.push([d.key, 'eq', $td.text()]);
               $tr.append($td);
             });
+
+            if ($check) 
+              $check.attr('data-filter', JSON.stringify(dataDimensions));
+            
             message.metrics.forEach(function (m) {
               var $td = $('<td class="jio tbl value metric"></td>');
               $td.text(point[index++]);
@@ -286,13 +322,21 @@ var Table = module.exports = function (options, callback) {
 
           var _key = '';
           var j;
-          for (j = 0; j < message.dimensions.length; j++) {
+          var start = 0;
+          var end = message.dimensions.length;
+          if (self.options.row.checkbox) {
+            start++;
+            end++;
+          }
+          for (j = start; j < end; j++) {
             $col = $(cols[j]);
             _key += $col.text();
           }
 
-          if (existingkeys.indexOf(_key) == -1)
+          if (existingkeys.indexOf(_key) == -1) {
+            console.log('remove', _key);
             $tr.remove();
+          }
         }
       }
 
@@ -304,8 +348,10 @@ var Table = module.exports = function (options, callback) {
         for (var z = 0; z < trs.length; z++) {
           var elem = trs[z];
           var $elem = $(elem);
-          if (z + 1 > limit)
+          if (z + 1 > limit) {
+            console.log('remove');
             $elem.remove();
+          }
         }
       }
     });
