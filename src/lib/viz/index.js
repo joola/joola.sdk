@@ -48,7 +48,7 @@ viz.markContainer = function (container, attr) {
   attr = attr.attr || attr;
   attr.forEach(function (a) {
     Object.keys(a).forEach(function (key) {
-      if (key === 'css') {
+      if (key === 'css' && a[key]) {
         var currentClasses = container.attr('class');
         container.attr('class', currentClasses + ' ' + a[key]);
       }
@@ -64,14 +64,13 @@ viz.initialize = function (self, options, callback) {
     viz.markContainer(self.options.container, [
       {type: self.type},
       {uuid: self.uuid},
-      {css: self.options.css}
+      {css: self.options.css || null}
     ]);
     if (self.options.canvas) {
       self.options.canvas.addVisualization(self);
       //subscribe to default events
       self.options.canvas.on('datechange', function (dates) {
         //let's change our query and fetch again
-        console.log('self', self.options.query);
         self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0]));
         viz.destroy(self);
         return viz.initialize(self, self.options);
@@ -115,7 +114,6 @@ viz.fetch = function (context, query, callback) {
   }
   else {
     if (context && context.options && context.options.canvas) {
-      console.log('ctx', context.options);
       context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
       context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
     }
@@ -134,6 +132,7 @@ viz.fetch = function (context, query, callback) {
   args.push(function (err, messages) {
     if (err)
       return callback(err);
+
     if (!Array.isArray(messages))
       messages = [messages];
     messages.forEach(function (message, mindex) {
@@ -210,6 +209,7 @@ viz.fetch = function (context, query, callback) {
   });
 
   viz.stop(context, function () {
+    console.log(args);
     joola.query.fetch.apply(context, args);
   });
 };
@@ -244,3 +244,44 @@ viz.destroy = function (self) {
   $(self.options.container).html($html);
   self.initialized = true;
 };
+
+//this is a magic function for picking up namespace'd items
+joola.on('ready', function (err) {
+  if (err)
+    return;
+
+  Object.keys(joola.viz).forEach(function (key) {
+    var visualization = joola.viz[key];
+    var joola_elements = $('joola\\:' + key.toLowerCase());
+    if (joola_elements.length > 0) {
+      $.each(joola_elements, function (index, element) {
+        var $element = $(element);
+        //check not nested under a canvas
+        if ($element.parents('joola\\:canvas').length === 0) {
+          var attributes = $element.get(0).attributes;
+          var options = {
+            container: $element
+          };
+          for (var i = 0; i < attributes.length; i++) {
+            var attribute = attributes[i];
+
+            var value = null;
+            try {
+              value = JSON.parse(attribute.value);
+            }
+            catch (ex) {
+              try {
+                value = JSON.parse(attribute.value.replace(/\'/ig, '"'));
+              }
+              catch (ex2) {
+                value = attribute.value;
+              }
+            }
+            joola.common.flatGetSet(options, attribute.name, value);
+          }
+          new visualization(options);
+        }
+      });
+    }
+  });
+});

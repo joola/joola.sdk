@@ -24,12 +24,12 @@ var BarTable = module.exports = function (options, callback) {
   this.options = {
     container: null,
     template: '<div class="bartable-caption"></div>' +
-    '<table class="jio bartable table">' +
-    '<thead>' +
-    '</thead>' +
-    '<tbody>' +
-    '</tbody>' +
-    '</table>',
+      '<table class="jio bartable table">' +
+      '<thead>' +
+      '</thead>' +
+      '<tbody>' +
+      '</tbody>' +
+      '</table>',
     query: null,
     strings: {
       nodata: 'No data available.',
@@ -71,18 +71,18 @@ var BarTable = module.exports = function (options, callback) {
         percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
         _query.metrics.forEach(function (m) {
           var $td = $('<td class="jio bartable value">' +
-          '<div class="barwrapper">' +
-          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
-          '</div>' +
-          '</td>');
+            '<div class="barwrapper">' +
+            '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+            '</div>' +
+            '</td>');
           $tr.append($td);
         });
 
         _query.dimensions.forEach(function (d) {
           var $td = $('<td class="jio bartable value dimension">' +
-          '<div class="caption" title="Other"></div>' +
-          '<div class="subcaption"></div>' +
-          '</td>');
+            '<div class="caption" title="Other"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
           $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
           $td.find('.subcaption').text(point.metrics[metrickey] + ' ' + metricname);
@@ -103,17 +103,17 @@ var BarTable = module.exports = function (options, callback) {
 
         _query.metrics.forEach(function (m) {
           var $td = $('<td class="jio bartable value">' +
-          '<div class="barwrapper">' +
-          '<div class="tablebar" style="width:' + (percentage ? percentage + '%' : 'N/A') + '"></div>' +
-          '</div>' +
-          '</td>');
+            '<div class="barwrapper">' +
+            '<div class="tablebar" style="width:' + (percentage ? percentage + '%' : 'N/A') + '"></div>' +
+            '</div>' +
+            '</td>');
           $tr.append($td);
         });
         _query.dimensions.forEach(function (d) {
           var $td = $('<td class="jio bartable value dimension">' +
-          '<div class="caption" title="Other"></div>' +
-          '<div class="subcaption"></div>' +
-          '</td>');
+            '<div class="caption" title="Other"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
           var text;
           if (percentage)
@@ -157,11 +157,12 @@ var BarTable = module.exports = function (options, callback) {
     var $container = $(self.options.container);
     var $table = $($container.find('table')[0]);
     var $tbody = $($table.find('tbody')[0]);
+    var $tr, $td;
     if (data.length === 0) {
-      var $tr = $('<tr></tr>');
-      var $td = $('<td colspan="' + (self.options.query.dimensions.length + self.options.query.metrics.length + 1) + '" class="jio bartable nodata">' +
-      self.options.strings.nodata +
-      '</td>');
+      $tr = $('<tr></tr>');
+      $td = $('<td colspan="' + (self.options.query.dimensions.length + self.options.query.metrics.length + 1) + '" class="jio bartable nodata">' +
+        self.options.strings.nodata +
+        '</td>');
       $tr.append($td);
       $tbody.append($tr);
       return;
@@ -182,23 +183,23 @@ var BarTable = module.exports = function (options, callback) {
     });
     data.forEach(function (point, i) {
       if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit )) {
-        var $tr = $('<tr></tr>');
+        $tr = $('<tr></tr>');
         var index = 0;
         var percentage = parseFloat(point[metrickey]) / total * 100;
         self.options.query.metrics.forEach(function (m) {
-          var $td = $('<td class="jio bartable value">' +
-          '<div class="barwrapper">' +
-          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
-          '</div>' +
-          '</td>');
+          $td = $('<td class="jio bartable value">' +
+            '<div class="barwrapper">' +
+            '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+            '</div>' +
+            '</td>');
           $tr.append($td);
         });
 
         self.options.query.dimensions.forEach(function (d) {
-          var $td = $('<td class="jio bartable value dimension">' +
-          '<div class="caption" title="Other"></div>' +
-          '<div class="subcaption"></div>' +
-          '</td>');
+          $td = $('<td class="jio bartable value dimension">' +
+            '<div class="caption" title="Other"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
           $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[dimensionkey], 23));
           $td.find('.subcaption').text(point[metrickey] + ' ' + metricname);
@@ -209,24 +210,24 @@ var BarTable = module.exports = function (options, callback) {
       }
     });
     if (self.options.limit && self.options.limit < data.length) {
-      var $tr = $('<tr></tr>');
+      $tr = $('<tr></tr>');
       var index = 0;
       var percentage = parseFloat(notshown) / total * 100;
       self.options.query.metrics.forEach(function (m) {
-        var $td = $('<td class="jio bartable value metric">' +
-        '<div class="barwrapper">' +
-        '<div class="tablebar" style="width:' + percentage + '%"></div>' +
-        '</div>' +
-        '</td>');
+        $td = $('<td class="jio bartable value metric">' +
+          '<div class="barwrapper">' +
+          '<div class="tablebar" style="width:' + percentage + '%"></div>' +
+          '</div>' +
+          '</td>');
         $td.find('.tablebar').css({'background-color': joola.colors[11]});
         $tr.append($td);
       });
 
       self.options.query.dimensions.forEach(function (d) {
-        var $td = $('<td class="jio bartable value dimension notshown">' +
-        '<div class="caption" title="Other"></div>' +
-        '<div class="subcaption"></div>' +
-        '</td>');
+        $td = $('<td class="jio bartable value dimension notshown">' +
+          '<div class="caption" title="Other"></div>' +
+          '<div class="subcaption"></div>' +
+          '</td>');
 
         $td.find('.caption').text(percentage.toFixed(2) + '% ' + self.options.strings.not_shown || 'Not shown');
         $td.find('.subcaption').text(notshown + ' ' + self.options.query.metrics[0].name);

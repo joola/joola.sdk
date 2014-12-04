@@ -101,7 +101,7 @@ var Canvas = module.exports = function (options, callback) {
     });
     _query[0].hash = joola.common.hash(_query[0].hash);
     //self._datepicker = $(self.options.datepicker.container).DatePicker({});
-    console.log(self._datepicker.base_fromdate);
+
     if (!_query[0].timeframe && self.options.datepicker && self.options.datepicker.container) {
       _query[0].timeframe = {};
       _query[0].timeframe.start = self._datepicker.base_fromdate;
@@ -141,61 +141,61 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      self._datepicker = $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
-      });
-      console.log(self._datepicker);
-    }
-    if (self.options.datepicker && self.options.datepicker.interval) {
-      self.options.datepicker.$interval = $(self.options.datepicker.interval);
-      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
-      self.options.datepicker.$interval.find('.btn').on('click', function () {
-        var $this = $(this);
-        self.options.datepicker.$interval.find('.btn').removeClass('active');
-        $this.addClass('active');
+        self._datepicker = ref;
+        console.log(ref);
 
-        self.options.datepicker._interval = $this.attr('data-id');
-        self.emit('intervalchange', self.options.datepicker._interval);
-      });
-    }
+        if (self.options.datepicker.interval) {
+          self.options.datepicker.$interval = $(self.options.datepicker.interval);
+          self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+          self.options.datepicker.$interval.find('.btn').on('click', function () {
+            var $this = $(this);
+            self.options.datepicker.$interval.find('.btn').removeClass('active');
+            $this.addClass('active');
 
-    if (self.options.visualizations && self.options.visualizations) {
-      Object.keys(self.options.visualizations).forEach(function (key) {
-        var viz = self.options.visualizations[key];
-        if (viz.container) {
-          viz.query = self.prepareQuery(viz.query);
-          viz.force = true;
-          viz.canvas = self;
-          switch (viz.type.toLowerCase()) {
-            case 'timeline':
-              $(viz.container).Timeline(viz);
-              break;
-            case 'metric':
-              $(viz.container).Metric(viz);
-              break;
-            case 'table':
-              $(viz.container).Table(viz);
-              break;
-            case 'minitable':
-              $(viz.container).MiniTable(viz);
-              break;
-            case 'bartable':
-              $(viz.container).BarTable(viz);
-              break;
-            case 'pie':
-              $(viz.container).Pie(viz);
-              break;
-            case 'geo':
-              $(viz.container).Geo(viz);
-              break;
-            default:
-              break;
-          }
+            self.options.datepicker._interval = $this.attr('data-id');
+            self.emit('intervalchange', self.options.datepicker._interval);
+          });
         }
+
+        console.log('a');
+        Object.keys(self.options.visualizations).forEach(function (key) {
+          var viz = self.options.visualizations[key];
+          if (viz.container) {
+            viz.query = self.prepareQuery(viz.query);
+            viz.force = true;
+            viz.canvas = self;
+            switch (viz.type.toLowerCase()) {
+              case 'timeline':
+                $(viz.container).Timeline(viz);
+                break;
+              case 'metric':
+                $(viz.container).Metric(viz);
+                break;
+              case 'table':
+                $(viz.container).Table(viz);
+                break;
+              case 'minitable':
+                $(viz.container).MiniTable(viz);
+                break;
+              case 'bartable':
+                $(viz.container).BarTable(viz);
+                break;
+              case 'pie':
+                $(viz.container).Pie(viz);
+                break;
+              case 'geo':
+                $(viz.container).Geo(viz);
+                break;
+              default:
+                break;
+            }
+          }
+        });
       });
     }
-
     if (typeof callback === 'function') {
       return callback(null, self);
     }
