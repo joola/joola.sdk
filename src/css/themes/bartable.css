@@ -18,9 +18,9 @@
   padding-top: 5px;
   padding-bottom: 5px;
 
-
   white-space: nowrap;
-  overflow: hidden
+  overflow: hidden;
+  min-width: 100px;
 }
 
 [jio-type="bartable"] .table td .caption {
@@ -47,7 +47,6 @@
   background-color: white;
 }
 
-
 [jio-type="bartable"] .bartable-caption {
   line-height: 1.2857142857em;
   margin: 0 0 10px;
@@ -60,14 +59,21 @@
   margin-bottom: 20px;
 }
 
-[jio-type="bartable"] .jio.bartable.nodata
-{
+[jio-type="bartable"] .jio.bartable.nodata, [jio-type="bartable"] .jio.bartable.loading {
   text-align: center;
 }
 
 [jio-type="bartable"] .barwrapper {
   float: left;
   width: 100%;
+}
+
+[jio-type="bartable"] .barwrapper.compare .tablebar {
+  height: 15px;
+}
+
+[jio-type="bartable"] .barwrapper.compare .tablebar.compare_ratio {
+  margin-top: 1px;
 }
 
 [jio-type="bartable"] .tablebar {

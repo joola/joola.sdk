@@ -221,3 +221,7 @@ common.flatGetSet = function (obj, is, value) {
     return common.flatGetSet(obj[is[0]], is.slice(1), value);
   }
 };
+
+common.isNumeric= function( obj ) {
+  return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+}

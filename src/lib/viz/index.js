@@ -71,8 +71,8 @@ viz.initialize = function (self, options, callback) {
       //subscribe to default events
       self.options.canvas.on('datechange', function (dates) {
         //let's change our query and fetch again
-        self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0]));
-        viz.destroy(self);
+        self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0], dates));
+        viz.destroy(self, {loading: true});
         return viz.initialize(self, self.options);
       });
     }
@@ -137,8 +137,9 @@ viz.fetch = function (context, query, callback) {
       messages = [messages];
     messages.forEach(function (message, mindex) {
       var _data = [];
-      if (context.data[mindex])
+      if (context.data[mindex]) {
         _data = context.data[mindex];
+      }
 
       if (message && message.query && message.query.ts && message.query.ts.duration)
         joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
@@ -209,7 +210,7 @@ viz.fetch = function (context, query, callback) {
   });
 
   viz.stop(context, function () {
-    console.log(args);
+    console.log('execute query', args);
     joola.query.fetch.apply(context, args);
   });
 };
@@ -229,7 +230,7 @@ viz.stop = function (self, callback) {
     return callback(null);
 };
 
-viz.destroy = function (self) {
+viz.destroy = function (self, vizOptions) {
   if (self.realtimeQueries) {
     self.realtimeQueries.forEach(function (q) {
       joola.logger.debug('Stopping realtime query [' + q + '].');
@@ -238,10 +239,8 @@ viz.destroy = function (self) {
   }
   self.initialized = false;
   self.data = [];
-  $(self.options.container).empty();
-
-  var $html = $(self.options.template);
-  $(self.options.container).html($html);
+  self.destroy();
+  self.draw(vizOptions);
   self.initialized = true;
 };
 

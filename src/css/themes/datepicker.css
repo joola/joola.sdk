@@ -45,6 +45,7 @@
 
 [jio-type="datepicker"] .datetable .dates {
   padding: 5px;
+  text-align: left;
 }
 
 [jio-type="datepicker"] .datetable .dates .datelabel {
@@ -81,6 +82,10 @@
   border-top-color: inherit;
 }
 
+[jio-type="datepicker"].compare .datetable .dropdownmarker {
+  top: 20px;
+}
+
 [jio-type="datepicker"] .datebox.expanded .datetable .dropdownmarker {
   top: 5px;
 
@@ -88,6 +93,10 @@
   border-left-color: transparent;
   border-top-color: transparent;
   border-bottom-color: inherit;
+}
+
+[jio-type="datepicker"].compare .datebox.expanded .datetable .dropdownmarker {
+  top: 13px;
 }
 
 [jio-type="datepicker"] .picker {
