@@ -97,6 +97,12 @@ viz.lookup = function (base, key) {
   return result[0];
 };
 
+viz.lookupDate = function (base, index) {
+  console.log('lookupdate');
+  console.log(base[index])
+  return base[index]
+};
+
 viz.fetch = function (context, query, callback) {
   if (!context.realtimeQueries)
     context.realtimeQueries = [];
@@ -144,7 +150,7 @@ viz.fetch = function (context, query, callback) {
         joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
       if (message.realtime && context.realtimeQueries.indexOf(message.realtime) == -1)
         context.realtimeQueries.push(message.realtime);
-      message.documents.forEach(function (doc) {
+      message.documents.forEach(function (doc, docindex) {
         doc = {
           dimensions: {},
           metrics: {},
@@ -184,7 +190,7 @@ viz.fetch = function (context, query, callback) {
       context.data[mindex] = _data;
     });
 
-    context.data[0].forEach(function (data) {
+    context.data[0].forEach(function (data,pointIndex) {
       var point = [data];
       var paired = {
         missing: true,
@@ -192,9 +198,15 @@ viz.fetch = function (context, query, callback) {
       };
       if (context.data.length === 2) {
         //find the pair
-        paired = _.find(context.data[1], function (item) {
-          return item.key === data.key;
-        }) || paired;
+        if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp){
+          paired = context.data[1][pointIndex] || paired;
+        }
+        else
+        {
+          paired = _.find(context.data[1], function (item) {
+            return item.key === data.key;
+          }) || paired;
+        }
         if (paired || context.data.length > 1)
           point = [data, paired];
       }

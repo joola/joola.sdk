@@ -42259,7 +42259,7 @@ var BarTable = module.exports = function (options, callback) {
 
           Object.keys(point.dimensions).forEach(function (d) {
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption" title="Other"></div>' +
+              '<div class="caption"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
 
@@ -42271,7 +42271,6 @@ var BarTable = module.exports = function (options, callback) {
           $tbody.append($tr);
           return;
         }
-
 
         //we have a simple row
         $tr = $$('<tr></tr>');
@@ -42287,8 +42286,14 @@ var BarTable = module.exports = function (options, callback) {
         });
 
         _query.dimensions.forEach(function (d) {
+          var dimensionkey = d.key||d;
+          var title = point.meta[dimensionkey];
+          if (title)
+            title = title.title || title.name || title.key;
+          else
+            title = d.name || d.key;
           var $td = $$('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="Other"></div>' +
+            '<div class="caption" title="' + title + '"></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
 
@@ -42330,7 +42335,7 @@ var BarTable = module.exports = function (options, callback) {
 
           Object.keys(base.dimensions).forEach(function (d) {
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption" title="Other"></div>' +
+              '<div class="caption"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
 
@@ -42372,7 +42377,7 @@ var BarTable = module.exports = function (options, callback) {
         });
         _query.dimensions.forEach(function (d) {
           var $td = $$('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="Other"></div>' +
+            '<div class="caption" title="' + d.name + '"></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
 
@@ -47366,6 +47371,12 @@ viz.lookup = function (base, key) {
   return result[0];
 };
 
+viz.lookupDate = function (base, index) {
+  console.log('lookupdate');
+  console.log(base[index])
+  return base[index]
+};
+
 viz.fetch = function (context, query, callback) {
   if (!context.realtimeQueries)
     context.realtimeQueries = [];
@@ -47413,7 +47424,7 @@ viz.fetch = function (context, query, callback) {
         joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
       if (message.realtime && context.realtimeQueries.indexOf(message.realtime) == -1)
         context.realtimeQueries.push(message.realtime);
-      message.documents.forEach(function (doc) {
+      message.documents.forEach(function (doc, docindex) {
         doc = {
           dimensions: {},
           metrics: {},
@@ -47453,7 +47464,7 @@ viz.fetch = function (context, query, callback) {
       context.data[mindex] = _data;
     });
 
-    context.data[0].forEach(function (data) {
+    context.data[0].forEach(function (data,pointIndex) {
       var point = [data];
       var paired = {
         missing: true,
@@ -47461,9 +47472,15 @@ viz.fetch = function (context, query, callback) {
       };
       if (context.data.length === 2) {
         //find the pair
-        paired = _.find(context.data[1], function (item) {
-          return item.key === data.key;
-        }) || paired;
+        if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp){
+          paired = context.data[1][pointIndex] || paired;
+        }
+        else
+        {
+          paired = _.find(context.data[1], function (item) {
+            return item.key === data.key;
+          }) || paired;
+        }
         if (paired || context.data.length > 1)
           point = [data, paired];
       }
