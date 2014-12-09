@@ -127,7 +127,8 @@
   clear: both;
   padding: 5px;
 
-  font-size: 75%;
+  font-size: 16px;
+  line-height: 20px;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .customdate {
@@ -159,33 +160,37 @@
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .daterange .dateoption {
-  border: #dedede solid 3px;
+  border: #ccc solid 1px;
   cursor: pointer;
 
-  width: 8em;
+  width: 6.5em;
+  line-height: 20px;
 
   padding: 2px;
   padding-left: 5px;
-  padding-right: 5px;
+  margin-bottom: 6px;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-top: 2px;
 
-  margin-top: 0;
-  margin-bottom: 4px;
-  margin-left: 4px;
-  margin-right: 4px;
+  font-size: 16px;
+  font-family: Signika, helvetica, arial, sans-serif;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .daterange .dateoption.active {
   border: #07C solid 3px;
   margin-top: 0;
   margin-bottom: 4px;
-  margin-left: 4px;
-  margin-right: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .comparerange .dateoption.active {
   border: #86BE2B solid 3px;
 
   margin-bottom: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .daterange .dateoption.invalid {
@@ -199,9 +204,6 @@
   white-space: nowrap;
   padding-right: 22px;
   display: none;
-
-  /*font-size: 75%;*/
-  font-weight: bold;
   margin-bottom: 3px;
 }
 
@@ -279,6 +281,7 @@
   height: 9px;
   padding: 0;
   width: 4px;
+
 }
 
 [jio-type="datepicker"] .picker .wrapper .calendars .datetable-prev div div.inline-block {
@@ -434,6 +437,7 @@
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .compareoption .checker {
   top: 4px;
+  margin-left: 0;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .compareoption {
@@ -446,26 +450,64 @@
 
 [jio-type="datepicker"] .daycell {
   font-size: 11px;
-  font-weight: 300 !important;
+  font-weight: 300;
+  line-height: 22px;
 }
 
 [jio-type="datepicker"] .daycell a {
-
   color: #0088cc;
   border-bottom: 0;
 }
 
 .ui-datepicker-calendar th {
   font-weight: 600;
+  line-height: 22px;
 }
 
 [jio-type="datepicker"] .picker .wrapper .control .optionscontainer .apply {
   margin-top: -5px;
+
+  font-family: Signika, helvetica, arial, sans-serif;
+
+  background-color: #6d6d6d;
+  background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, #6d6d6d), color-stop(100%, #1a1a1a));
+  background-image: -webkit-linear-gradient(top, #6d6d6d, #1a1a1a);
+  background-image: -moz-linear-gradient(to bottom, #6d6d6d, #1a1a1a);
+  background-image: -o-linear-gradient(top, #6d6d6d, #1a1a1a);
+  background-image: linear-gradient(top, #6d6d6d, #1a1a1a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#6d6d6d', EndColorStr='#1a1a1a');
+  border: 1px solid #4c4c4c;
+  border-bottom: 0;
+  border-radius: 5px;
+  color: #fff;
+  text-shadow: 0 -1px 0 #272727;
+
+  font-size: .875em;
+  height: 28px;
+  line-height: 26px;
+  padding: 1px 10px;
+
+  text-transform: uppercase;
+}
+
+[jio-type="datepicker"] .picker .wrapper .control .optionscontainer .apply:hover {
+  background-color: #7f7f7f;
+  background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, #7f7f7f), color-stop(100%, #1a1a1a));
+  background-image: -webkit-linear-gradient(top, #7f7f7f, #1a1a1a);
+  background-image: -moz-linear-gradient(to bottom, #7f7f7f, #1a1a1a);
+  background-image: -o-linear-gradient(top, #7f7f7f, #1a1a1a);
+  background-image: linear-gradient(top, #7f7f7f, #1a1a1a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#7f7f7f', EndColorStr='#1a1a1a');
 }
 
 [jio-type="datepicker"] .picker .wrapper .calendars .datetable-prev div, [jio-type="datepicker"] .picker .wrapper .calendars .datetable-next div {
-  padding-top: 10px;
-  height: 22px;
+  padding-top: 14px;
+  height: 28px;
+
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 [jio-type="datepicker"] .picker .wrapper .calendars .datetable-prev div div.inline-block, [jio-type="datepicker"] .picker .wrapper .calendars .datetable-next div div.inline-block {
@@ -499,17 +541,18 @@
   margin-right: 2px;
 }
 
-[jio-type="datepicker"] .picker .wrapper .control .optionscontainer .apply {
-  font-family: "Signika", helvetica, arial, sans-serif;
-}
-
 [jio-type="datepicker"] .picker .wrapper .calendars {
   padding-top: 5px;
 }
 
 [jio-type="datepicker"] .ui-datepicker-title {
-  height: 22px;
+  height: 28px;
   color: #666;
-  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-top: 7px;
   font-weight: 300;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }

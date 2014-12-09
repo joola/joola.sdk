@@ -64,6 +64,8 @@ joola.VERSION = require('./../../package.json').version;
 joola._token = null;
 joola._apitoken = null;
 
+require('./common/modifiers');
+
 Object.defineProperty(joola, 'TOKEN', {
   get: function () {
     return joola._token;
@@ -286,15 +288,15 @@ joola.browser3rd = function (callback) {
     }
 
     /*
-    if (typeof (Tablesort) === 'undefined') {
-      script = document.createElement('script');
-      expected++;
-      script.onload = function () {
-        done('tablesort');
-      };
-      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
-      document.head.appendChild(script);
-    }*/
+     if (typeof (Tablesort) === 'undefined') {
+     script = document.createElement('script');
+     expected++;
+     script.onload = function () {
+     done('tablesort');
+     };
+     script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
+     document.head.appendChild(script);
+     }*/
 
     //css
     if (joola.options.includecss) {

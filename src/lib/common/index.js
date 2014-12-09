@@ -224,4 +224,4 @@ common.flatGetSet = function (obj, is, value) {
 
 common.isNumeric= function( obj ) {
   return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
-}
+};
