@@ -67,8 +67,8 @@ var BarTable = module.exports = function (options, callback) {
     if (Array.isArray(self.options.query))
       _query = _query[0];
     var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
-    var metricname = _query.metrics[0].name || _query.metrics[0];
     var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metricname = data[0].meta[metrickey].name || _query.metrics[0].name || _query.metrics[0];
 
     function addRow(point, total, shown, notshown) {
       var $table = $$($$(self.options.container).find('table')[0]);

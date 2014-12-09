@@ -42227,8 +42227,8 @@ var BarTable = module.exports = function (options, callback) {
     if (Array.isArray(self.options.query))
       _query = _query[0];
     var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
-    var metricname = _query.metrics[0].name || _query.metrics[0];
     var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metricname = data[0].meta[metrickey].name || _query.metrics[0].name || _query.metrics[0];
 
     function addRow(point, total, shown, notshown) {
       var $table = $$($$(self.options.container).find('table')[0]);
@@ -47467,18 +47467,27 @@ viz.fetch = function (context, query, callback) {
         if (paired || context.data.length > 1)
           point = [data, paired];
       }
-      if (data.state === 'enter' || paired.state === 'enter')
+
+      if (data.state === 'enter' || paired.state === 'enter') {
+        if (context.options.enter)
+          context.options.enter.apply(context, [point, context.data]);
         context.enter(point, context.data);
-      else if (data.state === 'update' || paired.state === 'update')
+      }
+      else if (data.state === 'update' || paired.state === 'update') {
+        if (context.options.update)
+          context.options.update.apply(context, [point, context.data]);
         context.update(point, context.data);
-      else if (data.state === 'exit' || paired.state === 'exit')
-        context.update(point, context.data);
+      }
+      else if (data.state === 'exit' || paired.state === 'exit') {
+        if (context.options.exit)
+          context.options.exit.apply(context, [point, context.data]);
+        context.exit(point, context.data);
+      }
     });
     return callback(null, context.data);
   });
 
   viz.stop(context, function () {
-    console.log('execute query', args);
     joola.query.fetch.apply(context, args);
   });
 };
