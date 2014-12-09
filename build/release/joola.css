@@ -162,14 +162,13 @@
 
 [jio-type="bartable"] .bartable-caption {
   line-height: 1.2857142857em;
-  margin: 0 0 10px;
+  margin: 20px 0 0;
   padding: 0;
   text-transform: uppercase;
   font-size: 18px;
   font-weight: normal;
   color: #333;
   text-align: center;
-  margin-bottom: 20px;
 }
 
 [jio-type="bartable"] .jio.bartable.nodata, [jio-type="bartable"] .jio.bartable.loading {
