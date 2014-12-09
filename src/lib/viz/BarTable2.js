@@ -11,11 +11,18 @@
 var
   joola = require('../index'),
   d3 = require('d3'),
-  $ = require('jquery'),
+  $$ = require('jquery'),
   _ = require('underscore');
 
 var BarTable = module.exports = function (options, callback) {
   var self = this;
+
+  //mixin
+  this._super = {};
+  for (var x in require('./_proto')) {
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
+  }
 
   this.type = 'bartable';
   this.uuid = joola.common.uuid();
@@ -64,8 +71,8 @@ var BarTable = module.exports = function (options, callback) {
     var metrickey = _query.metrics[0].key || _query.metrics[0];
 
     function addRow(point, total, shown, notshown) {
-      var $table = $($(self.options.container).find('table')[0]);
-      var $tbody = $($table.find('tbody')[0]);
+      var $table = $$($$(self.options.container).find('table')[0]);
+      var $tbody = $$($table.find('tbody')[0]);
       var percentage, $tr;
       if ($tbody.find('tr.nodata').length > 0)
         $tbody.find('tr.nodata').remove();
@@ -91,7 +98,7 @@ var BarTable = module.exports = function (options, callback) {
           });
 
           Object.keys(point.dimensions).forEach(function (d) {
-            var $td = $('<td class="jio bartable value dimension notshown">' +
+            var $td = $$('<td class="jio bartable value dimension notshown">' +
               '<div class="caption" title="Other"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
@@ -107,11 +114,11 @@ var BarTable = module.exports = function (options, callback) {
 
 
         //we have a simple row
-        $tr = $('<tr></tr>');
+        $tr = $$('<tr></tr>');
         var index = 0;
         percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
         _query.metrics.forEach(function (m) {
-          var $td = $('<td class="jio bartable value">' +
+          var $td = $$('<td class="jio bartable value">' +
             '<div class="barwrapper">' +
             '<div class="tablebar" style="width:' + percentage + '%;background-color:' + self.options.colors[0] + '" title="' + point.metrics[metrickey].commas() + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
             '</div>' +
@@ -120,7 +127,7 @@ var BarTable = module.exports = function (options, callback) {
         });
 
         _query.dimensions.forEach(function (d) {
-          var $td = $('<td class="jio bartable value dimension">' +
+          var $td = $$('<td class="jio bartable value dimension">' +
             '<div class="caption" title="Other"></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
@@ -141,7 +148,7 @@ var BarTable = module.exports = function (options, callback) {
         if ($tbody.find('tr').length >= self.options.limit) {
           if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
             return;
-          $tr = $('<tr></tr>');
+          $tr = $$('<tr></tr>');
           base_percentage = parseFloat(notshown[0]) / total[0] * 100;
           if (base_percentage > 100)
             base_percentage = 100;
@@ -149,7 +156,7 @@ var BarTable = module.exports = function (options, callback) {
           if (compare_percentage > 100)
             compare_percentage = 100;
           Object.keys(base.metrics).forEach(function (m) {
-            var $td = $('<td class="jio bartable value">' +
+            var $td = $$('<td class="jio bartable value">' +
                   '<div class="barwrapper compare">' +
                   '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
                   '<div style="clear:both"></div>' +
@@ -162,7 +169,7 @@ var BarTable = module.exports = function (options, callback) {
           });
 
           Object.keys(base.dimensions).forEach(function (d) {
-            var $td = $('<td class="jio bartable value dimension notshown">' +
+            var $td = $$('<td class="jio bartable value dimension notshown">' +
               '<div class="caption" title="Other"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
@@ -176,7 +183,7 @@ var BarTable = module.exports = function (options, callback) {
           return;
         }
 
-        $tr = $('<tr></tr>');
+        $tr = $$('<tr></tr>');
         if (compare.missing)
           percentage = null;
         else
@@ -194,7 +201,7 @@ var BarTable = module.exports = function (options, callback) {
         else
           compare_percentage = null;
         _query.metrics.forEach(function (m) {
-          var $td = $('<td class="jio bartable value">' +
+          var $td = $$('<td class="jio bartable value">' +
             '<div class="barwrapper compare">' +
             '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
             '<div style="clear:both"></div>' +
@@ -204,7 +211,7 @@ var BarTable = module.exports = function (options, callback) {
           $tr.append($td);
         });
         _query.dimensions.forEach(function (d) {
-          var $td = $('<td class="jio bartable value dimension">' +
+          var $td = $$('<td class="jio bartable value dimension">' +
             '<div class="caption" title="Other"></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
@@ -249,23 +256,23 @@ var BarTable = module.exports = function (options, callback) {
   this.draw = function (options) {
     if (!options)
       options = {};
-    var $html = $(self.options.template);
-    $(self.options.container).html($html);
+    var $html = $$(self.options.template);
+    $$(self.options.container).html($html);
     if (self.options.caption)
-      $(self.options.container).find('.bartable-caption').text(self.options.caption);
+      $$(self.options.container).find('.bartable-caption').text(self.options.caption);
 
     if (!self.data || (self.data && self.data.length === 0)) {
       var $tr;
       var $td;
       if (options.loading) {
-        $tr = $('<tr class="loading"></tr>');
-        $td = $('<td colspan="2" class="jio bartable loading">' +
+        $tr = $$('<tr class="loading"></tr>');
+        $td = $$('<td colspan="2" class="jio bartable loading">' +
           self.options.strings.loading +
           '</td>');
       }
       else {
-        $tr = $('<tr class="nodata"></tr>');
-        $td = $('<td colspan="2" class="jio bartable nodata">' +
+        $tr = $$('<tr class="nodata"></tr>');
+        $td = $$('<td colspan="2" class="jio bartable nodata">' +
           self.options.strings.nodata +
           '</td>');
       }
@@ -275,7 +282,7 @@ var BarTable = module.exports = function (options, callback) {
   };
 
   this.destroy = function () {
-    $(self.options.container).find('table').empty();
+    $$(self.options.container).find('table').empty();
   };
 
   if (options && options.query && !Array.isArray(options.query))
@@ -289,21 +296,21 @@ var BarTable = module.exports = function (options, callback) {
     self.options.offcolors = joola.offcolors;
 
   //we draw the template into the container
-  var $html = $(self.options.template);
-  $(self.options.container).html($html);
+  var $html = $$(self.options.template);
+  $$(self.options.container).html($html);
   if (self.options.caption)
-    $(self.options.container).find('.bartable-caption').text(self.options.caption);
+    $$(self.options.container).find('.bartable-caption').text(self.options.caption);
   //visualization specific drawing
   if (self.options.headers) {
-    var $thead = $($html.find('thead'));
-    var $head_tr = $('<tr class="jio bartable captions"></tr>');
+    var $thead = $$($html.find('thead'));
+    var $head_tr = $$('<tr class="jio bartable captions"></tr>');
     self.options.query[0].metrics.forEach(function (m) {
-      var $th = $('<th class="jio bartable caption metric"></th>');
+      var $th = $$('<th class="jio bartable caption metric"></th>');
       //$th.text(m.name || m.key || m);
       $head_tr.append($th);
     });
     self.options.query[0].dimensions.forEach(function (d) {
-      var $th = $('<th class="jio bartable caption dimension"></th>');
+      var $th = $$('<th class="jio bartable caption dimension"></th>');
       $th.text(d.name || d.key || d);
       $head_tr.append($th);
     });
@@ -318,3 +325,53 @@ var BarTable = module.exports = function (options, callback) {
 
   return self;
 };
+
+joola.events.on('core.init.finish', function () {
+  var found;
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.BarTable = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || options.force) {
+        if (options.force && uuid) {
+          var existing = null;
+          found = false;
+          joola.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joola.viz.BarTable(options, function (err, bartable) {
+          if (err)
+            throw err;
+          bartable.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        found = false;
+        joola.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
