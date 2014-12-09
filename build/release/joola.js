@@ -1,5 +1,5 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports=module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
 },{}],2:[function(require,module,exports){
 /*!
  * tablesort v2.0.1 (2014-11-06)
@@ -40752,7 +40752,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 }).call(this);
 
 },{}],102:[function(require,module,exports){
-module.exports=module.exports={
+module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
   "version": "0.7.25-develop",
@@ -42157,7 +42157,7 @@ joola.on('ready', function () {
   var end = new Date().getTime();
 });
 
-},{"./../../package.json":102,"./common/api":103,"./common/dispatch":104,"./common/events":105,"./common/globals":106,"./common/index":107,"./common/logger":108,"./common/modifiers":109,"./viz/index":126,"querystring":17,"socket.io-client":54,"url":21}],111:[function(require,module,exports){
+},{"./../../package.json":102,"./common/api":103,"./common/dispatch":104,"./common/events":105,"./common/globals":106,"./common/index":107,"./common/logger":108,"./common/modifiers":109,"./viz/index":125,"querystring":17,"socket.io-client":54,"url":21}],111:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42170,13 +42170,12 @@ joola.on('ready', function () {
 
 var
   joola = require('../index'),
+  d3 = require('d3'),
+  $$ = require('jquery'),
   _ = require('underscore');
 
 var BarTable = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joola.events.emit('bartable.init.start');
+  var self = this;
 
   //mixin
   this._super = {};
@@ -42185,311 +42184,305 @@ var BarTable = module.exports = function (options, callback) {
     this._super[x] = require('./_proto')[x];
   }
 
-  var self = this;
-
-  this._id = '_bartable';
+  this.type = 'bartable';
   this.uuid = joola.common.uuid();
+  this.initialized = false;
+  this.data = [];
   this.options = {
-    legend: true,
     container: null,
-    $container: null,
-    query: null,
-    strings: {
-      not_shown: 'Not shown'
-    },
-    limit: 10,
-    headers: false
-  };
-  this.chartDrawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('<div class="bartable-caption"></div>' +
+    colors: [],
+    offcolors: [],
+    template: '<div class="bartable-caption"></div>' +
       '<table class="jio bartable table">' +
       '<thead>' +
       '</thead>' +
       '<tbody>' +
       '</tbody>' +
-      '</table>');
-    return $html;
+      '</table>',
+    query: null,
+    strings: {
+      loading: 'No data available.',
+      nodata: 'No data available.',
+      not_shown: 'Not shown'
+    },
+    legend: true,
+    limit: 10,
+    headers: false,
+    include_not_shown: true
+  };
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (self.options.dimensions.length === 0 || self.options.dimensions.length > 1)
+        return 'Please specify a single dimension.';
+      if (self.options.metrics.length === 0 || self.options.metrics.length > 1)
+        return 'Please specify a single metric.';
+    }
+    return null;
   };
 
-  this.sort = function (key, callback) {
-    if (typeof callback === 'function')
-      return callback(null);
-  };
+  this.enter = function (data, alldata) {
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+    var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
+    var metricname = _query.metrics[0].name || _query.metrics[0];
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
 
-  this._draw = function (callback) {
-    if (typeof callback === 'function')
-      return callback(null);
-  };
-
-  this.draw = function (options, callback) {
-    self.stop();
-    return this._super.fetch(this.options.query, function (err, message) {
-      if (Array.isArray(message))
-        message = message[0];
-      if (err) {
-        if (typeof callback === 'function')
-          return callback(err);
-
-        return;
-      }
-
-      var $col, $tr, trs;
-      var series = self._super.makeTableChartSeries(message.dimensions, message.metrics, message.documents);
-      if (!self.chartDrawn) {
-        self.chartDrawn = true;
-
-        var $html = self.template();
-
-
-        if (self.options.headers) {
-          var $thead = $($html.find('thead'));
-          var $head_tr = $('<tr class="jio bartable captions"></tr>');
-
-          message.metrics.forEach(function (m) {
-            var $th = $('<th class="jio bartable caption metric"></th>');
-            $th.text(m.name);
-            $head_tr.append($th);
-          });
-          message.dimensions.forEach(function (d) {
-            var $th = $('<th class="jio bartable caption dimension"></th>');
-            $th.text(d.name);
-            $head_tr.append($th);
-          });
-
-          $thead.append($head_tr);
-          $html.find('table').append($thead);
-        }
-        var $tbody = $($html.find('tbody'));
-        var hasData = false;
-        series.forEach(function (ser, serIndex) {
-          var total = 0;
-          var shown = 0;
-          var notshown = 0;
-          ser.data.forEach(function (point, i) {
-            hasData = true;
-            total += point[1];
-            if (i < (self.options.limit && self.options.limit < ser.data.length ? self.options.limit - 1 : self.options.limit ))
-              shown += point[1];
-            else
-              notshown += point[1];
-          });
-
-          ser.data.forEach(function (point, i) {
-            if (i < (self.options.limit && self.options.limit < ser.data.length ? self.options.limit - 1 : self.options.limit )) {
-              var $tr = $('<tr></tr>');
-              var index = 0;
-              var percentage = parseFloat(point[1]) / total * 100;
-              message.metrics.forEach(function (m) {
-                var $td = $('<td class="jio bartable value">' +
-                  '<div class="barwrapper">' +
-                  '<div class="tablebar" style="width:' + percentage + '%"></div>' +
-                  '</div>' +
-                  '</td>');
-                //$td.text(point[1]);
-                $tr.append($td);
-              });
-
-              message.dimensions.forEach(function (d) {
-                var $td = $('<td class="jio bartable value dimension">' +
-                  '<div class="caption" title="Other"></div>' +
-                  '<div class="subcaption"></div>' +
-                  '</td>');
-
-                $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point[0], 23));
-                $td.find('.subcaption').text(point[1] + ' ' + self.options.query.metrics[0].name);
-                $tr.append($td);
-              });
-
-              $tbody.append($tr);
-            }
-          });
-          if (self.options.limit && self.options.limit < ser.data.length) {
-            var $tr = $('<tr></tr>');
-            var index = 0;
-            var percentage = parseFloat(notshown) / total * 100;
-            message.metrics.forEach(function (m) {
-
-              var $td = $('<td class="jio bartable value metric">' +
-                '<div class="barwrapper">' +
-                '<div class="tablebar" style="width:' + percentage + '%"></div>' +
-                '</div>' +
-                '</td>');
-              $td.find('.tablebar').css({'background-color': joola.colors[11]});
-              $tr.append($td);
-            });
-
-            message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio bartable value dimension notshown">' +
-                '<div class="caption" title="Other"></div>' +
-                '<div class="subcaption"></div>' +
-                '</td>');
-
-              $td.find('.caption').text(percentage.toFixed(2) + '% ' + self.options.strings.not_shown || 'Not shown');
-              $td.find('.subcaption').text(notshown + ' ' + self.options.query.metrics[0].name);
-              $tr.append($td);
-            });
-
-            $tbody.append($tr);
-          }
-        });
-        if (!hasData) {
+    function addRow(point, total, shown, notshown) {
+      var $table = $$($$(self.options.container).find('table')[0]);
+      var $tbody = $$($table.find('tbody')[0]);
+      var percentage, $tr;
+      if ($tbody.find('tr.nodata').length > 0)
+        $tbody.find('tr.nodata').remove();
+      if ($tbody.find('tr.loading').length > 0)
+        $tbody.find('tr.loading').remove();
+      if (point.length === 1) {
+        point = point[0];
+        if ($tbody.find('tr').length >= self.options.limit) {
+          if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
+            return;
           $tr = $('<tr></tr>');
-          message.dimensions.forEach(function (d) {
-            var $td = $('<td colspan="2" class="jio bartable nodata">' +
-              'No data available.' +
+          percentage = parseFloat(notshown[0]) / total[0] * 100;
+          if (percentage > 100)
+            percentage = 100;
+          Object.keys(point.metrics).forEach(function (m) {
+            var $td = $('<td class="jio bartable value metric">' +
+              '<div class="barwrapper">' +
+              '<div class="tablebar" style="width:' + percentage + '%" title="' + notshown[0].commas() + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
+              '</div>' +
               '</td>');
+            $td.find('.tablebar').css({'background-color': self.options.colors[11]});
+            $tr.append($td);
+          });
+
+          Object.keys(point.dimensions).forEach(function (d) {
+            var $td = $$('<td class="jio bartable value dimension notshown">' +
+              '<div class="caption" title="Other"></div>' +
+              '<div class="subcaption"></div>' +
+              '</td>');
+
+            $td.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));
+            $td.find('.subcaption').text(notshown[0].commas() + ' ' + metricname);
             $tr.append($td);
           });
 
           $tbody.append($tr);
+          return;
         }
-        $html.find('table').append($tbody);
-        self.options.$container.append($html);
 
-        if (self.options.caption)
-          self.options.$container.find('.bartable-caption').text(self.options.caption);
 
-        if (self.options.onDraw)
-          window[self.options.onDraw](self.options.container, self);
-
-        if (typeof callback === 'function')
-          return callback(null);
-      }
-      else if (self.options.query.realtime) {
-        //we're dealing with realtime
-        trs = self.options.$container.find('tbody').find('tr');
-        var existingkeys = [];
-        series[0].data.forEach(function (point) {
-          var index = 0;
-          var key = '';
-          var found = false;
-          message.dimensions.forEach(function (d) {
-            key += point[index++];
-          });
-
-          existingkeys.push(key);
-
-          for (var i = 0; i < trs.length; i++) {
-            $tr = $(trs[i]);
-            var cols = $tr.find('td');
-
-            var _key = '';
-            var j;
-            for (j = 0; j < message.dimensions.length; j++) {
-              $col = $(cols[j]);
-              _key += $col.text();
-            }
-
-            if (_key == key) {
-              for (; j < message.dimensions.length + message.metrics.length; j++) {
-                $col = $(cols[j]);
-                var value = $col.text();
-                if (value != point[j])
-                  $col.text(point[j]);
-              }
-              found = true;
-            }
-          }
-          if (!found) {
-            //add
-            var $tbody = $(self.options.$container.find('tbody')[0]);
-            $tr = $('<tr></tr>');
-
-            index = 0;
-            message.dimensions.forEach(function (d) {
-              var $td = $('<td class="jio bartable value dimension"></td>');
-              $td.text(point[index++]);
-              $tr.append($td);
-            });
-            message.metrics.forEach(function (m) {
-              var $td = $('<td class="jio bartable value metric"></td>');
-              $td.text(point[index++]);
-              $tr.append($td);
-            });
-
-            $tbody.append($tr);
-          }
+        //we have a simple row
+        $tr = $$('<tr></tr>');
+        var index = 0;
+        percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
+        _query.metrics.forEach(function (m) {
+          var $td = $$('<td class="jio bartable value">' +
+            '<div class="barwrapper">' +
+            '<div class="tablebar" style="width:' + percentage + '%;background-color:' + self.options.colors[0] + '" title="' + point.metrics[metrickey].commas() + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
+            '</div>' +
+            '</td>');
+          $tr.append($td);
         });
-        for (var i = 0; i < trs.length; i++) {
-          $tr = $(trs[i]);
-          var cols = $tr.find('td');
 
-          var _key = '';
-          var j;
-          for (j = 0; j < message.dimensions.length; j++) {
-            $col = $(cols[j]);
-            _key += $col.text();
-          }
+        _query.dimensions.forEach(function (d) {
+          var $td = $$('<td class="jio bartable value dimension">' +
+            '<div class="caption" title="Other"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
-          if (existingkeys.indexOf(_key) == -1)
-            $tr.remove();
-        }
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
+          $td.find('.subcaption').text(point.metrics[metrickey].commas() + ' ' + metricname);
+          $tr.append($td);
+        });
+        $tbody.append($tr);
       }
+      else {
+        //we have a comparison
+        var base = point[0];
+        var compare = point[1];
 
-      if (series[0].data.length > 0) {
-        trs = self.options.$container.find('tbody tr');
-        for (var z = 0; z < trs.length; z++) {
-          var elem = trs[z];
-          var $elem = $(elem);
-          if (z + 1 > self.options.limit)
-            $elem.remove();
-        }
-      }
-    });
-  };
+        var base_percentage, compare_percentage;
 
-  //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
-
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {type: 'bartable'},
-        {uuid: self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
-
-        joola.viz.onscreen.push(self);
-
-        joola.events.emit('bartable.init.finish', self);
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-
-          //subscribe to default events
-          self.options.canvas.on('datechange', function (dates) {
-            //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
-
-            self.destroy();
-            self.draw(self.options);
+        if ($tbody.find('tr').length >= self.options.limit) {
+          if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
+            return;
+          $tr = $$('<tr></tr>');
+          base_percentage = parseFloat(notshown[0]) / total[0] * 100;
+          if (base_percentage > 100)
+            base_percentage = 100;
+          compare_percentage = parseFloat(notshown[1]) / total[1] * 100;
+          if (compare_percentage > 100)
+            compare_percentage = 100;
+          Object.keys(base.metrics).forEach(function (m) {
+            var $td = $$('<td class="jio bartable value">' +
+                  '<div class="barwrapper compare">' +
+                  '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
+                  '<div style="clear:both"></div>' +
+                  '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '"  title="' + (compare.metrics && compare.metrics[metrickey] ? compare.metrics[metrickey].commas() : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
+                  '</div>' +
+                  '</td>'
+              )
+              ;
+            $tr.append($td);
           });
+
+          Object.keys(base.dimensions).forEach(function (d) {
+            var $td = $$('<td class="jio bartable value dimension notshown">' +
+              '<div class="caption" title="Other"></div>' +
+              '<div class="subcaption"></div>' +
+              '</td>');
+
+            $td.find('.caption').text('N/A ' + (self.options.strings.not_shown || 'Not shown'));
+            $td.find('.subcaption').text(notshown[0] + ' vs. ' + (compare.missing ? 'N/A' : notshown[1]));
+            $tr.append($td);
+          });
+
+          $tbody.append($tr);
+          return;
         }
 
-        if (typeof callback === 'function')
-          return callback(null, self);
+        $tr = $$('<tr></tr>');
+        if (compare.missing)
+          percentage = null;
+        else
+          percentage = ((base.metrics[metrickey] - compare.metrics[metrickey]) / compare.metrics[metrickey] * 100);
+
+        base_percentage = parseFloat(base.metrics[metrickey]) / total[0] * 100;
+        if (base_percentage > 100)
+          base_percentage = 100;
+        if (!compare.missing) {
+          compare_percentage = parseFloat(compare.metrics[metrickey]) / total[1] * 100;
+          if (compare_percentage > 100) {
+            compare_percentage = 100;
+          }
+        }
+        else
+          compare_percentage = null;
+        _query.metrics.forEach(function (m) {
+          var $td = $$('<td class="jio bartable value">' +
+            '<div class="barwrapper compare">' +
+            '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
+            '<div style="clear:both"></div>' +
+            '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? compare.metrics[metrickey].commas() : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
+            '</div>' +
+            '</td>');
+          $tr.append($td);
+        });
+        _query.dimensions.forEach(function (d) {
+          var $td = $$('<td class="jio bartable value dimension">' +
+            '<div class="caption" title="Other"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
+
+          var text;
+          if (joola.common.isNumeric(percentage))
+            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + base.dimensions[dimensionkey], 23);
+          else
+            text = joola.common.ensureLength('N/A ' + base.dimensions[dimensionkey], 23);
+          $td.find('.caption').text(text);
+          if (!compare.missing)
+            $td.find('.subcaption').text(base.metrics[metrickey].commas() + ' vs. ' + compare.metrics[metrickey].commas());
+          else
+            $td.find('.subcaption').text(base.metrics[metrickey].commas() + ' vs. N/A');
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+      }
+    }
+
+    var total = [0, 0];
+    var shown = [0, 0];
+    var notshown = [0, 0];
+    data.forEach(function (point, index) {
+      alldata[index].forEach(function (point, i) {
+        total[index] += point.metrics[metrickey];
+        if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+          shown[index] += point.metrics[metrickey];
+        else
+          notshown[index] += point.metrics[metrickey];
       });
     });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+    addRow(data, total, shown, notshown);
+  };
+  this.exit = function (data) {
+    //console.log('exit', data);
+  };
+  this.update = function (data) {
+    //console.log('update', data);
+  };
 
-  //callback(null, self);
+  this.draw = function (options) {
+    if (!options)
+      options = {};
+    var $html = $$(self.options.template);
+    $$(self.options.container).html($html);
+    if (self.options.caption)
+      $$(self.options.container).find('.bartable-caption').text(self.options.caption);
+
+    if (!self.data || (self.data && self.data.length === 0)) {
+      var $tr;
+      var $td;
+      if (options.loading) {
+        $tr = $$('<tr class="loading"></tr>');
+        $td = $$('<td colspan="2" class="jio bartable loading">' +
+          self.options.strings.loading +
+          '</td>');
+      }
+      else {
+        $tr = $$('<tr class="nodata"></tr>');
+        $td = $$('<td colspan="2" class="jio bartable nodata">' +
+          self.options.strings.nodata +
+          '</td>');
+      }
+      $tr.append($td);
+      $html.find('tbody').append($tr);
+    }
+  };
+
+  this.destroy = function () {
+    $$(self.options.container).find('table').empty();
+  };
+
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+
+  if (self.options.colors.length === 0)
+    self.options.colors = joola.colors;
+  if (self.options.offcolors.length === 0)
+    self.options.offcolors = joola.offcolors;
+
+  //we draw the template into the container
+  var $html = $$(self.options.template);
+  $$(self.options.container).html($html);
+  if (self.options.caption)
+    $$(self.options.container).find('.bartable-caption').text(self.options.caption);
+  //visualization specific drawing
+  if (self.options.headers) {
+    var $thead = $$($html.find('thead'));
+    var $head_tr = $$('<tr class="jio bartable captions"></tr>');
+    self.options.query[0].metrics.forEach(function (m) {
+      var $th = $$('<th class="jio bartable caption metric"></th>');
+      //$th.text(m.name || m.key || m);
+      $head_tr.append($th);
+    });
+    self.options.query[0].dimensions.forEach(function (d) {
+      var $th = $$('<th class="jio bartable caption dimension"></th>');
+      $th.text(d.name || d.key || d);
+      $head_tr.append($th);
+    });
+
+    $thead.append($head_tr);
+    $html.find('table').append($thead);
+  }
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
 
@@ -42542,328 +42535,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],112:[function(require,module,exports){
-/**
- *  @title joola
- *  @overview the open-source data analytics framework
- *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
- *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
- *
- *  Licensed under GNU General Public License 3.0 or later.
- *  Some rights reserved. See LICENSE, AUTHORS.
- **/
-
-var
-  joola = require('../index'),
-  d3 = require('d3'),
-  $ = require('jquery'),
-  _ = require('underscore');
-
-var BarTable = module.exports = function (options, callback) {
-  var self = this;
-
-  this.type = 'bartable';
-  this.uuid = joola.common.uuid();
-  this.initialized = false;
-  this.data = [];
-  this.options = {
-    container: null,
-    colors: [],
-    offcolors: [],
-    template: '<div class="bartable-caption"></div>' +
-      '<table class="jio bartable table">' +
-      '<thead>' +
-      '</thead>' +
-      '<tbody>' +
-      '</tbody>' +
-      '</table>',
-    query: null,
-    strings: {
-      loading: 'No data available.',
-      nodata: 'No data available.',
-      not_shown: 'Not shown'
-    },
-    legend: true,
-    limit: 10,
-    headers: false,
-    include_not_shown: true
-  };
-  this.verify = function (options) {
-    if (!self.options)
-      return 'Failed to verify [options].';
-    if (self.options.query) {
-      if (self.options.dimensions.length === 0 || self.options.dimensions.length > 1)
-        return 'Please specify a single dimension.';
-      if (self.options.metrics.length === 0 || self.options.metrics.length > 1)
-        return 'Please specify a single metric.';
-    }
-    return null;
-  };
-
-  this.enter = function (data, alldata) {
-    var _query = self.options.query;
-    if (Array.isArray(self.options.query))
-      _query = _query[0];
-    var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
-    var metricname = _query.metrics[0].name || _query.metrics[0];
-    var metrickey = _query.metrics[0].key || _query.metrics[0];
-
-    function addRow(point, total, shown, notshown) {
-      var $table = $($(self.options.container).find('table')[0]);
-      var $tbody = $($table.find('tbody')[0]);
-      var percentage, $tr;
-      if ($tbody.find('tr.nodata').length > 0)
-        $tbody.find('tr.nodata').remove();
-      if ($tbody.find('tr.loading').length > 0)
-        $tbody.find('tr.loading').remove();
-      if (point.length === 1) {
-        point = point[0];
-        if ($tbody.find('tr').length >= self.options.limit) {
-          if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
-            return;
-          $tr = $('<tr></tr>');
-          percentage = parseFloat(notshown[0]) / total[0] * 100;
-          if (percentage > 100)
-            percentage = 100;
-          Object.keys(point.metrics).forEach(function (m) {
-            var $td = $('<td class="jio bartable value metric">' +
-              '<div class="barwrapper">' +
-              '<div class="tablebar" style="width:' + percentage + '%" title="' + notshown[0].commas() + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
-              '</div>' +
-              '</td>');
-            $td.find('.tablebar').css({'background-color': self.options.colors[11]});
-            $tr.append($td);
-          });
-
-          Object.keys(point.dimensions).forEach(function (d) {
-            var $td = $('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption" title="Other"></div>' +
-              '<div class="subcaption"></div>' +
-              '</td>');
-
-            $td.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));
-            $td.find('.subcaption').text(notshown[0].commas() + ' ' + metricname);
-            $tr.append($td);
-          });
-
-          $tbody.append($tr);
-          return;
-        }
-
-
-        //we have a simple row
-        $tr = $('<tr></tr>');
-        var index = 0;
-        percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
-        _query.metrics.forEach(function (m) {
-          var $td = $('<td class="jio bartable value">' +
-            '<div class="barwrapper">' +
-            '<div class="tablebar" style="width:' + percentage + '%;background-color:' + self.options.colors[0] + '" title="' + point.metrics[metrickey].commas() + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
-            '</div>' +
-            '</td>');
-          $tr.append($td);
-        });
-
-        _query.dimensions.forEach(function (d) {
-          var $td = $('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="Other"></div>' +
-            '<div class="subcaption"></div>' +
-            '</td>');
-
-          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
-          $td.find('.subcaption').text(point.metrics[metrickey].commas() + ' ' + metricname);
-          $tr.append($td);
-        });
-        $tbody.append($tr);
-      }
-      else {
-        //we have a comparison
-        var base = point[0];
-        var compare = point[1];
-
-        var base_percentage, compare_percentage;
-
-        if ($tbody.find('tr').length >= self.options.limit) {
-          if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
-            return;
-          $tr = $('<tr></tr>');
-          base_percentage = parseFloat(notshown[0]) / total[0] * 100;
-          if (base_percentage > 100)
-            base_percentage = 100;
-          compare_percentage = parseFloat(notshown[1]) / total[1] * 100;
-          if (compare_percentage > 100)
-            compare_percentage = 100;
-          Object.keys(base.metrics).forEach(function (m) {
-            var $td = $('<td class="jio bartable value">' +
-                  '<div class="barwrapper compare">' +
-                  '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
-                  '<div style="clear:both"></div>' +
-                  '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '"  title="' + (compare.metrics && compare.metrics[metrickey] ? compare.metrics[metrickey].commas() : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
-                  '</div>' +
-                  '</td>'
-              )
-              ;
-            $tr.append($td);
-          });
-
-          Object.keys(base.dimensions).forEach(function (d) {
-            var $td = $('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption" title="Other"></div>' +
-              '<div class="subcaption"></div>' +
-              '</td>');
-
-            $td.find('.caption').text('N/A ' + (self.options.strings.not_shown || 'Not shown'));
-            $td.find('.subcaption').text(notshown[0] + ' vs. ' + (compare.missing ? 'N/A' : notshown[1]));
-            $tr.append($td);
-          });
-
-          $tbody.append($tr);
-          return;
-        }
-
-        $tr = $('<tr></tr>');
-        if (compare.missing)
-          percentage = null;
-        else
-          percentage = ((base.metrics[metrickey] - compare.metrics[metrickey]) / compare.metrics[metrickey] * 100);
-
-        base_percentage = parseFloat(base.metrics[metrickey]) / total[0] * 100;
-        if (base_percentage > 100)
-          base_percentage = 100;
-        if (!compare.missing) {
-          compare_percentage = parseFloat(compare.metrics[metrickey]) / total[1] * 100;
-          if (compare_percentage > 100) {
-            compare_percentage = 100;
-          }
-        }
-        else
-          compare_percentage = null;
-        _query.metrics.forEach(function (m) {
-          var $td = $('<td class="jio bartable value">' +
-            '<div class="barwrapper compare">' +
-            '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + base.metrics[metrickey].commas() + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
-            '<div style="clear:both"></div>' +
-            '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? compare.metrics[metrickey].commas() : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
-            '</div>' +
-            '</td>');
-          $tr.append($td);
-        });
-        _query.dimensions.forEach(function (d) {
-          var $td = $('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="Other"></div>' +
-            '<div class="subcaption"></div>' +
-            '</td>');
-
-          var text;
-          if (joola.common.isNumeric(percentage))
-            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + base.dimensions[dimensionkey], 23);
-          else
-            text = joola.common.ensureLength('N/A ' + base.dimensions[dimensionkey], 23);
-          $td.find('.caption').text(text);
-          if (!compare.missing)
-            $td.find('.subcaption').text(base.metrics[metrickey].commas() + ' vs. ' + compare.metrics[metrickey].commas());
-          else
-            $td.find('.subcaption').text(base.metrics[metrickey].commas() + ' vs. N/A');
-          $tr.append($td);
-        });
-        $tbody.append($tr);
-      }
-    }
-
-    var total = [0, 0];
-    var shown = [0, 0];
-    var notshown = [0, 0];
-    data.forEach(function (point, index) {
-      alldata[index].forEach(function (point, i) {
-        total[index] += point.metrics[metrickey];
-        if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
-          shown[index] += point.metrics[metrickey];
-        else
-          notshown[index] += point.metrics[metrickey];
-      });
-    });
-    addRow(data, total, shown, notshown);
-  };
-  this.exit = function (data) {
-    //console.log('exit', data);
-  };
-  this.update = function (data) {
-    //console.log('update', data);
-  };
-
-  this.draw = function (options) {
-    if (!options)
-      options = {};
-    var $html = $(self.options.template);
-    $(self.options.container).html($html);
-    if (self.options.caption)
-      $(self.options.container).find('.bartable-caption').text(self.options.caption);
-
-    if (!self.data || (self.data && self.data.length === 0)) {
-      var $tr;
-      var $td;
-      if (options.loading) {
-        $tr = $('<tr class="loading"></tr>');
-        $td = $('<td colspan="2" class="jio bartable loading">' +
-          self.options.strings.loading +
-          '</td>');
-      }
-      else {
-        $tr = $('<tr class="nodata"></tr>');
-        $td = $('<td colspan="2" class="jio bartable nodata">' +
-          self.options.strings.nodata +
-          '</td>');
-      }
-      $tr.append($td);
-      $html.find('tbody').append($tr);
-    }
-  };
-
-  this.destroy = function () {
-    $(self.options.container).find('table').empty();
-  };
-
-  if (options && options.query && !Array.isArray(options.query))
-    options.query = [options.query];
-  //we call the core initialize option
-  joola.viz.initialize(self, options || {});
-
-  if (self.options.colors.length === 0)
-    self.options.colors = joola.colors;
-  if (self.options.offcolors.length === 0)
-    self.options.offcolors = joola.offcolors;
-
-  //we draw the template into the container
-  var $html = $(self.options.template);
-  $(self.options.container).html($html);
-  if (self.options.caption)
-    $(self.options.container).find('.bartable-caption').text(self.options.caption);
-  //visualization specific drawing
-  if (self.options.headers) {
-    var $thead = $($html.find('thead'));
-    var $head_tr = $('<tr class="jio bartable captions"></tr>');
-    self.options.query[0].metrics.forEach(function (m) {
-      var $th = $('<th class="jio bartable caption metric"></th>');
-      //$th.text(m.name || m.key || m);
-      $head_tr.append($th);
-    });
-    self.options.query[0].dimensions.forEach(function (d) {
-      var $th = $('<th class="jio bartable caption dimension"></th>');
-      $th.text(d.name || d.key || d);
-      $head_tr.append($th);
-    });
-
-    $thead.append($head_tr);
-    $html.find('table').append($thead);
-  }
-  //wrap up
-  self.initialized = true;
-  if (typeof callback === 'function')
-    return callback(null, self);
-
-  return self;
-};
-},{"../index":110,"d3":5,"jquery":52,"underscore":101}],113:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"d3":5,"jquery":52,"underscore":101}],112:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -43130,7 +42802,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"cloneextend":4,"eventemitter2":7,"underscore":101}],114:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"cloneextend":4,"eventemitter2":7,"underscore":101}],113:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44199,7 +43871,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],115:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"underscore":101}],114:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44515,7 +44187,7 @@ DimensionPicker.template = function (options) {
   return html;
 };
 
-},{"./_proto":125,"cloneextend":4,"eventemitter2":7}],116:[function(require,module,exports){
+},{"./_proto":124,"cloneextend":4,"eventemitter2":7}],115:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44655,7 +44327,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125}],117:[function(require,module,exports){
+},{"../index":110,"./_proto":124}],116:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44912,7 +44584,7 @@ Metric.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"cloneextend":4}],118:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"cloneextend":4}],117:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45227,7 +44899,7 @@ MetricPicker.template = function (options) {
   return html;
 };
 
-},{"./_proto":125,"cloneextend":4,"eventemitter2":7}],119:[function(require,module,exports){
+},{"./_proto":124,"cloneextend":4,"eventemitter2":7}],118:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45530,7 +45202,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125,"underscore":101}],120:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"underscore":101}],119:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45762,7 +45434,7 @@ Pie.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"underscore":101}],121:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"underscore":101}],120:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -45989,7 +45661,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":110,"./_proto":125,"underscore":101}],122:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"underscore":101}],121:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -46251,7 +45923,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":110,"./_proto":125}],123:[function(require,module,exports){
+},{"../index":110,"./_proto":124}],122:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -46703,7 +46375,7 @@ Table.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"underscore":101}],124:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"underscore":101}],123:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -47196,7 +46868,7 @@ Timeline.template = function (options) {
   return html;
 };
 
-},{"../index":110,"./_proto":125,"moment":53,"underscore":101}],125:[function(require,module,exports){
+},{"../index":110,"./_proto":124,"moment":53,"underscore":101}],124:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -47594,7 +47266,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":110,"cloneextend":4,"d3":5,"moment":53,"twix":100,"underscore":101}],126:[function(require,module,exports){
+},{"../index":110,"cloneextend":4,"d3":5,"moment":53,"twix":100,"underscore":101}],125:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -47631,7 +47303,6 @@ viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
-viz.BarTable = require('./BarTable2');
 viz.PunchCard = require('./PunchCard');
 viz.Table = require('./Table');
 viz.Timeline = require('./Timeline');
@@ -47881,5 +47552,5 @@ joola.on('ready', function (err) {
     }
   });
 });
-},{"../index":110,"./BarTable":111,"./BarTable2":112,"./Canvas":113,"./DatePicker":114,"./DimensionPicker":115,"./Geo":116,"./Metric":117,"./MetricPicker":118,"./MiniTable":119,"./Pie":120,"./PunchCard":121,"./Sparkline":122,"./Table":123,"./Timeline":124,"async":3,"cloneextend":4,"d3":5,"jquery":52,"underscore":101}]},{},[2,110])
+},{"../index":110,"./BarTable":111,"./Canvas":112,"./DatePicker":113,"./DimensionPicker":114,"./Geo":115,"./Metric":116,"./MetricPicker":117,"./MiniTable":118,"./Pie":119,"./PunchCard":120,"./Sparkline":121,"./Table":122,"./Timeline":123,"async":3,"cloneextend":4,"d3":5,"jquery":52,"underscore":101}]},{},[2,110])
 ;
