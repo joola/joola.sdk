@@ -98,9 +98,7 @@ viz.lookup = function (base, key) {
 };
 
 viz.lookupDate = function (base, index) {
-  console.log('lookupdate');
-  console.log(base[index])
-  return base[index]
+  return base[index];
 };
 
 viz.fetch = function (context, query, callback) {
