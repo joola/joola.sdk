@@ -34,14 +34,6 @@ module.exports = function (grunt) {
     },
 
     browserify: {
-      /*vendor: {
-       src: [],
-       dest: 'build/temp/vendor.js',
-       options: {
-       require: [],
-       alias: []
-       }
-       },*/
       client: {
         src: ['src/lib/index.js'],
         dest: 'build/temp/joola.js',
@@ -50,13 +42,12 @@ module.exports = function (grunt) {
         }
       }
     },
-
     watchify: {
       options: {
         keepalive: true
       },
       all: {
-        src: ['./src/lib/index.js'],
+        src: ['./build/temp/vendor.js', './src/lib/index.js'],
         dest: 'build/release/joola.js'
       }
     },
@@ -89,7 +80,8 @@ module.exports = function (grunt) {
     },
 
     concat: {
-      'build/release/joola.js': ['build/temp/joola.js'],
+      'build/temp/vendor.js': ['build/vendor/**/*.js'],
+      'build/release/joola.js': ['build/temp/vendor.js', 'build/temp/joola.js'],
       'build/temp/joola.css': ['src/css/**/*.css']
     },
 

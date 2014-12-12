@@ -265,7 +265,6 @@ var Table = module.exports = function (options, callback) {
             }
           }
           if (!found) {
-            console.log('not found');
             //add
             var $tbody = $(self.options.$container.find('tbody')[0]);
             $tr = $('<tr></tr>');
@@ -334,7 +333,6 @@ var Table = module.exports = function (options, callback) {
           }
 
           if (existingkeys.indexOf(_key) == -1) {
-            console.log('remove', _key);
             $tr.remove();
           }
         }
@@ -349,7 +347,6 @@ var Table = module.exports = function (options, callback) {
           var elem = trs[z];
           var $elem = $(elem);
           if (z + 1 > limit) {
-            console.log('remove');
             $elem.remove();
           }
         }

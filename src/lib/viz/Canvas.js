@@ -50,13 +50,17 @@ var Canvas = module.exports = function (options, callback) {
     return this._super.verify(options, callback);
   };
 
-  this.prepareQuery = function (query) {
+  this.prepareQuery = function (query, dates) {
+    if (!dates)
+      dates = {};
     var _query = ce.extend({}, query);
     if (self.options.query) {
       _query = joola.common.extend(self.options.query, _query);
     }
-    if (self.options.dimensions && self.options.dimensions.length > 0 && query.dimensions && query.dimensions.length > 0) {
-      _query.dimensions.forEach(function (dimension, i) {
+    if (!Array.isArray(_query))
+      _query = [_query];
+    if (_query[0].dimensions && _query[0].dimensions.length > 0 && _query[0].dimensions && _query[0].dimensions.length > 0) {
+      _query[0].dimensions.forEach(function (dimension, i) {
         var key;
         if (typeof dimension === 'string')
           key = dimension;
@@ -64,49 +68,60 @@ var Canvas = module.exports = function (options, callback) {
           key = dimension.key;
 
         if (key) {
-          var exist = _.find(self.options.dimensions, function (m) {
+          var exist = _.find(_query[0].dimensions, function (m) {
             return m.key === key;
           });
           if (exist)
-            _query.dimensions[i] = exist;
+            _query[0].dimensions[i] = exist;
         }
       });
     }
-    if (self.options.metrics && self.options.metrics.length > 0 && query.metrics && query.metrics.length > 0) {
-      _query.metrics.forEach(function (metric, i) {
+
+    if (_query[0].metrics && _query[0].metrics.length > 0 && _query[0].metrics && _query[0].metrics.length > 0) {
+      _query[0].metrics.forEach(function (metric, i) {
         var key;
         if (typeof metric === 'string')
           key = metric;
-        else if (typeof metric === 'object')
-          key = metric.key;
+        //else if (typeof metric === 'object')
+        //  key = metric.key;
 
         if (key) {
           var exist = _.find(self.options.metrics, function (m) {
             return m.key === key;
           });
           if (exist)
-            _query.metrics[i] = exist;
+            _query[0].metrics[i] = exist;
         }
       });
     }
-    if (!query.timeframe && self.options.datepicker && self.options.datepicker.container) {
-      var _datepicker = $(self.options.datepicker.container).DatePicker({}, function (err) {
-        if (err)
-          throw err;
-      });
-      _query.timeframe = {};
-      _query.timeframe.start = _datepicker.base_fromdate;
-      _query.timeframe.end = _datepicker.base_todate;
-      _query.interval = 'day';
+    _query[0].type = 'base';
+    _query[0].hash = '';
+    _query[0].dimensions.forEach(function (d) {
+      _query[0].hash += d.key || d;
+    });
+    _query[0].metrics.forEach(function (m) {
+      _query[0].hash += m.key || m;
+    });
+    _query[0].hash = joola.common.hash(_query[0].hash);
+    if (self.options.datepicker && self.options.datepicker.container) {
+      _query[0].timeframe = {};
+      _query[0].timeframe.start = dates.base_fromdate || self._datepicker.base_fromdate;
+      _query[0].timeframe.end = dates.base_todate || self._datepicker.base_todate;
+      _query[0].interval = 'day';
       if (self.options.datepicker && self.options.datepicker._interval)
-        _query.interval = self.options.datepicker._interval;
+        _query[0].interval = self.options.datepicker._interval;
     }
-    if (_query.timeframe && _query.timeframe.end && _query.timeframe.end.getTime() > new Date().getTime()) {
-      _query.realtime = true;
-      _query.timeframe.end = null;
+    if (self._datepicker.comparePeriod) {
+      var cquery = ce.clone(_query[0]);
+      cquery.type = 'compare';
+      cquery.timeframe = {};
+      cquery.timeframe.start = dates.compare_fromdate || self._datepicker.compare_fromdate;
+      cquery.timeframe.end = dates.compare_todate || self._datepicker.compare_todate;
+      cquery.interval = 'day';
+      if (self.options.datepicker && self.options.datepicker._interval)
+        cquery.interval = self.options.datepicker._interval;
+      _query = [_query[0], cquery];
     }
-    else
-      _query.realtime = false;
     return _query;
   };
 
@@ -120,60 +135,59 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err) {
+      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
-      });
-    }
-    if (self.options.datepicker && self.options.datepicker.interval) {
-      self.options.datepicker.$interval = $(self.options.datepicker.interval);
-      self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
-      self.options.datepicker.$interval.find('.btn').on('click', function () {
-        var $this = $(this);
-        self.options.datepicker.$interval.find('.btn').removeClass('active');
-        $this.addClass('active');
+        self._datepicker = ref;
 
-        self.options.datepicker._interval = $this.attr('data-id');
-        self.emit('intervalchange', self.options.datepicker._interval);
-      });
-    }
+        if (self.options.datepicker.interval) {
+          self.options.datepicker.$interval = $(self.options.datepicker.interval);
+          self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
+          self.options.datepicker.$interval.find('.btn').on('click', function () {
+            var $this = $(this);
+            self.options.datepicker.$interval.find('.btn').removeClass('active');
+            $this.addClass('active');
 
-    if (self.options.visualizations && self.options.visualizations) {
-      Object.keys(self.options.visualizations).forEach(function (key) {
-        var viz = self.options.visualizations[key];
-        if (viz.container) {
-          viz.query = self.prepareQuery(viz.query);
-          viz.force = true;
-          viz.canvas = self;
-          switch (viz.type.toLowerCase()) {
-            case 'timeline':
-              $(viz.container).Timeline(viz);
-              break;
-            case 'metric':
-              $(viz.container).Metric(viz);
-              break;
-            case 'table':
-              $(viz.container).Table(viz);
-              break;
-            case 'minitable':
-              $(viz.container).MiniTable(viz);
-              break;
-            case 'bartable':
-              $(viz.container).BarTable(viz);
-              break;
-            case 'pie':
-              $(viz.container).Pie(viz);
-              break;
-            case 'geo':
-              $(viz.container).Geo(viz);
-              break;
-            default:
-              break;
-          }
+            self.options.datepicker._interval = $this.attr('data-id');
+            self.emit('intervalchange', self.options.datepicker._interval);
+          });
         }
+
+        Object.keys(self.options.visualizations).forEach(function (key) {
+          var viz = self.options.visualizations[key];
+          if (viz.container) {
+            viz.query = self.prepareQuery(viz.query);
+            viz.force = true;
+            viz.canvas = self;
+            switch (viz.type.toLowerCase()) {
+              case 'timeline':
+                $(viz.container).Timeline(viz);
+                break;
+              case 'metric':
+                $(viz.container).Metric(viz);
+                break;
+              case 'table':
+                $(viz.container).Table(viz);
+                break;
+              case 'minitable':
+                $(viz.container).MiniTable(viz);
+                break;
+              case 'bartable':
+                $(viz.container).BarTable(viz);
+                break;
+              case 'pie':
+                $(viz.container).Pie(viz);
+                break;
+              case 'geo':
+                $(viz.container).Geo(viz);
+                break;
+              default:
+                break;
+            }
+          }
+        });
       });
     }
-
     if (typeof callback === 'function') {
       return callback(null, self);
     }
