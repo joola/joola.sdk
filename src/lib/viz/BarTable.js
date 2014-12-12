@@ -98,8 +98,14 @@ var BarTable = module.exports = function (options, callback) {
           });
 
           Object.keys(point.dimensions).forEach(function (d) {
+            var dimensionkey = d.key || d;
+            var title = point.meta[dimensionkey];
+            if (title)
+              title = title.title || title.name || title.key;
+            else
+              title = d.name || d.key;
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption"></div>' +
+              '<div class="caption" title="' + title + '"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
 
@@ -126,7 +132,7 @@ var BarTable = module.exports = function (options, callback) {
         });
 
         _query.dimensions.forEach(function (d) {
-          var dimensionkey = d.key||d;
+          var dimensionkey = d.key || d;
           var title = point.meta[dimensionkey];
           if (title)
             title = title.title || title.name || title.key;
@@ -174,8 +180,14 @@ var BarTable = module.exports = function (options, callback) {
           });
 
           Object.keys(base.dimensions).forEach(function (d) {
+            var dimensionkey = d.key || d;
+            var title = base.meta[dimensionkey];
+            if (title)
+              title = title.title || title.name || title.key;
+            else
+              title = d.name || d.key;
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-              '<div class="caption"></div>' +
+              '<div class="caption" title="' + title + '"></div>' +
               '<div class="subcaption"></div>' +
               '</td>');
 
@@ -216,8 +228,14 @@ var BarTable = module.exports = function (options, callback) {
           $tr.append($td);
         });
         _query.dimensions.forEach(function (d) {
+          var dimensionkey = d.key || d;
+          var title = base.meta[dimensionkey];
+          if (title)
+            title = title.title || title.name || title.key;
+          else
+            title = d.name || d.key;
           var $td = $$('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="' + d.name + '"></div>' +
+            '<div class="caption" title="' + title + '"></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
 
