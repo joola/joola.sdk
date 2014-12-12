@@ -16,6 +16,7 @@ var
   util = require('util'),
   _ = require('underscore'),
   de = require('deep-extend'),
+  traverse = require('traverse'),
   crypto = require('crypto'),
   ce = require('cloneextend');//,
 //JSONStream = require('JSONStream');
@@ -187,4 +188,40 @@ common.ensureLength = function (string, length) {
     counter++;
   }
   return string;
+};
+
+common.flatGetSet = function (obj, is, value) {
+  if (typeof is == 'string') {
+    return common.flatGetSet(obj, is.split('.'), value);
+  }
+  else if (is.length == 1 && value !== undefined) {
+    if (value === null) {
+      return delete obj[is[0]];
+    }
+    else {
+      obj[is[0]] = value;
+    }
+  }
+  else if (is.length === 0) {
+    if (typeof obj === 'object' && Object.keys(obj).length === 0)
+      return null;
+    else {
+      //check if converted array
+      if (typeof obj === 'object' && Object.keys(obj)[0] === '0')
+        return common.objToArray(obj);
+
+      return obj;
+    }
+  }
+  else {
+    if (typeof obj === 'undefined' || obj === null)
+      obj = {};
+    if (typeof obj[is[0]] === 'undefined' || obj[is[0]] === null)
+      obj[is[0]] = {};
+    return common.flatGetSet(obj[is[0]], is.slice(1), value);
+  }
+};
+
+common.isNumeric= function( obj ) {
+  return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
 };

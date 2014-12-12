@@ -45,7 +45,7 @@ Date.prototype.format = function (formatString) {
   formatString = formatString.replace(/mm/i, mm);
   //formatString = formatString.replace(/m/, m);
   formatString = formatString.replace(/dd/i, dd);
-  formatString = formatString.replace(/d/i, d);
+  //formatString = formatString.replace(/d/i, d);
   formatString = formatString.replace(/hh/i, hh);
   //formatString = formatString.replace(/h/i, h);
   formatString = formatString.replace(/nn/i, nn);
@@ -57,16 +57,16 @@ Date.prototype.format = function (formatString) {
   return formatString;
 };
 
-Date.dateDiff = function(datepart, fromdate, todate) {
+Date.dateDiff = function (datepart, fromdate, todate) {
   datepart = datepart.toLowerCase();
   var diff = todate - fromdate;
-  var divideBy = { w:604800000,
-    d:86400000,
-    h:3600000,
-    n:60000,
-    s:1000 };
+  var divideBy = { w: 604800000,
+    d: 86400000,
+    h: 3600000,
+    n: 60000,
+    s: 1000 };
 
-  return Math.floor( diff/divideBy[datepart]);
+  return Math.floor(diff / divideBy[datepart]);
 };
 
 /**
@@ -93,39 +93,39 @@ Object.defineProperty(Error.prototype, 'toJSON', {
   configurable: true
 });
 /*
-Array.prototype.clone = function () {
-  return this.slice(0);
-};
+ Array.prototype.clone = function () {
+ return this.slice(0);
+ };
 
 
-var stringify = require('json-stringify-safe');
+ var stringify = require('json-stringify-safe');
 
 
-JSON._parse = JSON.parse.clone();
-JSON.parse = function (obj) {
-  var start = new Date().getTime();
-  var result = JSON._parse(obj);
-  var end = new Date().getTime();
-  if (end - start > 50) {
-    console.log('BLOCKING PARSE: ' + (end - start).toString() + 'ms');
-    console.trace();
-  }
-  return result;
-};
+ JSON._parse = JSON.parse.clone();
+ JSON.parse = function (obj) {
+ var start = new Date().getTime();
+ var result = JSON._parse(obj);
+ var end = new Date().getTime();
+ if (end - start > 50) {
+ console.log('BLOCKING PARSE: ' + (end - start).toString() + 'ms');
+ console.trace();
+ }
+ return result;
+ };
 
 
-JSON._stringify = stringify.clone();
-JSON.stringify = function (obj) {
-  var start = new Date().getTime();
-  var result = JSON._stringify(obj);
-  var end = new Date().getTime();
-  if (end - start > 50) {
-    console.log('BLOCKING STRINGIFY: ' + (end - start).toString() + 'ms');
-    console.trace();
-  }
-  return result;
-};
-*/
+ JSON._stringify = stringify.clone();
+ JSON.stringify = function (obj) {
+ var start = new Date().getTime();
+ var result = JSON._stringify(obj);
+ var end = new Date().getTime();
+ if (end - start > 50) {
+ console.log('BLOCKING STRINGIFY: ' + (end - start).toString() + 'ms');
+ console.trace();
+ }
+ return result;
+ };
+ */
 
 // attach the .equals method to Array's prototype to call it on any array
 Array.prototype.equals = function (array) {
@@ -137,7 +137,7 @@ Array.prototype.equals = function (array) {
   if (this.length != array.length)
     return false;
 
-  for (var i = 0, l=this.length; i < l; i++) {
+  for (var i = 0, l = this.length; i < l; i++) {
     // Check if we have nested arrays
     if (this[i] instanceof Array && array[i] instanceof Array) {
       // recurse into the nested arrays
@@ -150,4 +150,11 @@ Array.prototype.equals = function (array) {
     }
   }
   return true;
-};  
+};
+
+Number.prototype.commas = function () {
+  var x = this;
+  var parts = x.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+};

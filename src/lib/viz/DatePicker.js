@@ -47,22 +47,7 @@ var DatePicker = module.exports = function (options, callback) {
     var seconds = date.getUTCSeconds();
 
     var bAddDay = false;
-
-
     hours = hours + offset; //gmt
-
-
-//    month = (month < 10) ? '0' + month : month;
-//    day = (day < 10) ? '0' + day : day;
-//    hours = (hours < 10) ? '0' + hours : hours;
-
-//    if (hours == 24) {
-//        hours = '00';
-//        bAddDay = true;
-//    }
-//    minutes = (minutes < 10) ? '0' + minutes : minutes;
-//    seconds = (seconds < 10) ? '0' + seconds : seconds;
-
 
     var fixedDate = null;
     if (!zero)
@@ -103,7 +88,7 @@ var DatePicker = module.exports = function (options, callback) {
     container: null,
     $container: null,
     comparePeriod: false,
-    disableCompare: true
+    disableCompare: false
   };
 
   this.currentMode = 'base-from';
@@ -122,7 +107,7 @@ var DatePicker = module.exports = function (options, callback) {
   this.max_date.setMilliseconds(999);
 
   this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -30);
+  this.base_fromdate = self.addDays(this.base_todate, -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -132,6 +117,10 @@ var DatePicker = module.exports = function (options, callback) {
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
   this.compare_todate = self.addDays(this.base_fromdate, -1);
+  this.compare_todate.setHours(23);
+  this.compare_todate.setMinutes(59);
+  this.compare_todate.setSeconds(59);
+  this.compare_todate.setMilliseconds(999);
   this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
 
   this.original_base_fromdate = this.base_fromdate;
@@ -197,11 +186,11 @@ var DatePicker = module.exports = function (options, callback) {
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
     var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-      '<tr>' +
-      '<td class="dates"></td>' +
-      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
-      '</tr>' +
-      '</table></div></div>');
+    '<tr>' +
+    '<td class="dates"></td>' +
+    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
+    '</tr>' +
+    '</table></div></div>');
 
     $container.append($table);
 
@@ -211,64 +200,67 @@ var DatePicker = module.exports = function (options, callback) {
     $dates.append('<span class="datelabel todate">' + self.formatDate(self.base_todate) + '</span>');
     $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + self.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + self.formatDate(self.compare_todate) + '</span></div>');
 
-    if (self.comparePeriod)
+    if (self.comparePeriod) {
       $container.find('.dates .compare').show();
-    else
+      $container.addClass('compare');
+    }
+    else {
+      $container.removeClass('compare');
       $container.find('.dates .compare').hide();
-
+    }
     var $item = $('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-      '<td class="calendars"></td>' +
-      '<td class="control"><div class="optionscontainer"></div></td>' +
-      '</tr></table>');
+    '<td class="calendars"></td>' +
+    '<td class="control"><div class="optionscontainer"></div></td>' +
+    '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $container.find('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-      '</div>');
+    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+    '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-      '</div>');
+    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+    '</div>');
     if (self.options.disableCompare) {
       $optionscontainer.find('.compareoption').removeClass('visible');
     }
     $optionscontainer.append('<div class="daterange comparerange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('' +
-      '<hr class="divider">' +
-      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-      '<span class="cancel">Cancel</span></div>');
+    '<hr class="divider">' +
+    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+    '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $('<div class="datepicker"></div>');
 
     $item = $('<table><tr valign=top>' +
-      '<td class="datetable-prev unselectable"></td>' +
-      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-      '<td class="datetable-next unselectable"></td>' +
-      '</tr></table>');
+    '<td class="datetable-prev unselectable"></td>' +
+    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+    '<td class="datetable-next unselectable"></td>' +
+    '</tr></table>');
     $calendars.append($item);
 
     $container.find('.datetable-prev').append('<div class="prev">' +
-      '<div class="inline-block prev">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block prev">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-prev .prev').off('click');
     $container.find('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -277,7 +269,7 @@ var DatePicker = module.exports = function (options, callback) {
       if (currentLeftCellDate.setMonth(currentLeftCellDate.getMonth()) < self.min_date)
         return;
 
-      var currentRightCellDate = ($container.find('.datepicker')[2]).datepicker('getDate');
+      var currentRightCellDate = $($container.find('.datepicker')[2]).datepicker('getDate');
       currentRightCellDate = new Date(currentRightCellDate);
       currentRightCellDate.setMonth(currentRightCellDate.getMonth() - 1);
       var selectedDate = new Date(currentRightCellDate);
@@ -292,9 +284,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $container.find('.datetable-next').append('<div class="next">' +
-      '<div class="inline-block next">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block next">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-next .next').off('click');
     $container.find('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -339,7 +331,6 @@ var DatePicker = module.exports = function (options, callback) {
             self.base_todate.setMinutes(59);
             self.base_todate.setSeconds(59);
             self.base_todate.setMilliseconds(999);
-
 
             var _checkLimit = new Date(self.min_date);
             _checkLimit.setUTCHours(0, 0, 0, 0);
@@ -666,7 +657,7 @@ var DatePicker = module.exports = function (options, callback) {
 
         $picker.show();
         $picker.offset({
-          top: $picker.offset().top,
+          top: $container.offset().top + $container.height() -1,
           left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
         });
       }
@@ -707,11 +698,25 @@ var DatePicker = module.exports = function (options, callback) {
 
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
+
+    return callback(null, self);
+
   };
 
   this.DateUpdate = function () {
     var _this = this;
     var options = {};
+
+    this.base_todate.setHours(23);
+    this.base_todate.setMinutes(59);
+    this.base_todate.setSeconds(59);
+    this.base_todate.setMilliseconds(999);
+
+    this.compare_todate.setHours(23);
+    this.compare_todate.setMinutes(59);
+    this.compare_todate.setSeconds(59);
+    this.compare_todate.setMilliseconds(999);
+
     _this.applied_base_fromdate = this.base_fromdate;
     _this.applied_base_todate = this.base_todate;
     _this.applied_compare_fromdate = this.compare_fromdate;
@@ -723,6 +728,15 @@ var DatePicker = module.exports = function (options, callback) {
       compare_todate: this.applied_compare_todate,
       compare: this.comparePeriod
     };
+
+    if (self.comparePeriod) {
+      self.options.$container.find('.dates .compare').show();
+      self.options.$container.addClass('compare');
+    }
+    else {
+      self.options.$container.removeClass('compare');
+      self.options.$container.find('.dates .compare').hide();
+    }
 
     var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
     var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
@@ -768,9 +782,9 @@ var DatePicker = module.exports = function (options, callback) {
       formatString = formatString.replace(/yy/i, yy);
       formatString = formatString.replace(/mmm/i, mmm);
       formatString = formatString.replace(/mm/i, mm);
-      formatString = formatString.replace(/m/i, m);
+      //formatString = formatString.replace(/m/i, m);
       formatString = formatString.replace(/dd/i, dd);
-      formatString = formatString.replace(/d/i, d);
+      //formatString = formatString.replace(/d/i, d);
       formatString = formatString.replace(/hh/i, hh);
       //formatString = formatString.replace(/h/i, h);
       formatString = formatString.replace(/nn/i, nn);

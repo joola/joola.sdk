@@ -52,11 +52,13 @@ dispatch.buildstub = function (callback) {
           if (typeof args[Object.keys(args).length - 1] === 'function') {
             callback = args[Object.keys(args).length - 1];
           }
-          if (fn !== 'verifyAPIToken') {
+          if (['verifyAPIToken', 'getByToken'].indexOf(fn) === -1) {
             if (!joola.connected)
               return callback(new Error('Joola not connected.'));
-            if (!joola.USER)
+            if (!joola.USER) {
+              console.log(fn);
               return callback(new Error('Joola not connected, invalid user.'));
+            }
           }
           var argCounter = 0;
           var _args = {};
