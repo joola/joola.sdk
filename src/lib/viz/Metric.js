@@ -46,14 +46,15 @@ var Metric = module.exports = function (options, callback) {
 
   this.template = function () {
     var $html = $('<div class="jio metricbox value"></div>' +
-      '<div class="jio metricbox caption"></div>');
+    '<div class="jio metricbox caption"></div>');
     return $html;
   };
-
   this.draw = function (options, callback) {
+    if (!Array.isArray(this.options.query))
+      this.options.query = [this.options.query];
     self.stop();
-    this.options.query.dimensions = [];
-    this.options.query.metrics = this.options.query.metrics.splice(0, 1);
+    this.options.query[0].dimensions = [];
+    this.options.query[0].metrics = this.options.query[0].metrics.splice(0, 1);
     return this._super.fetch(this.options.query, function (err, message) {
       if (Array.isArray(message))
         message = message[0];
@@ -143,9 +144,13 @@ var Metric = module.exports = function (options, callback) {
           //subscribe to default events
           self.options.canvas.on('datechange', function (dates) {
             //let's change our query and fetch again
-            self.options.query.timeframe = {};
-            self.options.query.timeframe.start = new Date(dates.base_fromdate);
-            self.options.query.timeframe.end = new Date(dates.base_todate);
+            if (!Array.isArray(self.options.query))
+              self.options.query = [self.options.query];
+            //let's change our query and fetch again
+            self.options.query[0].timeframe = {};
+            self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
+            self.options.query[0].timeframe.end = new Date(dates.base_todate);
+
 
             self.destroy();
             self.draw(self.options);

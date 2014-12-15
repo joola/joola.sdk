@@ -96,12 +96,15 @@ var Canvas = module.exports = function (options, callback) {
     }
     _query[0].type = 'base';
     _query[0].hash = '';
-    _query[0].dimensions.forEach(function (d) {
-      _query[0].hash += d.key || d;
-    });
-    _query[0].metrics.forEach(function (m) {
-      _query[0].hash += m.key || m;
-    });
+    if (_query[0].dimensions && Array.isArray(_query[0].dimensions)) {
+      _query[0].dimensions.forEach(function (d) {
+        _query[0].hash += d.key || d;
+      });
+    }
+    if (_query[0].metrics && Array.isArray(_query[0].metrics))
+      _query[0].metrics.forEach(function (m) {
+        _query[0].hash += m.key || m;
+      });
     _query[0].hash = joola.common.hash(_query[0].hash);
     if (self.options.datepicker && self.options.datepicker.container) {
       _query[0].timeframe = {};
