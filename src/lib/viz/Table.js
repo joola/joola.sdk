@@ -77,6 +77,9 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    if (!Array.isArray(this.options.query))
+      this.options.query = [this.options.query];
+
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (Array.isArray(message))
@@ -222,7 +225,7 @@ var Table = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) {
+      else if (self.options.query[0].realtime) {
         if (self.options.onUpdate)
           window[self.options.onUpdate](self);
         //we're dealing with realtime
