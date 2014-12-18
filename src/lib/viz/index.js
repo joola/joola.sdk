@@ -68,7 +68,9 @@ viz.initialize = function (self, options, callback) {
     if (self.options.canvas) {
       self.options.canvas.addVisualization(self);
       //subscribe to default events
+
       self.options.canvas.on('datechange', function (dates) {
+        //console.log('canvas event - datechange', self.options.canvas.uuid, self.uuid, dates)
         //let's change our query and fetch again
         self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0], dates));
         viz.destroy(self, {loading: true});
@@ -188,7 +190,7 @@ viz.fetch = function (context, query, callback) {
       context.data[mindex] = _data;
     });
 
-    context.data[0].forEach(function (data,pointIndex) {
+    context.data[0].forEach(function (data, pointIndex) {
       var point = [data];
       var paired = {
         missing: true,
@@ -196,11 +198,10 @@ viz.fetch = function (context, query, callback) {
       };
       if (context.data.length === 2) {
         //find the pair
-        if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp){
+        if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp) {
           paired = context.data[1][pointIndex] || paired;
         }
-        else
-        {
+        else {
           paired = _.find(context.data[1], function (item) {
             return item.key === data.key;
           }) || paired;

@@ -7,11 +7,9 @@
  *  Licensed under GNU General Public License 3.0 or later.
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
-
-
 var
   joola = require('../index'),
-  d3 = require('d3'),
+  $$ = require('jquery'),
   ce = require('cloneextend'),
   moment = require('moment'),
   _ = require('underscore');
@@ -79,7 +77,7 @@ proto.verify = function (options, callback) {
   if (!options.container)
     return callback(new Error('no container specified.'));
 
-  var $container = $(options.container);
+  var $container = $$(options.container);
   if ($container === null)
     return callback(new Error('cannot find container [' + options.container + '].'));
 

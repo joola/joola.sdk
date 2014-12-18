@@ -10,15 +10,16 @@
 
 var
   joola = require('../index'),
+  $$ = require('jquery'),
   _ = require('underscore');
 
+require('jquery-ui/datepicker');
 
 var DatePicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
   joola.events.emit('datepicker.init.start');
-
   //mixin
   this._super = {};
   for (var x in require('./_proto')) {
@@ -148,7 +149,7 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.template = function () {
     var bindKey = function (btn) {
-      var $btn = $(btn);
+      var $btn = $$(btn);
       $btn.on('click', function () {
         self.options.$container.find('.btn').removeClass('active');
         $btn.addClass('active');
@@ -157,7 +158,7 @@ var DatePicker = module.exports = function (options, callback) {
     };
 
     var bindPopUp = function (btn) {
-      var $btn = $(btn);
+      var $btn = $$(btn);
       $btn.on('click', function () {
         self.options.$container.find('.btn').removeClass('active');
         $btn.addClass('active open');
@@ -165,11 +166,11 @@ var DatePicker = module.exports = function (options, callback) {
       return $btn;
     };
 
-    var $group = $('<div class="jio datepicker btn-group"></div>');
-    var $last_day = $('<div class="jio datepicker option btn btn-default last_day">Past Day</div>');
-    var $last_week = $('<div class="jio datepicker option btn btn-default last_week">Past Week</div>');
-    var $last_month = $('<div class="jio datepicker option btn btn-default last_month">Past Month</div>');
-    var $custom = $('<div class="jio datepicker option btn btn-default custom">Custom</div>');
+    var $group = $$('<div class="jio datepicker btn-group"></div>');
+    var $last_day = $$('<div class="jio datepicker option btn btn-default last_day">Past Day</div>');
+    var $last_week = $$('<div class="jio datepicker option btn btn-default last_week">Past Week</div>');
+    var $last_month = $$('<div class="jio datepicker option btn btn-default last_month">Past Month</div>');
+    var $custom = $$('<div class="jio datepicker option btn btn-default custom">Custom</div>');
 
     $group.append(bindKey($last_day));
     $group.append(bindKey($last_week));
@@ -185,7 +186,7 @@ var DatePicker = module.exports = function (options, callback) {
 
     var $container = self.options.$container;
     //self.options.$container.append(self.template());
-    var $table = $('<div class="datebox jcontainer"><table class="datetable unselectable">' +
+    var $table = $$('<div class="datebox jcontainer"><table class="datetable unselectable">' +
     '<tr>' +
     '<td class="dates"></td>' +
     '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
@@ -208,7 +209,7 @@ var DatePicker = module.exports = function (options, callback) {
       $container.removeClass('compare');
       $container.find('.dates .compare').hide();
     }
-    var $item = $('<div class="picker" style="display:none"></div>');
+    var $item = $$('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
     '<td class="calendars"></td>' +
@@ -246,9 +247,9 @@ var DatePicker = module.exports = function (options, callback) {
     '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
-    //$item = $('<div class="datepicker"></div>');
+    //$item = $$('<div class="datepicker"></div>');
 
-    $item = $('<table><tr valign=top>' +
+    $item = $$('<table><tr valign=top>' +
     '<td class="datetable-prev unselectable"></td>' +
     '<td class="datetable"><div class="datepicker dp1"></div></td>' +
     '<td class="datetable"><div class="datepicker dp2"></div></td>' +
@@ -265,11 +266,11 @@ var DatePicker = module.exports = function (options, callback) {
     $container.find('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
 
-      var currentLeftCellDate = $($container.find('.datepicker')[0]).datepicker('getDate');
+      var currentLeftCellDate = $$($container.find('.datepicker')[0]).datepicker('getDate');
       if (currentLeftCellDate.setMonth(currentLeftCellDate.getMonth()) < self.min_date)
         return;
 
-      var currentRightCellDate = $($container.find('.datepicker')[2]).datepicker('getDate');
+      var currentRightCellDate = $$($container.find('.datepicker')[2]).datepicker('getDate');
       currentRightCellDate = new Date(currentRightCellDate);
       currentRightCellDate.setMonth(currentRightCellDate.getMonth() - 1);
       var selectedDate = new Date(currentRightCellDate);
@@ -279,7 +280,7 @@ var DatePicker = module.exports = function (options, callback) {
         var localdate = new Date(selectedDate);
 
         localdate.setMonth(localdate.getMonth() - (2 - index));
-        $(item).datepicker('setDate', localdate);
+        $$(item).datepicker('setDate', localdate);
       });
     });
 
@@ -291,7 +292,7 @@ var DatePicker = module.exports = function (options, callback) {
     $container.find('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
 
-      var currentRightCellDate = $($container.find('.datepicker')[2]).datepicker('getDate');
+      var currentRightCellDate = $$($container.find('.datepicker')[2]).datepicker('getDate');
       if (currentRightCellDate.setMonth(currentRightCellDate.getMonth() + 1) > self.max_date)
         return;
 
@@ -303,7 +304,7 @@ var DatePicker = module.exports = function (options, callback) {
 
         var localdate = new Date(selectedDate);
         localdate.setMonth(localdate.getMonth() - (2 - index));
-        $(item).datepicker('setDate', localdate);
+        $$(item).datepicker('setDate', localdate);
       });
     });
 
@@ -344,11 +345,11 @@ var DatePicker = module.exports = function (options, callback) {
                 $container.find('.compareoption .checker').removeAttr('disabled');
               }
             }
-            //$($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-            $($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-            $($container.find('.daterange.baserange .dateoption')[0]).removeClass('invalid');
-            $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_fromdate));
-            $($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
+            //$$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[0]).removeClass('invalid');
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
 
             break;
           case 'base-to':
@@ -357,9 +358,9 @@ var DatePicker = module.exports = function (options, callback) {
             self.base_todate.setMinutes(59);
             self.base_todate.setSeconds(59);
             self.base_todate.setMilliseconds(999);
-            //$($('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-            $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-            $($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
+            //$$($$('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
             if (self.isCompareChecked) {
               self.currentMode = 'compare-from';
 
@@ -381,11 +382,11 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-            $($container.find('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
+            $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
 
-            $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_fromdate));
-            $($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'compare-to';
             break;
           case 'compare-to':
@@ -394,8 +395,8 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
-            $($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'base-from';
             break;
           default:
@@ -407,7 +408,7 @@ var DatePicker = module.exports = function (options, callback) {
 
 
     $container.find('.datepicker').find('a[href="#"]').each(function (index, item) {
-      $(this).on('click', function (event) {
+      $$(this).on('click', function (event) {
         event.stopPropagation();
       });
     });
@@ -415,122 +416,122 @@ var DatePicker = module.exports = function (options, callback) {
     $container.find('.datepicker').each(function (index, item) {
       var selectedDate = new Date(self.base_todate.getFullYear(), self.base_todate.getMonth(), 1);
       selectedDate.setMonth(selectedDate.getMonth() - (2 - index));
-      $(item).datepicker('setDate', selectedDate);
+      $$(item).datepicker('setDate', selectedDate);
     });
 
-    $($container.find('.daterange.baserange .dateoption')[0]).focus(function (e) {
+    $$($container.find('.daterange.baserange .dateoption')[0]).focus(function (e) {
       self.currentMode = 'base-from';
       self.handleChange();
     });
 
-    $($container.find('.daterange.baserange .dateoption')[0]).blur(function (e) {
-      //if ($($('.daterange.baserange .dateoption')[0]).hasClass('invalid')) {
-      //    $($('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+    $$($container.find('.daterange.baserange .dateoption')[0]).blur(function (e) {
+      //if ($$($$('.daterange.baserange .dateoption')[0]).hasClass('invalid')) {
+      //    $$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
       //}
-      $($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $(this).removeClass('invalid');
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
       self.currentMode = 'base-from';
       self.handleChange();
     });
 
-    $($container.find('.daterange.baserange .dateoption')[0]).keyup(function (e) {
-      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) > self.base_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
-        $(this).addClass('invalid');
+    $$($container.find('.daterange.baserange .dateoption')[0]).keyup(function (e) {
+      if (new Date($$(this).val()) == 'Invalid Date' || new Date($$(this).val()) > self.base_todate || new Date($$(this).val()) > self.max_date || new Date($$(this).val()) < self.min_date) {
+        $$(this).addClass('invalid');
         $container.find('.btn.apply').addClass('disabled');
         $container.find('.btn.apply').prop('disabled', true);
       }
       else {
-        $(this).removeClass('invalid');
+        $$(this).removeClass('invalid');
         $container.find('.btn.apply').removeClass('disabled');
         $container.find('.btn.apply').prop('disabled', false);
-        self.base_fromdate = new Date($(this).val());
+        self.base_fromdate = new Date($$(this).val());
       }
     });
 
 
-    $($container.find('.daterange.baserange .dateoption')[1]).focus(function (e) {
+    $$($container.find('.daterange.baserange .dateoption')[1]).focus(function (e) {
       self.currentMode = 'base-to';
       self.handleChange();
     });
 
-    $($container.find('.daterange.baserange .dateoption')[1]).blur(function (e) {
-      $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $(this).removeClass('invalid');
+    $$($container.find('.daterange.baserange .dateoption')[1]).blur(function (e) {
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
       self.currentMode = 'base-to';
       self.handleChange();
     });
-    $($container.find('.daterange.baserange .dateoption')[1]).keyup(function (e) {
-      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) < self.base_fromdate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
-        $(this).addClass('invalid');
+    $$($container.find('.daterange.baserange .dateoption')[1]).keyup(function (e) {
+      if (new Date($$(this).val()) == 'Invalid Date' || new Date($$(this).val()) < self.base_fromdate || new Date($$(this).val()) > self.max_date || new Date($$(this).val()) < self.min_date) {
+        $$(this).addClass('invalid');
         $container.find('.btn.apply').addClass('disabled');
         $container.find('.btn.apply').prop('disabled', true);
       }
       else {
-        $(this).removeClass('invalid');
+        $$(this).removeClass('invalid');
         $container.find('.btn.apply').removeClass('disabled');
         $container.find('.btn.apply').prop('disabled', false);
-        self.base_todate = new Date($(this).val());
+        self.base_todate = new Date($$(this).val());
       }
 
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[0]).focus(function (e) {
+    $$($container.find('.daterange.comparerange .dateoption')[0]).focus(function (e) {
       self.currentMode = 'compare-from';
       self.handleChange();
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[0]).blur(function (e) {
-      $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $(this).removeClass('invalid');
+    $$($container.find('.daterange.comparerange .dateoption')[0]).blur(function (e) {
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
       self.currentMode = 'compare-from';
       self.handleChange();
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[0]).keyup(function (e) {
-      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) > self.compare_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
-        $(this).addClass('invalid');
+    $$($container.find('.daterange.comparerange .dateoption')[0]).keyup(function (e) {
+      if (new Date($$(this).val()) == 'Invalid Date' || new Date($$(this).val()) > self.compare_todate || new Date($$(this).val()) > self.max_date || new Date($$(this).val()) < self.min_date) {
+        $$(this).addClass('invalid');
         $container.find('.btn.apply').addClass('disabled');
         $container.find('.btn.apply').prop('disabled', true);
       }
       else {
-        $(this).removeClass('invalid');
+        $$(this).removeClass('invalid');
         $container.find('.btn.apply').removeClass('disabled');
         $container.find('.btn.apply').prop('disabled', false);
-        self.compare_fromdate = new Date($(this).val());
+        self.compare_fromdate = new Date($$(this).val());
       }
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[1]).focus(function (e) {
+    $$($container.find('.daterange.comparerange .dateoption')[1]).focus(function (e) {
       self.currentMode = 'compare-to';
       self.handleChange();
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[1]).blur(function (e) {
-      $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
-      $(this).removeClass('invalid');
+    $$($container.find('.daterange.comparerange .dateoption')[1]).blur(function (e) {
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
       self.currentMode = 'compare-to';
       self.handleChange();
     });
 
-    $($container.find('.daterange.comparerange .dateoption')[1]).keyup(function (e) {
-      if (new Date($(this).val()) == 'Invalid Date' || new Date($(this).val()) < self.compare_fromdate || new Date($(this).val()) > self.base_todate || new Date($(this).val()) > self.max_date || new Date($(this).val()) < self.min_date) {
-        $(this).addClass('invalid');
+    $$($container.find('.daterange.comparerange .dateoption')[1]).keyup(function (e) {
+      if (new Date($$(this).val()) == 'Invalid Date' || new Date($$(this).val()) < self.compare_fromdate || new Date($$(this).val()) > self.base_todate || new Date($$(this).val()) > self.max_date || new Date($$(this).val()) < self.min_date) {
+        $$(this).addClass('invalid');
         $container.find('.btn.apply').addClass('disabled');
         $container.find('.btn.apply').prop('disabled', true);
       }
       else {
-        $(this).removeClass('invalid');
+        $$(this).removeClass('invalid');
         $container.find('.btn.apply').removeClass('disabled');
         $container.find('.btn.apply').prop('disabled', false);
-        self.compare_todate = new Date($(this).val());
+        self.compare_todate = new Date($$(this).val());
       }
     });
     $optionscontainer.find('.cancel').click(function (e) {
@@ -553,10 +554,10 @@ var DatePicker = module.exports = function (options, callback) {
           $container.find('.compareoption .checker').prop('checked', true);
         }
       }
-      $($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
 
       self.handleChange();
 
@@ -622,28 +623,28 @@ var DatePicker = module.exports = function (options, callback) {
       self.compare_todate = self.addDays(self.base_fromdate, -1);
       self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
 
-      $($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
 
       self.handleChange();
     });
-    $($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-    $($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-    $($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-    $($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+    $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+    $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+    $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+    $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
 
     var $dateboxcontainer = $container.find('.jcontainer');
     $dateboxcontainer.off('click');
     var $picker = $container.find('.picker');
     $dateboxcontainer.on('click', function (e) {
-      if ($(this).hasClass('expanded')) {
-        $(this).removeClass('expanded');
+      if ($$(this).hasClass('expanded')) {
+        $$(this).removeClass('expanded');
         $picker.hide();
       }
       else {
-        $(this).addClass('expanded');
+        $$(this).addClass('expanded');
 
         self.base_fromdate = self.applied_base_fromdate;
         self.base_todate = self.applied_base_todate;
@@ -657,7 +658,7 @@ var DatePicker = module.exports = function (options, callback) {
 
         $picker.show();
         $picker.offset({
-          top: $container.offset().top + $container.height() -1,
+          top: $container.offset().top + $container.height() - 1,
           left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
         });
       }
@@ -670,7 +671,7 @@ var DatePicker = module.exports = function (options, callback) {
       e.stopPropagation();
     });
 
-    $('body').click(function (e) {
+    $$('body').click(function (e) {
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
     });
@@ -738,21 +739,21 @@ var DatePicker = module.exports = function (options, callback) {
       self.options.$container.find('.dates .compare').hide();
     }
 
-    var $fromdate = $(self.options.$container.find('.dates .datelabel.fromdate')[0]);
-    var todate = $(self.options.$container.find('.dates .datelabel.todate')[0]);
+    var $fromdate = $$(self.options.$container.find('.dates .datelabel.fromdate')[0]);
+    var todate = $$(self.options.$container.find('.dates .datelabel.todate')[0]);
 
     $fromdate.text(self.formatDate(_this.applied_base_fromdate));
     todate.text(self.formatDate(_this.applied_base_todate));
 
-    $(this.callbacks).each(function (index, item) {
+    $$(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
     });
     //_this.setState(_this);
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
-    $(self).trigger("datechange", options);
-    $(joola).trigger("datechange", options);
+    //$$(self).trigger("datechange", options);
+    //$$(joola).trigger("datechange", options);
 
     if (self.options.onUpdate)
       window[self.options.onUpdate](self.container, self);
@@ -859,81 +860,81 @@ var DatePicker = module.exports = function (options, callback) {
 
     var $datebox = self.options.$container;//.find('[jio-type="datepicker"]');
     self.options.$container.find('.datepicker').not(this).each(function () {
-      $(this).datepicker('refresh');
+      $$(this).datepicker('refresh');
     });
 
     /*
-     $($('.daterange.baserange .dateoption')[0]).val(formatDate(self.base_fromdate));
-     $($('.daterange.baserange .dateoption')[1]).val(formatDate(self.base_todate));
-     $($('.daterange.comparerange .dateoption')[0]).val(formatDate(self.compare_fromdate));
-     $($('.daterange.comparerange .dateoption')[1]).val(formatDate(self.compare_todate));
+     $$($$('.daterange.baserange .dateoption')[0]).val(formatDate(self.base_fromdate));
+     $$($$('.daterange.baserange .dateoption')[1]).val(formatDate(self.base_todate));
+     $$($$('.daterange.comparerange .dateoption')[0]).val(formatDate(self.compare_fromdate));
+     $$($$('.daterange.comparerange .dateoption')[1]).val(formatDate(self.compare_todate));
      */
 
-    $(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
-    $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
-    $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
+    $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
+    $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
+    $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
 
     switch (this.currentMode) {
       case 'base-from':
         if (self.base_fromdate < self.min_date) {
           self.base_fromdate = self.min_date;
-          $(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
         }
         if (self.base_fromdate > self.max_date) {
           self.base_fromdate = self.max_date;
-          $(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
         }
-        $(self.options.$container.find('.daterange.baserange .dateoption')[0]).addClass('active');
-        $(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).addClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
 
         break;
       case 'base-to':
         if (self.base_todate < self.min_date) {
           self.base_todate = self.min_date;
-          $(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
         }
         if (self.base_todate > self.max_date) {
           self.base_todate = self.max_date;
-          $(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
         }
-        $(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.baserange .dateoption')[1]).addClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).addClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
 
         break;
       case 'compare-from':
         if (self.compare_fromdate < self.min_date) {
           self.compare_fromdate = self.min_date;
-          $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
         }
         if (self.compare_fromdate > self.max_date) {
           self.compare_fromdate = self.max_date;
-          $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
         }
 
-        $(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).addClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).addClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).removeClass('active');
 
         break;
       case 'compare-to':
         if (self.compare_todate < self.min_date) {
           self.compare_todate = self.min_date;
-          $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
         }
         if (self.compare_todate > self.max_date) {
           self.compare_todate = self.max_date;
-          $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
         }
 
-        $(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).addClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).removeClass('active');
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).addClass('active');
 
         break;
       default:
@@ -947,14 +948,14 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
 
 
       if (this.currentMode == 'compare-to')
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).focus();
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).focus();
       else if (this.currentMode == 'compare-from')
-        $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).focus();
+        $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).focus();
     }
 
     if (this.isCompareChecked) {
@@ -983,8 +984,8 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
 
       self.handleChange();
     });
@@ -992,7 +993,7 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechanging', self);
     }
-    $(self).trigger('datechanging', self);
+    $$(self).trigger('datechanging', self);
   };
 
   //here we go
@@ -1002,7 +1003,7 @@ var DatePicker = module.exports = function (options, callback) {
       if (err)
         return callback(err);
 
-      self.options.$container = $(self.options.container);
+      self.options.$container = $$(self.options.container);
       self.markContainer(self.options.$container, [
         {'type': 'datepicker'},
         {'uuid': self.uuid},
@@ -1015,15 +1016,17 @@ var DatePicker = module.exports = function (options, callback) {
         if (!self.options.canvas) {
           var elem = self.options.$container.parent();
           if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
+            self.options.canvas = $$(elem).Canvas();
           }
         }
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
         }
-        joola.events.emit('datepicker.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
+        self.draw(options, function () {
+          joola.events.emit('datepicker.init.finish', self);
+          if (typeof callback === 'function')
+            return callback(null, self);
+        });
       });
     });
   }

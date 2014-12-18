@@ -14,6 +14,7 @@ var
 
   _ = require('underscore'),
   ce = require('cloneextend'),
+  $$ = require('jquery'),
   _events = new EventEmitter2({wildcard: true, newListener: true});
 
 var Canvas = module.exports = function (options, callback) {
@@ -138,16 +139,16 @@ var Canvas = module.exports = function (options, callback) {
       window[self.options.onDraw](self);
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
+      new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
         self._datepicker = ref;
 
         if (self.options.datepicker.interval) {
-          self.options.datepicker.$interval = $(self.options.datepicker.interval);
+          self.options.datepicker.$interval = $$(self.options.datepicker.interval);
           self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
           self.options.datepicker.$interval.find('.btn').on('click', function () {
-            var $this = $(this);
+            var $this = $$(this);
             self.options.datepicker.$interval.find('.btn').removeClass('active');
             $this.addClass('active');
 
@@ -164,25 +165,25 @@ var Canvas = module.exports = function (options, callback) {
             viz.canvas = self;
             switch (viz.type.toLowerCase()) {
               case 'timeline':
-                $(viz.container).Timeline(viz);
+                new joola.viz.Timeline(viz);
                 break;
               case 'metric':
-                $(viz.container).Metric(viz);
+                new joola.viz.Metric(viz);
                 break;
               case 'table':
-                $(viz.container).Table(viz);
+                new joola.viz.Table(viz);
                 break;
               case 'minitable':
-                $(viz.container).MiniTable(viz);
+                new joola.viz.MiniTable(viz);
                 break;
               case 'bartable':
-                $(viz.container).BarTable(viz);
+                new joola.viz.BarTable(viz);
                 break;
               case 'pie':
-                $(viz.container).Pie(viz);
+                new joola.viz.Pie(viz);
                 break;
               case 'geo':
-                $(viz.container).Geo(viz);
+                new joola.viz.Geo(viz);
                 break;
               default:
                 break;
@@ -209,7 +210,7 @@ var Canvas = module.exports = function (options, callback) {
       return callback(err);
     }
 
-    self.options.$container = $(self.options.container);
+    self.options.$container = $$(self.options.container);
     self.markContainer(self.options.$container, {
       attr: [
         {'type': 'canvas'},
@@ -224,9 +225,11 @@ var Canvas = module.exports = function (options, callback) {
 
       joola.viz.onscreen.push(self);
       joola.events.emit('canvas.init.finish', self);
-      if (typeof callback === 'function') {
-        return callback(null, self);
-      }
+      self.draw(options, function () {
+        if (typeof callback === 'function') {
+          return callback(null, self);
+        }
+      });
     });
   });
 
