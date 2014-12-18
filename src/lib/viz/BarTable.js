@@ -295,13 +295,13 @@ var BarTable = module.exports = function (options, callback) {
       if (options.loading) {
         $tr = $$('<tr class="loading"></tr>');
         $td = $$('<td colspan="2" class="jio bartable loading">' +
-        self.options.strings.loading +
+        (self.options.strings.nodata || 'No data available.') +
         '</td>');
       }
       else {
         $tr = $$('<tr class="nodata"></tr>');
         $td = $$('<td colspan="2" class="jio bartable nodata">' +
-        self.options.strings.nodata +
+        (self.options.strings.nodata || 'No data available.') +
         '</td>');
       }
       $tr.append($td);
@@ -357,7 +357,7 @@ var BarTable = module.exports = function (options, callback) {
   if (self.options.canvas) {
     self.options.canvas.addVisualization(self);
   }
-  
+
   //wrap up
   self.initialized = true;
   if (typeof callback === 'function')

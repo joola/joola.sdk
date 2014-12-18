@@ -15,7 +15,7 @@ var
   _ = require('underscore'),
   ce = require('cloneextend'),
   $$ = require('jquery');
-  
+
 var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
@@ -196,6 +196,41 @@ var Canvas = module.exports = function (options, callback) {
             }
           }
         });
+      });
+    }
+    else {
+      Object.keys(self.options.visualizations).forEach(function (key) {
+        var viz = self.options.visualizations[key];
+        if (viz.container) {
+          viz.query = self.prepareQuery(viz.query);
+          viz.force = true;
+          viz.canvas = self;
+          switch (viz.type.toLowerCase()) {
+            case 'timeline':
+              new joola.viz.Timeline(viz);
+              break;
+            case 'metric':
+              new joola.viz.Metric(viz);
+              break;
+            case 'table':
+              new joola.viz.Table(viz);
+              break;
+            case 'minitable':
+              new joola.viz.MiniTable(viz);
+              break;
+            case 'bartable':
+              new joola.viz.BarTable(viz);
+              break;
+            case 'pie':
+              new joola.viz.Pie(viz);
+              break;
+            case 'geo':
+              new joola.viz.Geo(viz);
+              break;
+            default:
+              break;
+          }
+        }
       });
     }
     if (typeof callback === 'function') {

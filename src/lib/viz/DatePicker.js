@@ -678,7 +678,6 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $optionscontainer.find('.apply').click(function (e) {
-      console.log('apply',self.uuid);
       $dateboxcontainer.removeClass('expanded');
       $picker.hide();
       self.comparePeriod = self.isCompareChecked;
@@ -752,7 +751,6 @@ var DatePicker = module.exports = function (options, callback) {
     });
     //_this.setState(_this);
     if (self.options.canvas) {
-      console.log('emit', self.uuid, self.options.canvas.uuid);
       self.options.canvas.emit('datechange', options);
     }
     $$(self).trigger("datechange", options);
@@ -860,7 +858,6 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.handleChange = function (options) {
     var self = this;
-    console.log('handleChange', self.uuid);
 
     var $datebox = self.options.$container;//.find('[jio-type="datepicker"]');
     self.options.$container.find('.datepicker').not(this).each(function () {
@@ -1069,7 +1066,6 @@ joola.events.on('core.init.finish', function () {
           }
         }
         //create new
-        console.log('new');
         if (!options)
           options = {};
         options.container = this.get(0);
@@ -1081,7 +1077,6 @@ joola.events.on('core.init.finish', function () {
       }
       else {
         //return existing
-        console.log('existing');
         found = false;
         joola.viz.onscreen.forEach(function (viz) {
           if (viz.uuid == uuid && !found) {
