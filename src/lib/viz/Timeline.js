@@ -50,12 +50,12 @@ var Timeline = module.exports = function (options, callback) {
 
     this.template = function () {
       var $html = $('<div class="jio timeline caption"></div>' +
-        '<div class="jio timeline chartwrapper">' +
-        ' <div class="jio timeline controls">' +
-        '     <div class="jio timeline primary-metric-picker"></div>' +
-        '     <div class="jio timeline secondary-metric-picker"></div>' +
-        '   </div>' +
-        '<div class="jio timeline thechart" style="width:100%;margin:0 auto"></div> </div > ');
+      '<div class="jio timeline chartwrapper">' +
+      ' <div class="jio timeline controls">' +
+      '     <div class="jio timeline primary-metric-picker"></div>' +
+      '     <div class="jio timeline secondary-metric-picker"></div>' +
+      '   </div>' +
+      '<div class="jio timeline thechart" style="width:100%;margin:0 auto"></div> </div > ');
       return $html;
     };
 
@@ -363,10 +363,12 @@ var Timeline = module.exports = function (options, callback) {
             if (self.options.canvas) {
               self.options.canvas.addVisualization(self);
               self.options.canvas.on('datechange', function (dates) {
+                if (!Array.isArray(self.options.query))
+                  self.options.query = [self.options.query];
                 //let's change our query and fetch again
-                self.options.query.timeframe = {};
-                self.options.query.timeframe.start = new Date(dates.base_fromdate);
-                self.options.query.timeframe.end = new Date(dates.base_todate);
+                self.options.query[0].timeframe = {};
+                self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
+                self.options.query[0].timeframe.end = new Date(dates.base_todate);
 
                 self.destroy();
                 self.draw(self.options);
@@ -386,7 +388,6 @@ var Timeline = module.exports = function (options, callback) {
                 query.reason = 'added_plot';
                 query.abc = 'abc';
                 query.filter = filter;
-                console.log(query);
                 self.destroy();
                 self.draw(self.options);
               });

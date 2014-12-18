@@ -126,7 +126,6 @@ proto.fetch = function (context, query, callback) {
     return callback(null, message);
   });
 
-  console.log(args);
   joola.query.fetch.apply(this, args);
 };
 
@@ -212,7 +211,7 @@ proto.makeChartTimelineSeries = function (message) {
     });
     if (timestampDimension) {
       //validate and fill the date range;
-      interval = interval === 'ddate' ? 'day' : interval;
+      interval = interval === 'ddate' ? 'day' : (interval || 'day');
       if (!query.timeframe) {
         query.timeframe = {};
         query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
@@ -274,7 +273,7 @@ proto.makeChartTimelineSeries = function (message) {
         name: metric_name,
         data: [],
         yAxis: _yaxis,
-        color: joola.colors[seriesIndex ]
+        color: joola.colors[seriesIndex]
       };
       documents.forEach(function (document, docIndex) {
         var x = document.fvalues[dimensions[0].key];

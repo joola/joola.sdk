@@ -371,7 +371,22 @@ var Table = module.exports = function (options, callback) {
           return callback(err);
 
         joola.viz.onscreen.push(self);
+        
+        if (self.options.canvas) {
+          self.options.canvas.addVisualization(self);
+          self.options.canvas.on('datechange', function (dates) {
+            if (!Array.isArray(self.options.query))
+              self.options.query = [self.options.query];
+            //let's change our query and fetch again
+            self.options.query[0].timeframe = {};
+            self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
+            self.options.query[0].timeframe.end = new Date(dates.base_todate);
 
+            self.destroy();
+            self.draw(self.options);
+          });
+        }
+        
         joola.events.emit('table.init.finish', self);
         if (typeof callback === 'function')
           return callback(null, self);
