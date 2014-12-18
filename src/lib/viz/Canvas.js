@@ -14,9 +14,8 @@ var
 
   _ = require('underscore'),
   ce = require('cloneextend'),
-  $$ = require('jquery'),
-  _events = new EventEmitter2({wildcard: true, newListener: true});
-
+  $$ = require('jquery');
+  
 var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
@@ -29,6 +28,7 @@ var Canvas = module.exports = function (options, callback) {
     this[x] = require('./_proto')[x];
     this._super[x] = require('./_proto')[x];
   }
+  _events = new EventEmitter2({wildcard: true, newListener: true});
   for (var y in _events) {
     this[y] = _events[y];
     this._super[y] = _events[y];
@@ -108,6 +108,12 @@ var Canvas = module.exports = function (options, callback) {
       });
     _query[0].hash = joola.common.hash(_query[0].hash);
     if (self.options.datepicker && self.options.datepicker.container) {
+      dates = {
+        base_fromdate: self.options.$datepicker.base_fromdate,
+        base_todate: self.options.$datepicker.base_todate,
+        compare_fromdate: self.options.$datepicker.compare_fromdate,
+        compare_todate: self.options.$datepicker.compare_todate
+      };
       _query[0].timeframe = {};
       _query[0].timeframe.start = dates.base_fromdate || self._datepicker.base_fromdate;
       _query[0].timeframe.end = dates.base_todate || self._datepicker.base_todate;
@@ -143,7 +149,7 @@ var Canvas = module.exports = function (options, callback) {
         if (err)
           throw err;
         self._datepicker = ref;
-
+        self.options.$datepicker = ref;
         if (self.options.datepicker.interval) {
           self.options.datepicker.$interval = $$(self.options.datepicker.interval);
           self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
