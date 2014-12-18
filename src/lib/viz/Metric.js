@@ -96,14 +96,14 @@ var Metric = module.exports = function (options, callback) {
           self.options.$container.on('click', window[self.options.onSelect]);
         if (self.options.allowSelect && self.options.canvas) {
           self.options.$container.on('click', function () {
-            self.options.canvas.emit('metricselect', self, self.options.query.metrics[0]);
+            self.options.canvas.emit('metricselect', self, self.options.query[0].metrics[0]);
           });
         }
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
       }
-      else if (self.options.query.realtime) {
+      else if (self.options.query[0].realtime) {
         if (self.options.onUpdate)
           window[self.options.onUpdate](self);
         //we're dealing with realtime
