@@ -39095,7 +39095,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.26",
+  "version": "0.7.26-feature.152",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -42798,14 +42798,14 @@ var Metric = module.exports = function (options, callback) {
           self.options.$container.on('click', window[self.options.onSelect]);
         if (self.options.allowSelect && self.options.canvas) {
           self.options.$container.on('click', function () {
-            self.options.canvas.emit('metricselect', self, self.options.query.metrics[0]);
+            self.options.canvas.emit('metricselect', self, self.options.query[0].metrics[0]);
           });
         }
         self.options.$container.find('.value').text(value);
         if (typeof callback === 'function')
           return callback(null, self);
       }
-      else if (self.options.query.realtime) {
+      else if (self.options.query[0].realtime) {
         if (self.options.onUpdate)
           window[self.options.onUpdate](self);
         //we're dealing with realtime
@@ -44380,6 +44380,9 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.draw = function (options, callback) {
+    if (!Array.isArray(this.options.query))
+      this.options.query = [this.options.query];
+
     self.stop();
     return this._super.fetch(this.options.query, function (err, message) {
       if (Array.isArray(message))
@@ -44525,7 +44528,7 @@ var Table = module.exports = function (options, callback) {
         if (typeof callback === 'function')
           return callback(null);
       }
-      else if (self.options.query.realtime) {
+      else if (self.options.query[0].realtime) {
         if (self.options.onUpdate)
           window[self.options.onUpdate](self);
         //we're dealing with realtime
@@ -44830,12 +44833,15 @@ var Timeline = module.exports = function (options, callback) {
     };
 
     this.draw = function (options, callback) {
+      if (!Array.isArray(this.options.query))
+        this.options.query = [this.options.query];
+
       self.stop();
       var extremes_0, extremes_1;
-      if (!self.options.query.dimensions)
-        self.options.query.dimensions = [];
-      if (self.options.query.dimensions.length === 0)
-        self.options.query.dimensions.push('timestamp');
+      if (!self.options.query[0].dimensions)
+        self.options.query[0].dimensions = [];
+      if (self.options.query[0].dimensions.length === 0)
+        self.options.query[0].dimensions.push('timestamp');
 
       return this._super.fetch(self, this.options.query, function (err, message) {
         if (err) {
@@ -45036,7 +45042,7 @@ var Timeline = module.exports = function (options, callback) {
           if (typeof callback === 'function')
             return callback(null);
         }
-        else if (self.options.query.realtime) {
+        else if (self.options.query[0].realtime) {
           //we're dealing with realtime
           series.forEach(function (ser, serIndex) {
             ser.data.forEach(function (datapoint) {
@@ -45145,7 +45151,7 @@ var Timeline = module.exports = function (options, callback) {
               });
               self.options.canvas.on('intervalchange', function (interval) {
                 //let's change our query and fetch again
-                self.options.query.interval = interval;
+                self.options.query[0].interval = interval;
 
                 self.destroy();
                 self.draw(self.options);
@@ -45179,7 +45185,7 @@ var Timeline = module.exports = function (options, callback) {
                 self.draw(self.options);
               });
               self.options.canvas.on('metricselect', function (sender, metric) {
-                self.options.query.metrics[0] = metric;
+                self.options.query[0].metrics[0] = metric;
                 self.destroy();
                 self.draw(self.options);
               });
