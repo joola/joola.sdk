@@ -70,7 +70,7 @@ viz.initialize = function (self, options, callback) {
       //subscribe to default events
 
       self.options.canvas.on('datechange', function (dates) {
-        //console.log('canvas event - datechange', self.options.canvas.uuid, self.uuid, dates)
+        console.log('canvas event - datechange', self.options.canvas.uuid, dates)
         //let's change our query and fetch again
         self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0], dates));
         viz.destroy(self, {loading: true});
