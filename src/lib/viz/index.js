@@ -12,7 +12,6 @@ var
   joola = require('../index'),
   async = require('async'),
   ce = require('cloneextend'),
-  d3 = require('d3'),
   _ = require('underscore'),
   $ = require('jquery');
 
@@ -29,7 +28,7 @@ viz.Canvas = require('./Canvas');
 
 //charts
 viz.Sparkline = require('./Sparkline');
-viz.Metric = require('./Metric');
+viz.Metric = require('./Metric2');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
@@ -59,6 +58,9 @@ viz.markContainer = function (container, attr) {
 
 viz.initialize = function (self, options, callback) {
   joola.common.mixin(self.options, options, true);
+  var verified = self.verify.apply(self);
+  if (verified !== null)
+    throw new Error(verified);
   if (!self.initialized) {
     viz.markContainer(self.options.container, [
       {type: self.type},
