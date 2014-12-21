@@ -28,7 +28,7 @@ viz.Canvas = require('./Canvas');
 
 //charts
 viz.Sparkline = require('./Sparkline');
-viz.Metric = require('./Metric2');
+viz.Metric = require('./Metric');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');

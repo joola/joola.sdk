@@ -10,170 +10,145 @@
 
 var
   joola = require('../index'),
-  ce = require('cloneextend');
+  $$ = require('jquery'),
+  _ = require('underscore');
 
 var Metric = module.exports = function (options, callback) {
-  if (!callback)
-    callback = function () {
-    };
-  joola.events.emit('metric.init.start');
+  var self = this;
 
   //mixin
   this._super = {};
   for (var x in require('./_proto')) {
-    this[x] = ce.clone(require('./_proto')[x]);
-    this._super[x] = ce.clone(require('./_proto')[x]);
+    this[x] = require('./_proto')[x];
+    this._super[x] = require('./_proto')[x];
   }
 
-  var self = this;
-
-  this._id = '_metric';
+  this.type = 'metric';
   this.uuid = joola.common.uuid();
+  this.initialized = false;
+  this.data = [];
   this.options = {
-    canvas: null,
-    legend: true,
     container: null,
-    $container: null,
+    caption: '',
+    template: '<div class="jio metricbox">' +
+    '<div class="value"></div>' +
+    '<div class="summary" style="display:none;">' +
+    '<span class="base"></span>' +
+    '<span class="sep">vs.</span>' +
+    '<span class="compare"></span>' +
+    '</div>' +
+    '<div class="caption"></div>' +
+    '</div>',
     query: null,
-    allowSelect: true
+    strings: {
+      loading: '---',
+      nodata: '---'
+    }
   };
-  this.drawn = false;
-  this.realtimeQueries = [];
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (!Array.isArray(self.options.query))
+        self.options.query = [self.options.query];
+      if (self.options.query[0].dimensions && self.options.query[0].dimensions.length > 0)
+        return 'Please specify a single dimension.';
+      if (self.options.query[0].metrics && (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1) || !self.options.query[0].metrics)
+        return 'Please specify a single metric.';
+    }
+    return null;
+  };
 
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
+  this.enter = function (data, alldata) {
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
 
-  this.template = function () {
-    var $html = $('<div class="jio metricbox value"></div>' +
-    '<div class="jio metricbox caption"></div>');
-    return $html;
-  };
-  this.draw = function (options, callback) {
-    if (!Array.isArray(this.options.query))
-      this.options.query = [this.options.query];
-    self.stop();
-    this.options.query[0].dimensions = [];
-    this.options.query[0].metrics = this.options.query[0].metrics.splice(0, 1);
-    return this._super.fetch(this.options.query, function (err, message) {
-      if (Array.isArray(message))
-        message = message[0];
-      if (err) {
-        if (typeof callback === 'function')
-          return callback(err);
-        return;
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metric = data[0].meta[metrickey];
+    var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
+
+    if (data.length === 1) {
+      $$(self.options.container).find('.summary').hide();
+      var value = data[0].metrics[metrickey];
+      $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+    }
+    else {
+      $$(self.options.container).find('.summary').show();
+      var base = data[0].metrics[metrickey];
+      var compare = null;
+      var change = 0;
+      if (!data[1].missing) {
+        compare = data[1].metrics[metrickey];
+        change = joola.common.percentageChange(compare, base) + '%';
       }
-      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
-        self.realtimeQueries.push(message.realtime);
-
-      var value;
-      if (message.documents && message.documents.length > 0)
-        value = message.documents[0].fvalues[message.metrics[0].key];
-      else
-        value = 0;
-
-      if (!value)
-        value = 0;
-
-      /*
-       var decimals = 2;
-       if (message.metrics[0].decimals)
-       decimals = message.metrics[0].decimals
-       value = Math.round(value * (Math.pow(10, decimals))) / (Math.pow(10, decimals));
-       */
-      if (!self.drawn) {
-        self.options.$container.data(self);
-        self.options.$container.append(self.options.template || self.template());
-        self.options.$container.find('.caption').text(self.options.caption || '');
-        self.drawn = true;
-
-        if (self.options.onDraw)
-          window[self.options.onDraw](self.options.$container, self);
-
-        if (self.options.allowSelect)
-          self.options.$container.css('cursor', 'pointer');
-        if (self.options.allowSelect && self.options.onSelect)
-          self.options.$container.on('click', window[self.options.onSelect]);
-        if (self.options.allowSelect && self.options.canvas) {
-          self.options.$container.on('click', function () {
-            self.options.canvas.emit('metricselect', self, self.options.query[0].metrics[0]);
-          });
-        }
-        self.options.$container.find('.value').text(value);
-        if (typeof callback === 'function')
-          return callback(null, self);
+      else {
+        change = 'N/A';
       }
-      else if (self.options.query[0].realtime) {
-        if (self.options.onUpdate)
-          window[self.options.onUpdate](self);
-        //we're dealing with realtime
-
-        self.options.$container.find('.value').text(value);
+      $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.base').html(joola.common.formatMetric(base, metric));
+      if (compare) {
+        $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
       }
-    });
+      else {
+        $$(self.options.container).find('.compare').html('N/A');
+      }
+    }
+  };
+  this.exit = function (data) {
+    console.log('exit', data);
+  };
+  this.update = function (data) {
+    console.log('update', data);
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metric = data[0].meta[metrickey];
+    var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
+
+    var value = data[0].metrics[metrickey];
+    $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
   };
 
-  //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  this.destroy = function () {
+    $$(self.options.container).empty();
+  };
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'metric'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
+  this.draw = function (options) {
+    //we draw the template into the container
+    var $html = $$(self.options.template);
+    $$(self.options.container).html($html);
+    if (self.options.caption) {
+      $html.find('.caption').html(self.options.caption);
+    }
+    $html.find('.value').html(self.options.strings.nodata);
+    //visualization specific drawing
+  };
 
-        joola.viz.onscreen.push(self);
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
 
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
-          }
-        }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-
-          //subscribe to default events
-          self.options.canvas.on('datechange', function (dates) {
-            //let's change our query and fetch again
-            if (!Array.isArray(self.options.query))
-              self.options.query = [self.options.query];
-            //let's change our query and fetch again
-            self.options.query[0].timeframe = {};
-            self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
-            self.options.query[0].timeframe.end = new Date(dates.base_todate);
-
-
-            self.destroy();
-            self.draw(self.options);
-          });
-        }
-
-        joola.events.emit('metric.init.finish', self);
-
-        //if (self.options.query) {
-        //  return self.draw(options, callback);
-        //}
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
-
+  self.draw();
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
+    }
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
   }
 
-  //callback(null, self);
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
 
@@ -187,8 +162,8 @@ joola.events.on('core.init.finish', function () {
         options.force = true;
       var result = null;
       var uuid = this.attr('jio-uuid');
-      if (!uuid || (options && options.force)) {
-        if (options && options.force && uuid) {
+      if (!uuid || options.force) {
+        if (options.force && uuid) {
           var existing = null;
           found = false;
           joola.viz.onscreen.forEach(function (viz) {
@@ -202,7 +177,6 @@ joola.events.on('core.init.finish', function () {
             existing.destroy();
           }
         }
-
         //create new
         if (!options)
           options = {};
@@ -210,7 +184,6 @@ joola.events.on('core.init.finish', function () {
         result = new joola.viz.Metric(options, function (err, metric) {
           if (err)
             throw err;
-          metric.draw(options, callback);
         }).options.$container;
       }
       else {
@@ -225,36 +198,5 @@ joola.events.on('core.init.finish', function () {
       }
       return result;
     };
-
-    /*
-     joola.events.on('core.ready', function () {
-     if (typeof (jQuery) != 'undefined') {
-     $.find('.jio.metric').forEach(function (container) {
-     var $container = $(container);
-
-     var caption = $container.attr('data-caption') || '';
-     var timeframe = $container.attr('data-timeframe');
-     var metrics = $container.attr('data-metrics');
-     metrics = eval("(" + metrics + ')');
-
-     var query = {
-     timeframe: timeframe,
-     metrics: [metrics]
-     };
-     $container.Metric({caption: caption, query: query});
-     });
-     }
-     });
-     */
   }
 });
-
-Metric.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    ' <div class="jio metricbox wrapper">\n' +
-    '   <div class="jio metricbox caption"></div>\n' +
-    '   <div class="jio metricbox value"></div>\n' +
-    ' </div>\n' +
-    '</div>';
-  return html;
-};
