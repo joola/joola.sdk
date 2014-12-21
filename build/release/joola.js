@@ -38845,7 +38845,7 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.exit = function (data) {
-    console.log('exit', data);
+    $$(self.options.container).find('.value').html(self.options.strings.nodata);
   };
 
   this.update = function (data, alldata) {
