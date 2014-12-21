@@ -793,3 +793,85 @@
 [jio-type="metric"] .compare {
   padding-left: 5px;
 }
+
+[jio-type="table"] .table {
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+[jio-type="table"] .table tr {
+  vertical-align: top;
+}
+
+[jio-type="table"] .table td {
+  padding-top: 8px;
+  padding-bottom: 5px;
+}
+
+[jio-type="table"] .table tr:first-of-type td {
+  text-overflow: ellipsis;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+[jio-type="table"] .table td .caption {
+  text-overflow: ellipsis;
+  line-height: 17px;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+  overflow: hidden
+}
+
+[jio-type="table"] .table td .subcaption {
+  color: #999;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+[jio-type="table"] .table.table-striped tbody > tr:nth-child(even) > td {
+  background-color: white;
+}
+
+[jio-type="table"] .table-caption {
+  line-height: 1.2857142857em;
+  margin: 20px 0 20px;
+  padding: 0;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: normal;
+  color: #333;
+  text-align: center;
+}
+
+[jio-type="table"] .nodata, [jio-type="table"] .loading {
+  text-align: center;
+}
+
+[jio-type="table"] .barwrapper {
+  float: left;
+  width: 100%;
+}
+
+[jio-type="table"] .barwrapper.compare .tablebar {
+  height: 15px;
+}
+
+[jio-type="table"] .barwrapper.compare .tablebar.compare_ratio {
+  margin-top: 1px;
+}
+
+[jio-type="table"] .tablebar {
+  background-color: rgb(5, 141, 199);
+  float: left;
+  height: 30px;
+}
