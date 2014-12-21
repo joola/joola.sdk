@@ -58,7 +58,7 @@
   text-align: center;
 }
 
-[jio-type="bartable"] .jio.bartable.nodata, [jio-type="bartable"] .jio.bartable.loading {
+[jio-type="bartable"] .nodata, [jio-type="bartable"] .loading {
   text-align: center;
 }
 

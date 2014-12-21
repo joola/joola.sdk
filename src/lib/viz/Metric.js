@@ -99,6 +99,7 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.exit = function (data) {
+    console.log('exit', data);
   };
 
   this.update = function (data, alldata) {

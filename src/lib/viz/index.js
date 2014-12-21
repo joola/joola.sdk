@@ -147,8 +147,10 @@ viz.fetch = function (context, query, callback) {
       var _data = [];
       if (context.data[mindex]) {
         _data = context.data[mindex];
+        _data.forEach(function (item) {
+          item.state = 'exit';
+        });
       }
-
       if (message && message.query && message.query.ts && message.query.ts.duration)
         joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
       if (message.realtime && context.realtimeQueries.indexOf(message.realtime) == -1)
@@ -226,6 +228,7 @@ viz.fetch = function (context, query, callback) {
         context.update(point, context.data);
       }
       else if (data.state === 'exit' || paired.state === 'exit') {
+        context.data[0].splice(pointIndex, 1);
         if (context.options.exit)
           context.options.exit.apply(context, [point, context.data]);
         context.exit(point, context.data);
