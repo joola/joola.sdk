@@ -13,7 +13,7 @@ var
   async = require('async'),
   ce = require('cloneextend'),
   _ = require('underscore'),
-  $ = require('jquery');
+  $$ = require('jquery');
 
 var viz = exports;
 viz._id = 'viz';
@@ -41,7 +41,7 @@ viz.Timeline = require('./Timeline');
 viz.onscreen = [];
 
 viz.markContainer = function (container, attr) {
-  container = $(container);
+  container = $$(container);
   container.attr('jio-domain', 'joola');
   attr = attr.attr || attr;
   attr.forEach(function (a) {
@@ -67,6 +67,7 @@ viz.initialize = function (self, options, callback) {
       {uuid: self.uuid},
       {css: self.options.css || null}
     ]);
+    self.options.$container = $$(self.options.container);
     if (self.options.canvas) {
       self.options.canvas.addVisualization(self);
       //subscribe to default events
@@ -274,10 +275,10 @@ joola.on('ready', function (err) {
 
   Object.keys(joola.viz).forEach(function (key) {
     var visualization = joola.viz[key];
-    var joola_elements = $('joola\\:' + key.toLowerCase());
+    var joola_elements = $$('joola\\:' + key.toLowerCase());
     if (joola_elements.length > 0) {
       $.each(joola_elements, function (index, element) {
-        var $element = $(element);
+        var $element = $$(element);
         //check not nested under a canvas
         if ($element.parents('joola\\:canvas').length === 0) {
           var attributes = $element.get(0).attributes;

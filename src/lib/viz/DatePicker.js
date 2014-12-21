@@ -1069,10 +1069,10 @@ joola.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.DatePicker(options, function (err, bartable) {
+        result = new joola.viz.DatePicker(options, function (err) {
           if (err)
             throw err;
-          bartable.draw(options, callback);
+          //bartable.draw(options, callback);
         }).options.$container;
       }
       else {

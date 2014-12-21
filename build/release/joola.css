@@ -9,6 +9,7 @@
   border-spacing: 0;
 }
 
+
 [jio-domain="joola"] {
   font-family: Signika, helvetica, arial, sans-serif;
 }
@@ -792,3 +793,5 @@
 [jio-type="metric"] .compare {
   padding-left: 5px;
 }
+
+

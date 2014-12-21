@@ -83,10 +83,11 @@ var BarTable = module.exports = function (options, callback) {
         if ($tbody.find('tr').length >= self.options.limit) {
           if ($tbody.find('td.notshown').length > 0 || !self.options.include_not_shown)
             return;
-          $tr = $$('<tr></tr>');
+
           percentage = parseFloat(notshown[0]) / total[0] * 100;
           if (percentage > 100)
             percentage = 100;
+          $tr = $$('<tr data-id="other" data-value="' + notshown[0] + '" data-name="' + self.options.strings.not_shown + '" data-value-sort="' + percentage + '"></tr>');
           Object.keys(point.metrics).forEach(function (m) {
             var $td = $$('<td class="jio bartable value metric">' +
             '<div class="barwrapper">' +
@@ -119,9 +120,9 @@ var BarTable = module.exports = function (options, callback) {
         }
 
         //we have a simple row
-        $tr = $$('<tr></tr>');
         var index = 0;
         percentage = parseFloat(point.metrics[metrickey]) / total[index] * 100;
+        $tr = $$('<tr data-id="' + point.key + '" data-value="' + point.metrics[metrickey] + '" data-name="' + point.dimensions[dimensionkey] + '"  data-value-sort="' + percentage + '"></tr>');
         _query.metrics.forEach(function (m) {
           var $td = $$('<td class="jio bartable value">' +
           '<div class="barwrapper">' +
@@ -200,7 +201,7 @@ var BarTable = module.exports = function (options, callback) {
           return;
         }
 
-        $tr = $$('<tr></tr>');
+        $tr = $$('<tr data-id="' + base.key + '"></tr>');
         if (compare.missing)
           percentage = null;
         else
@@ -273,16 +274,96 @@ var BarTable = module.exports = function (options, callback) {
       notshown = [0, 0];
     }
     addRow(data, total, shown, notshown);
+    //self.sort();
   };
   this.exit = function (data) {
     //console.log('exit', data);
+    $$(self.options.container).find('tr[data-id="' + data.key + '"]').remove();
+    self.sort();
   };
-  this.update = function (data) {
-    console.log('update', data);
+  this.update = function (data, alldata) {
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+    var dimensionkey = _query.dimensions[0].key || _query.dimensions[0];
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metricname = data[0].meta[metrickey].name || _query.metrics[0].name || _query.metrics[0];
+
+    var total = [0, 0];
+    var shown = [0, 0];
+    var notshown = [0, 0];
+
+    data.forEach(function (point, index) {
+      alldata[index].forEach(function (point, i) {
+        total[index] += point.metrics[metrickey];
+        if (i < (self.options.limit && self.options.limit < data.length ? self.options.limit - 1 : self.options.limit ))
+          shown[index] += point.metrics[metrickey];
+        else
+          notshown[index] += point.metrics[metrickey];
+      });
+    });
+    if (!self.options.include_not_shown) {
+      total = shown;
+      notshown = [0, 0];
+    }
+
+    if (data.length === 1) {
+      var point = data[0];
+      console.log('update', point);
+      var found = false;
+      $$(self.options.container).find('tr').each(function (index, elem) {
+        //var elem = $$(self.options.container).find('[data-id="' + point.key + '"]')[0];
+        var $elem = $$(elem);
+        var percentage, text;
+        var name = $elem.attr('data-name');
+        var value = parseFloat($elem.attr('data-value'));
+        percentage = parseFloat(value / total[0] * 100);
+        $elem.attr('data-value-sort', percentage);
+        if ($elem.attr('data-id') === point.key) {
+          value = point.metrics[metrickey];
+          $elem.attr('data-value', value);
+        }
+        else if ($elem.attr('data-id') === 'other') {
+          value = notshown[0];
+          $elem.attr('data-value', value);
+        }
+
+        if (joola.common.isNumeric(percentage))
+          text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + name, 23);
+        else
+          text = joola.common.ensureLength('N/A ' + name, 23);
+        $elem.find('.tablebar').css('width', (joola.common.isNumeric(percentage) ? (percentage > 100 ? '100%' : percentage + '%') : 0));
+        if ($elem.attr('data-id') === 'other')
+          $elem.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));
+        else
+          $elem.find('.caption').text(text);
+        $elem.find('.subcaption').text(joola.common.formatMetric(value, point.meta[metrickey]) + ' ' + metricname);
+      });
+      
+    }
+    self.sort();
   };
 
   this.destroy = function () {
     $$(self.options.container).find('table').empty();
+  };
+
+  this.sort = function () {
+    var $tbody = $$($$(self.options.container).find('tbody')[0]);
+    var $rows = $tbody.find('tr');
+    for (var i = 0; i < $rows.length - 1; i++) {
+      for (var j = 0; j < $rows.length - (i + 1); j++) {
+        var $row = $$($rows[j]);
+        var value = $row.attr('data-value-sort');
+        var $nextrow = $$($rows[j + 1]);
+        var nextvalue = $nextrow.attr('data-value-sort');
+
+        if ($nextrow.attr('data-name') !== self.options.strings.not_shown) {
+          if (parseFloat(nextvalue) > parseFloat(value))
+            $row.before($nextrow);
+        }
+      }
+    }
   };
 
   this.draw = function (options) {

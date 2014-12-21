@@ -67,6 +67,8 @@ var Metric = module.exports = function (options, callback) {
     var metrickey = _query.metrics[0].key || _query.metrics[0];
     var metric = data[0].meta[metrickey];
     var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
+    if (self.options.enter)
+      self.options.enter.apply(self, [data, alldata]);
 
     if (data.length === 1) {
       $$(self.options.container).find('.summary').hide();
@@ -95,11 +97,11 @@ var Metric = module.exports = function (options, callback) {
       }
     }
   };
+
   this.exit = function (data) {
-    console.log('exit', data);
   };
-  this.update = function (data) {
-    console.log('update', data);
+
+  this.update = function (data, alldata) {
     var _query = self.options.query;
     if (Array.isArray(self.options.query))
       _query = _query[0];
@@ -107,6 +109,9 @@ var Metric = module.exports = function (options, callback) {
     var metrickey = _query.metrics[0].key || _query.metrics[0];
     var metric = data[0].meta[metrickey];
     var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
+
+    if (self.options.update)
+      self.options.update.apply(self, [data, alldata]);
 
     var value = data[0].metrics[metrickey];
     $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
