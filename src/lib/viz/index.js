@@ -164,11 +164,11 @@ viz.fetch = function (context, query, callback) {
         var key = '';
         message.dimensions.forEach(function (d) {
           key += doc.raw.values[d.key];
-          doc.dimensions[d.key] = doc.raw.fvalues[d.key];
+          doc.dimensions[d.key] = doc.raw.values[d.key];
           doc.meta[d.key] = d;
         });
         message.metrics.forEach(function (m) {
-          doc.metrics[m.key] = doc.raw.fvalues[m.key];
+          doc.metrics[m.key] = doc.raw.values[m.key];
           doc.meta[m.key] = m;
         });
         doc.key = joola.common.hash(key);
@@ -184,6 +184,8 @@ viz.fetch = function (context, query, callback) {
           });
           if (dirty)
             exist.state = 'update';
+          else
+            exist.state = 'static';
         }
         else {
           _data.push(doc);

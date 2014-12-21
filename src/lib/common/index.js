@@ -222,6 +222,31 @@ common.flatGetSet = function (obj, is, value) {
   }
 };
 
-common.isNumeric= function( obj ) {
-  return !Array.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+common.isNumeric = function (obj) {
+  return !Array.isArray(obj) && (obj - parseFloat(obj) + 1) >= 0;
+};
+
+common.formatDimension = function (value, dimension) {
+  var result = value;
+  return result;
+};
+
+common.formatMetric = function (value, metric) {
+  if (!metric)
+    metric = {};
+  var result = parseFloat(value);
+  if (metric.decimals)
+    result = result.toFixed(metric.decimals);
+  if ((metric.hasOwnProperty('commas') && metric.commas ) || true) {
+    result = result.commas();
+  }
+  if (metric.prefix)
+    result = metric.prefix + result;
+  if (metric.suffix)
+    result += metric.suffix;
+  return result;
+};
+
+common.percentageChange = function (num1, num2) {
+  return ((num2 - num1) / num1 * 100).toFixed(2);
 };

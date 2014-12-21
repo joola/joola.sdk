@@ -31,9 +31,14 @@ var Metric = module.exports = function (options, callback) {
     container: null,
     caption: '',
     template: '<div class="jio metricbox">' +
-      '<div class="jio metricbox value"></div>' +
-      '<div class="jio metricbox caption"></div>' +
-      '</div>',
+    '<div class="value"></div>' +
+    '<div class="summary" style="display:none;">' +
+    '<span class="base"></span>' +
+    '<span class="sep">vs.</span>' +
+    '<span class="compare"></span>' +
+    '</div>' +
+    '<div class="caption"></div>' +
+    '</div>',
     query: null,
     strings: {
       loading: '---',
@@ -60,16 +65,51 @@ var Metric = module.exports = function (options, callback) {
       _query = _query[0];
 
     var metrickey = _query.metrics[0].key || _query.metrics[0];
-    var metricname = data[0].meta[metrickey].name || _query.metrics[0].name || _query.metrics[0];
+    var metric = data[0].meta[metrickey];
+    var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
 
-    var value = data[0].metrics[metrickey];
-    $$(self.options.container).find('.value').html(value);
+    if (data.length === 1) {
+      $$(self.options.container).find('.summary').hide();
+      var value = data[0].metrics[metrickey];
+      $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+    }
+    else {
+      $$(self.options.container).find('.summary').show();
+      var base = data[0].metrics[metrickey];
+      var compare = null;
+      var change = 0;
+      if (!data[1].missing) {
+        compare = data[1].metrics[metrickey];
+        change = joola.common.percentageChange(compare, base) + '%';
+      }
+      else {
+        change = 'N/A';
+      }
+      $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.base').html(joola.common.formatMetric(base, metric));
+      if (compare) {
+        $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
+      }
+      else {
+        $$(self.options.container).find('.compare').html('N/A');
+      }
+    }
   };
   this.exit = function (data) {
     console.log('exit', data);
   };
   this.update = function (data) {
-    //console.log('update', data);
+    console.log('update', data);
+    var _query = self.options.query;
+    if (Array.isArray(self.options.query))
+      _query = _query[0];
+
+    var metrickey = _query.metrics[0].key || _query.metrics[0];
+    var metric = data[0].meta[metrickey];
+    var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
+
+    var value = data[0].metrics[metrickey];
+    $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
   };
 
   this.destroy = function () {
