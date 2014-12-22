@@ -125,8 +125,8 @@ var BarTable = module.exports = function (options, callback) {
         $tr = $$('<tr data-id="' + point.key + '" data-value="' + point.metrics[metrickey] + '" data-name="' + point.dimensions[dimensionkey] + '" data-value-sort="' + percentage + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
 
         //should we mark this row as active?
-        if (self.options.canvas && self.options.canvas.options._filters.length > 0) {
-          self.options.canvas.options._filters.forEach(function (filter) {
+        if (self.options.canvas && self.options.canvas.options.filters.length > 0) {
+          self.options.canvas.options.filters.forEach(function (filter) {
             if (filter.key === point.key)
               $tr.addClass('active');
           });
@@ -228,12 +228,19 @@ var BarTable = module.exports = function (options, callback) {
           return;
         }
 
-        $tr = $$('<tr data-id="' + base.key + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
         if (compare.missing)
           percentage = null;
         else
           percentage = ((base.metrics[metrickey] - compare.metrics[metrickey]) / compare.metrics[metrickey] * 100);
-
+        
+        $tr = $$('<tr data-id="' + base.key + '" data-value="' + base.metrics[metrickey] + '" data-name="' + base.dimensions[dimensionkey] + '" data-value-sort="' + percentage + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
+        //should we mark this row as active?
+        if (self.options.canvas && self.options.canvas.options.filters.length > 0) {
+          self.options.canvas.options.filters.forEach(function (filter) {
+            if (filter.key === base.key)
+              $tr.addClass('active');
+          });
+        }
         base_percentage = parseFloat(base.metrics[metrickey]) / total[0] * 100;
         if (base_percentage > 100)
           base_percentage = 100;

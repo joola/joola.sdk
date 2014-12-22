@@ -22,7 +22,7 @@ viz._id = 'viz';
 viz.DatePicker = require('./DatePicker');
 viz.MetricPicker = require('./MetricPicker');
 viz.DimensionPicker = require('./DimensionPicker');
-viz.Filters = require('./Filters');
+viz.FilterBox = require('./FilterBox');
 //panels
 viz.Canvas = require('./Canvas');
 
@@ -92,7 +92,7 @@ viz.initialize = function (self, options, callback) {
         self.options.query.forEach(function (query) {
           if (!query.filters)
             query.filter = [];
-          self.options.canvas.options._filters.forEach(function (f) {
+          self.options.canvas.options.filters.forEach(function (f) {
             f.filters.forEach(function (f2) {
               query.filter.push(f2);
             });
@@ -136,132 +136,130 @@ viz.fetch = function (context, query, callback) {
     query = context;
   }
   var _query = ce.clone(query);
-
-  if (!Array.isArray(_query)) {
-    if (context && context.options && context.options.canvas) {
-      context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
-      context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
-    }
-  }
-  else {
-    if (context && context.options && context.options.canvas) {
-      context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
-      context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
-    }
-  }
-  //adjust offset
-  if (_query.timeframe && typeof _query.timeframe === 'object') {
-    if (_query.timeframe.start)
-      _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
-    if (_query.timeframe.end)
-      _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
-  }
-  var args = [];
-  if (_query.authContext)
-    args.push(_query.authContext);
-  args.push(_query);
-  args.push(function (err, messages) {
-    if (err)
-      return callback(err);
-
-    if (!Array.isArray(messages))
-      messages = [messages];
-    messages.forEach(function (message, mindex) {
-      var _data = [];
-      if (context.data[mindex]) {
-        _data = context.data[mindex];
-        _data.forEach(function (item) {
-          item.state = 'exit';
-        });
+  viz.stop(context, function () {
+    if (!Array.isArray(_query)) {
+      if (context && context.options && context.options.canvas) {
+        context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
+        context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
       }
-      if (message && message.query && message.query.ts && message.query.ts.duration)
-        joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
-      if (message.realtime && context.realtimeQueries.indexOf(message.realtime) == -1)
-        context.realtimeQueries.push(message.realtime);
-      message.documents.forEach(function (doc, docindex) {
-        doc = {
-          dimensions: {},
-          metrics: {},
-          meta: {},
-          raw: ce.clone(doc),
-          state: 'enter',
-          type: message.query.type
-        };
-        var key = '';
-        message.dimensions.forEach(function (d) {
-          key += doc.raw.values[d.key];
-          doc.dimensions[d.key] = doc.raw.values[d.key];
-          doc.meta[d.key] = d;
-        });
-        message.metrics.forEach(function (m) {
-          doc.metrics[m.key] = doc.raw.values[m.key];
-          doc.meta[m.key] = m;
-        });
-        doc.key = joola.common.hash(key);
-        //lookup key
-        var exist = viz.lookup(_data, doc.key);
-        if (exist) {
-          var dirty = false;
-          Object.keys(exist.metrics).forEach(function (key) {
-            if (exist.metrics[key] !== doc.metrics[key]) {
-              dirty = true;
-              exist.metrics[key] = doc.metrics[key];
-            }
+    }
+    else {
+      if (context && context.options && context.options.canvas) {
+        context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
+        context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
+      }
+    }
+    //adjust offset
+    if (_query.timeframe && typeof _query.timeframe === 'object') {
+      if (_query.timeframe.start)
+        _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
+      if (_query.timeframe.end)
+        _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
+    }
+    var args = [];
+    if (_query.authContext)
+      args.push(_query.authContext);
+    args.push(_query);
+    args.push(function (err, messages) {
+      if (err)
+        return callback(err);
+      if (!Array.isArray(messages))
+        messages = [messages];
+      messages.forEach(function (message, mindex) {
+        var _data = [];
+        if (context.data[mindex]) {
+          _data = context.data[mindex];
+          _data.forEach(function (item) {
+            item.state = 'exit';
           });
-          if (dirty)
-            exist.state = 'update';
-          else
-            exist.state = 'static';
         }
-        else {
-          _data.push(doc);
+        if (message && message.query && message.query.ts && message.query.ts.duration)
+          joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
+        if (message.query.realtimeUID && context.realtimeQueries.indexOf(message.query.realtimeUID) == -1)
+          context.realtimeQueries.push(message.query.realtimeUID);
+        message.documents.forEach(function (doc, docindex) {
+          doc = {
+            dimensions: {},
+            metrics: {},
+            meta: {},
+            raw: ce.clone(doc),
+            state: 'enter',
+            type: message.query.type
+          };
+          var key = '';
+          message.dimensions.forEach(function (d) {
+            key += doc.raw.values[d.key];
+            doc.dimensions[d.key] = doc.raw.values[d.key];
+            doc.meta[d.key] = d;
+          });
+          message.metrics.forEach(function (m) {
+            doc.metrics[m.key] = doc.raw.values[m.key];
+            doc.meta[m.key] = m;
+          });
+          doc.key = joola.common.hash(key);
+          //lookup key
+          var exist = viz.lookup(_data, doc.key);
+          if (exist) {
+            var dirty = false;
+            Object.keys(exist.metrics).forEach(function (key) {
+              if (exist.metrics[key] !== doc.metrics[key]) {
+                dirty = true;
+                exist.metrics[key] = doc.metrics[key];
+              }
+            });
+            if (dirty)
+              exist.state = 'update';
+            else
+              exist.state = 'static';
+          }
+          else {
+            _data.push(doc);
+          }
+        });
+        context.data[mindex] = _data;
+      });
+
+      context.data[0].forEach(function (data, pointIndex) {
+        var point = [data];
+        var paired = {
+          missing: true,
+          meta: point.meta
+        };
+        if (context.data.length === 2) {
+          //find the pair
+          if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp) {
+            paired = context.data[1][pointIndex] || paired;
+          }
+          else {
+            paired = _.find(context.data[1], function (item) {
+              return item.key === data.key;
+            }) || paired;
+          }
+          if (paired || context.data.length > 1)
+            point = [data, paired];
+        }
+
+        if (data.state === 'enter' || paired.state === 'enter') {
+          if (context.options.enter)
+            context.options.enter.apply(context, [point, context.data]);
+          context.enter(point, context.data);
+        }
+        else if (data.state === 'update' || paired.state === 'update') {
+          if (context.options.update)
+            context.options.update.apply(context, [point, context.data]);
+          context.update(point, context.data);
+        }
+        else if (data.state === 'exit' || paired.state === 'exit') {
+          context.data[0].splice(pointIndex, 1);
+          if (context.options.exit)
+            context.options.exit.apply(context, [point, context.data]);
+          context.exit(point, context.data);
         }
       });
-      context.data[mindex] = _data;
+      return callback(null, context.data);
     });
 
-    context.data[0].forEach(function (data, pointIndex) {
-      var point = [data];
-      var paired = {
-        missing: true,
-        meta: point.meta
-      };
-      if (context.data.length === 2) {
-        //find the pair
-        if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp) {
-          paired = context.data[1][pointIndex] || paired;
-        }
-        else {
-          paired = _.find(context.data[1], function (item) {
-            return item.key === data.key;
-          }) || paired;
-        }
-        if (paired || context.data.length > 1)
-          point = [data, paired];
-      }
-
-      if (data.state === 'enter' || paired.state === 'enter') {
-        if (context.options.enter)
-          context.options.enter.apply(context, [point, context.data]);
-        context.enter(point, context.data);
-      }
-      else if (data.state === 'update' || paired.state === 'update') {
-        if (context.options.update)
-          context.options.update.apply(context, [point, context.data]);
-        context.update(point, context.data);
-      }
-      else if (data.state === 'exit' || paired.state === 'exit') {
-        context.data[0].splice(pointIndex, 1);
-        if (context.options.exit)
-          context.options.exit.apply(context, [point, context.data]);
-        context.exit(point, context.data);
-      }
-    });
-    return callback(null, context.data);
-  });
-
-  viz.stop(context, function () {
-    console.log('q', args);
+    //console.log('q', args);
     joola.query.fetch.apply(context, args);
   });
 };

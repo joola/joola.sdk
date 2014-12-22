@@ -31,7 +31,7 @@ var Canvas = module.exports = function (options, callback) {
     visualizations: {},
     metrics: [],
     dimensions: [],
-    _filters: [],
+    filters: [],
     state: {}
   };
 
@@ -142,10 +142,10 @@ var Canvas = module.exports = function (options, callback) {
     var self = this;
     if (self.options.onDraw)
       window[self.options.onDraw](self);
-    if (self.options.filters && self.options.filters.container) {
-      self.options.filters.canvas = self;
-      new joola.viz.Filters(self.options.filters, function (err, ref) {
-        self.options.filters.ref = ref;
+    if (self.options.filterbox && self.options.filterbox.container) {
+      self.options.filterbox.canvas = self;
+      new joola.viz.FilterBox(self.options.filterbox, function (err, ref) {
+        self.options.filterbox.ref = ref;
       });
     }
     if (self.options.datepicker && self.options.datepicker.container) {
@@ -190,13 +190,13 @@ var Canvas = module.exports = function (options, callback) {
               case 'bartable':
                 new joola.viz.BarTable(viz).on('select', function (point, ref) {
                   var filter = self.buildFilter(point);
-                  var exist = _.find(self.options._filters, function (filter) {
+                  var exist = _.find(self.options.filters, function (filter) {
                     return filter.key === point.key;
                   });
                   if (exist)
                     self.emit('removefilter', point.key);
                   else {
-                    self.emit('addfilter', point.key, filter);
+                    self.emit('addfilter', point.key, point.meta, filter);
                   }
                 });
                 break;
@@ -249,33 +249,38 @@ var Canvas = module.exports = function (options, callback) {
       });
     }
 
-    self.on('addfilter', function (key, filter) {
+    self.on('addfilter', function (key, meta, filter) {
       var found = false;
-      for (var i = 0; i < self.options._filters.length; i++) {
-        if (self.options._filters[i].key === key) {
+      for (var i = 0; i < self.options.filters.length; i++) {
+        if (self.options.filters[i].key === key) {
           found = true;
         }
       }
       if (!found) {
-        self.options._filters.push({key: key, filters: filter});
+        self.options.filters.push({key: key, filters: filter});
         filter.forEach(function (f) {
           var $filter = $$('<div data-id="' + key + '" class="filter"></div>');
-          var text = f[0] + ':<strong>' + f[2] + '</strong>';
+          var text = meta[f[0]].name + ': <strong class="value">' + f[2] + '</strong>';
           var $inner = $$('<span class="caption">' + text + '</span>');
+          var $close = $$('<span class="close">x</span>');
+          $close.on('click', function () {
+            self.emit('removefilter', key);
+          });
           $filter.append($inner);
-          if (self.options.filters && self.options.filters.ref)
-            self.options.filters.ref.options.$container.append($filter);
+          $filter.append($close);
+          if (self.options.filterbox && self.options.filterbox.ref)
+            self.options.filterbox.ref.options.$container.find('.filterbox').append($filter);
           self.emit('filterchange');
         });
       }
     });
     self.on('removefilter', function (key) {
-      for (var i = 0; i < self.options._filters.length; i++) {
-        if (self.options._filters[i].key === key) {
-          self.options._filters.splice(i, 1);
-          if (self.options.filters && self.options.filters.ref)
-            self.options.filters.ref.options.$container.find('[data-id="' + key + '"]').remove();
-          i = self.options._filters.length;
+      for (var i = 0; i < self.options.filters.length; i++) {
+        if (self.options.filters[i].key === key) {
+          self.options.filters.splice(i, 1);
+          if (self.options.filterbox && self.options.filterbox.ref)
+            self.options.filterbox.ref.options.$container.find('[data-id="' + key + '"]').remove();
+          i = self.options.filters.length;
           self.emit('filterchange');
         }
       }

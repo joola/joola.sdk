@@ -13,18 +13,19 @@ var
   $$ = require('jquery'),
   _ = require('underscore');
 
-var Filters = module.exports = function (options, callback) {
+var FilterBox = module.exports = function (options, callback) {
   var self = this;
 
   //mixin
-  this.type = 'filters';
+  this.type = 'filterbox';
   this.uuid = joola.common.uuid();
   this.initialized = false;
   this.data = [];
   this.options = {
     container: null,
-    template: '<div class="jio filtersbox">' +
-    '</div>'
+    template: '<div class="filterbox">' +
+    '</div>' +
+    '<div class="jio clearfix">'
   };
   this.verify = function (options) {
     return null;
@@ -69,7 +70,7 @@ var Filters = module.exports = function (options, callback) {
 joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
-    $.fn.Filters = function (options, callback) {
+    $.fn.FilterBox = function (options, callback) {
       if (!options)
         options = {force: false};
       else if (!options.hasOwnProperty('force'))
@@ -95,7 +96,7 @@ joola.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.Filters(options, function (err, filters) {
+        result = new joola.viz.FilterBox(options, function (err, filterbox) {
           if (err)
             throw err;
         }).options.$container;

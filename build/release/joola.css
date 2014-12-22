@@ -14,6 +14,10 @@
   font-family: Signika, helvetica, arial, sans-serif;
 }
 
+[jio-domain="joola"] .clearfix {
+  clear: both;
+}
+
 [jio-domain="joola"] .btn-group, .btn-group-vertical {
   position: relative;
   display: inline-block;
@@ -766,16 +770,32 @@
   box-sizing: border-box;
 }
 
-[jio-type="filters"] {
+[jio-type="filterbox"] {
   padding: 5px;
   margin: 0;
   float: none;
   border-top: 0;
   min-height: 0;
   text-align: center;
-  border:1px solid red;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
 }
 
+[jio-type="filterbox"] .filter {
+  float: left;
+  padding: 3px;
+  border: 1px solid #ddd;
+  float: left;
+}
+
+[jio-type="filterbox"] .filter:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+[jio-type="filterbox"] .close {
+  padding-left: 5px;
+  cursor: pointer;
+}
 [jio-type="metric"] {
   padding: 5px;
   margin: 0;

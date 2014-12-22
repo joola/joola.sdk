@@ -1,0 +1,26 @@
+[jio-type="filterbox"] {
+  padding: 5px;
+  margin: 0;
+  float: none;
+  border-top: 0;
+  min-height: 0;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+[jio-type="filterbox"] .filter {
+  float: left;
+  padding: 3px;
+  border: 1px solid #ddd;
+  float: left;
+}
+
+[jio-type="filterbox"] .filter:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+[jio-type="filterbox"] .close {
+  padding-left: 5px;
+  cursor: pointer;
+}
