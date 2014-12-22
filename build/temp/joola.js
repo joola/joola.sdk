@@ -37823,6 +37823,11 @@ var Table = module.exports = function (options, callback) {
     container: null,
     colors: [],
     offcolors: [],
+    paging: {
+      currentPage: 1,
+      sizes: [10, 50, 100, 500, 1000],
+      currentSize: 10
+    },
     template: '<div class="table-caption"></div>' +
     '<div class="controls">' +
     ' <div class="primary-dimension-picker">Primary dimension picker</div>' +
@@ -37839,16 +37844,15 @@ var Table = module.exports = function (options, callback) {
     '<div class="paging">' +
     ' <div class="paging-wrapper">' +
     '   <div class="page-size">' +
-    '     <span class="caption">Page size:</span>' +
+    '     <span class="caption">Page size: </span>' +
     '     <select>' +
-    '       <option value="10">10</option>' +
     '     </select>' +
     '   </div>' +
     ' </div>' +
-    ' <div class="showing">1 - 10 of 44</div>' +
+    ' <div class="showing"></div>' +
     ' <div class="navigation">' +
-    '   <div class="prev">Prev</div>' +
-    '   <div class="next">Next</div>' +
+    '   <div class="prev chevron left"></div>' +
+    '   <div class="next chevron right"></div>' +
     ' </div>' +
     '</div>',
     query: null,
@@ -37900,6 +37904,7 @@ var Table = module.exports = function (options, callback) {
         $tr.append($td);
       });
     }
+    self.handlePaging();
   }
   ;
   this.exit = function (data, alldata) {
@@ -37911,6 +37916,20 @@ var Table = module.exports = function (options, callback) {
 
   this.destroy = function () {
     $$(self.options.container).find('table').empty();
+  };
+
+  this.handlePaging = function () {
+    var page = 1;
+    var pageSize = 10;
+
+    var $showing = $$(self.options.$container.find('.showing'));
+
+    var total = self.data[0].length;
+    var to = page * pageSize;
+    if (to > total)
+      to = total;
+    var showingText = ((page - 1) * 10 + 1) + ' - ' + to + ' of ' + total;
+    $showing.text(showingText);
   };
 
   this.sort = function () {
@@ -37944,10 +37963,16 @@ var Table = module.exports = function (options, callback) {
     $tbody = $$($tbody);
     $tbody.empty();
     var $tr = $$('<tr class="loading"></tr>');
-    var $td = $$('<td class="loading" colspan="2">' + self.options.strings.loading + '</td>');
+    var $td = $$('<td class="loading" colspan="' + (self.options.query[0].dimensions.length + self.options.query[0].metrics.length) + '">' + self.options.strings.loading + '</td>');
     $tr.append($td);
     $tbody.append($tr);
     $html.find('table').append($tbody);
+
+    var $pageSize = $$($html.find('.page-size select'));
+    self.options.paging.sizes.forEach(function (size) {
+      var $option = $$('<option value="' + size + '">' + size + '</option>');
+      $pageSize.append($option);
+    });
   };
 
   if (options && options.query && !Array.isArray(options.query))
