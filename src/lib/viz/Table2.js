@@ -401,7 +401,7 @@ var Table = module.exports = function (options, callback) {
     self.sort();
     if (self.data.length === 0) {
       var $tbody = $$(self.options.container).find('tbody');
-      $tbody = $$($tbody)
+      $tbody = $$($tbody);
       $tbody.empty();
       var $tr = $('<tr class="nodata"></tr>');
       var $td = $('<td colspan="2">' + self.options.strings.nodata + '</td>');

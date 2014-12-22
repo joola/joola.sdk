@@ -22,7 +22,7 @@ viz._id = 'viz';
 viz.DatePicker = require('./DatePicker');
 viz.MetricPicker = require('./MetricPicker');
 viz.DimensionPicker = require('./DimensionPicker');
-
+viz.Filters = require('./Filters');
 //panels
 viz.Canvas = require('./Canvas');
 
@@ -73,8 +73,31 @@ viz.initialize = function (self, options, callback) {
       //subscribe to default events
 
       self.options.canvas.on('datechange', function (dates) {
+        if (!self.options)
+          return;
+        if (!self.options.query)
+          return;
         //let's change our query and fetch again
         self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0], dates));
+        viz.destroy(self, {loading: true});
+        return viz.initialize(self, self.options);
+      });
+
+      self.options.canvas.on('filterchange', function () {
+        if (!self.options)
+          return;
+        if (!self.options.query)
+          return;
+
+        self.options.query.forEach(function (query) {
+          if (!query.filters)
+            query.filter = [];
+          self.options.canvas.options._filters.forEach(function (f) {
+            f.filters.forEach(function (f2) {
+              query.filter.push(f2);
+            });
+          });
+        });
         viz.destroy(self, {loading: true});
         return viz.initialize(self, self.options);
       });
@@ -238,6 +261,7 @@ viz.fetch = function (context, query, callback) {
   });
 
   viz.stop(context, function () {
+    console.log('q', args);
     joola.query.fetch.apply(context, args);
   });
 };

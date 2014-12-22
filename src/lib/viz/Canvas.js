@@ -10,8 +10,8 @@
 
 var
   joola = require('../index'),
-  EventEmitter2 = require('eventemitter2').EventEmitter2,
-
+  events = require('events'),
+  util = require('util'),
   _ = require('underscore'),
   ce = require('cloneextend'),
   $$ = require('jquery');
@@ -21,19 +21,6 @@ var Canvas = module.exports = function (options, callback) {
     callback = function () {
     };
   joola.events.emit('canvas.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-  _events = new EventEmitter2({wildcard: true, newListener: true});
-  for (var y in _events) {
-    this[y] = _events[y];
-    this._super[y] = _events[y];
-  }
-
   var self = this;
 
   this._id = '_canvas';
@@ -44,11 +31,12 @@ var Canvas = module.exports = function (options, callback) {
     visualizations: {},
     metrics: [],
     dimensions: [],
+    _filters: [],
     state: {}
   };
 
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
+  this.verify = function (options) {
+    return null;
   };
 
   this.prepareQuery = function (query, dates) {
@@ -139,10 +127,27 @@ var Canvas = module.exports = function (options, callback) {
     return $container.find('.active').attr('data-id');
   };
 
+  this.buildFilter = function (point) {
+    var filters = [];
+    Object.keys(point.dimensions).forEach(function (key) {
+      var dimension = point.meta[key];
+      var value = point.dimensions[key];
+      var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
+      filters.push(filter);
+    });
+    return filters;
+  };
+
   this.draw = function (options, callback) {
     var self = this;
     if (self.options.onDraw)
       window[self.options.onDraw](self);
+    if (self.options.filters && self.options.filters.container) {
+      self.options.filters.canvas = self;
+      new joola.viz.Filters(self.options.filters, function (err, ref) {
+        self.options.filters.ref = ref;
+      });
+    }
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
@@ -183,7 +188,17 @@ var Canvas = module.exports = function (options, callback) {
                 new joola.viz.MiniTable(viz);
                 break;
               case 'bartable':
-                new joola.viz.BarTable(viz);
+                new joola.viz.BarTable(viz).on('select', function (point, ref) {
+                  var filter = self.buildFilter(point);
+                  var exist = _.find(self.options._filters, function (filter) {
+                    return filter.key === point.key;
+                  });
+                  if (exist)
+                    self.emit('removefilter', point.key);
+                  else {
+                    self.emit('addfilter', point.key, filter);
+                  }
+                });
                 break;
               case 'pie':
                 new joola.viz.Pie(viz);
@@ -233,6 +248,38 @@ var Canvas = module.exports = function (options, callback) {
         }
       });
     }
+
+    self.on('addfilter', function (key, filter) {
+      var found = false;
+      for (var i = 0; i < self.options._filters.length; i++) {
+        if (self.options._filters[i].key === key) {
+          found = true;
+        }
+      }
+      if (!found) {
+        self.options._filters.push({key: key, filters: filter});
+        filter.forEach(function (f) {
+          var $filter = $$('<div data-id="' + key + '" class="filter"></div>');
+          var text = f[0] + ':<strong>' + f[2] + '</strong>';
+          var $inner = $$('<span class="caption">' + text + '</span>');
+          $filter.append($inner);
+          if (self.options.filters && self.options.filters.ref)
+            self.options.filters.ref.options.$container.append($filter);
+          self.emit('filterchange');
+        });
+      }
+    });
+    self.on('removefilter', function (key) {
+      for (var i = 0; i < self.options._filters.length; i++) {
+        if (self.options._filters[i].key === key) {
+          self.options._filters.splice(i, 1);
+          if (self.options.filters && self.options.filters.ref)
+            self.options.filters.ref.options.$container.find('[data-id="' + key + '"]').remove();
+          i = self.options._filters.length;
+          self.emit('filterchange');
+        }
+      }
+    });
     if (typeof callback === 'function') {
       return callback(null, self);
     }
@@ -245,34 +292,24 @@ var Canvas = module.exports = function (options, callback) {
   };
 
   //here we go
-  joola.common.mixin(self.options, options, true);
-  self.verify(self.options, function (err) {
-    if (err) {
-      return callback(err);
+  joola.viz.initialize(self, options || {});
+
+  self.draw();
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
     }
+  }
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
+  }
 
-    self.options.$container = $$(self.options.container);
-    self.markContainer(self.options.$container, {
-      attr: [
-        {'type': 'canvas'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ],
-      css: self.options.css
-    }, function (err) {
-      if (err) {
-        return callback(err);
-      }
-
-      joola.viz.onscreen.push(self);
-      joola.events.emit('canvas.init.finish', self);
-      self.draw(options, function () {
-        if (typeof callback === 'function') {
-          return callback(null, self);
-        }
-      });
-    });
-  });
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
 
   return self;
 };
@@ -311,3 +348,5 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
+
+util.inherits(Canvas, events.EventEmitter);

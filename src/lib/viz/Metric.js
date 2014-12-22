@@ -16,13 +16,6 @@ var
 var Metric = module.exports = function (options, callback) {
   var self = this;
 
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-
   this.type = 'metric';
   this.uuid = joola.common.uuid();
   this.initialized = false;
