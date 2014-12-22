@@ -1,19 +1,28 @@
 [jio-type="filterbox"] {
+
+}
+
+[jio-type="filterbox"] .filterbox {
   padding: 5px;
   margin: 0;
-  float: none;
+  
   border-top: 0;
   min-height: 0;
-  text-align: center;
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
+  display:none;
+}
+
+[jio-type="filterbox"] .filterbox:not(:empty) {
+  display: block;
 }
 
 [jio-type="filterbox"] .filter {
-  float: left;
-  padding: 3px;
+  display:inline-block;
+  padding: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
   border: 1px solid #ddd;
-  float: left;
 }
 
 [jio-type="filterbox"] .filter:not(:first-of-type) {
