@@ -24,8 +24,7 @@ var FilterBox = module.exports = function (options, callback) {
   this.options = {
     container: null,
     template: '<div class="filterbox">' +
-    '</div>' +
-    '<div class="jio clearfix">'
+    '</div>'
   };
   this.verify = function (options) {
     return null;
