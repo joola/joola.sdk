@@ -9,6 +9,9 @@
  **/
 
 var
+  events = require('events'),
+  util = require('util'),
+  
   joola = require('../index'),
   $$ = require('jquery'),
   _ = require('underscore');
@@ -45,7 +48,7 @@ var Metric = module.exports = function (options, callback) {
       if (!Array.isArray(self.options.query))
         self.options.query = [self.options.query];
       if (self.options.query[0].dimensions && self.options.query[0].dimensions.length > 0)
-        return 'Please specify a single dimension.';
+        return 'Please don\'t specify a dimension.';
       if (self.options.query[0].metrics && (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1) || !self.options.query[0].metrics)
         return 'Please specify a single metric.';
     }
@@ -109,6 +112,10 @@ var Metric = module.exports = function (options, callback) {
 
     var value = data[0].metrics[metrickey];
     $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+  };
+
+  this.done = function () {
+    self.emit('done');
   };
 
   this.destroy = function () {
@@ -199,3 +206,5 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
+
+util.inherits(Metric, events.EventEmitter);

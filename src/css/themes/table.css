@@ -40,6 +40,15 @@
   text-align: right;
 }
 
+[jio-type="table"] .table td.caption.change {
+  font-weight: bold;
+}
+
+[jio-type="table"] .table td.value.change {
+  text-align: right;
+  font-weight: bold;
+}
+
 [jio-type="table"] .table.table-striped tbody > tr:nth-child(even) > td {
   background-color: white;
 }

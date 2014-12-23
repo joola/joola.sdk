@@ -127,13 +127,15 @@ var Canvas = module.exports = function (options, callback) {
     return $container.find('.active').attr('data-id');
   };
 
-  this.buildFilter = function (point) {
+  this.buildFilter = function (point, dimensionkey) {
     var filters = [];
     Object.keys(point.dimensions).forEach(function (key) {
-      var dimension = point.meta[key];
-      var value = point.dimensions[key];
-      var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
-      filters.push(filter);
+      if (dimensionkey && dimensionkey === key || !dimensionkey) {
+        var dimension = point.meta[key];
+        var value = point.dimensions[key];
+        var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
+        filters.push(filter);
+      }
     });
     return filters;
   };
@@ -182,21 +184,31 @@ var Canvas = module.exports = function (options, callback) {
                 new joola.viz.Metric(viz);
                 break;
               case 'table':
-                new joola.viz.Table(viz);
+                new joola.viz.Table(viz).on('select', function (point, dimensionkey) {
+                  var filter = self.buildFilter(point, dimensionkey);
+                  var exist = _.find(self.options.filters, function (filter) {
+                    return filter.key === point.key + dimensionkey;
+                  });
+                  if (exist)
+                    self.emit('removefilter', point.key + dimensionkey);
+                  else {
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                  }
+                });
                 break;
               case 'minitable':
                 new joola.viz.MiniTable(viz);
                 break;
               case 'bartable':
-                new joola.viz.BarTable(viz).on('select', function (point, ref) {
-                  var filter = self.buildFilter(point);
+                new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                  var filter = self.buildFilter(point, dimensionkey);
                   var exist = _.find(self.options.filters, function (filter) {
-                    return filter.key === point.key;
+                    return filter.key === point.key + dimensionkey;
                   });
                   if (exist)
-                    self.emit('removefilter', point.key);
+                    self.emit('removefilter', point.key + dimensionkey);
                   else {
-                    self.emit('addfilter', point.key, point.meta, filter);
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
                   }
                 });
                 break;

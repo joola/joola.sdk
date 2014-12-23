@@ -100,16 +100,27 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
-  this.min_date.setMonth(this.min_date.getMonth() - 6);
-  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
+  if (options.mindate)
+    this.min_date = options.min_date;
+  //this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
+  //this.min_date.setMonth(this.min_date.getMonth() - 6);
+  if (options.maxdate)
+    this.max_date = options.maxdate;
+  else
+    this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
   this.max_date.setHours(23);
   this.max_date.setMinutes(59);
   this.max_date.setSeconds(59);
   this.max_date.setMilliseconds(999);
 
-  this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -90);
+  if (options.todate)
+    this.base_todate = new Date(options.todate);
+  else
+    this.base_todate = new Date(this.max_date);
+  if (options.fromdate)
+    this.base_fromdate = new Date(options.fromdate);
+  else
+    this.base_fromdate = self.addDays(this.base_todate, -30);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -118,12 +129,18 @@ var DatePicker = module.exports = function (options, callback) {
   }
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
-  this.compare_todate = self.addDays(this.base_fromdate, -1);
+  if (options.compare_todate)
+    this.compare_todate = options.compare_todate;
+  else
+    this.compare_todate = self.addDays(this.base_fromdate, -1);
   this.compare_todate.setHours(23);
   this.compare_todate.setMinutes(59);
   this.compare_todate.setSeconds(59);
   this.compare_todate.setMilliseconds(999);
-  this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
+  if (options.compare_fromdate)
+    this.compare_fromdate = options.compare_fromdate;
+  else
+    this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
 
   this.original_base_fromdate = this.base_fromdate;
   this.original_base_todate = this.base_todate;
@@ -135,8 +152,8 @@ var DatePicker = module.exports = function (options, callback) {
   this.applied_compare_fromdate = this.compare_fromdate;
   this.applied_compare_todate = this.compare_todate;
 
-  this.comparePeriod = false;
-  this.isCompareChecked = false;
+  this.comparePeriod = options.compare || false;
+  this.isCompareChecked = options.compare || false;
 
   //self.getState(self);
 
@@ -197,10 +214,10 @@ var DatePicker = module.exports = function (options, callback) {
     $container.append($table);
 
     var $dates = $table.find('.dates');
-    $dates.append('<span class="datelabel fromdate">' + self.formatDate(self.base_fromdate) + '</span>');
+    $dates.append('<span class="datelabel fromdate">' + joola.common.formatDate(self.base_fromdate) + '</span>');
     $dates.append(' - ');
-    $dates.append('<span class="datelabel todate">' + self.formatDate(self.base_todate) + '</span>');
-    $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + self.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + self.formatDate(self.compare_todate) + '</span></div>');
+    $dates.append('<span class="datelabel todate">' + joola.common.formatDate(self.base_todate) + '</span>');
+    $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + joola.common.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + joola.common.formatDate(self.compare_todate) + '</span></div>');
 
     if (self.comparePeriod) {
       $container.find('.dates .compare').show();
@@ -346,10 +363,9 @@ var DatePicker = module.exports = function (options, callback) {
                 $container.find('.compareoption .checker').removeAttr('disabled');
               }
             }
-            //$$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-            $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
             $$($container.find('.daterange.baserange .dateoption')[0]).removeClass('invalid');
-            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_fromdate));
             $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
 
             break;
@@ -359,8 +375,7 @@ var DatePicker = module.exports = function (options, callback) {
             self.base_todate.setMinutes(59);
             self.base_todate.setSeconds(59);
             self.base_todate.setMilliseconds(999);
-            //$$($$('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
             $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
             if (self.isCompareChecked) {
               self.currentMode = 'compare-from';
@@ -383,10 +398,10 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
             $$($container.find('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
 
-            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_fromdate));
             $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'compare-to';
             break;
@@ -396,7 +411,7 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
             $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'base-from';
             break;
@@ -426,10 +441,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.baserange .dateoption')[0]).blur(function (e) {
-      //if ($$($$('.daterange.baserange .dateoption')[0]).hasClass('invalid')) {
-      //    $$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      //}
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -451,14 +463,13 @@ var DatePicker = module.exports = function (options, callback) {
       }
     });
 
-
     $$($container.find('.daterange.baserange .dateoption')[1]).focus(function (e) {
       self.currentMode = 'base-to';
       self.handleChange();
     });
 
     $$($container.find('.daterange.baserange .dateoption')[1]).blur(function (e) {
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -486,7 +497,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.comparerange .dateoption')[0]).blur(function (e) {
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -514,7 +525,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.comparerange .dateoption')[1]).blur(function (e) {
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -555,10 +566,10 @@ var DatePicker = module.exports = function (options, callback) {
           $container.find('.compareoption .checker').prop('checked', true);
         }
       }
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
 
@@ -624,17 +635,17 @@ var DatePicker = module.exports = function (options, callback) {
       self.compare_todate = self.addDays(self.base_fromdate, -1);
       self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
 
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
     });
-    $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-    $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-    $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-    $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+    $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+    $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+    $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+    $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
     var $dateboxcontainer = $container.find('.jcontainer');
     $dateboxcontainer.off('click');
@@ -743,8 +754,8 @@ var DatePicker = module.exports = function (options, callback) {
     var $fromdate = $$(self.options.$container.find('.dates .datelabel.fromdate')[0]);
     var todate = $$(self.options.$container.find('.dates .datelabel.todate')[0]);
 
-    $fromdate.text(self.formatDate(_this.applied_base_fromdate));
-    todate.text(self.formatDate(_this.applied_base_todate));
+    $fromdate.text(joola.common.formatDate(_this.applied_base_fromdate));
+    todate.text(joola.common.formatDate(_this.applied_base_todate));
 
     $$(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
@@ -758,47 +769,6 @@ var DatePicker = module.exports = function (options, callback) {
 
     if (self.options.onUpdate)
       window[self.options.onUpdate](self.container, self);
-  };
-
-  this.formatDate = function (date) {
-    var format = function (date, formatString) {
-      var formatDate = date;
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      var yyyy = formatDate.getFullYear();
-      var yy = yyyy.toString().substring(2);
-      var m = formatDate.getMonth() + 1;
-      var mm = m < 10 ? "0" + m : m;
-      var mmm = months[m - 1];
-      var d = formatDate.getDate();
-      var dd = d < 10 ? "0" + d : d;
-      var fff = formatDate.getMilliseconds().toString();
-      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
-      var h = formatDate.getHours();
-      var hh = h < 10 ? "0" + h : h;
-      var n = formatDate.getMinutes();
-      var nn = n < 10 ? "0" + n : n;
-      var s = formatDate.getSeconds();
-      var ss = s < 10 ? "0" + s : s;
-
-      formatString = formatString.replace(/yyyy/i, yyyy);
-      formatString = formatString.replace(/yy/i, yy);
-      formatString = formatString.replace(/mmm/i, mmm);
-      formatString = formatString.replace(/mm/i, mm);
-      //formatString = formatString.replace(/m/i, m);
-      formatString = formatString.replace(/dd/i, dd);
-      //formatString = formatString.replace(/d/i, d);
-      formatString = formatString.replace(/hh/i, hh);
-      //formatString = formatString.replace(/h/i, h);
-      formatString = formatString.replace(/nn/i, nn);
-      //formatString = formatString.replace(/n/i, n);
-      formatString = formatString.replace(/ss/i, ss);
-      formatString = formatString.replace(/fff/i, fff);
-      //formatString = formatString.replace(/s/i, s);
-
-      return formatString;
-    };
-
-    return format(date, 'mmm dd, yyyy');
   };
 
   this.drawCell = function (date) {
@@ -879,11 +849,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'base-from':
         if (self.base_fromdate < self.min_date) {
           self.base_fromdate = self.min_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
         }
         if (self.base_fromdate > self.max_date) {
           self.base_fromdate = self.max_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
         }
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).addClass('active');
         $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
@@ -894,11 +864,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'base-to':
         if (self.base_todate < self.min_date) {
           self.base_todate = self.min_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
         }
         if (self.base_todate > self.max_date) {
           self.base_todate = self.max_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
         }
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
         $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).addClass('active');
@@ -909,11 +879,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'compare-from':
         if (self.compare_fromdate < self.min_date) {
           self.compare_fromdate = self.min_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
         }
         if (self.compare_fromdate > self.max_date) {
           self.compare_fromdate = self.max_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
         }
 
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
@@ -925,11 +895,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'compare-to':
         if (self.compare_todate < self.min_date) {
           self.compare_todate = self.min_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
         }
         if (self.compare_todate > self.max_date) {
           self.compare_todate = self.max_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
         }
 
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
@@ -949,8 +919,8 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
 
       if (this.currentMode == 'compare-to')
@@ -985,8 +955,8 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
     });
