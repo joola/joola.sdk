@@ -359,8 +359,9 @@ var Table = module.exports = function (options, callback) {
         if (ref.data.length > 0) {
           var total = ref.data[0][0].metrics[m.key];
           var comparetotal;
-          if (ref.data.length === 2)
+          if (ref.data.length === 2 && ref.data[1].length > 0 && ref.data[1].type !== 'overall') {
             comparetotal = ref.data[1][0].metrics[m.key];
+          }
           var $summaries = $$('.value.metric[data-key="' + m.key + '"]');
           $summaries.each(function (index, summary) {
             var $summary = $$(summary);
@@ -410,7 +411,6 @@ var Table = module.exports = function (options, callback) {
       var $metric_tr = $$('<tr class="metricboxes"></tr>');
       self.options.query[0].dimensions.forEach(function (d) {
         var $td = $$('<td class="metricbox dimension"></td>');
-
         $metric_tr.append($td);
       });
 
@@ -421,11 +421,21 @@ var Table = module.exports = function (options, callback) {
         _query.forEach(function (q) {
           q.dimensions = [];
           q.metrics = [m];
+          if (!q.filter)
+            q.filter = [];
+          if (q.filter.length > 0) {
+            var _q = ce.clone(q);
+            _q.filter = [];
+            _q.type = 'overall';
+            _query.push(_q);
+          }
         });
+       
         if (!self.summaries)
           self.summaries = {};
         self.summaries[m.key] = new joola.viz.Metric({
           container: $td.get(0),
+          //canvas: self.options.canvas,
           query: _query
         });
         self.summaries[m.key].on('done', function () {

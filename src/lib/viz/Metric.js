@@ -11,7 +11,7 @@
 var
   events = require('events'),
   util = require('util'),
-  
+  ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery'),
   _ = require('underscore');
@@ -67,9 +67,24 @@ var Metric = module.exports = function (options, callback) {
       self.options.enter.apply(self, [data, alldata]);
 
     if (data.length === 1) {
-      $$(self.options.container).find('.summary').hide();
+      $$(self.options.container).find('.summary').show();
       var value = data[0].metrics[metrickey];
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+      var $$summary = $$($$(self.options.container).find('.summary'));
+      var total = data[0].metrics[metrickey];
+      $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
+    }
+    else if (data.length === 2 && data[1].type === 'overall') {
+      $$(self.options.container).find('.summary').show();
+      var value = data[0].metrics[metrickey];
+      $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+      var $$summary = $$($$(self.options.container).find('.summary'));
+      if (data[1].type === 'overall') {
+        var total = data[1].metrics[metrickey];
+        var percentage = (value / total * 100).toFixed() + '%';
+        $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
+        self.options.query.splice(1, 1);
+      }
     }
     else {
       $$(self.options.container).find('.summary').show();
@@ -83,14 +98,20 @@ var Metric = module.exports = function (options, callback) {
       else {
         change = 'N/A';
       }
+      var $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary.html('<span class="base"></span>' +
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
       $$(self.options.container).find('.base').html(joola.common.formatMetric(base, metric));
+
       if (compare) {
         $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
       }
       else {
         $$(self.options.container).find('.compare').html('N/A');
       }
+
     }
   };
 
@@ -131,10 +152,23 @@ var Metric = module.exports = function (options, callback) {
     }
     $html.find('.value').html(self.options.strings.nodata);
     //visualization specific drawing
+    //if we have a filter, let's add a query for the overall
+    if (self.options.query.length === 1) {
+      var q = self.options.query[0];
+      if (!q.filter)
+        q.filter = [];
+      if (q.filter.length > 0) {
+        var _q = ce.clone(q);
+        _q.filter = [];
+        _q.type = 'overall';
+        self.options.query.push(_q);
+      }
+    }
   };
 
   if (options && options.query && !Array.isArray(options.query))
     options.query = [options.query];
+
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
