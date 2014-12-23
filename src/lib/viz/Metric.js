@@ -27,14 +27,14 @@ var Metric = module.exports = function (options, callback) {
     container: null,
     caption: '',
     template: '<div class="jio metricbox">' +
-    '<div class="value"></div>' +
-    '<div class="summary" style="display:none;">' +
-    '<span class="base"></span>' +
-    '<span class="sep">vs.</span>' +
-    '<span class="compare"></span>' +
-    '</div>' +
-    '<div class="caption"></div>' +
-    '</div>',
+      '<div class="value"></div>' +
+      '<div class="summary" style="display:none;">' +
+      '<span class="base"></span>' +
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>' +
+      '</div>' +
+      '<div class="caption"></div>' +
+      '</div>',
     query: null,
     strings: {
       loading: '---',
@@ -66,6 +66,7 @@ var Metric = module.exports = function (options, callback) {
     if (self.options.enter)
       self.options.enter.apply(self, [data, alldata]);
 
+
     if (data.length === 1) {
       $$(self.options.container).find('.summary').show();
       var value = data[0].metrics[metrickey];
@@ -88,22 +89,22 @@ var Metric = module.exports = function (options, callback) {
     }
     else {
       $$(self.options.container).find('.summary').show();
-      var base = data[0].metrics[metrickey];
-      var compare = null;
-      var change = 0;
-      if (!data[1].missing) {
+      var base, compare, change = 0;
+      if (!data[0].missing)
+        base = data[0].metrics[metrickey];
+      if (!data[1].missing)
         compare = data[1].metrics[metrickey];
+      if (base && compare)
         change = joola.common.percentageChange(compare, base) + '%';
-      }
-      else {
+      else
         change = 'N/A';
-      }
+
       var $$summary = $$($$(self.options.container).find('.summary'));
       $$summary.html('<span class="base"></span>' +
-      '<span class="sep">vs.</span>' +
-      '<span class="compare"></span>');
+        '<span class="sep">vs.</span>' +
+        '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
-      $$(self.options.container).find('.base').html(joola.common.formatMetric(base, metric));
+      $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
       if (compare) {
         $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));

@@ -219,7 +219,9 @@ viz.fetch = function (context, query, callback) {
         context.data[mindex] = _data;
       });
 
+      var handled = [];
       context.data[0].forEach(function (data, pointIndex) {
+        handled.push(data.key);
         var point = [data];
         var paired = {
           missing: true,
@@ -256,6 +258,37 @@ viz.fetch = function (context, query, callback) {
           context.exit(point, context.data);
         }
       });
+      if (context.data.length > 1) {
+        context.data[1].forEach(function (data, pointIndex) {
+          if (handled.indexOf(data.key) === -1) {
+            var paired = data;
+            var point = [
+              {
+                missing: true,
+                meta: paired.meta
+              },
+              data
+            ];
+
+            if (data.state === 'enter' || paired.state === 'enter') {
+              if (context.options.enter)
+                context.options.enter.apply(context, [point, context.data]);
+              context.enter(point, context.data);
+            }
+            else if (data.state === 'update' || paired.state === 'update') {
+              if (context.options.update)
+                context.options.update.apply(context, [point, context.data]);
+              context.update(point, context.data);
+            }
+            else if (data.state === 'exit' || paired.state === 'exit') {
+              context.data[1].splice(pointIndex, 1);
+              if (context.options.exit)
+                context.options.exit.apply(context, [point, context.data]);
+              context.exit(point, context.data);
+            }
+          }
+        });
+      }
       if (context.options.done)
         context.options.done.apply(context, context.data);
       if (context.done)

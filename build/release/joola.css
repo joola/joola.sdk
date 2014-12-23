@@ -995,3 +995,8 @@
   background-color: white;
   margin-left: 7px;
 }
+
+[jio-type="table"] td .summary {
+  color: #999;
+  font-size: 13px;
+}
