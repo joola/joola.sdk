@@ -11,6 +11,7 @@
 var
   joola = require('../index'),
   $$ = require('jquery'),
+  ce = require('cloneextend'),
   _ = require('underscore');
 
 var Table = module.exports = function (options, callback) {
@@ -33,36 +34,36 @@ var Table = module.exports = function (options, callback) {
     offcolors: [],
     paging: {
       currentPage: 1,
-      sizes: [10, 50, 100, 500, 1000],
+      sizes: [10, 25, 50, 100, 250, 500, 1000],
       currentSize: 10
     },
     template: '<div class="table-caption"></div>' +
-    '<div class="controls">' +
-    ' <div class="primary-dimension-picker">Primary dimension picker</div>' +
-    ' <div class="add-dimension-picker">Add dimension...</div>' +
-    ' <div class="add-metric-picker">Add metric...</div>' +
-    ' <div class="search-wrapper">' +
-    '   <input type="text" placeholder="Search..."/>' +
-    ' </div>' +
-    '</div>' +
-    '<table class="jio table">' +
-    ' <thead></thead>' +
-    ' <tbody></tbody>' +
-    '</table>' +
-    '<div class="paging">' +
-    ' <div class="paging-wrapper">' +
-    '   <div class="page-size">' +
-    '     <span class="caption">Page size: </span>' +
-    '     <select>' +
-    '     </select>' +
-    '   </div>' +
-    ' </div>' +
-    ' <div class="showing"></div>' +
-    ' <div class="navigation">' +
-    '   <div class="prev chevron left"></div>' +
-    '   <div class="next chevron right"></div>' +
-    ' </div>' +
-    '</div>',
+      '<div class="controls">' +
+      ' <div class="primary-dimension-picker">Primary dimension picker</div>' +
+      ' <div class="add-dimension-picker">Add dimension...</div>' +
+      ' <div class="add-metric-picker">Add metric...</div>' +
+      ' <div class="search-wrapper">' +
+      '   <input class="search" type="text" placeholder="Search..."/>' +
+      ' </div>' +
+      '</div>' +
+      '<table class="jio table">' +
+      ' <thead></thead>' +
+      ' <tbody></tbody>' +
+      '</table>' +
+      '<div class="paging">' +
+      ' <div class="paging-wrapper">' +
+      '   <div class="page-size">' +
+      '     <span class="caption">Page size: </span>' +
+      '     <select>' +
+      '     </select>' +
+      '   </div>' +
+      ' </div>' +
+      ' <div class="showing"></div>' +
+      ' <div class="navigation">' +
+      '   <div class="prev chevron left"></div>' +
+      '   <div class="next chevron right"></div>' +
+      ' </div>' +
+      '</div>',
     query: null,
     strings: {
       loading: 'No data available.',
@@ -85,34 +86,7 @@ var Table = module.exports = function (options, callback) {
   };
 
   this.enter = function (data, alldata) {
-    var _query = self.options.query;
-    if (Array.isArray(self.options.query))
-      _query = _query[0];
 
-    var $table = $$($$(self.options.container).find('table')[0]);
-    var $tbody = $$($table.find('tbody')[0]);
-    var percentage, $tr;
-    if ($tbody.find('tr.nodata').length > 0)
-      $tbody.find('tr.nodata').remove();
-    if ($tbody.find('tr.loading').length > 0)
-      $tbody.find('tr.loading').remove();
-    if (data.length === 1) {
-      var point = data[0];
-      //we have a simple row
-      $tr = $$('<tr data-id="' + point.key + '"></tr>');
-      _query.dimensions.forEach(function (d) {
-        var dimensionkey = d.key || d;
-        var $td = $$('<td class="value dimension">' + point.dimensions[dimensionkey] + '</td>');
-        $tr.append($td);
-      });
-      $tbody.append($tr);
-      _query.metrics.forEach(function (m) {
-        var metrickey = m.key || m;
-        var $td = $$('<td class="value metric">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '</td>');
-        $tr.append($td);
-      });
-    }
-    self.handlePaging();
   }
   ;
   this.exit = function (data, alldata) {
@@ -126,18 +100,105 @@ var Table = module.exports = function (options, callback) {
     $$(self.options.container).find('table').empty();
   };
 
-  this.handlePaging = function () {
-    var page = 1;
-    var pageSize = 10;
+  this.filter = function (data, filter) {
+    return _.filter(data, function (item) {
+      var found = false;
+      Object.keys(item.dimensions).forEach(function (key) {
+        if (item.dimensions[key].toLowerCase().indexOf(filter.toLowerCase()) > -1)
+          found = true;
+      });
+      return found;
+    });
+  };
 
+  this.paint = function () {
+    var _query = self.options.query[0];
+    var $table = $$($$(self.options.container).find('table')[0]);
+    var $search = $$($$(self.options.container).find('input.search')[0]);
+    var $tbody = $$($table.find('tbody')[0]);
+    if (self.data[0].length > 0) {
+      $tbody.find('tr').remove();
+    }
+    else {
+
+    }
+
+    var start = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize) + 1;
+    var length = self.options.paging.currentSize;
+    if (self.data.length === 1) {
+      var _data;
+      var search = $search.val();
+      if (search && search.length > 2)
+        _data = self.filter(self.data[0], search);
+      else
+        _data = self.data[0];
+      self._data = [];
+      self._data[0] = ce.clone(_data);
+      _data = _data.slice(start - 1, (start - 1) + length);
+      _data.forEach(function (point) {
+        //we have a simple row
+        var $tr = $$('<tr data-id="' + point.key + '"></tr>');
+        _query.dimensions.forEach(function (d) {
+          var dimensionkey = d.key || d;
+          var $td = $$('<td class="value dimension">' + point.dimensions[dimensionkey] + '</td>');
+          $tr.append($td);
+        });
+        $tbody.append($tr);
+        _query.metrics.forEach(function (m) {
+          var metrickey = m.key || m;
+          var $td = $$('<td class="value metric">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '</td>');
+          $tr.append($td);
+        });
+      });
+    }
+
+    self.handlePaging();
+  };
+
+  this.done = function () {
+    self.paint();
+  };
+
+  this.handlePaging = function () {
     var $showing = $$(self.options.$container.find('.showing'));
 
-    var total = self.data[0].length;
-    var to = page * pageSize;
+    var total = self._data[0].length;
+    var to = self.options.paging.currentPage * self.options.paging.currentSize;
     if (to > total)
       to = total;
-    var showingText = ((page - 1) * 10 + 1) + ' - ' + to + ' of ' + total;
+    var showingText = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize + 1) + ' - ' + to + ' of ' + total;
     $showing.text(showingText);
+
+    var $prev = $$(self.options.$container.find('.prev'));
+    var $next = $$(self.options.$container.find('.next'));
+    if (self.options.paging.currentPage > 1) {
+      $prev.removeClass('disabled');
+      $prev.on('click', function () {
+        if (self.options.paging.currentPage > 1) {
+          self.options.paging.currentPage--;
+          self.paint();
+        }
+      });
+    }
+    else {
+      $prev.addClass('disabled');
+      $prev.off('click');
+    }
+    var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
+    if (nextIndex < self._data[0].length) {
+      $next.removeClass('disabled');
+      $next.on('click', function () {
+        var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
+        if (nextIndex < self._data[0].length) {
+          self.options.paging.currentPage++;
+          self.paint();
+        }
+      });
+    }
+    else {
+      $next.addClass('disabled');
+      $next.off('click');
+    }
   };
 
   this.sort = function () {
@@ -180,6 +241,21 @@ var Table = module.exports = function (options, callback) {
     self.options.paging.sizes.forEach(function (size) {
       var $option = $$('<option value="' + size + '">' + size + '</option>');
       $pageSize.append($option);
+    });
+    $pageSize.on('change', function () {
+      self.options.paging.currentPage = 1;
+      self.options.paging.currentSize = parseInt($pageSize.val(), 10);
+      self.paint();
+    });
+
+    var $search = $$($html.find('input.search'));
+    $search.on('keyup', function () {
+      if ($search.val().length > 2) {
+        self.options.paging.currentPage = 1;
+        self.paint();
+      }
+      else
+        self.paint();
     });
   };
 

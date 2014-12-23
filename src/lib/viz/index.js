@@ -256,6 +256,10 @@ viz.fetch = function (context, query, callback) {
           context.exit(point, context.data);
         }
       });
+      if (context.options.done)
+        context.options.done.apply(context, context.data);
+      if (context.done)
+        context.done(context.data);
       return callback(null, context.data);
     });
 
