@@ -39897,7 +39897,7 @@ var Table = module.exports = function (options, callback) {
           var total, comparetotal;
           if (ref.data[0].length > 0)
             total = ref.data[0][0].metrics[m.key];
-          if (ref.data.length === 2 && ref.data[1].length > 0 && ref.data[1].type !== 'overall') {
+          if (ref.data.length > 1 && ref.data[1].length > 0 && ref.data[1].type !== 'overall') {
             comparetotal = ref.data[1][0].metrics[m.key];
           }
           var $summaries = $$('.value.metric[data-key="' + m.key + '"]');
