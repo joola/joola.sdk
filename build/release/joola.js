@@ -38026,7 +38026,10 @@ var Metric = module.exports = function (options, callback) {
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
       var $$summary = $$($$(self.options.container).find('.summary'));
       var total = data[0].metrics[metrickey];
-      $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
+      if (metric.aggregation === 'sum')
+        $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
+      else if (metric.aggregation === 'avg')
+        $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (0%)');
     }
     else if (data.length === 2 && data[1].type === 'overall') {
       $$(self.options.container).find('.summary').show();
@@ -38035,8 +38038,15 @@ var Metric = module.exports = function (options, callback) {
       var $$summary = $$($$(self.options.container).find('.summary'));
       if (data[1].type === 'overall') {
         var total = data[1].metrics[metrickey];
-        var percentage = (value / total * 100).toFixed() + '%';
-        $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
+        var percentage;
+        if (metric.aggregation === 'sum') {
+          percentage = (value / total * 100).toFixed() + '%';
+          $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
+        }
+        else if (metric.aggregation === 'avg') {
+          percentage = joola.common.percentageChange(total,value);
+          $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (' + percentage + '%)');
+        }
         self.options.query.splice(1, 1);
       }
     }
@@ -39893,7 +39903,7 @@ var Table = module.exports = function (options, callback) {
       Object.keys(self.summaries).forEach(function (key, mindex) {
         var ref = self.summaries[key];
         var m = self.options.query[0].metrics[mindex];
-        if (ref.data.length > 0) {
+        if ((m.aggregation || 'sum') === 'sum' && ref.data.length > 0) {
           var total, comparetotal;
           if (ref.data[0].length > 0)
             total = ref.data[0][0].metrics[m.key];

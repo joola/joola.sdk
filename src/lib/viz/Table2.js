@@ -355,7 +355,7 @@ var Table = module.exports = function (options, callback) {
       Object.keys(self.summaries).forEach(function (key, mindex) {
         var ref = self.summaries[key];
         var m = self.options.query[0].metrics[mindex];
-        if (ref.data.length > 0) {
+        if ((m.aggregation || 'sum') === 'sum' && ref.data.length > 0) {
           var total, comparetotal;
           if (ref.data[0].length > 0)
             total = ref.data[0][0].metrics[m.key];
