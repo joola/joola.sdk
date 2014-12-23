@@ -248,7 +248,11 @@ common.formatMetric = function (value, metric) {
 };
 
 common.percentageChange = function (num1, num2) {
-  return ((num2 - num1) / num1 * 100).toFixed(2);
+  var result = ((num2 - num1) / num1 * 100).toFixed(2);
+  
+  if (num1 === 0)
+    result = '∞';
+  return result;
 };
 
 common.formatDate = function (date) {

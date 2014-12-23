@@ -80,7 +80,11 @@ var Metric = module.exports = function (options, callback) {
     }
     else if (data.length === 2 && data[1].type === 'overall') {
       $$(self.options.container).find('.summary').show();
-      var value = data[0].metrics[metrickey];
+      var value;
+      if (!data[0].missing)
+        value = data[0].metrics[metrickey];
+      else
+        value = 0;
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
       var $$summary = $$($$(self.options.container).find('.summary'));
       if (data[1].type === 'overall') {
@@ -91,7 +95,7 @@ var Metric = module.exports = function (options, callback) {
           $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
         }
         else if (metric.aggregation === 'avg') {
-          percentage = joola.common.percentageChange(total,value);
+          percentage = joola.common.percentageChange(total, value);
           $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (' + percentage + '%)');
         }
         self.options.query.splice(1, 1);
