@@ -30,20 +30,21 @@ var DimensionPicker = module.exports = function (options, callback) {
     container: null,
     $container: null,
     dimensions: [],
+    disabled: [],
     selected: null,
     allowRemove: true,
     allowSelect: true,
     template: '<div class="jio-dimensionpicker-wrapper">\n' +
-    '  <button class="btn jio-dimensionpicker-button">' +
-    '   <span class="caption"></span>' +
-    '   <span class="close">×</span>' +
-    '  </button>' +
-    '  <div class="picker-container">' +
-    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-    '    <div class="clear"></div>' +
-    '  </div>' +
-    '  <div class="clear"></div>' +
-    '</div>'
+      '  <button class="btn jio-dimensionpicker-button">' +
+      '   <span class="caption"></span>' +
+      '   <span class="close">×</span>' +
+      '  </button>' +
+      '  <div class="picker-container">' +
+      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+      '    <div class="clear"></div>' +
+      '  </div>' +
+      '  <div class="clear"></div>' +
+      '</div>'
   };
   this.drawn = false;
 
@@ -76,19 +77,23 @@ var DimensionPicker = module.exports = function (options, callback) {
           var keys = [];
           list = list.filter(function (item) {
             if (keys.indexOf(item.key) === -1) {
-              keys.push(item.key);
-              return item;
+              if (item.key !== 'timestamp') {
+                keys.push(item.key);
+                return item;
+              }
             }
           });
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + collection.key + '.' + dimension.key + '">' + dimension.name + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + dimension.name + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
               e.stopPropagation();
 
+              if ($this.hasClass('active'))
+                return;
               if ($this.hasClass('disabled'))
                 return;
 
@@ -183,11 +188,9 @@ var DimensionPicker = module.exports = function (options, callback) {
     }
 
     self.markSelected = function () {
-      if (!self.options.allowSelect)
-        return;
       $ul.find('div').removeClass('active');
-      if (self.options.selected) {
-        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
+      if (self.options.allowSelect&&self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.key + '"]').addClass('active');
         self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
@@ -202,7 +205,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           self.options.disabled = [self.options.disabled];
 
         self.options.disabled.forEach(function (disable) {
-          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+          $ul.find('div[data-member="' + disable.key + '"]').addClass('disabled');
         });
       }
     };

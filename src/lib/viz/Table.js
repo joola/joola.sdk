@@ -42,35 +42,35 @@ var Table = module.exports = function (options, callback) {
         currentSize: 10
       },
       template: '<div class="table-caption"></div>' +
-      '<div class="controls">' +
-      ' <div class="primary-dimension-picker"></div>' +
-      ' <div class="add-dimension-picker"></div>' +
-      ' <div class="add-metric-picker"></div>' +
-      ' <div class="search-wrapper">' +
-      '   <input class="search" type="text" placeholder="Search..."/>' +
-      ' </div>' +
-      ' <div class="clearfix"></div>' +
-      '</div>' +
-      '<div class="table-wrapper">' +
-      ' <table class="jio table">' +
-      '   <thead></thead>' +
-      '   <tbody></tbody>' +
-      ' </table>' +
-      '</div>' +
-      '<div class="paging">' +
-      ' <div class="paging-wrapper">' +
-      '   <div class="page-size">' +
-      '     <span class="caption">Page size: </span>' +
-      '     <select>' +
-      '     </select>' +
-      '   </div>' +
-      ' </div>' +
-      ' <div class="showing"></div>' +
-      ' <div class="navigation">' +
-      '   <div class="prev chevron left"></div>' +
-      '   <div class="next chevron right"></div>' +
-      ' </div>' +
-      '</div>',
+        '<div class="controls">' +
+        ' <div class="primary-dimension-picker"></div>' +
+        ' <div class="add-dimension-picker"></div>' +
+        ' <div class="add-metric-picker"></div>' +
+        ' <div class="search-wrapper">' +
+        '   <input class="search" type="text" placeholder="Search..."/>' +
+        ' </div>' +
+        ' <div class="clearfix"></div>' +
+        '</div>' +
+        '<div class="table-wrapper">' +
+        ' <table class="jio table">' +
+        '   <thead></thead>' +
+        '   <tbody></tbody>' +
+        ' </table>' +
+        '</div>' +
+        '<div class="paging">' +
+        ' <div class="paging-wrapper">' +
+        '   <div class="page-size">' +
+        '     <span class="caption">Page size: </span>' +
+        '     <select>' +
+        '     </select>' +
+        '   </div>' +
+        ' </div>' +
+        ' <div class="showing"></div>' +
+        ' <div class="navigation">' +
+        '   <div class="prev chevron left"></div>' +
+        '   <div class="next chevron right"></div>' +
+        ' </div>' +
+        '</div>',
       query: null,
       strings: {
         loading: 'No data available.',
@@ -171,8 +171,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-            '<span class="summary"></span>' +
-            '</td>');
+              '<span class="summary"></span>' +
+              '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -231,8 +231,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-            '<span class="summary"></span>' +
-            '</td>');
+              '<span class="summary"></span>' +
+              '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -249,7 +249,7 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-            '<span class="summary"></span></td>');
+              '<span class="summary"></span></td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -296,8 +296,8 @@ var Table = module.exports = function (options, callback) {
             _query.metrics.forEach(function (m) {
               var metrickey = m.key || m;
               var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + 'N/A' + '">' + 'N/A' + '' +
-              '<span class="summary"></span>' +
-              '</td>');
+                '<span class="summary"></span>' +
+                '</td>');
               $tr.append($td);
             });
 
@@ -311,7 +311,7 @@ var Table = module.exports = function (options, callback) {
             _query.metrics.forEach(function (m) {
               var metrickey = m.key || m;
               var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-              '<span class="summary"></span></td>');
+                '<span class="summary"></span></td>');
               $tr.append($td);
             });
 
@@ -373,7 +373,7 @@ var Table = module.exports = function (options, callback) {
       var lastIndex = 0;
       self.options.query[0].dimensions.forEach(function (d, di) {
         lastIndex++;
-        var $th = $$('<th class="caption dimension"><span class="name"></span><span class="icon-close"></span><span class="icon-help"><span>test</span></span><span class="caret-sort"></span></th>');
+        var $th = $$('<th class="caption dimension"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
         $th.find('.name').text(d.name || d.key || d);
         if (d.allowremove) {
           $th.find('.icon-close').off('click');
@@ -449,8 +449,39 @@ var Table = module.exports = function (options, callback) {
         $head_tr.append($th);
       });
       self.options.query[0].metrics.forEach(function (m, mi) {
-        var $th = $$('<th class="caption metric"><span class="name"></span><span class="icon-help"></span><span class="caret-sort"></span></th>');
+        var $th = $$('<th class="caption metric"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
         $th.find('.name').text(m.name || m.key || m);
+        if (m.allowremove) {
+          $th.find('.icon-close').off('click');
+          $th.find('.icon-close').on('click', function (e) {
+            e.stopPropagation();
+            self.options.query.forEach(function (q) {
+              var index = -1;
+              q.metrics.forEach(function (item, i) {
+                if (item.key === m.key)
+                  index = i;
+              });
+              if (index > -1)
+                q.metrics.splice(index, 1);
+            });
+            var _summaries = {}
+            Object.keys(self.summaries).forEach(function (key) {
+              item=self.summaries[key];
+              if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
+              }
+              else
+                _summaries[key] = self.summaries[key];
+            });
+            self.summaries = _summaries;
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex--;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
+          });
+        }
+        else
+          $th.find('.icon-close').remove();
         if (!m.description)
           $th.find('.icon-help').hide();
         else {
@@ -611,9 +642,11 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.summarize = function () {
+      console.log(self.summaries);
       Object.keys(self.summaries).forEach(function (key, mindex) {
         var ref = self.summaries[key];
         var m = self.options.query[0].metrics[mindex];
+
         if ((m.aggregation || 'sum') === 'sum' && ref.data.length > 0) {
           var total, comparetotal;
           if (ref.data[0].length > 0)
@@ -649,9 +682,15 @@ var Table = module.exports = function (options, callback) {
       //visualization specific drawing
       if (self.options.pickers && self.options.pickers.primary && self.options.pickers.primary.enabled) {
         var $primary_dimension_picker = $$($html.find('.primary-dimension-picker'));
-        self.options.pickers.primary.css='table-picker';
+        self.options.pickers.primary.css = 'table-picker';
         self.options.pickers.primary.container = $primary_dimension_picker.get(0);
-        self.options.pickers.primary.selected = self.options.query[0].dimensions[0];
+        var dimension = self.options.query[0].dimensions[0];
+        if (!dimension.key)
+          dimension = {key: dimension};
+        if (!dimension.collection)
+          dimension.collection = self.options.query[0].collection;
+        self.options.pickers.primary.selected = dimension;
+        self.options.pickers.primary.disabled = self.options.query[0].dimensions;
         self.options.pickers.primary.prefix = 'Primary dimension: ';
         self.primary_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.primary).on('change', function (dimension) {
           self.options.query.forEach(function (q) {
@@ -667,9 +706,10 @@ var Table = module.exports = function (options, callback) {
       }
       if (self.options.pickers && self.options.pickers.add_dimension && self.options.pickers.add_dimension.enabled) {
         var $add_dimension_picker = $$($html.find('.add-dimension-picker'));
-        self.options.pickers.add_dimension.css='table-picker';
+        self.options.pickers.add_dimension.css = 'table-picker';
         self.options.pickers.add_dimension.container = $add_dimension_picker.get(0);
         self.options.pickers.add_dimension.caption = self.options.pickers.add_dimension.caption || 'Add dimension...';
+        self.options.pickers.add_dimension.disabled = self.options.query[0].dimensions;
         self.add_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.add_dimension).on('change', function (dimension) {
           self.options.query.forEach(function (q) {
             if (dimension) {
@@ -684,11 +724,12 @@ var Table = module.exports = function (options, callback) {
           joola.viz.initialize(self, self.options);
         });
       }
-      if (self.options.pickers && self.options.pickers.add_metric&& self.options.pickers.add_metric.enabled) {
+      if (self.options.pickers && self.options.pickers.add_metric && self.options.pickers.add_metric.enabled) {
         var $add_metric_picker = $$($html.find('.add-metric-picker'));
-        self.options.pickers.add_metric.css='table-picker';
+        self.options.pickers.add_metric.css = 'table-picker';
         self.options.pickers.add_metric.container = $add_metric_picker.get(0);
         self.options.pickers.add_metric.caption = self.options.pickers.add_metric.caption || 'Add metric...';
+        self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
         self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
           self.options.query.forEach(function (q) {
             if (metric) {

@@ -133,15 +133,6 @@
   width: 100%;
 }
 
-[jio-type="table"] .table-picker input {
-  padding: 5px;
-  border: 1px solid #DDD;
-  font-family: Signika, helvetica, arial, sans-serif;
-  font-size: 14px;
-  background-color: #FFF;
-  margin-left: 7px;
-}
-
 [jio-type="table"] .paging {
   float: right;
   display: table;
