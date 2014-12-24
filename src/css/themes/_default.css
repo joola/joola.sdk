@@ -129,3 +129,47 @@
 [jio-domain="joola"] .chevron.left:before {
   transform: rotate(-135deg);
 }
+
+[jio-domain="joola"] span.icon-help {
+  position: relative;
+  display: inline;
+}
+
+[jio-domain="joola"] span.icon-help span {
+  position: absolute;
+  width: 150px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+
+  padding-left: 5px;
+  padding-right: 5px;
+
+  font-size: 12px;
+}
+
+[jio-domain="joola"] span.icon-help span:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0;
+  height: 0;
+  border-bottom: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+[jio-domain="joola"] span:hover.icon-help span {
+  visibility: visible;
+  opacity: 0.8;
+  top: 30px;
+  left: 50%;
+  margin-left: -76px;
+  z-index: 999;
+}

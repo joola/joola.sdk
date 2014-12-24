@@ -9,6 +9,9 @@
  **/
 
 var
+  events = require('events'),
+  util = require('util'),
+
   joola = require('../index'),
   $$ = require('jquery'),
   _ = require('underscore');
@@ -1059,3 +1062,5 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
+
+util.inherits(DatePicker, events.EventEmitter);

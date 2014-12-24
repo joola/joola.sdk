@@ -34,7 +34,7 @@ viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');
-viz.Table = require('./Table2');
+viz.Table = require('./Table');
 viz.Timeline = require('./Timeline');
 
 //onscreen
