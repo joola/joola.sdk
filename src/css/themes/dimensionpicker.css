@@ -1,0 +1,23 @@
+[jio-type="dimensionpicker"] {
+  float: left;
+  position: relative;
+}
+
+[jio-type="dimensionpicker"] .picker-container {
+  position: absolute;
+
+  background-color: #E9E9E9;
+  display: none;
+
+  border: 1px solid #ddd;
+  padding: 5px;
+  z-index: 1000;
+}
+
+[jio-type="dimensionpicker"] .picker-container.active {
+  display: block;
+}
+
+[jio-type="dimensionpicker"] .name {
+  font-weight: bold;
+}

@@ -839,6 +839,29 @@
   box-sizing: border-box;
 }
 
+[jio-type="dimensionpicker"] {
+  float: left;
+  position: relative;
+}
+
+[jio-type="dimensionpicker"] .picker-container {
+  position: absolute;
+
+  background-color: #E9E9E9;
+  display: none;
+
+  border: 1px solid #ddd;
+  padding: 5px;
+  z-index: 1000;
+}
+
+[jio-type="dimensionpicker"] .picker-container.active {
+  display: block;
+}
+
+[jio-type="dimensionpicker"] .name {
+  font-weight: bold;
+}
 [jio-type="filterbox"] {
 
 }
@@ -962,6 +985,7 @@
 
 
 .help:before { content: '\e800'; } /* '' */
+.icon-close:before { content: '\e803'; } /* '' */
 .sort-desc:before { content: '\e801'; } /* '' */
 .sort-asc:before { content: '\e802'; } /* '' */
 @font-face {
@@ -1093,6 +1117,7 @@
 }
  
 .icon-help:before { content: '\e800'; } /* '' */
+.icon-close:before { content: '\e803'; } /* '' */
 .icon-sort-desc:before { content: '\e801'; } /* '' */
 .icon-sort-asc:before { content: '\e802'; } /* '' */
 [jio-type="metric"] {
@@ -1178,7 +1203,7 @@
   text-transform: uppercase;
 }
 
-[jio-type="table"] .table th .icon-help {
+[jio-type="table"] .table th .icon-help, [jio-type="table"] .table th .icon-close {
   margin-left: 5px;
 }
 
@@ -1211,6 +1236,12 @@
   font-weight: bold;
 }
 
+[jio-type="table"] .table td.value .summary {
+  color: #999;
+  font-size: 13px;
+  font-weight: normal;
+}
+
 [jio-type="table"] .table.table-striped tbody > tr:nth-child(even) > td {
   background-color: white;
 }
@@ -1235,6 +1266,40 @@
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+
+  padding: 5px;
+  padding-left: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+[jio-type="table"] [jio-type="dimensionpicker"]:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+[jio-type="table"] .search-wrapper {
+  float: right;
+  margin-right: 30px;
+  width: 250px;
+}
+
+[jio-type="table"] .search-wrapper input.search {
+  padding: 5px;
+  border: 1px solid #DDD;
+  font-family: Signika, helvetica, arial, sans-serif;
+  font-size: 16px;
+  background-color: #FFF;
+  margin-left: 7px;
+  width: 100%;
+}
+
+[jio-type="table"] [jio-type="dimensionpicker"] input {
+  padding: 5px;
+  border: 1px solid #DDD;
+  font-family: Signika, helvetica, arial, sans-serif;
+  font-size: 14px;
+  background-color: #FFF;
+  margin-left: 7px;
 }
 
 [jio-type="table"] .paging {
@@ -1287,8 +1352,3 @@
   margin-left: 7px;
 }
 
-[jio-type="table"] td .summary {
-  color: #999;
-  font-size: 13px;
-  font-weight: normal;
-}

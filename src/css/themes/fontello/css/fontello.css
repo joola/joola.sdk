@@ -51,5 +51,6 @@
 }
  
 .icon-help:before { content: '\e800'; } /* '' */
+.icon-close:before { content: '\e803'; } /* '' */
 .icon-sort-desc:before { content: '\e801'; } /* '' */
 .icon-sort-asc:before { content: '\e802'; } /* '' */

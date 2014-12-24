@@ -23,7 +23,7 @@ var DimensionPicker = module.exports = function (options, callback) {
   joola.events.emit('dimensionpicker.init.start');
   var self = this;
 
-  this._id = 'dimensionpicker';
+  this.type = 'dimensionpicker';
   this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
@@ -31,10 +31,14 @@ var DimensionPicker = module.exports = function (options, callback) {
     $container: null,
     dimensions: [],
     selected: null,
+    allowRemove: true,
+    allowSelect: true,
     template: '<div class="jio-dimensionpicker-wrapper">\n' +
-    '  <button class="btn jio-dimensionpicker-button"></button>' +
-    '  <button class="close">×</button>' +
-    '  <div class="jio-dimensionpicker-container">' +
+    '  <button class="btn jio-dimensionpicker-button">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
     '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
     '    <div class="clear"></div>' +
     '  </div>' +
@@ -52,12 +56,14 @@ var DimensionPicker = module.exports = function (options, callback) {
     if (!self.drawn) {
       self.options.$container = $$(self.options.container);
       self.options.$container.append(self.options.template || self.template());
-      var $ul = $$(self.options.$container.find('.jio-dimensionpicker-container'));
+      var $ul = $$(self.options.$container.find('.picker-container'));
       var $btn = $$(self.options.$container.find('.jio-dimensionpicker-button'));
       var $close = $$(self.options.$container.find('.close'));
+      if (!self.options.allowRemove)
+        $close.remove();
       var $search = $$(self.options.$container.find('.quicksearch'));
       if (self.options.caption)
-        $btn.text(self.options.caption);
+        $btn.find('.caption').text(self.options.caption);
       if (self.options.dimensions.length === 0)
         joola.dimensions.list(function (err, list) {
           if (err)
@@ -79,8 +85,8 @@ var DimensionPicker = module.exports = function (options, callback) {
                 return;
 
               self.options.selected = dimension;
-              var $content = dimension.name;
-              $btn.html($content);
+              //var $content = '<span class="name">' + dimension.name + '</span>';
+              //$btn.find('.caption').html((self.options.prefix || '' ) + $content);
               $btn.removeClass('active');
               $ul.removeClass('active');
               mOpen = false;
@@ -169,14 +175,16 @@ var DimensionPicker = module.exports = function (options, callback) {
     }
 
     self.markSelected = function () {
+      if (!self.options.allowSelect)
+        return;
       $ul.find('div').removeClass('active');
       if (self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
-        self.options.$container.find('.jio-dimensionpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-dimensionpicker-button').html('Choose a dimension...' + '');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html('Choose a dimension...' + '');
         self.options.$container.find('.close').hide();
       }
 
