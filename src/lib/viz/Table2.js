@@ -329,12 +329,12 @@ var Table = module.exports = function (options, callback) {
         $prev.addClass('disabled');
         $prev.off('click');
       }
-      var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
+      var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) ;
       if (nextIndex < self._data[0].length) {
         $next.removeClass('disabled');
         $next.off('click');
         $next.on('click', function () {
-          var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
+          var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize);
           if (nextIndex < self._data[0].length) {
             self.options.paging.currentPage++;
             self.paint();
@@ -394,11 +394,53 @@ var Table = module.exports = function (options, callback) {
       self.options.query[0].dimensions.forEach(function (d) {
         var $th = $$('<th class="caption dimension"></th>');
         $th.text(d.name || d.key || d);
+        $th.on('click', function () {
+          self.data[0] = _.sortBy(self.data[0], function (item) {
+            return item.dimensions[d.key || d];
+          });
+          var sortDir = $th.attr('data-sort-dir') || 'desc';
+          if (sortDir === 'desc') {
+            sortDir = 'asc';
+          }
+          else {
+            self.data[0] = _.sortBy(self.data[0], function (item) {
+              return item.dimensions[d.key || d];
+            });
+            self.data[0].reverse();
+            sortDir = 'desc';
+          }
+          $head_tr.find('th').attr('data-sort-dir', null);
+          $head_tr.find('th').attr('data-sort', null);
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', sortDir);
+          self.paint();
+        });
         $head_tr.append($th);
       });
       self.options.query[0].metrics.forEach(function (m) {
         var $th = $$('<th class="caption metric"></th>');
         $th.text(m.name || m.key || m);
+        $th.on('click', function () {
+          self.data[0] = _.sortBy(self.data[0], function (item) {
+            return item.metrics[m.key || m];
+          });
+          var sortDir = $th.attr('data-sort-dir') || 'desc';
+          if (sortDir === 'desc') {
+            sortDir = 'asc';
+          }
+          else {
+            self.data[0] = _.sortBy(self.data[0], function (item) {
+              return item.metrics[m.key || m];
+            });
+            self.data[0].reverse();
+            sortDir = 'desc';
+          }
+          $head_tr.find('th').attr('data-sort-dir', null);
+          $head_tr.find('th').attr('data-sort', null);
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', sortDir);
+          self.paint();
+        });
         $head_tr.append($th);
       });
       $thead.append($head_tr);
