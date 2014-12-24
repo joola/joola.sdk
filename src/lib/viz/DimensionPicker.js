@@ -73,6 +73,14 @@ var DimensionPicker = module.exports = function (options, callback) {
           var mSkipOne = false;
           var mlasttarget = null;
 
+          var keys = [];
+          list = list.filter(function (item) {
+            if (keys.indexOf(item.key) === -1) {
+              keys.push(item.key);
+              return item;
+            }
+          });
+
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
             var $li = $$('<div class="dimensionOption" data-member="' + collection.key + '.' + dimension.key + '">' + dimension.name + '</div>');

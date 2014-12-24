@@ -156,7 +156,7 @@
   content: '';
   position: absolute;
   bottom: 100%;
-  left: 50%;
+  left: 48%;
   margin-left: -8px;
   width: 0;
   height: 0;
@@ -169,7 +169,7 @@
   visibility: visible;
   opacity: 0.8;
   top: 30px;
-  left: 50%;
+  left: 48%;
   margin-left: -76px;
   z-index: 999;
 }

@@ -45,7 +45,7 @@ var Table = module.exports = function (options, callback) {
       '<div class="controls">' +
       ' <div class="primary-dimension-picker"></div>' +
       ' <div class="add-dimension-picker"></div>' +
-        //' <div class="add-metric-picker">Add metric...</div>' +
+      ' <div class="add-metric-picker"></div>' +
       ' <div class="search-wrapper">' +
       '   <input class="search" type="text" placeholder="Search..."/>' +
       ' </div>' +
@@ -649,6 +649,7 @@ var Table = module.exports = function (options, callback) {
       //visualization specific drawing
       if (self.options.pickers && self.options.pickers.primary && self.options.pickers.primary.enabled) {
         var $primary_dimension_picker = $$($html.find('.primary-dimension-picker'));
+        self.options.pickers.primary.css='table-picker';
         self.options.pickers.primary.container = $primary_dimension_picker.get(0);
         self.options.pickers.primary.selected = self.options.query[0].dimensions[0];
         self.options.pickers.primary.prefix = 'Primary dimension: ';
@@ -666,6 +667,7 @@ var Table = module.exports = function (options, callback) {
       }
       if (self.options.pickers && self.options.pickers.add_dimension && self.options.pickers.add_dimension.enabled) {
         var $add_dimension_picker = $$($html.find('.add-dimension-picker'));
+        self.options.pickers.add_dimension.css='table-picker';
         self.options.pickers.add_dimension.container = $add_dimension_picker.get(0);
         self.options.pickers.add_dimension.caption = self.options.pickers.add_dimension.caption || 'Add dimension...';
         self.add_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.add_dimension).on('change', function (dimension) {
@@ -673,6 +675,25 @@ var Table = module.exports = function (options, callback) {
             if (dimension) {
               dimension.allowremove = true;
               q.dimensions.push(dimension);
+            }
+          });
+          self.data = [];
+          self.options.paging.currentPage = 1;
+          self.sortIndex++;
+          self.handleMetricBoxes();
+          joola.viz.initialize(self, self.options);
+        });
+      }
+      if (self.options.pickers && self.options.pickers.add_metric&& self.options.pickers.add_metric.enabled) {
+        var $add_metric_picker = $$($html.find('.add-metric-picker'));
+        self.options.pickers.add_metric.css='table-picker';
+        self.options.pickers.add_metric.container = $add_metric_picker.get(0);
+        self.options.pickers.add_metric.caption = self.options.pickers.add_metric.caption || 'Add metric...';
+        self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
+          self.options.query.forEach(function (q) {
+            if (metric) {
+              metric.allowremove = true;
+              q.metrics.push(metric);
             }
           });
           self.data = [];

@@ -274,7 +274,7 @@ var Canvas = module.exports = function (options, callback) {
           var $filter = $$('<div data-id="' + key + '" class="filter"></div>');
           var text = meta[f[0]].name + ': <strong class="value">' + f[2] + '</strong>';
           var $inner = $$('<span class="caption">' + text + '</span>');
-          var $close = $$('<span class="close">x</span>');
+          var $close = $$('<span class="close icon-close"></span>');
           $close.on('click', function () {
             self.emit('removefilter', key);
           });

@@ -48,6 +48,7 @@
 
 [jio-type="table"] .table th .caret-sort {
   float: right;
+  margin-right: 15px;
 }
 
 [jio-type="table"] .table td.value.metric {
@@ -112,7 +113,7 @@
   padding-bottom: 10px;
 }
 
-[jio-type="table"] [jio-type="dimensionpicker"]:not(:first-of-type) {
+[jio-type="table"] .table-picker:not(:first-of-type) {
   margin-left: 10px;
 }
 
@@ -132,7 +133,7 @@
   width: 100%;
 }
 
-[jio-type="table"] [jio-type="dimensionpicker"] input {
+[jio-type="table"] .table-picker input {
   padding: 5px;
   border: 1px solid #DDD;
   font-family: Signika, helvetica, arial, sans-serif;

@@ -1,0 +1,23 @@
+[jio-type="metricpicker"] {
+  float: left;
+  position: relative;
+}
+
+[jio-type="metricpicker"] .picker-container {
+  position: absolute;
+
+  background-color: #E9E9E9;
+  display: none;
+
+  border: 1px solid #ddd;
+  padding: 5px;
+  z-index: 1000;
+}
+
+[jio-type="metricpicker"] .picker-container.active {
+  display: block;
+}
+
+[jio-type="metricpicker"] .name {
+  font-weight: bold;
+}
