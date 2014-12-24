@@ -391,7 +391,6 @@ var Table = module.exports = function (options, callback) {
             self.data = [];
             self.options.paging.currentPage = 1;
             self.sortIndex--;
-            console.log('sort index', self.sortIndex);
             self.handleMetricBoxes();
             joola.viz.initialize(self, self.options);
           });
@@ -543,7 +542,6 @@ var Table = module.exports = function (options, callback) {
 
         if (!self.summaries)
           self.summaries = {};
-        console.log(lastIndex + index, self.sortIndex, lastIndex + index === self.sortIndex ? 'sorted' : '');
         self.summaries[m.key] = new joola.viz.Metric({
           container: $td.get(0),
           css: lastIndex + index === self.sortIndex ? 'sorted' : '',
