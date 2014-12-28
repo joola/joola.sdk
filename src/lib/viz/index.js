@@ -166,6 +166,8 @@ viz.fetch = function (context, query, callback) {
       if (!Array.isArray(messages))
         messages = [messages];
       messages.forEach(function (message, mindex) {
+        if (!context.data)
+          context.data = [];
         var _data = [];
         if (context.data[mindex]) {
           _data = context.data[mindex];
@@ -184,7 +186,8 @@ viz.fetch = function (context, query, callback) {
             meta: {},
             raw: ce.clone(doc),
             state: 'enter',
-            type: message.query.type
+            type: message.query.type,
+            realtime: message.query.realtime
           };
           var key = '';
           message.dimensions.forEach(function (d) {
@@ -240,7 +243,8 @@ viz.fetch = function (context, query, callback) {
           if (paired || context.data.length > 1)
             point = [data, paired];
         }
-
+        if (context.reply)
+          context.reply(point, context.data);
         if (data.state === 'enter' || paired.state === 'enter') {
           if (context.options.enter)
             context.options.enter.apply(context, [point, context.data]);
@@ -292,7 +296,7 @@ viz.fetch = function (context, query, callback) {
       if (context.options.done)
         context.options.done.apply(context, context.data);
       if (context.done)
-        context.done(context.data);
+        context.done(context.data, messages);
       return callback(null, context.data);
     });
 
@@ -331,42 +335,43 @@ viz.destroy = function (self, vizOptions) {
 };
 
 //this is a magic function for picking up namespace'd items
-joola.on('ready', function (err) {
-  if (err)
-    return;
+/*
+ joola.on('ready', function (err) {
+ if (err)
+ return;
 
-  Object.keys(joola.viz).forEach(function (key) {
-    var visualization = joola.viz[key];
-    var joola_elements = $$('joola\\:' + key.toLowerCase());
-    if (joola_elements.length > 0) {
-      $.each(joola_elements, function (index, element) {
-        var $element = $$(element);
-        //check not nested under a canvas
-        if ($element.parents('joola\\:canvas').length === 0) {
-          var attributes = $element.get(0).attributes;
-          var options = {
-            container: $element
-          };
-          for (var i = 0; i < attributes.length; i++) {
-            var attribute = attributes[i];
+ Object.keys(joola.viz).forEach(function (key) {
+ var visualization = joola.viz[key];
+ var joola_elements = $$('joola\\:' + key.toLowerCase());
+ if (joola_elements.length > 0) {
+ $.each(joola_elements, function (index, element) {
+ var $element = $$(element);
+ //check not nested under a canvas
+ if ($element.parents('joola\\:canvas').length === 0) {
+ var attributes = $element.get(0).attributes;
+ var options = {
+ container: $element
+ };
+ for (var i = 0; i < attributes.length; i++) {
+ var attribute = attributes[i];
 
-            var value = null;
-            try {
-              value = JSON.parse(attribute.value);
-            }
-            catch (ex) {
-              try {
-                value = JSON.parse(attribute.value.replace(/\'/ig, '"'));
-              }
-              catch (ex2) {
-                value = attribute.value;
-              }
-            }
-            joola.common.flatGetSet(options, attribute.name, value);
-          }
-          new visualization(options);
-        }
-      });
-    }
-  });
-});
+ var value = null;
+ try {
+ value = JSON.parse(attribute.value);
+ }
+ catch (ex) {
+ try {
+ value = JSON.parse(attribute.value.replace(/\'/ig, '"'));
+ }
+ catch (ex2) {
+ value = attribute.value;
+ }
+ }
+ joola.common.flatGetSet(options, attribute.name, value);
+ }
+ new visualization(options);
+ }
+ });
+ }
+ });
+ });*/

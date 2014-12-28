@@ -44,10 +44,13 @@ module.exports = function (grunt) {
     },
     watchify: {
       options: {
-        keepalive: true
+        keepalive: true,
+        verbose: true,
+        debug: true
       },
       all: {
         src: ['./build/temp/vendor.js', './src/lib/index.js'],
+
         dest: 'build/release/joola.js'
       }
     },

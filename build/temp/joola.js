@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}},"permissions":{"name":"/users/permissions","description":"I get the user's permissions","inputs":["workspace","user"],"_outputExample":{},"_permission":["users:permissions"],"_dispatch":{"message":"users:permissions","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"alerts":{},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
 },{}],2:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
@@ -11031,7 +11031,7 @@ $.datepicker.version = "1.10.4";
 
 },{"./core":38,"jquery":40}],40:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.1
+ * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -11041,19 +11041,19 @@ $.datepicker.version = "1.10.4";
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-05-01T17:11Z
+ * Date: 2014-12-18T15:11Z
  */
 
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper window is present,
-		// execute the factory and get jQuery
-		// For environments that do not inherently posses a window with a document
-		// (such as Node.js), expose a jQuery-making factory as module.exports
-		// This accentuates the need for the creation of a real window
+		// For CommonJS and CommonJS-like environments where a proper `window`
+		// is present, execute the factory and get jQuery.
+		// For environments that do not have a `window` with a `document`
+		// (such as Node.js), expose a factory as module.exports.
+		// This accentuates the need for the creation of a real `window`.
 		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info
+		// See ticket #14549 for more info.
 		module.exports = global.document ?
 			factory( global, true ) :
 			function( w ) {
@@ -11069,10 +11069,10 @@ $.datepicker.version = "1.10.4";
 // Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
 
-// Can't do this because several apps including ASP.NET trace
+// Support: Firefox 18+
+// Can't be in strict mode, several libs including ASP.NET trace
 // the stack via arguments.caller.callee and Firefox dies if
 // you try to trace through "use strict" call chains. (#13335)
-// Support: Firefox 18+
 //
 
 var arr = [];
@@ -11099,7 +11099,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.1",
+	version = "2.1.3",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -11217,7 +11217,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	if ( typeof target === "boolean" ) {
 		deep = target;
 
-		// skip the boolean and the target
+		// Skip the boolean and the target
 		target = arguments[ i ] || {};
 		i++;
 	}
@@ -11227,7 +11227,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		target = {};
 	}
 
-	// extend jQuery itself if only one argument is passed
+	// Extend jQuery itself if only one argument is passed
 	if ( i === length ) {
 		target = this;
 		i--;
@@ -11284,9 +11284,6 @@ jQuery.extend({
 
 	noop: function() {},
 
-	// See test/unit/core.js for details concerning isFunction.
-	// Since version 1.3, DOM methods and functions like alert
-	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
 		return jQuery.type(obj) === "function";
 	},
@@ -11301,7 +11298,8 @@ jQuery.extend({
 		// parseFloat NaNs numeric-cast false positives (null|true|false|"")
 		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
 		// subtraction forces infinities to NaN
-		return !jQuery.isArray( obj ) && obj - parseFloat( obj ) >= 0;
+		// adding 1 corrects loss of precision from parseFloat (#15100)
+		return !jQuery.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
 	},
 
 	isPlainObject: function( obj ) {
@@ -11335,7 +11333,7 @@ jQuery.extend({
 		if ( obj == null ) {
 			return obj + "";
 		}
-		// Support: Android < 4.0, iOS < 6 (functionish RegExp)
+		// Support: Android<4.0, iOS<6 (functionish RegExp)
 		return typeof obj === "object" || typeof obj === "function" ?
 			class2type[ toString.call(obj) ] || "object" :
 			typeof obj;
@@ -11365,6 +11363,7 @@ jQuery.extend({
 	},
 
 	// Convert dashed to camelCase; used by the css and data modules
+	// Support: IE9-11+
 	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
@@ -11580,14 +11579,14 @@ function isArraylike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v1.10.19
+ * Sizzle CSS Selector Engine v2.2.0-pre
  * http://sizzlejs.com/
  *
- * Copyright 2013 jQuery Foundation, Inc. and other contributors
+ * Copyright 2008, 2014 jQuery Foundation, Inc. and other contributors
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-04-18
+ * Date: 2014-12-16
  */
 (function( window ) {
 
@@ -11614,7 +11613,7 @@ var i,
 	contains,
 
 	// Instance-specific data
-	expando = "sizzle" + -(new Date()),
+	expando = "sizzle" + 1 * new Date(),
 	preferredDoc = window.document,
 	dirruns = 0,
 	done = 0,
@@ -11629,7 +11628,6 @@ var i,
 	},
 
 	// General-purpose constants
-	strundefined = typeof undefined,
 	MAX_NEGATIVE = 1 << 31,
 
 	// Instance methods
@@ -11639,12 +11637,13 @@ var i,
 	push_native = arr.push,
 	push = arr.push,
 	slice = arr.slice,
-	// Use a stripped-down indexOf if we can't use a native one
-	indexOf = arr.indexOf || function( elem ) {
+	// Use a stripped-down indexOf as it's faster than native
+	// http://jsperf.com/thor-indexof-vs-for/5
+	indexOf = function( list, elem ) {
 		var i = 0,
-			len = this.length;
+			len = list.length;
 		for ( ; i < len; i++ ) {
-			if ( this[i] === elem ) {
+			if ( list[i] === elem ) {
 				return i;
 			}
 		}
@@ -11684,6 +11683,7 @@ var i,
 		")\\)|)",
 
 	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
+	rwhitespace = new RegExp( whitespace + "+", "g" ),
 	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" ),
 
 	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
@@ -11735,6 +11735,14 @@ var i,
 				String.fromCharCode( high + 0x10000 ) :
 				// Supplemental Plane codepoint (surrogate pair)
 				String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
+	},
+
+	// Used for iframes
+	// See setDocument()
+	// Removing the function wrapper causes a "Permission Denied"
+	// error in IE
+	unloadHandler = function() {
+		setDocument();
 	};
 
 // Optimize for push.apply( _, NodeList )
@@ -11777,19 +11785,18 @@ function Sizzle( selector, context, results, seed ) {
 
 	context = context || document;
 	results = results || [];
+	nodeType = context.nodeType;
 
-	if ( !selector || typeof selector !== "string" ) {
+	if ( typeof selector !== "string" || !selector ||
+		nodeType !== 1 && nodeType !== 9 && nodeType !== 11 ) {
+
 		return results;
 	}
 
-	if ( (nodeType = context.nodeType) !== 1 && nodeType !== 9 ) {
-		return [];
-	}
+	if ( !seed && documentIsHTML ) {
 
-	if ( documentIsHTML && !seed ) {
-
-		// Shortcuts
-		if ( (match = rquickExpr.exec( selector )) ) {
+		// Try to shortcut find operations when possible (e.g., not under DocumentFragment)
+		if ( nodeType !== 11 && (match = rquickExpr.exec( selector )) ) {
 			// Speed-up: Sizzle("#ID")
 			if ( (m = match[1]) ) {
 				if ( nodeType === 9 ) {
@@ -11821,7 +11828,7 @@ function Sizzle( selector, context, results, seed ) {
 				return results;
 
 			// Speed-up: Sizzle(".CLASS")
-			} else if ( (m = match[3]) && support.getElementsByClassName && context.getElementsByClassName ) {
+			} else if ( (m = match[3]) && support.getElementsByClassName ) {
 				push.apply( results, context.getElementsByClassName( m ) );
 				return results;
 			}
@@ -11831,7 +11838,7 @@ function Sizzle( selector, context, results, seed ) {
 		if ( support.qsa && (!rbuggyQSA || !rbuggyQSA.test( selector )) ) {
 			nid = old = expando;
 			newContext = context;
-			newSelector = nodeType === 9 && selector;
+			newSelector = nodeType !== 1 && selector;
 
 			// qSA works strangely on Element-rooted queries
 			// We can work around this by specifying an extra ID on the root
@@ -12018,7 +12025,7 @@ function createPositionalPseudo( fn ) {
  * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
  */
 function testContext( context ) {
-	return context && typeof context.getElementsByTagName !== strundefined && context;
+	return context && typeof context.getElementsByTagName !== "undefined" && context;
 }
 
 // Expose support vars for convenience
@@ -12042,9 +12049,8 @@ isXML = Sizzle.isXML = function( elem ) {
  * @returns {Object} Returns the current document
  */
 setDocument = Sizzle.setDocument = function( node ) {
-	var hasCompare,
-		doc = node ? node.ownerDocument || node : preferredDoc,
-		parent = doc.defaultView;
+	var hasCompare, parent,
+		doc = node ? node.ownerDocument || node : preferredDoc;
 
 	// If no document and documentElement is available, return
 	if ( doc === document || doc.nodeType !== 9 || !doc.documentElement ) {
@@ -12054,9 +12060,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// Set our document
 	document = doc;
 	docElem = doc.documentElement;
-
-	// Support tests
-	documentIsHTML = !isXML( doc );
+	parent = doc.defaultView;
 
 	// Support: IE>8
 	// If iframe document is assigned to "document" variable and if iframe has been reloaded,
@@ -12065,21 +12069,22 @@ setDocument = Sizzle.setDocument = function( node ) {
 	if ( parent && parent !== parent.top ) {
 		// IE11 does not have attachEvent, so all must suffer
 		if ( parent.addEventListener ) {
-			parent.addEventListener( "unload", function() {
-				setDocument();
-			}, false );
+			parent.addEventListener( "unload", unloadHandler, false );
 		} else if ( parent.attachEvent ) {
-			parent.attachEvent( "onunload", function() {
-				setDocument();
-			});
+			parent.attachEvent( "onunload", unloadHandler );
 		}
 	}
+
+	/* Support tests
+	---------------------------------------------------------------------- */
+	documentIsHTML = !isXML( doc );
 
 	/* Attributes
 	---------------------------------------------------------------------- */
 
 	// Support: IE<8
-	// Verify that getAttribute really returns attributes and not properties (excepting IE8 booleans)
+	// Verify that getAttribute really returns attributes and not properties
+	// (excepting IE8 booleans)
 	support.attributes = assert(function( div ) {
 		div.className = "i";
 		return !div.getAttribute("className");
@@ -12094,17 +12099,8 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return !div.getElementsByTagName("*").length;
 	});
 
-	// Check if getElementsByClassName can be trusted
-	support.getElementsByClassName = rnative.test( doc.getElementsByClassName ) && assert(function( div ) {
-		div.innerHTML = "<div class='a'></div><div class='a i'></div>";
-
-		// Support: Safari<4
-		// Catch class over-caching
-		div.firstChild.className = "i";
-		// Support: Opera<10
-		// Catch gEBCN failure to find non-leading classes
-		return div.getElementsByClassName("i").length === 2;
-	});
+	// Support: IE<9
+	support.getElementsByClassName = rnative.test( doc.getElementsByClassName );
 
 	// Support: IE<10
 	// Check if getElementById returns elements by name
@@ -12118,7 +12114,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// ID find and filter
 	if ( support.getById ) {
 		Expr.find["ID"] = function( id, context ) {
-			if ( typeof context.getElementById !== strundefined && documentIsHTML ) {
+			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
 				var m = context.getElementById( id );
 				// Check parentNode to catch when Blackberry 4.6 returns
 				// nodes that are no longer in the document #6963
@@ -12139,7 +12135,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		Expr.filter["ID"] =  function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
-				var node = typeof elem.getAttributeNode !== strundefined && elem.getAttributeNode("id");
+				var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
 				return node && node.value === attrId;
 			};
 		};
@@ -12148,14 +12144,20 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// Tag
 	Expr.find["TAG"] = support.getElementsByTagName ?
 		function( tag, context ) {
-			if ( typeof context.getElementsByTagName !== strundefined ) {
+			if ( typeof context.getElementsByTagName !== "undefined" ) {
 				return context.getElementsByTagName( tag );
+
+			// DocumentFragment nodes don't have gEBTN
+			} else if ( support.qsa ) {
+				return context.querySelectorAll( tag );
 			}
 		} :
+
 		function( tag, context ) {
 			var elem,
 				tmp = [],
 				i = 0,
+				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
 				results = context.getElementsByTagName( tag );
 
 			// Filter out possible comments
@@ -12173,7 +12175,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 	// Class
 	Expr.find["CLASS"] = support.getElementsByClassName && function( className, context ) {
-		if ( typeof context.getElementsByClassName !== strundefined && documentIsHTML ) {
+		if ( documentIsHTML ) {
 			return context.getElementsByClassName( className );
 		}
 	};
@@ -12202,13 +12204,15 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// setting a boolean content attribute,
 			// since its presence should be enough
 			// http://bugs.jquery.com/ticket/12359
-			div.innerHTML = "<select msallowclip=''><option selected=''></option></select>";
+			docElem.appendChild( div ).innerHTML = "<a id='" + expando + "'></a>" +
+				"<select id='" + expando + "-\f]' msallowcapture=''>" +
+				"<option selected=''></option></select>";
 
 			// Support: IE8, Opera 11-12.16
 			// Nothing should be selected when empty strings follow ^= or $= or *=
 			// The test attribute must be unknown in Opera but "safe" for WinRT
 			// http://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
-			if ( div.querySelectorAll("[msallowclip^='']").length ) {
+			if ( div.querySelectorAll("[msallowcapture^='']").length ) {
 				rbuggyQSA.push( "[*^$]=" + whitespace + "*(?:''|\"\")" );
 			}
 
@@ -12218,11 +12222,23 @@ setDocument = Sizzle.setDocument = function( node ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:value|" + booleans + ")" );
 			}
 
+			// Support: Chrome<29, Android<4.2+, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.7+
+			if ( !div.querySelectorAll( "[id~=" + expando + "-]" ).length ) {
+				rbuggyQSA.push("~=");
+			}
+
 			// Webkit/Opera - :checked should return selected option elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			// IE8 throws error here and will not see later tests
 			if ( !div.querySelectorAll(":checked").length ) {
 				rbuggyQSA.push(":checked");
+			}
+
+			// Support: Safari 8+, iOS 8+
+			// https://bugs.webkit.org/show_bug.cgi?id=136851
+			// In-page `selector#id sibing-combinator selector` fails
+			if ( !div.querySelectorAll( "a#" + expando + "+*" ).length ) {
+				rbuggyQSA.push(".#.+[+~]");
 			}
 		});
 
@@ -12340,7 +12356,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 			// Maintain original order
 			return sortInput ?
-				( indexOf.call( sortInput, a ) - indexOf.call( sortInput, b ) ) :
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
 				0;
 		}
 
@@ -12367,7 +12383,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 				aup ? -1 :
 				bup ? 1 :
 				sortInput ?
-				( indexOf.call( sortInput, a ) - indexOf.call( sortInput, b ) ) :
+				( indexOf( sortInput, a ) - indexOf( sortInput, b ) ) :
 				0;
 
 		// If the nodes are siblings, we can do a quick check
@@ -12430,7 +12446,7 @@ Sizzle.matchesSelector = function( elem, expr ) {
 					elem.document && elem.document.nodeType !== 11 ) {
 				return ret;
 			}
-		} catch(e) {}
+		} catch (e) {}
 	}
 
 	return Sizzle( expr, document, null, [ elem ] ).length > 0;
@@ -12649,7 +12665,7 @@ Expr = Sizzle.selectors = {
 			return pattern ||
 				(pattern = new RegExp( "(^|" + whitespace + ")" + className + "(" + whitespace + "|$)" )) &&
 				classCache( className, function( elem ) {
-					return pattern.test( typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== strundefined && elem.getAttribute("class") || "" );
+					return pattern.test( typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || "" );
 				});
 		},
 
@@ -12671,7 +12687,7 @@ Expr = Sizzle.selectors = {
 					operator === "^=" ? check && result.indexOf( check ) === 0 :
 					operator === "*=" ? check && result.indexOf( check ) > -1 :
 					operator === "$=" ? check && result.slice( -check.length ) === check :
-					operator === "~=" ? ( " " + result + " " ).indexOf( check ) > -1 :
+					operator === "~=" ? ( " " + result.replace( rwhitespace, " " ) + " " ).indexOf( check ) > -1 :
 					operator === "|=" ? result === check || result.slice( 0, check.length + 1 ) === check + "-" :
 					false;
 			};
@@ -12791,7 +12807,7 @@ Expr = Sizzle.selectors = {
 							matched = fn( seed, argument ),
 							i = matched.length;
 						while ( i-- ) {
-							idx = indexOf.call( seed, matched[i] );
+							idx = indexOf( seed, matched[i] );
 							seed[ idx ] = !( matches[ idx ] = matched[i] );
 						}
 					}) :
@@ -12830,6 +12846,8 @@ Expr = Sizzle.selectors = {
 				function( elem, context, xml ) {
 					input[0] = elem;
 					matcher( input, null, xml, results );
+					// Don't keep the element (issue #299)
+					input[0] = null;
 					return !results.pop();
 				};
 		}),
@@ -12841,6 +12859,7 @@ Expr = Sizzle.selectors = {
 		}),
 
 		"contains": markFunction(function( text ) {
+			text = text.replace( runescape, funescape );
 			return function( elem ) {
 				return ( elem.textContent || elem.innerText || getText( elem ) ).indexOf( text ) > -1;
 			};
@@ -13262,7 +13281,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 				i = matcherOut.length;
 				while ( i-- ) {
 					if ( (elem = matcherOut[i]) &&
-						(temp = postFinder ? indexOf.call( seed, elem ) : preMap[i]) > -1 ) {
+						(temp = postFinder ? indexOf( seed, elem ) : preMap[i]) > -1 ) {
 
 						seed[temp] = !(results[temp] = elem);
 					}
@@ -13297,13 +13316,16 @@ function matcherFromTokens( tokens ) {
 			return elem === checkContext;
 		}, implicitRelative, true ),
 		matchAnyContext = addCombinator( function( elem ) {
-			return indexOf.call( checkContext, elem ) > -1;
+			return indexOf( checkContext, elem ) > -1;
 		}, implicitRelative, true ),
 		matchers = [ function( elem, context, xml ) {
-			return ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
+			var ret = ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
 				(checkContext = context).nodeType ?
 					matchContext( elem, context, xml ) :
 					matchAnyContext( elem, context, xml ) );
+			// Avoid hanging onto element (issue #299)
+			checkContext = null;
+			return ret;
 		} ];
 
 	for ( ; i < len; i++ ) {
@@ -13553,7 +13575,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 // Sort stability
 support.sortStable = expando.split("").sort( sortOrder ).join("") === expando;
 
-// Support: Chrome<14
+// Support: Chrome 14-35+
 // Always assume duplicates if they aren't passed to the comparison function
 support.detectDuplicates = !!hasDuplicate;
 
@@ -13762,7 +13784,7 @@ var rootjQuery,
 				if ( match[1] ) {
 					context = context instanceof jQuery ? context[0] : context;
 
-					// scripts is true for back-compat
+					// Option to run scripts is true for back-compat
 					// Intentionally let the error be thrown if parseHTML is not present
 					jQuery.merge( this, jQuery.parseHTML(
 						match[1],
@@ -13790,8 +13812,8 @@ var rootjQuery,
 				} else {
 					elem = document.getElementById( match[2] );
 
-					// Check parentNode to catch when Blackberry 4.6 returns
-					// nodes that are no longer in the document #6963
+					// Support: Blackberry 4.6
+					// gEBID returns nodes no longer in the document (#6963)
 					if ( elem && elem.parentNode ) {
 						// Inject the element directly into the jQuery object
 						this.length = 1;
@@ -13844,7 +13866,7 @@ rootjQuery = jQuery( document );
 
 
 var rparentsprev = /^(?:parents|prev(?:Until|All))/,
-	// methods guaranteed to produce a unique set when starting from a unique set
+	// Methods guaranteed to produce a unique set when starting from a unique set
 	guaranteedUnique = {
 		children: true,
 		contents: true,
@@ -13924,8 +13946,7 @@ jQuery.fn.extend({
 		return this.pushStack( matched.length > 1 ? jQuery.unique( matched ) : matched );
 	},
 
-	// Determine the position of an element within
-	// the matched set of elements
+	// Determine the position of an element within the set
 	index: function( elem ) {
 
 		// No argument, return index in parent
@@ -13933,7 +13954,7 @@ jQuery.fn.extend({
 			return ( this[ 0 ] && this[ 0 ].parentNode ) ? this.first().prevAll().length : -1;
 		}
 
-		// index in selector
+		// Index in selector
 		if ( typeof elem === "string" ) {
 			return indexOf.call( jQuery( elem ), this[ 0 ] );
 		}
@@ -14349,7 +14370,7 @@ jQuery.extend({
 
 			progressValues, progressContexts, resolveContexts;
 
-		// add listeners to Deferred subordinates; treat others as resolved
+		// Add listeners to Deferred subordinates; treat others as resolved
 		if ( length > 1 ) {
 			progressValues = new Array( length );
 			progressContexts = new Array( length );
@@ -14366,7 +14387,7 @@ jQuery.extend({
 			}
 		}
 
-		// if we're not waiting on anything, resolve the master
+		// If we're not waiting on anything, resolve the master
 		if ( !remaining ) {
 			deferred.resolveWith( resolveContexts, resolveValues );
 		}
@@ -14445,7 +14466,7 @@ jQuery.ready.promise = function( obj ) {
 		readyList = jQuery.Deferred();
 
 		// Catch cases where $(document).ready() is called after the browser event has already occurred.
-		// we once tried to use readyState "interactive" here, but it caused issues like the one
+		// We once tried to use readyState "interactive" here, but it caused issues like the one
 		// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15
 		if ( document.readyState === "complete" ) {
 			// Handle it asynchronously to allow scripts the opportunity to delay ready
@@ -14539,7 +14560,7 @@ jQuery.acceptData = function( owner ) {
 
 
 function Data() {
-	// Support: Android < 4,
+	// Support: Android<4,
 	// Old WebKit does not have Object.preventExtensions/freeze method,
 	// return new empty object instead with no [[set]] accessor
 	Object.defineProperty( this.cache = {}, 0, {
@@ -14548,7 +14569,7 @@ function Data() {
 		}
 	});
 
-	this.expando = jQuery.expando + Math.random();
+	this.expando = jQuery.expando + Data.uid++;
 }
 
 Data.uid = 1;
@@ -14576,7 +14597,7 @@ Data.prototype = {
 				descriptor[ this.expando ] = { value: unlock };
 				Object.defineProperties( owner, descriptor );
 
-			// Support: Android < 4
+			// Support: Android<4
 			// Fallback to a less secure definition
 			} catch ( e ) {
 				descriptor[ this.expando ] = unlock;
@@ -14716,17 +14737,16 @@ var data_user = new Data();
 
 
 
-/*
-	Implementation Summary
+//	Implementation Summary
+//
+//	1. Enforce API surface and semantic compatibility with 1.9.x branch
+//	2. Improve the module's maintainability by reducing the storage
+//		paths to a single mechanism.
+//	3. Use the same single mechanism to support "private" and "user" data.
+//	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
+//	5. Avoid exposing implementation details on user objects (eg. expando properties)
+//	6. Provide a clear path for implementation upgrade to WeakMap in 2014
 
-	1. Enforce API surface and semantic compatibility with 1.9.x branch
-	2. Improve the module's maintainability by reducing the storage
-		paths to a single mechanism.
-	3. Use the same single mechanism to support "private" and "user" data.
-	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
-	5. Avoid exposing implementation details on user objects (eg. expando properties)
-	6. Provide a clear path for implementation upgrade to WeakMap in 2014
-*/
 var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
 	rmultiDash = /([A-Z])/g;
 
@@ -14931,7 +14951,7 @@ jQuery.extend({
 				queue.unshift( "inprogress" );
 			}
 
-			// clear up the last queue stop function
+			// Clear up the last queue stop function
 			delete hooks.stop;
 			fn.call( elem, next, hooks );
 		}
@@ -14941,7 +14961,7 @@ jQuery.extend({
 		}
 	},
 
-	// not intended for public consumption - generates a queueHooks object, or returns the current one
+	// Not public - generate a queueHooks object, or return the current one
 	_queueHooks: function( elem, type ) {
 		var key = type + "queueHooks";
 		return data_priv.get( elem, key ) || data_priv.access( elem, key, {
@@ -14971,7 +14991,7 @@ jQuery.fn.extend({
 			this.each(function() {
 				var queue = jQuery.queue( this, type, data );
 
-				// ensure a hooks for this queue
+				// Ensure a hooks for this queue
 				jQuery._queueHooks( this, type );
 
 				if ( type === "fx" && queue[0] !== "inprogress" ) {
@@ -15038,21 +15058,22 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 		div = fragment.appendChild( document.createElement( "div" ) ),
 		input = document.createElement( "input" );
 
-	// #11217 - WebKit loses check when the name is after the checked attribute
+	// Support: Safari<=5.1
+	// Check state lost if the name is set (#11217)
 	// Support: Windows Web Apps (WWA)
-	// `name` and `type` need .setAttribute for WWA
+	// `name` and `type` must use .setAttribute for WWA (#14901)
 	input.setAttribute( "type", "radio" );
 	input.setAttribute( "checked", "checked" );
 	input.setAttribute( "name", "t" );
 
 	div.appendChild( input );
 
-	// Support: Safari 5.1, iOS 5.1, Android 4.x, Android 2.3
-	// old WebKit doesn't clone checked state correctly in fragments
+	// Support: Safari<=5.1, Android<4.2
+	// Older WebKit doesn't clone checked state correctly in fragments
 	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
 
+	// Support: IE<=11+
 	// Make sure textarea (and checkbox) defaultValue is properly cloned
-	// Support: IE9-IE11+
 	div.innerHTML = "<textarea>x</textarea>";
 	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 })();
@@ -15430,8 +15451,8 @@ jQuery.event = {
 			j = 0;
 			while ( (handleObj = matched.handlers[ j++ ]) && !event.isImmediatePropagationStopped() ) {
 
-				// Triggered event must either 1) have no namespace, or
-				// 2) have namespace(s) a subset or equal to those in the bound event (both can have no namespace).
+				// Triggered event must either 1) have no namespace, or 2) have namespace(s)
+				// a subset or equal to those in the bound event (both can have no namespace).
 				if ( !event.namespace_re || event.namespace_re.test( handleObj.namespace ) ) {
 
 					event.handleObj = handleObj;
@@ -15581,7 +15602,7 @@ jQuery.event = {
 			event.target = document;
 		}
 
-		// Support: Safari 6.0+, Chrome < 28
+		// Support: Safari 6.0+, Chrome<28
 		// Target should not be a text node (#504, #13143)
 		if ( event.target.nodeType === 3 ) {
 			event.target = event.target.parentNode;
@@ -15686,7 +15707,7 @@ jQuery.Event = function( src, props ) {
 		// by a handler lower down the tree; reflect the correct value.
 		this.isDefaultPrevented = src.defaultPrevented ||
 				src.defaultPrevented === undefined &&
-				// Support: Android < 4.0
+				// Support: Android<4.0
 				src.returnValue === false ?
 			returnTrue :
 			returnFalse;
@@ -15776,8 +15797,8 @@ jQuery.each({
 	};
 });
 
-// Create "bubbling" focus and blur events
 // Support: Firefox, Chrome, Safari
+// Create "bubbling" focus and blur events
 if ( !support.focusinBubbles ) {
 	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
 
@@ -15930,7 +15951,7 @@ var
 	// We have to close these tags to support XHTML (#13200)
 	wrapMap = {
 
-		// Support: IE 9
+		// Support: IE9
 		option: [ 1, "<select multiple='multiple'>", "</select>" ],
 
 		thead: [ 1, "<table>", "</table>" ],
@@ -15941,7 +15962,7 @@ var
 		_default: [ 0, "", "" ]
 	};
 
-// Support: IE 9
+// Support: IE9
 wrapMap.optgroup = wrapMap.option;
 
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
@@ -16031,7 +16052,7 @@ function getAll( context, tag ) {
 		ret;
 }
 
-// Support: IE >= 9
+// Fix IE bugs, see support tests
 function fixInput( src, dest ) {
 	var nodeName = dest.nodeName.toLowerCase();
 
@@ -16051,8 +16072,7 @@ jQuery.extend({
 			clone = elem.cloneNode( true ),
 			inPage = jQuery.contains( elem.ownerDocument, elem );
 
-		// Support: IE >= 9
-		// Fix Cloning issues
+		// Fix IE cloning issues
 		if ( !support.noCloneChecked && ( elem.nodeType === 1 || elem.nodeType === 11 ) &&
 				!jQuery.isXMLDoc( elem ) ) {
 
@@ -16103,8 +16123,8 @@ jQuery.extend({
 
 				// Add nodes directly
 				if ( jQuery.type( elem ) === "object" ) {
-					// Support: QtWebKit
-					// jQuery.merge because push.apply(_, arraylike) throws
+					// Support: QtWebKit, PhantomJS
+					// push.apply(_, arraylike) throws on ancient WebKit
 					jQuery.merge( nodes, elem.nodeType ? [ elem ] : elem );
 
 				// Convert non-html into a text node
@@ -16126,15 +16146,14 @@ jQuery.extend({
 						tmp = tmp.lastChild;
 					}
 
-					// Support: QtWebKit
-					// jQuery.merge because push.apply(_, arraylike) throws
+					// Support: QtWebKit, PhantomJS
+					// push.apply(_, arraylike) throws on ancient WebKit
 					jQuery.merge( nodes, tmp.childNodes );
 
 					// Remember the top-level container
 					tmp = fragment.firstChild;
 
-					// Fixes #12346
-					// Support: Webkit, IE
+					// Ensure the created nodes are orphaned (#12392)
 					tmp.textContent = "";
 				}
 			}
@@ -16496,7 +16515,7 @@ function actualDisplay( name, doc ) {
 		// getDefaultComputedStyle might be reliably used only on attached element
 		display = window.getDefaultComputedStyle && ( style = window.getDefaultComputedStyle( elem[ 0 ] ) ) ?
 
-			// Use of this method is a temporary fix (more like optmization) until something better comes along,
+			// Use of this method is a temporary fix (more like optimization) until something better comes along,
 			// since it was removed from specification and supported only in FF
 			style.display : jQuery.css( elem[ 0 ], "display" );
 
@@ -16546,7 +16565,14 @@ var rmargin = (/^margin/);
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
 var getStyles = function( elem ) {
-		return elem.ownerDocument.defaultView.getComputedStyle( elem, null );
+		// Support: IE<=11+, Firefox<=30+ (#15098, #14150)
+		// IE throws on elements created in popups
+		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
+		if ( elem.ownerDocument.defaultView.opener ) {
+			return elem.ownerDocument.defaultView.getComputedStyle( elem, null );
+		}
+
+		return window.getComputedStyle( elem, null );
 	};
 
 
@@ -16558,7 +16584,7 @@ function curCSS( elem, name, computed ) {
 	computed = computed || getStyles( elem );
 
 	// Support: IE9
-	// getPropertyValue is only needed for .css('filter') in IE9, see #12537
+	// getPropertyValue is only needed for .css('filter') (#12537)
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
 	}
@@ -16604,15 +16630,13 @@ function addGetHookIf( conditionFn, hookFn ) {
 	return {
 		get: function() {
 			if ( conditionFn() ) {
-				// Hook not needed (or it's not possible to use it due to missing dependency),
-				// remove it.
-				// Since there are no other hooks for marginRight, remove the whole object.
+				// Hook not needed (or it's not possible to use it due
+				// to missing dependency), remove it.
 				delete this.get;
 				return;
 			}
 
 			// Hook needed; redefine it so that the support test is not executed again.
-
 			return (this.get = hookFn).apply( this, arguments );
 		}
 	};
@@ -16629,6 +16653,8 @@ function addGetHookIf( conditionFn, hookFn ) {
 		return;
 	}
 
+	// Support: IE9-11+
+	// Style of cloned element affects source element cloned (#8908)
 	div.style.backgroundClip = "content-box";
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
@@ -16661,6 +16687,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 	if ( window.getComputedStyle ) {
 		jQuery.extend( support, {
 			pixelPosition: function() {
+
 				// This test is executed only once but we still do memoizing
 				// since we can use the boxSizingReliable pre-computing.
 				// No need to check if the test was already performed, though.
@@ -16674,6 +16701,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 				return boxSizingReliableVal;
 			},
 			reliableMarginRight: function() {
+
 				// Support: Android 2.3
 				// Check if div with explicit width and no margin-right incorrectly
 				// gets computed margin-right based on width of container. (#3333)
@@ -16695,6 +16723,7 @@ function addGetHookIf( conditionFn, hookFn ) {
 				ret = !parseFloat( window.getComputedStyle( marginDiv, null ).marginRight );
 
 				docElem.removeChild( container );
+				div.removeChild( marginDiv );
 
 				return ret;
 			}
@@ -16726,8 +16755,8 @@ jQuery.swap = function( elem, options, callback, args ) {
 
 
 var
-	// swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
-	// see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
+	// Swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
+	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
 	rnumsplit = new RegExp( "^(" + pnum + ")(.*)$", "i" ),
 	rrelNum = new RegExp( "^([+-])=(" + pnum + ")", "i" ),
@@ -16740,15 +16769,15 @@ var
 
 	cssPrefixes = [ "Webkit", "O", "Moz", "ms" ];
 
-// return a css property mapped to a potentially vendor prefixed property
+// Return a css property mapped to a potentially vendor prefixed property
 function vendorPropName( style, name ) {
 
-	// shortcut for names that are not vendor prefixed
+	// Shortcut for names that are not vendor prefixed
 	if ( name in style ) {
 		return name;
 	}
 
-	// check for vendor prefixed names
+	// Check for vendor prefixed names
 	var capName = name[0].toUpperCase() + name.slice(1),
 		origName = name,
 		i = cssPrefixes.length;
@@ -16781,7 +16810,7 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 		val = 0;
 
 	for ( ; i < 4; i += 2 ) {
-		// both box models exclude margin, so add it if we want it
+		// Both box models exclude margin, so add it if we want it
 		if ( extra === "margin" ) {
 			val += jQuery.css( elem, extra + cssExpand[ i ], true, styles );
 		}
@@ -16792,15 +16821,15 @@ function augmentWidthOrHeight( elem, name, extra, isBorderBox, styles ) {
 				val -= jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 			}
 
-			// at this point, extra isn't border nor margin, so remove border
+			// At this point, extra isn't border nor margin, so remove border
 			if ( extra !== "margin" ) {
 				val -= jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
 		} else {
-			// at this point, extra isn't content, so add padding
+			// At this point, extra isn't content, so add padding
 			val += jQuery.css( elem, "padding" + cssExpand[ i ], true, styles );
 
-			// at this point, extra isn't content nor padding, so add border
+			// At this point, extra isn't content nor padding, so add border
 			if ( extra !== "padding" ) {
 				val += jQuery.css( elem, "border" + cssExpand[ i ] + "Width", true, styles );
 			}
@@ -16818,7 +16847,7 @@ function getWidthOrHeight( elem, name, extra ) {
 		styles = getStyles( elem ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
 
-	// some non-html elements return undefined for offsetWidth, so check for null/undefined
+	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
 	// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
 	if ( val <= 0 || val == null ) {
@@ -16833,7 +16862,7 @@ function getWidthOrHeight( elem, name, extra ) {
 			return val;
 		}
 
-		// we need the check for style in case a browser which returns unreliable values
+		// Check for style in case a browser which returns unreliable values
 		// for getComputedStyle silently falls back to the reliable elem.style
 		valueIsBorderBox = isBorderBox &&
 			( support.boxSizingReliable() || val === elem.style[ name ] );
@@ -16842,7 +16871,7 @@ function getWidthOrHeight( elem, name, extra ) {
 		val = parseFloat( val ) || 0;
 	}
 
-	// use the active box-sizing model to add/subtract irrelevant styles
+	// Use the active box-sizing model to add/subtract irrelevant styles
 	return ( val +
 		augmentWidthOrHeight(
 			elem,
@@ -16906,12 +16935,14 @@ function showHide( elements, show ) {
 }
 
 jQuery.extend({
+
 	// Add in style property hooks for overriding the default
 	// behavior of getting and setting a style property
 	cssHooks: {
 		opacity: {
 			get: function( elem, computed ) {
 				if ( computed ) {
+
 					// We should always get a number back from opacity
 					var ret = curCSS( elem, "opacity" );
 					return ret === "" ? "1" : ret;
@@ -16939,12 +16970,12 @@ jQuery.extend({
 	// Add in properties whose names you wish to fix before
 	// setting or getting the value
 	cssProps: {
-		// normalize float css property
 		"float": "cssFloat"
 	},
 
 	// Get and set the style property on a DOM Node
 	style: function( elem, name, value, extra ) {
+
 		// Don't set styles on text and comment nodes
 		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
 			return;
@@ -16957,33 +16988,32 @@ jQuery.extend({
 
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( style, origName ) );
 
-		// gets hook for the prefixed version
-		// followed by the unprefixed version
+		// Gets hook for the prefixed version, then unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// Check if we're setting a value
 		if ( value !== undefined ) {
 			type = typeof value;
 
-			// convert relative number strings (+= or -=) to relative numbers. #7345
+			// Convert "+=" or "-=" to relative numbers (#7345)
 			if ( type === "string" && (ret = rrelNum.exec( value )) ) {
 				value = ( ret[1] + 1 ) * ret[2] + parseFloat( jQuery.css( elem, name ) );
 				// Fixes bug #9237
 				type = "number";
 			}
 
-			// Make sure that null and NaN values aren't set. See: #7116
+			// Make sure that null and NaN values aren't set (#7116)
 			if ( value == null || value !== value ) {
 				return;
 			}
 
-			// If a number was passed in, add 'px' to the (except for certain CSS properties)
+			// If a number, add 'px' to the (except for certain CSS properties)
 			if ( type === "number" && !jQuery.cssNumber[ origName ] ) {
 				value += "px";
 			}
 
-			// Fixes #8908, it can be done more correctly by specifying setters in cssHooks,
-			// but it would mean to define eight (for every problematic property) identical functions
+			// Support: IE9-11+
+			// background-* props affect original clone's values
 			if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
 				style[ name ] = "inherit";
 			}
@@ -17011,8 +17041,7 @@ jQuery.extend({
 		// Make sure that we're working with the right name
 		name = jQuery.cssProps[ origName ] || ( jQuery.cssProps[ origName ] = vendorPropName( elem.style, origName ) );
 
-		// gets hook for the prefixed version
-		// followed by the unprefixed version
+		// Try prefixed name followed by the unprefixed name
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
 		// If a hook was provided get the computed value from there
@@ -17025,12 +17054,12 @@ jQuery.extend({
 			val = curCSS( elem, name, styles );
 		}
 
-		//convert "normal" to computed value
+		// Convert "normal" to computed value
 		if ( val === "normal" && name in cssNormalTransform ) {
 			val = cssNormalTransform[ name ];
 		}
 
-		// Return, converting to number if forced or a qualifier was provided and val looks numeric
+		// Make numeric if forced or a qualifier was provided and val looks numeric
 		if ( extra === "" || extra ) {
 			num = parseFloat( val );
 			return extra === true || jQuery.isNumeric( num ) ? num || 0 : val;
@@ -17043,8 +17072,9 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 	jQuery.cssHooks[ name ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
-				// certain elements can have dimension info if we invisibly show them
-				// however, it must have a current display style that would benefit from this
+
+				// Certain elements can have dimension info if we invisibly show them
+				// but it must have a current display style that would benefit
 				return rdisplayswap.test( jQuery.css( elem, "display" ) ) && elem.offsetWidth === 0 ?
 					jQuery.swap( elem, cssShow, function() {
 						return getWidthOrHeight( elem, name, extra );
@@ -17072,8 +17102,6 @@ jQuery.each([ "height", "width" ], function( i, name ) {
 jQuery.cssHooks.marginRight = addGetHookIf( support.reliableMarginRight,
 	function( elem, computed ) {
 		if ( computed ) {
-			// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
-			// Work around by temporarily setting element display to inline-block
 			return jQuery.swap( elem, { "display": "inline-block" },
 				curCSS, [ elem, "marginRight" ] );
 		}
@@ -17091,7 +17119,7 @@ jQuery.each({
 			var i = 0,
 				expanded = {},
 
-				// assumes a single number if not a string
+				// Assumes a single number if not a string
 				parts = typeof value === "string" ? value.split(" ") : [ value ];
 
 			for ( ; i < 4; i++ ) {
@@ -17214,17 +17242,18 @@ Tween.propHooks = {
 				return tween.elem[ tween.prop ];
 			}
 
-			// passing an empty string as a 3rd parameter to .css will automatically
-			// attempt a parseFloat and fallback to a string if the parse fails
-			// so, simple values such as "10px" are parsed to Float.
-			// complex values such as "rotate(1rad)" are returned as is.
+			// Passing an empty string as a 3rd parameter to .css will automatically
+			// attempt a parseFloat and fallback to a string if the parse fails.
+			// Simple values such as "10px" are parsed to Float;
+			// complex values such as "rotate(1rad)" are returned as-is.
 			result = jQuery.css( tween.elem, tween.prop, "" );
 			// Empty strings, null, undefined and "auto" are converted to 0.
 			return !result || result === "auto" ? 0 : result;
 		},
 		set: function( tween ) {
-			// use step hook for back compat - use cssHook if its there - use .style if its
-			// available and use plain properties where available
+			// Use step hook for back compat.
+			// Use cssHook if its there.
+			// Use .style if available and use plain properties where available.
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
 			} else if ( tween.elem.style && ( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] != null || jQuery.cssHooks[ tween.prop ] ) ) {
@@ -17238,7 +17267,6 @@ Tween.propHooks = {
 
 // Support: IE9
 // Panic based approach to setting things on disconnected nodes
-
 Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
 	set: function( tween ) {
 		if ( tween.elem.nodeType && tween.elem.parentNode ) {
@@ -17294,16 +17322,16 @@ var
 				start = +target || 1;
 
 				do {
-					// If previous iteration zeroed out, double until we get *something*
-					// Use a string for doubling factor so we don't accidentally see scale as unchanged below
+					// If previous iteration zeroed out, double until we get *something*.
+					// Use string for doubling so we don't accidentally see scale as unchanged below
 					scale = scale || ".5";
 
 					// Adjust and apply
 					start = start / scale;
 					jQuery.style( tween.elem, prop, start + unit );
 
-				// Update scale, tolerating zero or NaN from tween.cur()
-				// And breaking the loop if scale is unchanged or perfect, or if we've just had enough
+				// Update scale, tolerating zero or NaN from tween.cur(),
+				// break the loop if scale is unchanged or perfect, or if we've just had enough
 				} while ( scale !== (scale = tween.cur() / target) && scale !== 1 && --maxIterations );
 			}
 
@@ -17335,8 +17363,8 @@ function genFx( type, includeWidth ) {
 		i = 0,
 		attrs = { height: type };
 
-	// if we include width, step value is 1 to do all cssExpand values,
-	// if we don't include width, step value is 2 to skip over Left and Right
+	// If we include width, step value is 1 to do all cssExpand values,
+	// otherwise step value is 2 to skip over Left and Right
 	includeWidth = includeWidth ? 1 : 0;
 	for ( ; i < 4 ; i += 2 - includeWidth ) {
 		which = cssExpand[ i ];
@@ -17358,7 +17386,7 @@ function createTween( value, prop, animation ) {
 	for ( ; index < length; index++ ) {
 		if ( (tween = collection[ index ].call( animation, prop, value )) ) {
 
-			// we're done with this property
+			// We're done with this property
 			return tween;
 		}
 	}
@@ -17373,7 +17401,7 @@ function defaultPrefilter( elem, props, opts ) {
 		hidden = elem.nodeType && isHidden( elem ),
 		dataShow = data_priv.get( elem, "fxshow" );
 
-	// handle queue: false promises
+	// Handle queue: false promises
 	if ( !opts.queue ) {
 		hooks = jQuery._queueHooks( elem, "fx" );
 		if ( hooks.unqueued == null ) {
@@ -17388,8 +17416,7 @@ function defaultPrefilter( elem, props, opts ) {
 		hooks.unqueued++;
 
 		anim.always(function() {
-			// doing this makes sure that the complete handler will be called
-			// before this completes
+			// Ensure the complete handler is called before this completes
 			anim.always(function() {
 				hooks.unqueued--;
 				if ( !jQuery.queue( elem, "fx" ).length ) {
@@ -17399,7 +17426,7 @@ function defaultPrefilter( elem, props, opts ) {
 		});
 	}
 
-	// height/width overflow pass
+	// Height/width overflow pass
 	if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
 		// Make sure that nothing sneaks out
 		// Record all 3 overflow attributes because IE9-10 do not
@@ -17461,7 +17488,7 @@ function defaultPrefilter( elem, props, opts ) {
 			dataShow = data_priv.access( elem, "fxshow", {} );
 		}
 
-		// store state if its toggle - enables .stop().toggle() to "reverse"
+		// Store state if its toggle - enables .stop().toggle() to "reverse"
 		if ( toggle ) {
 			dataShow.hidden = !hidden;
 		}
@@ -17521,8 +17548,8 @@ function propFilter( props, specialEasing ) {
 			value = hooks.expand( value );
 			delete props[ name ];
 
-			// not quite $.extend, this wont overwrite keys already present.
-			// also - reusing 'index' from above because we have the correct "name"
+			// Not quite $.extend, this won't overwrite existing keys.
+			// Reusing 'index' because we have the correct "name"
 			for ( index in value ) {
 				if ( !( index in props ) ) {
 					props[ index ] = value[ index ];
@@ -17541,7 +17568,7 @@ function Animation( elem, properties, options ) {
 		index = 0,
 		length = animationPrefilters.length,
 		deferred = jQuery.Deferred().always( function() {
-			// don't match elem in the :animated selector
+			// Don't match elem in the :animated selector
 			delete tick.elem;
 		}),
 		tick = function() {
@@ -17550,7 +17577,8 @@ function Animation( elem, properties, options ) {
 			}
 			var currentTime = fxNow || createFxNow(),
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
-				// archaic crash bug won't allow us to use 1 - ( 0.5 || 0 ) (#12497)
+				// Support: Android 2.3
+				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
 				temp = remaining / animation.duration || 0,
 				percent = 1 - temp,
 				index = 0,
@@ -17586,7 +17614,7 @@ function Animation( elem, properties, options ) {
 			},
 			stop: function( gotoEnd ) {
 				var index = 0,
-					// if we are going to the end, we want to run all the tweens
+					// If we are going to the end, we want to run all the tweens
 					// otherwise we skip this part
 					length = gotoEnd ? animation.tweens.length : 0;
 				if ( stopped ) {
@@ -17597,8 +17625,7 @@ function Animation( elem, properties, options ) {
 					animation.tweens[ index ].run( 1 );
 				}
 
-				// resolve when we played the last frame
-				// otherwise, reject
+				// Resolve when we played the last frame; otherwise, reject
 				if ( gotoEnd ) {
 					deferred.resolveWith( elem, [ animation, gotoEnd ] );
 				} else {
@@ -17680,7 +17707,7 @@ jQuery.speed = function( speed, easing, fn ) {
 	opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
 		opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[ opt.duration ] : jQuery.fx.speeds._default;
 
-	// normalize opt.queue - true/undefined/null -> "fx"
+	// Normalize opt.queue - true/undefined/null -> "fx"
 	if ( opt.queue == null || opt.queue === true ) {
 		opt.queue = "fx";
 	}
@@ -17704,10 +17731,10 @@ jQuery.speed = function( speed, easing, fn ) {
 jQuery.fn.extend({
 	fadeTo: function( speed, to, easing, callback ) {
 
-		// show any hidden elements after setting opacity to 0
+		// Show any hidden elements after setting opacity to 0
 		return this.filter( isHidden ).css( "opacity", 0 ).show()
 
-			// animate to the value specified
+			// Animate to the value specified
 			.end().animate({ opacity: to }, speed, easing, callback );
 	},
 	animate: function( prop, speed, easing, callback ) {
@@ -17770,9 +17797,9 @@ jQuery.fn.extend({
 				}
 			}
 
-			// start the next in the queue if the last step wasn't forced
-			// timers currently will call their complete callbacks, which will dequeue
-			// but only if they were gotoEnd
+			// Start the next in the queue if the last step wasn't forced.
+			// Timers currently will call their complete callbacks, which
+			// will dequeue but only if they were gotoEnd.
 			if ( dequeue || !gotoEnd ) {
 				jQuery.dequeue( this, type );
 			}
@@ -17790,17 +17817,17 @@ jQuery.fn.extend({
 				timers = jQuery.timers,
 				length = queue ? queue.length : 0;
 
-			// enable finishing flag on private data
+			// Enable finishing flag on private data
 			data.finish = true;
 
-			// empty the queue first
+			// Empty the queue first
 			jQuery.queue( this, type, [] );
 
 			if ( hooks && hooks.stop ) {
 				hooks.stop.call( this, true );
 			}
 
-			// look for any active animations, and finish them
+			// Look for any active animations, and finish them
 			for ( index = timers.length; index--; ) {
 				if ( timers[ index ].elem === this && timers[ index ].queue === type ) {
 					timers[ index ].anim.stop( true );
@@ -17808,14 +17835,14 @@ jQuery.fn.extend({
 				}
 			}
 
-			// look for any animations in the old queue and finish them
+			// Look for any animations in the old queue and finish them
 			for ( index = 0; index < length; index++ ) {
 				if ( queue[ index ] && queue[ index ].finish ) {
 					queue[ index ].finish.call( this );
 				}
 			}
 
-			// turn off finishing flag
+			// Turn off finishing flag
 			delete data.finish;
 		});
 	}
@@ -17918,21 +17945,21 @@ jQuery.fn.delay = function( time, type ) {
 
 	input.type = "checkbox";
 
-	// Support: iOS 5.1, Android 4.x, Android 2.3
-	// Check the default checkbox/radio value ("" on old WebKit; "on" elsewhere)
+	// Support: iOS<=5.1, Android<=4.2+
+	// Default value for a checkbox should be "on"
 	support.checkOn = input.value !== "";
 
-	// Must access the parent to make an option select properly
-	// Support: IE9, IE10
+	// Support: IE<=11+
+	// Must access selectedIndex to make default options select
 	support.optSelected = opt.selected;
 
-	// Make sure that the options inside disabled selects aren't marked as disabled
-	// (WebKit marks them as disabled)
+	// Support: Android<=2.3
+	// Options inside disabled selects are incorrectly marked as disabled
 	select.disabled = true;
 	support.optDisabled = !opt.disabled;
 
-	// Check if an input maintains its value after becoming a radio
-	// Support: IE9, IE10
+	// Support: IE<=11+
+	// An input loses its value after becoming a radio
 	input = document.createElement( "input" );
 	input.value = "t";
 	input.type = "radio";
@@ -18029,8 +18056,6 @@ jQuery.extend({
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
 					jQuery.nodeName( elem, "input" ) ) {
-					// Setting the type on a radio button after the value resets the value in IE6-9
-					// Reset value to default in case type is set after value during creation
 					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
@@ -18100,7 +18125,7 @@ jQuery.extend({
 		var ret, hooks, notxml,
 			nType = elem.nodeType;
 
-		// don't get/set properties on text, comment and attribute nodes
+		// Don't get/set properties on text, comment and attribute nodes
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
 			return;
 		}
@@ -18136,8 +18161,6 @@ jQuery.extend({
 	}
 });
 
-// Support: IE9+
-// Selectedness for an option in an optgroup can be inaccurate
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
@@ -18245,7 +18268,7 @@ jQuery.fn.extend({
 						}
 					}
 
-					// only assign if different to avoid unneeded rendering.
+					// Only assign if different to avoid unneeded rendering.
 					finalValue = value ? jQuery.trim( cur ) : "";
 					if ( elem.className !== finalValue ) {
 						elem.className = finalValue;
@@ -18272,14 +18295,14 @@ jQuery.fn.extend({
 
 		return this.each(function() {
 			if ( type === "string" ) {
-				// toggle individual class names
+				// Toggle individual class names
 				var className,
 					i = 0,
 					self = jQuery( this ),
 					classNames = value.match( rnotwhite ) || [];
 
 				while ( (className = classNames[ i++ ]) ) {
-					// check each className given, space separated list
+					// Check each className given, space separated list
 					if ( self.hasClass( className ) ) {
 						self.removeClass( className );
 					} else {
@@ -18294,7 +18317,7 @@ jQuery.fn.extend({
 					data_priv.set( this, "__className__", this.className );
 				}
 
-				// If the element has a class name or if we're passed "false",
+				// If the element has a class name or if we're passed `false`,
 				// then remove the whole classname (if there was one, the above saved it).
 				// Otherwise bring back whatever was previously saved (if anything),
 				// falling back to the empty string if nothing was stored.
@@ -18338,9 +18361,9 @@ jQuery.fn.extend({
 				ret = elem.value;
 
 				return typeof ret === "string" ?
-					// handle most common string cases
+					// Handle most common string cases
 					ret.replace(rreturn, "") :
-					// handle cases where value is null/undef or number
+					// Handle cases where value is null/undef or number
 					ret == null ? "" : ret;
 			}
 
@@ -18448,7 +18471,7 @@ jQuery.extend({
 					}
 				}
 
-				// force browsers to behave consistently when non-matching value is set
+				// Force browsers to behave consistently when non-matching value is set
 				if ( !optionSet ) {
 					elem.selectedIndex = -1;
 				}
@@ -18469,8 +18492,6 @@ jQuery.each([ "radio", "checkbox" ], function() {
 	};
 	if ( !support.checkOn ) {
 		jQuery.valHooks[ this ].get = function( elem ) {
-			// Support: Webkit
-			// "" is returned instead of "on" if a value isn't specified
 			return elem.getAttribute("value") === null ? "on" : elem.value;
 		};
 	}
@@ -18552,10 +18573,6 @@ jQuery.parseXML = function( data ) {
 
 
 var
-	// Document location
-	ajaxLocParts,
-	ajaxLocation,
-
 	rhash = /#.*$/,
 	rts = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
@@ -18584,22 +18601,13 @@ var
 	transports = {},
 
 	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
-	allTypes = "*/".concat("*");
+	allTypes = "*/".concat( "*" ),
 
-// #8138, IE may throw an exception when accessing
-// a field from window.location if document.domain has been set
-try {
-	ajaxLocation = location.href;
-} catch( e ) {
-	// Use the href attribute of an A element
-	// since IE will modify it given document.location
-	ajaxLocation = document.createElement( "a" );
-	ajaxLocation.href = "";
-	ajaxLocation = ajaxLocation.href;
-}
+	// Document location
+	ajaxLocation = window.location.href,
 
-// Segment location into parts
-ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
+	// Segment location into parts
+	ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
@@ -19078,7 +19086,8 @@ jQuery.extend({
 		}
 
 		// We can fire global events as of now if asked to
-		fireGlobals = s.global;
+		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (#15118)
+		fireGlobals = jQuery.event && s.global;
 
 		// Watch for a new set of requests
 		if ( fireGlobals && jQuery.active++ === 0 ) {
@@ -19151,7 +19160,7 @@ jQuery.extend({
 			return jqXHR.abort();
 		}
 
-		// aborting is no longer a cancellation
+		// Aborting is no longer a cancellation
 		strAbort = "abort";
 
 		// Install callbacks on deferreds
@@ -19263,8 +19272,7 @@ jQuery.extend({
 					isSuccess = !error;
 				}
 			} else {
-				// We extract error from statusText
-				// then normalize statusText and status for non-aborts
+				// Extract error from statusText and normalize for non-aborts
 				error = statusText;
 				if ( status || !statusText ) {
 					statusText = "error";
@@ -19320,7 +19328,7 @@ jQuery.extend({
 
 jQuery.each( [ "get", "post" ], function( i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
-		// shift arguments if data argument was omitted
+		// Shift arguments if data argument was omitted
 		if ( jQuery.isFunction( data ) ) {
 			type = type || callback;
 			callback = data;
@@ -19334,13 +19342,6 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 			data: data,
 			success: callback
 		});
-	};
-});
-
-// Attach a bunch of functions for handling common AJAX events
-jQuery.each( [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ], function( i, type ) {
-	jQuery.fn[ type ] = function( fn ) {
-		return this.on( type, fn );
 	};
 });
 
@@ -19561,8 +19562,9 @@ var xhrId = 0,
 
 // Support: IE9
 // Open requests must be manually aborted on unload (#5280)
-if ( window.ActiveXObject ) {
-	jQuery( window ).on( "unload", function() {
+// See https://support.microsoft.com/kb/2856746 for more info
+if ( window.attachEvent ) {
+	window.attachEvent( "onunload", function() {
 		for ( var key in xhrCallbacks ) {
 			xhrCallbacks[ key ]();
 		}
@@ -19915,6 +19917,16 @@ jQuery.fn.load = function( url, params, callback ) {
 
 
 
+// Attach a bunch of functions for handling common AJAX events
+jQuery.each( [ "ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend" ], function( i, type ) {
+	jQuery.fn[ type ] = function( fn ) {
+		return this.on( type, fn );
+	};
+});
+
+
+
+
 jQuery.expr.filters.animated = function( elem ) {
 	return jQuery.grep(jQuery.timers, function( fn ) {
 		return elem === fn.elem;
@@ -19951,7 +19963,8 @@ jQuery.offset = {
 		calculatePosition = ( position === "absolute" || position === "fixed" ) &&
 			( curCSSTop + curCSSLeft ).indexOf("auto") > -1;
 
-		// Need to be able to calculate position if either top or left is auto and position is either absolute or fixed
+		// Need to be able to calculate position if either
+		// top or left is auto and position is either absolute or fixed
 		if ( calculatePosition ) {
 			curPosition = curElem.position();
 			curTop = curPosition.top;
@@ -20008,8 +20021,8 @@ jQuery.fn.extend({
 			return box;
 		}
 
+		// Support: BlackBerry 5, iOS 3 (original iPhone)
 		// If we don't have gBCR, just use 0,0 rather than error
-		// BlackBerry 5, iOS 3 (original iPhone)
 		if ( typeof elem.getBoundingClientRect !== strundefined ) {
 			box = elem.getBoundingClientRect();
 		}
@@ -20031,7 +20044,7 @@ jQuery.fn.extend({
 
 		// Fixed elements are offset from window (parentOffset = {top:0, left: 0}, because it is its only offset parent
 		if ( jQuery.css( elem, "position" ) === "fixed" ) {
-			// We assume that getBoundingClientRect is available when computed position is fixed
+			// Assume getBoundingClientRect is there when computed position is fixed
 			offset = elem.getBoundingClientRect();
 
 		} else {
@@ -20094,16 +20107,18 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 	};
 });
 
+// Support: Safari<7+, Chrome<37+
 // Add the top/left cssHooks using jQuery.fn.position
 // Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-// getComputedStyle returns percent when specified for top/left/bottom/right
-// rather than make the css module depend on the offset module, we just check for it here
+// Blink bug: https://code.google.com/p/chromium/issues/detail?id=229280
+// getComputedStyle returns percent when specified for top/left/bottom/right;
+// rather than make the css module depend on the offset module, just check for it here
 jQuery.each( [ "top", "left" ], function( i, prop ) {
 	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
 		function( elem, computed ) {
 			if ( computed ) {
 				computed = curCSS( elem, prop );
-				// if curCSS returns percentage, fallback to offset
+				// If curCSS returns percentage, fallback to offset
 				return rnumnonpx.test( computed ) ?
 					jQuery( elem ).position()[ prop ] + "px" :
 					computed;
@@ -20116,7 +20131,7 @@ jQuery.each( [ "top", "left" ], function( i, prop ) {
 // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
 jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 	jQuery.each( { padding: "inner" + name, content: type, "": "outer" + name }, function( defaultExtra, funcName ) {
-		// margin is only for outerHeight, outerWidth
+		// Margin is only for outerHeight, outerWidth
 		jQuery.fn[ funcName ] = function( margin, value ) {
 			var chainable = arguments.length && ( defaultExtra || typeof margin !== "boolean" ),
 				extra = defaultExtra || ( margin === true || value === true ? "margin" : "border" );
@@ -20207,8 +20222,8 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 
-// Expose jQuery and $ identifiers, even in
-// AMD (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// Expose jQuery and $ identifiers, even in AMD
+// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if ( typeof noGlobal === strundefined ) {
 	window.jQuery = window.$ = jQuery;
@@ -20222,25 +20237,22 @@ return jQuery;
 }));
 
 },{}],41:[function(require,module,exports){
-(function (global){
 //! moment.js
-//! version : 2.8.4
+//! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
 
 (function (undefined) {
+
     /************************************
         Constants
     ************************************/
 
     var moment,
-        VERSION = '2.8.4',
-        // the global-scope this is NOT the global object in Node.js
-        globalScope = typeof global !== 'undefined' ? global : this,
-        oldGlobalMoment,
+        VERSION = "2.5.1",
+        global = this,
         round = Math.round,
-        hasOwnProperty = Object.prototype.hasOwnProperty,
         i,
 
         YEAR = 0,
@@ -20251,14 +20263,24 @@ return jQuery;
         SECOND = 5,
         MILLISECOND = 6,
 
-        // internal storage for locale config files
-        locales = {},
+        // internal storage for language config files
+        languages = {},
 
-        // extra moment internal properties (plugins register props here)
-        momentProperties = [],
+        // moment internal properties
+        momentProperties = {
+            _isAMomentObject: null,
+            _i : null,
+            _f : null,
+            _l : null,
+            _strict : null,
+            _isUTC : null,
+            _offset : null,  // optional. Combine with _isUTC
+            _pf : null,
+            _lang : null  // optional
+        },
 
         // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module && module.exports),
+        hasModule = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined'),
 
         // ASP.NET json date format regex
         aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
@@ -20269,8 +20291,8 @@ return jQuery;
         isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
 
         // format tokens
-        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g,
-        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
+        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,
 
         // parsing token regexes
         parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
@@ -20281,7 +20303,6 @@ return jQuery;
         parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
         parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
         parseTokenT = /T/i, // T (ISO separator)
-        parseTokenOffsetMs = /[\+\-]?\d+/, // 1234567890123
         parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
 
         //strict parsing regexes
@@ -20308,13 +20329,13 @@ return jQuery;
 
         // iso time formats and regexes
         isoTimes = [
-            ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
+            ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d{1,3}/],
             ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
             ['HH:mm', /(T| )\d\d:\d\d/],
             ['HH', /(T| )\d\d/]
         ],
 
-        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-15', '30']
+        // timezone chunker "+10:00" > ["10", "00"] or "-1530" > ["-15", "30"]
         parseTimezoneChunker = /([\+\-]|\d\d)/gi,
 
         // getter and setter names
@@ -20339,7 +20360,6 @@ return jQuery;
             w : 'week',
             W : 'isoWeek',
             M : 'month',
-            Q : 'quarter',
             y : 'year',
             DDD : 'dayOfYear',
             e : 'weekday',
@@ -20359,15 +20379,6 @@ return jQuery;
         // format function strings
         formatFunctions = {},
 
-        // default relative time thresholds
-        relativeTimeThresholds = {
-            s: 45,  // seconds to minute
-            m: 45,  // minutes to hour
-            h: 22,  // hours to day
-            d: 26,  // days to month
-            M: 11   // months to year
-        },
-
         // tokens to ordinalize and pad
         ordinalizeTokens = 'DDD w W M D d'.split(' '),
         paddedTokens = 'M D H h m s w W'.split(' '),
@@ -20377,10 +20388,10 @@ return jQuery;
                 return this.month() + 1;
             },
             MMM  : function (format) {
-                return this.localeData().monthsShort(this, format);
+                return this.lang().monthsShort(this, format);
             },
             MMMM : function (format) {
-                return this.localeData().months(this, format);
+                return this.lang().months(this, format);
             },
             D    : function () {
                 return this.date();
@@ -20392,13 +20403,13 @@ return jQuery;
                 return this.day();
             },
             dd   : function (format) {
-                return this.localeData().weekdaysMin(this, format);
+                return this.lang().weekdaysMin(this, format);
             },
             ddd  : function (format) {
-                return this.localeData().weekdaysShort(this, format);
+                return this.lang().weekdaysShort(this, format);
             },
             dddd : function (format) {
-                return this.localeData().weekdays(this, format);
+                return this.lang().weekdays(this, format);
             },
             w    : function () {
                 return this.week();
@@ -20444,10 +20455,10 @@ return jQuery;
                 return this.isoWeekday();
             },
             a    : function () {
-                return this.localeData().meridiem(this.hours(), this.minutes(), true);
+                return this.lang().meridiem(this.hours(), this.minutes(), true);
             },
             A    : function () {
-                return this.localeData().meridiem(this.hours(), this.minutes(), false);
+                return this.lang().meridiem(this.hours(), this.minutes(), false);
             },
             H    : function () {
                 return this.hours();
@@ -20475,19 +20486,19 @@ return jQuery;
             },
             Z    : function () {
                 var a = -this.zone(),
-                    b = '+';
+                    b = "+";
                 if (a < 0) {
                     a = -a;
-                    b = '-';
+                    b = "-";
                 }
-                return b + leftZeroFill(toInt(a / 60), 2) + ':' + leftZeroFill(toInt(a) % 60, 2);
+                return b + leftZeroFill(toInt(a / 60), 2) + ":" + leftZeroFill(toInt(a) % 60, 2);
             },
             ZZ   : function () {
                 var a = -this.zone(),
-                    b = '+';
+                    b = "+";
                 if (a < 0) {
                     a = -a;
-                    b = '-';
+                    b = "-";
                 }
                 return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
             },
@@ -20497,9 +20508,6 @@ return jQuery;
             zz : function () {
                 return this.zoneName();
             },
-            x    : function () {
-                return this.valueOf();
-            },
             X    : function () {
                 return this.unix();
             },
@@ -20508,23 +20516,7 @@ return jQuery;
             }
         },
 
-        deprecations = {},
-
         lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'];
-
-    // Pick the first defined of two or three arguments. dfl comes from
-    // default.
-    function dfl(a, b, c) {
-        switch (arguments.length) {
-            case 2: return a != null ? a : b;
-            case 3: return a != null ? a : b != null ? b : c;
-            default: throw new Error('Implement me');
-        }
-    }
-
-    function hasOwnProp(a, b) {
-        return hasOwnProperty.call(a, b);
-    }
 
     function defaultParsingFlags() {
         // We need to deep clone this object, and es5 standard is not very
@@ -20543,31 +20535,6 @@ return jQuery;
         };
     }
 
-    function printMsg(msg) {
-        if (moment.suppressDeprecationWarnings === false &&
-                typeof console !== 'undefined' && console.warn) {
-            console.warn('Deprecation warning: ' + msg);
-        }
-    }
-
-    function deprecate(msg, fn) {
-        var firstTime = true;
-        return extend(function () {
-            if (firstTime) {
-                printMsg(msg);
-                firstTime = false;
-            }
-            return fn.apply(this, arguments);
-        }, fn);
-    }
-
-    function deprecateSimple(name, msg) {
-        if (!deprecations[name]) {
-            printMsg(msg);
-            deprecations[name] = true;
-        }
-    }
-
     function padToken(func, count) {
         return function (a) {
             return leftZeroFill(func.call(this, a), count);
@@ -20575,7 +20542,7 @@ return jQuery;
     }
     function ordinalizeToken(func, period) {
         return function (a) {
-            return this.localeData().ordinal(func.call(this, a), period);
+            return this.lang().ordinal(func.call(this, a), period);
         };
     }
 
@@ -20594,23 +20561,20 @@ return jQuery;
         Constructors
     ************************************/
 
-    function Locale() {
+    function Language() {
+
     }
 
     // Moment prototype object
-    function Moment(config, skipOverflow) {
-        if (skipOverflow !== false) {
-            checkOverflow(config);
-        }
-        copyConfig(this, config);
-        this._d = new Date(+config._d);
+    function Moment(config) {
+        checkOverflow(config);
+        extend(this, config);
     }
 
     // Duration Constructor
     function Duration(duration) {
         var normalizedInput = normalizeObjectUnits(duration),
             years = normalizedInput.year || 0,
-            quarters = normalizedInput.quarter || 0,
             months = normalizedInput.month || 0,
             weeks = normalizedInput.week || 0,
             days = normalizedInput.day || 0,
@@ -20632,12 +20596,9 @@ return jQuery;
         // which months you are are talking about, so we have to store
         // it separately.
         this._months = +months +
-            quarters * 3 +
             years * 12;
 
         this._data = {};
-
-        this._locale = moment.localeData();
 
         this._bubble();
     }
@@ -20649,67 +20610,31 @@ return jQuery;
 
     function extend(a, b) {
         for (var i in b) {
-            if (hasOwnProp(b, i)) {
+            if (b.hasOwnProperty(i)) {
                 a[i] = b[i];
             }
         }
 
-        if (hasOwnProp(b, 'toString')) {
+        if (b.hasOwnProperty("toString")) {
             a.toString = b.toString;
         }
 
-        if (hasOwnProp(b, 'valueOf')) {
+        if (b.hasOwnProperty("valueOf")) {
             a.valueOf = b.valueOf;
         }
 
         return a;
     }
 
-    function copyConfig(to, from) {
-        var i, prop, val;
-
-        if (typeof from._isAMomentObject !== 'undefined') {
-            to._isAMomentObject = from._isAMomentObject;
-        }
-        if (typeof from._i !== 'undefined') {
-            to._i = from._i;
-        }
-        if (typeof from._f !== 'undefined') {
-            to._f = from._f;
-        }
-        if (typeof from._l !== 'undefined') {
-            to._l = from._l;
-        }
-        if (typeof from._strict !== 'undefined') {
-            to._strict = from._strict;
-        }
-        if (typeof from._tzm !== 'undefined') {
-            to._tzm = from._tzm;
-        }
-        if (typeof from._isUTC !== 'undefined') {
-            to._isUTC = from._isUTC;
-        }
-        if (typeof from._offset !== 'undefined') {
-            to._offset = from._offset;
-        }
-        if (typeof from._pf !== 'undefined') {
-            to._pf = from._pf;
-        }
-        if (typeof from._locale !== 'undefined') {
-            to._locale = from._locale;
-        }
-
-        if (momentProperties.length > 0) {
-            for (i in momentProperties) {
-                prop = momentProperties[i];
-                val = from[prop];
-                if (typeof val !== 'undefined') {
-                    to[prop] = val;
-                }
+    function cloneMoment(m) {
+        var result = {}, i;
+        for (i in m) {
+            if (m.hasOwnProperty(i) && momentProperties.hasOwnProperty(i)) {
+                result[i] = m[i];
             }
         }
 
-        return to;
+        return result;
     }
 
     function absRound(number) {
@@ -20732,68 +20657,35 @@ return jQuery;
         return (sign ? (forceSign ? '+' : '') : '-') + output;
     }
 
-    function positiveMomentsDifference(base, other) {
-        var res = {milliseconds: 0, months: 0};
-
-        res.months = other.month() - base.month() +
-            (other.year() - base.year()) * 12;
-        if (base.clone().add(res.months, 'M').isAfter(other)) {
-            --res.months;
-        }
-
-        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
-
-        return res;
-    }
-
-    function momentsDifference(base, other) {
-        var res;
-        other = makeAs(other, base);
-        if (base.isBefore(other)) {
-            res = positiveMomentsDifference(base, other);
-        } else {
-            res = positiveMomentsDifference(other, base);
-            res.milliseconds = -res.milliseconds;
-            res.months = -res.months;
-        }
-
-        return res;
-    }
-
-    // TODO: remove 'name' arg after deprecation is removed
-    function createAdder(direction, name) {
-        return function (val, period) {
-            var dur, tmp;
-            //invert the arguments, but complain about it
-            if (period !== null && !isNaN(+period)) {
-                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
-                tmp = val; val = period; period = tmp;
-            }
-
-            val = typeof val === 'string' ? +val : val;
-            dur = moment.duration(val, period);
-            addOrSubtractDurationFromMoment(this, dur, direction);
-            return this;
-        };
-    }
-
-    function addOrSubtractDurationFromMoment(mom, duration, isAdding, updateOffset) {
+    // helper function for _.addTime and _.subtractTime
+    function addOrSubtractDurationFromMoment(mom, duration, isAdding, ignoreUpdateOffset) {
         var milliseconds = duration._milliseconds,
             days = duration._days,
-            months = duration._months;
-        updateOffset = updateOffset == null ? true : updateOffset;
+            months = duration._months,
+            minutes,
+            hours;
 
         if (milliseconds) {
             mom._d.setTime(+mom._d + milliseconds * isAdding);
         }
+        // store the minutes and hours so we can restore them
+        if (days || months) {
+            minutes = mom.minute();
+            hours = mom.hour();
+        }
         if (days) {
-            rawSetter(mom, 'Date', rawGetter(mom, 'Date') + days * isAdding);
+            mom.date(mom.date() + days * isAdding);
         }
         if (months) {
-            rawMonthSetter(mom, rawGetter(mom, 'Month') + months * isAdding);
+            mom.month(mom.month() + months * isAdding);
         }
-        if (updateOffset) {
-            moment.updateOffset(mom, days || months);
+        if (milliseconds && !ignoreUpdateOffset) {
+            moment.updateOffset(mom);
+        }
+        // restore the minutes and hours after possibly changing dst
+        if (days || months) {
+            mom.minute(minutes);
+            mom.hour(hours);
         }
     }
 
@@ -20803,8 +20695,8 @@ return jQuery;
     }
 
     function isDate(input) {
-        return Object.prototype.toString.call(input) === '[object Date]' ||
-            input instanceof Date;
+        return  Object.prototype.toString.call(input) === '[object Date]' ||
+                input instanceof Date;
     }
 
     // compare two arrays, return the number of differences
@@ -20836,7 +20728,7 @@ return jQuery;
             prop;
 
         for (prop in inputObject) {
-            if (hasOwnProp(inputObject, prop)) {
+            if (inputObject.hasOwnProperty(prop)) {
                 normalizedProp = normalizeUnits(prop);
                 if (normalizedProp) {
                     normalizedInput[normalizedProp] = inputObject[prop];
@@ -20864,7 +20756,7 @@ return jQuery;
 
         moment[field] = function (format, index) {
             var i, getter,
-                method = moment._locale[field],
+                method = moment.fn._lang[field],
                 results = [];
 
             if (typeof format === 'number') {
@@ -20874,7 +20766,7 @@ return jQuery;
 
             getter = function (i) {
                 var m = moment().utc().set(setter, i);
-                return method.call(moment._locale, m, format || '');
+                return method.call(moment.fn._lang, m, format || '');
             };
 
             if (index != null) {
@@ -20908,10 +20800,6 @@ return jQuery;
         return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
     }
 
-    function weeksInYear(year, dow, doy) {
-        return weekOfYear(moment([year, 11, 31 + dow - doy]), dow, doy).week;
-    }
-
     function daysInYear(year) {
         return isLeapYear(year) ? 366 : 365;
     }
@@ -20926,10 +20814,7 @@ return jQuery;
             overflow =
                 m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH :
                 m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE :
-                m._a[HOUR] < 0 || m._a[HOUR] > 24 ||
-                    (m._a[HOUR] === 24 && (m._a[MINUTE] !== 0 ||
-                                           m._a[SECOND] !== 0 ||
-                                           m._a[MILLISECOND] !== 0)) ? HOUR :
+                m._a[HOUR] < 0 || m._a[HOUR] > 23 ? HOUR :
                 m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE :
                 m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND :
                 m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND :
@@ -20956,79 +20841,28 @@ return jQuery;
             if (m._strict) {
                 m._isValid = m._isValid &&
                     m._pf.charsLeftOver === 0 &&
-                    m._pf.unusedTokens.length === 0 &&
-                    m._pf.bigHour === undefined;
+                    m._pf.unusedTokens.length === 0;
             }
         }
         return m._isValid;
     }
 
-    function normalizeLocale(key) {
+    function normalizeLanguage(key) {
         return key ? key.toLowerCase().replace('_', '-') : key;
-    }
-
-    // pick the locale from the array
-    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
-    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
-    function chooseLocale(names) {
-        var i = 0, j, next, locale, split;
-
-        while (i < names.length) {
-            split = normalizeLocale(names[i]).split('-');
-            j = split.length;
-            next = normalizeLocale(names[i + 1]);
-            next = next ? next.split('-') : null;
-            while (j > 0) {
-                locale = loadLocale(split.slice(0, j).join('-'));
-                if (locale) {
-                    return locale;
-                }
-                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
-                    //the next array item is better than a shallower substring of this one
-                    break;
-                }
-                j--;
-            }
-            i++;
-        }
-        return null;
-    }
-
-    function loadLocale(name) {
-        var oldLocale = null;
-        if (!locales[name] && hasModule) {
-            try {
-                oldLocale = moment.locale();
-                require('./locale/' + name);
-                // because defineLocale currently also sets the global locale, we want to undo that for lazy loaded locales
-                moment.locale(oldLocale);
-            } catch (e) { }
-        }
-        return locales[name];
     }
 
     // Return a moment from input, that is local/utc/zone equivalent to model.
     function makeAs(input, model) {
-        var res, diff;
-        if (model._isUTC) {
-            res = model.clone();
-            diff = (moment.isMoment(input) || isDate(input) ?
-                    +input : +moment(input)) - (+res);
-            // Use low-level api, because this fn is low-level api.
-            res._d.setTime(+res._d + diff);
-            moment.updateOffset(res, false);
-            return res;
-        } else {
-            return moment(input).local();
-        }
+        return model._isUTC ? moment(input).zone(model._offset || 0) :
+            moment(input).local();
     }
 
     /************************************
-        Locale
+        Languages
     ************************************/
 
 
-    extend(Locale.prototype, {
+    extend(Language.prototype, {
 
         set : function (config) {
             var prop, i;
@@ -21040,63 +20874,50 @@ return jQuery;
                     this['_' + i] = prop;
                 }
             }
-            // Lenient ordinal parsing accepts just a number in addition to
-            // number + (possibly) stuff coming from _ordinalParseLenient.
-            this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
         },
 
-        _months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
+        _months : "January_February_March_April_May_June_July_August_September_October_November_December".split("_"),
         months : function (m) {
             return this._months[m.month()];
         },
 
-        _monthsShort : 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
+        _monthsShort : "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),
         monthsShort : function (m) {
             return this._monthsShort[m.month()];
         },
 
-        monthsParse : function (monthName, format, strict) {
+        monthsParse : function (monthName) {
             var i, mom, regex;
 
             if (!this._monthsParse) {
                 this._monthsParse = [];
-                this._longMonthsParse = [];
-                this._shortMonthsParse = [];
             }
 
             for (i = 0; i < 12; i++) {
                 // make the regex if we don't have it already
-                mom = moment.utc([2000, i]);
-                if (strict && !this._longMonthsParse[i]) {
-                    this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
-                    this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
-                }
-                if (!strict && !this._monthsParse[i]) {
+                if (!this._monthsParse[i]) {
+                    mom = moment.utc([2000, i]);
                     regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
                     this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
                 }
                 // test the regex
-                if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
-                    return i;
-                } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
-                    return i;
-                } else if (!strict && this._monthsParse[i].test(monthName)) {
+                if (this._monthsParse[i].test(monthName)) {
                     return i;
                 }
             }
         },
 
-        _weekdays : 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
+        _weekdays : "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),
         weekdays : function (m) {
             return this._weekdays[m.day()];
         },
 
-        _weekdaysShort : 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
+        _weekdaysShort : "Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),
         weekdaysShort : function (m) {
             return this._weekdaysShort[m.day()];
         },
 
-        _weekdaysMin : 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_'),
+        _weekdaysMin : "Su_Mo_Tu_We_Th_Fr_Sa".split("_"),
         weekdaysMin : function (m) {
             return this._weekdaysMin[m.day()];
         },
@@ -21123,12 +20944,11 @@ return jQuery;
         },
 
         _longDateFormat : {
-            LTS : 'h:mm:ss A',
-            LT : 'h:mm A',
-            L : 'MM/DD/YYYY',
-            LL : 'MMMM D, YYYY',
-            LLL : 'MMMM D, YYYY LT',
-            LLLL : 'dddd, MMMM D, YYYY LT'
+            LT : "h:mm A",
+            L : "MM/DD/YYYY",
+            LL : "MMMM D YYYY",
+            LLL : "MMMM D YYYY LT",
+            LLLL : "dddd, MMMM D YYYY LT"
         },
         longDateFormat : function (key) {
             var output = this._longDateFormat[key];
@@ -21164,44 +20984,41 @@ return jQuery;
             lastWeek : '[Last] dddd [at] LT',
             sameElse : 'L'
         },
-        calendar : function (key, mom, now) {
+        calendar : function (key, mom) {
             var output = this._calendar[key];
-            return typeof output === 'function' ? output.apply(mom, [now]) : output;
+            return typeof output === 'function' ? output.apply(mom) : output;
         },
 
         _relativeTime : {
-            future : 'in %s',
-            past : '%s ago',
-            s : 'a few seconds',
-            m : 'a minute',
-            mm : '%d minutes',
-            h : 'an hour',
-            hh : '%d hours',
-            d : 'a day',
-            dd : '%d days',
-            M : 'a month',
-            MM : '%d months',
-            y : 'a year',
-            yy : '%d years'
+            future : "in %s",
+            past : "%s ago",
+            s : "a few seconds",
+            m : "a minute",
+            mm : "%d minutes",
+            h : "an hour",
+            hh : "%d hours",
+            d : "a day",
+            dd : "%d days",
+            M : "a month",
+            MM : "%d months",
+            y : "a year",
+            yy : "%d years"
         },
-
         relativeTime : function (number, withoutSuffix, string, isFuture) {
             var output = this._relativeTime[string];
             return (typeof output === 'function') ?
                 output(number, withoutSuffix, string, isFuture) :
                 output.replace(/%d/i, number);
         },
-
         pastFuture : function (diff, output) {
             var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
             return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
         },
 
         ordinal : function (number) {
-            return this._ordinal.replace('%d', number);
+            return this._ordinal.replace("%d", number);
         },
-        _ordinal : '%d',
-        _ordinalParse : /\d{1,2}/,
+        _ordinal : "%d",
 
         preparse : function (string) {
             return string;
@@ -21226,6 +21043,78 @@ return jQuery;
         }
     });
 
+    // Loads a language definition into the `languages` cache.  The function
+    // takes a key and optionally values.  If not in the browser and no values
+    // are provided, it will load the language file module.  As a convenience,
+    // this function also returns the language values.
+    function loadLang(key, values) {
+        values.abbr = key;
+        if (!languages[key]) {
+            languages[key] = new Language();
+        }
+        languages[key].set(values);
+        return languages[key];
+    }
+
+    // Remove a language from the `languages` cache. Mostly useful in tests.
+    function unloadLang(key) {
+        delete languages[key];
+    }
+
+    // Determines which language definition to use and returns it.
+    //
+    // With no parameters, it will return the global language.  If you
+    // pass in a language key, such as 'en', it will return the
+    // definition for 'en', so long as 'en' has already been loaded using
+    // moment.lang.
+    function getLangDefinition(key) {
+        var i = 0, j, lang, next, split,
+            get = function (k) {
+                if (!languages[k] && hasModule) {
+                    try {
+                        require('./lang/' + k);
+                    } catch (e) { }
+                }
+                return languages[k];
+            };
+
+        if (!key) {
+            return moment.fn._lang;
+        }
+
+        if (!isArray(key)) {
+            //short-circuit everything else
+            lang = get(key);
+            if (lang) {
+                return lang;
+            }
+            key = [key];
+        }
+
+        //pick the language from the array
+        //try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
+        //substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
+        while (i < key.length) {
+            split = normalizeLanguage(key[i]).split('-');
+            j = split.length;
+            next = normalizeLanguage(key[i + 1]);
+            next = next ? next.split('-') : null;
+            while (j > 0) {
+                lang = get(split.slice(0, j).join('-'));
+                if (lang) {
+                    return lang;
+                }
+                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
+                    //the next array item is better than a shallower substring of this one
+                    break;
+                }
+                j--;
+            }
+            i++;
+        }
+        return moment.fn._lang;
+    }
+
     /************************************
         Formatting
     ************************************/
@@ -21233,9 +21122,9 @@ return jQuery;
 
     function removeFormattingTokens(input) {
         if (input.match(/\[[\s\S]/)) {
-            return input.replace(/^\[|\]$/g, '');
+            return input.replace(/^\[|\]$/g, "");
         }
-        return input.replace(/\\/g, '');
+        return input.replace(/\\/g, "");
     }
 
     function makeFormatFunction(format) {
@@ -21250,7 +21139,7 @@ return jQuery;
         }
 
         return function (mom) {
-            var output = '';
+            var output = "";
             for (i = 0; i < length; i++) {
                 output += array[i] instanceof Function ? array[i].call(mom, format) : array[i];
             }
@@ -21260,11 +21149,12 @@ return jQuery;
 
     // format date using native date object
     function formatMoment(m, format) {
+
         if (!m.isValid()) {
-            return m.localeData().invalidDate();
+            return m.lang().invalidDate();
         }
 
-        format = expandFormat(format, m.localeData());
+        format = expandFormat(format, m.lang());
 
         if (!formatFunctions[format]) {
             formatFunctions[format] = makeFormatFunction(format);
@@ -21273,11 +21163,11 @@ return jQuery;
         return formatFunctions[format](m);
     }
 
-    function expandFormat(format, locale) {
+    function expandFormat(format, lang) {
         var i = 5;
 
         function replaceLongDateFormatTokens(input) {
-            return locale.longDateFormat(input) || input;
+            return lang.longDateFormat(input) || input;
         }
 
         localFormattingTokens.lastIndex = 0;
@@ -21300,8 +21190,6 @@ return jQuery;
     function getParseRegexForToken(token, config) {
         var a, strict = config._strict;
         switch (token) {
-        case 'Q':
-            return parseTokenOneDigit;
         case 'DDDD':
             return parseTokenThreeDigits;
         case 'YYYY':
@@ -21318,19 +21206,13 @@ return jQuery;
         case 'ggggg':
             return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
         case 'S':
-            if (strict) {
-                return parseTokenOneDigit;
-            }
+            if (strict) { return parseTokenOneDigit; }
             /* falls through */
         case 'SS':
-            if (strict) {
-                return parseTokenTwoDigits;
-            }
+            if (strict) { return parseTokenTwoDigits; }
             /* falls through */
         case 'SSS':
-            if (strict) {
-                return parseTokenThreeDigits;
-            }
+            if (strict) { return parseTokenThreeDigits; }
             /* falls through */
         case 'DDD':
             return parseTokenOneToThreeDigits;
@@ -21342,9 +21224,7 @@ return jQuery;
             return parseTokenWord;
         case 'a':
         case 'A':
-            return config._locale._meridiemParse;
-        case 'x':
-            return parseTokenOffsetMs;
+            return getLangDefinition(config._l)._meridiemParse;
         case 'X':
             return parseTokenTimestampMs;
         case 'Z':
@@ -21378,16 +21258,14 @@ return jQuery;
         case 'e':
         case 'E':
             return parseTokenOneOrTwoDigits;
-        case 'Do':
-            return strict ? config._locale._ordinalParse : config._locale._ordinalParseLenient;
         default :
-            a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), 'i'));
+            a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), "i"));
             return a;
         }
     }
 
     function timezoneMinutesFromString(string) {
-        string = string || '';
+        string = string || "";
         var possibleTzMatches = (string.match(parseTokenTimezone) || []),
             tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
             parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
@@ -21401,12 +21279,6 @@ return jQuery;
         var a, datePartArray = config._a;
 
         switch (token) {
-        // QUARTER
-        case 'Q':
-            if (input != null) {
-                datePartArray[MONTH] = (toInt(input) - 1) * 3;
-            }
-            break;
         // MONTH
         case 'M' : // fall through to MM
         case 'MM' :
@@ -21416,7 +21288,7 @@ return jQuery;
             break;
         case 'MMM' : // fall through to MMMM
         case 'MMMM' :
-            a = config._locale.monthsParse(input, token, config._strict);
+            a = getLangDefinition(config._l).monthsParse(input);
             // if we didn't find a month name, mark the date as invalid.
             if (a != null) {
                 datePartArray[MONTH] = a;
@@ -21431,12 +21303,6 @@ return jQuery;
                 datePartArray[DATE] = toInt(input);
             }
             break;
-        case 'Do' :
-            if (input != null) {
-                datePartArray[DATE] = toInt(parseInt(
-                            input.match(/\d{1,2}/)[0], 10));
-            }
-            break;
         // DAY OF YEAR
         case 'DDD' : // fall through to DDDD
         case 'DDDD' :
@@ -21447,7 +21313,7 @@ return jQuery;
             break;
         // YEAR
         case 'YY' :
-            datePartArray[YEAR] = moment.parseTwoDigitYear(input);
+            datePartArray[YEAR] = toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
             break;
         case 'YYYY' :
         case 'YYYYY' :
@@ -21457,15 +21323,13 @@ return jQuery;
         // AM / PM
         case 'a' : // fall through to A
         case 'A' :
-            config._isPm = config._locale.isPM(input);
+            config._isPm = getLangDefinition(config._l).isPM(input);
             break;
-        // HOUR
+        // 24 HOUR
+        case 'H' : // fall through to hh
+        case 'HH' : // fall through to hh
         case 'h' : // fall through to hh
         case 'hh' :
-            config._pf.bigHour = true;
-            /* falls through */
-        case 'H' : // fall through to HH
-        case 'HH' :
             datePartArray[HOUR] = toInt(input);
             break;
         // MINUTE
@@ -21485,10 +21349,6 @@ return jQuery;
         case 'SSSS' :
             datePartArray[MILLISECOND] = toInt(('0.' + input) * 1000);
             break;
-        // UNIX OFFSET (MILLISECONDS)
-        case 'x':
-            config._d = new Date(toInt(input));
-            break;
         // UNIX TIMESTAMP WITH MS
         case 'X':
             config._d = new Date(parseFloat(input) * 1000);
@@ -21499,85 +21359,30 @@ return jQuery;
             config._useUTC = true;
             config._tzm = timezoneMinutesFromString(input);
             break;
-        // WEEKDAY - human
-        case 'dd':
-        case 'ddd':
-        case 'dddd':
-            a = config._locale.weekdaysParse(input);
-            // if we didn't get a weekday name, mark the date as invalid
-            if (a != null) {
-                config._w = config._w || {};
-                config._w['d'] = a;
-            } else {
-                config._pf.invalidWeekday = input;
-            }
-            break;
-        // WEEK, WEEK DAY - numeric
         case 'w':
         case 'ww':
         case 'W':
         case 'WW':
         case 'd':
+        case 'dd':
+        case 'ddd':
+        case 'dddd':
         case 'e':
         case 'E':
             token = token.substr(0, 1);
             /* falls through */
+        case 'gg':
         case 'gggg':
+        case 'GG':
         case 'GGGG':
         case 'GGGGG':
             token = token.substr(0, 2);
             if (input) {
                 config._w = config._w || {};
-                config._w[token] = toInt(input);
+                config._w[token] = input;
             }
             break;
-        case 'gg':
-        case 'GG':
-            config._w = config._w || {};
-            config._w[token] = moment.parseTwoDigitYear(input);
         }
-    }
-
-    function dayOfYearFromWeekInfo(config) {
-        var w, weekYear, week, weekday, dow, doy, temp;
-
-        w = config._w;
-        if (w.GG != null || w.W != null || w.E != null) {
-            dow = 1;
-            doy = 4;
-
-            // TODO: We need to take the current isoWeekYear, but that depends on
-            // how we interpret now (local, utc, fixed offset). So create
-            // a now version of current config (take local/utc/offset flags, and
-            // create now).
-            weekYear = dfl(w.GG, config._a[YEAR], weekOfYear(moment(), 1, 4).year);
-            week = dfl(w.W, 1);
-            weekday = dfl(w.E, 1);
-        } else {
-            dow = config._locale._week.dow;
-            doy = config._locale._week.doy;
-
-            weekYear = dfl(w.gg, config._a[YEAR], weekOfYear(moment(), dow, doy).year);
-            week = dfl(w.w, 1);
-
-            if (w.d != null) {
-                // weekday -- low day numbers are considered next week
-                weekday = w.d;
-                if (weekday < dow) {
-                    ++week;
-                }
-            } else if (w.e != null) {
-                // local weekday -- counting starts from begining of week
-                weekday = w.e + dow;
-            } else {
-                // default to begining of week
-                weekday = dow;
-            }
-        }
-        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
-
-        config._a[YEAR] = temp.year;
-        config._dayOfYear = temp.dayOfYear;
     }
 
     // convert an array to a date.
@@ -21585,7 +21390,8 @@ return jQuery;
     // note: all values past the year are optional and will default to the lowest possible value.
     // [year, month, day , hour, minute, second, millisecond]
     function dateFromConfig(config) {
-        var i, date, input = [], currentDate, yearToUse;
+        var i, date, input = [], currentDate,
+            yearToUse, fixYear, w, temp, lang, weekday, week;
 
         if (config._d) {
             return;
@@ -21595,12 +21401,39 @@ return jQuery;
 
         //compute day of the year from weeks and weekdays
         if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
-            dayOfYearFromWeekInfo(config);
+            fixYear = function (val) {
+                var int_val = parseInt(val, 10);
+                return val ?
+                  (val.length < 3 ? (int_val > 68 ? 1900 + int_val : 2000 + int_val) : int_val) :
+                  (config._a[YEAR] == null ? moment().weekYear() : config._a[YEAR]);
+            };
+
+            w = config._w;
+            if (w.GG != null || w.W != null || w.E != null) {
+                temp = dayOfYearFromWeeks(fixYear(w.GG), w.W || 1, w.E, 4, 1);
+            }
+            else {
+                lang = getLangDefinition(config._l);
+                weekday = w.d != null ?  parseWeekday(w.d, lang) :
+                  (w.e != null ?  parseInt(w.e, 10) + lang._week.dow : 0);
+
+                week = parseInt(w.w, 10) || 1;
+
+                //if we're parsing 'd', then the low day numbers may be next week
+                if (w.d != null && weekday < lang._week.dow) {
+                    week++;
+                }
+
+                temp = dayOfYearFromWeeks(fixYear(w.gg), week, weekday, lang._week.doy, lang._week.dow);
+            }
+
+            config._a[YEAR] = temp.year;
+            config._dayOfYear = temp.dayOfYear;
         }
 
         //if the day of the year is set, figure out what it is
         if (config._dayOfYear) {
-            yearToUse = dfl(config._a[YEAR], currentDate[YEAR]);
+            yearToUse = config._a[YEAR] == null ? currentDate[YEAR] : config._a[YEAR];
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
                 config._pf._overflowDayOfYear = true;
@@ -21625,25 +21458,11 @@ return jQuery;
             config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
         }
 
-        // Check for 24:00:00.000
-        if (config._a[HOUR] === 24 &&
-                config._a[MINUTE] === 0 &&
-                config._a[SECOND] === 0 &&
-                config._a[MILLISECOND] === 0) {
-            config._nextDay = true;
-            config._a[HOUR] = 0;
-        }
+        // add the offsets to the time to be parsed so that we can have a clean array for checking isValid
+        input[HOUR] += toInt((config._tzm || 0) / 60);
+        input[MINUTE] += toInt((config._tzm || 0) % 60);
 
         config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
-        // Apply timezone offset from input. The actual zone can be changed
-        // with parseZone.
-        if (config._tzm != null) {
-            config._d.setUTCMinutes(config._d.getUTCMinutes() + config._tzm);
-        }
-
-        if (config._nextDay) {
-            config._a[HOUR] = 24;
-        }
     }
 
     function dateFromObject(config) {
@@ -21657,7 +21476,7 @@ return jQuery;
         config._a = [
             normalizedInput.year,
             normalizedInput.month,
-            normalizedInput.day || normalizedInput.date,
+            normalizedInput.day,
             normalizedInput.hour,
             normalizedInput.minute,
             normalizedInput.second,
@@ -21682,21 +21501,18 @@ return jQuery;
 
     // date from string and format string
     function makeDateFromStringAndFormat(config) {
-        if (config._f === moment.ISO_8601) {
-            parseISO(config);
-            return;
-        }
 
         config._a = [];
         config._pf.empty = true;
 
         // This array is used to make a Date, either with `new Date` or `Date.UTC`
-        var string = '' + config._i,
+        var lang = getLangDefinition(config._l),
+            string = '' + config._i,
             i, parsedInput, tokens, token, skipped,
             stringLength = string.length,
             totalParsedInputLength = 0;
 
-        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+        tokens = expandFormat(config._f, lang).match(formattingTokens) || [];
 
         for (i = 0; i < tokens.length; i++) {
             token = tokens[i];
@@ -21730,10 +21546,6 @@ return jQuery;
             config._pf.unusedInput.push(string);
         }
 
-        // clear _12h flag if hour is <= 12
-        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
-            config._pf.bigHour = undefined;
-        }
         // handle am pm
         if (config._isPm && config._a[HOUR] < 12) {
             config._a[HOUR] += 12;
@@ -21742,6 +21554,7 @@ return jQuery;
         if (config._isPm === false && config._a[HOUR] === 12) {
             config._a[HOUR] = 0;
         }
+
         dateFromConfig(config);
         checkOverflow(config);
     }
@@ -21774,10 +21587,7 @@ return jQuery;
 
         for (i = 0; i < config._f.length; i++) {
             currentScore = 0;
-            tempConfig = copyConfig({}, config);
-            if (config._useUTC != null) {
-                tempConfig._useUTC = config._useUTC;
-            }
+            tempConfig = extend({}, config);
             tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             makeDateFromStringAndFormat(tempConfig);
@@ -21804,7 +21614,7 @@ return jQuery;
     }
 
     // date from iso format
-    function parseISO(config) {
+    function makeDateFromString(config) {
         var i, l,
             string = config._i,
             match = isoRegex.exec(string);
@@ -21813,8 +21623,8 @@ return jQuery;
             config._pf.iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
-                    // match[5] should be 'T' or undefined
-                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    // match[5] should be "T" or undefined
+                    config._f = isoDates[i][0] + (match[6] || " ");
                     break;
                 }
             }
@@ -21825,53 +21635,34 @@ return jQuery;
                 }
             }
             if (string.match(parseTokenTimezone)) {
-                config._f += 'Z';
+                config._f += "Z";
             }
             makeDateFromStringAndFormat(config);
-        } else {
-            config._isValid = false;
         }
-    }
-
-    // date from iso format or fallback
-    function makeDateFromString(config) {
-        parseISO(config);
-        if (config._isValid === false) {
-            delete config._isValid;
-            moment.createFromInputFallback(config);
+        else {
+            config._d = new Date(string);
         }
-    }
-
-    function map(arr, fn) {
-        var res = [], i;
-        for (i = 0; i < arr.length; ++i) {
-            res.push(fn(arr[i], i));
-        }
-        return res;
     }
 
     function makeDateFromInput(config) {
-        var input = config._i, matched;
+        var input = config._i,
+            matched = aspNetJsonRegex.exec(input);
+
         if (input === undefined) {
             config._d = new Date();
-        } else if (isDate(input)) {
-            config._d = new Date(+input);
-        } else if ((matched = aspNetJsonRegex.exec(input)) !== null) {
+        } else if (matched) {
             config._d = new Date(+matched[1]);
         } else if (typeof input === 'string') {
             makeDateFromString(config);
         } else if (isArray(input)) {
-            config._a = map(input.slice(0), function (obj) {
-                return parseInt(obj, 10);
-            });
+            config._a = input.slice(0);
             dateFromConfig(config);
+        } else if (isDate(input)) {
+            config._d = new Date(+input);
         } else if (typeof(input) === 'object') {
             dateFromObject(config);
-        } else if (typeof(input) === 'number') {
-            // from milliseconds
-            config._d = new Date(input);
         } else {
-            moment.createFromInputFallback(config);
+            config._d = new Date(input);
         }
     }
 
@@ -21895,13 +21686,13 @@ return jQuery;
         return date;
     }
 
-    function parseWeekday(input, locale) {
+    function parseWeekday(input, language) {
         if (typeof input === 'string') {
             if (!isNaN(input)) {
                 input = parseInt(input, 10);
             }
             else {
-                input = locale.weekdaysParse(input);
+                input = language.weekdaysParse(input);
                 if (typeof input !== 'number') {
                     return null;
                 }
@@ -21916,33 +21707,29 @@ return jQuery;
 
 
     // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
-    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
-        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    function substituteTimeAgo(string, number, withoutSuffix, isFuture, lang) {
+        return lang.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
     }
 
-    function relativeTime(posNegDuration, withoutSuffix, locale) {
-        var duration = moment.duration(posNegDuration).abs(),
-            seconds = round(duration.as('s')),
-            minutes = round(duration.as('m')),
-            hours = round(duration.as('h')),
-            days = round(duration.as('d')),
-            months = round(duration.as('M')),
-            years = round(duration.as('y')),
-
-            args = seconds < relativeTimeThresholds.s && ['s', seconds] ||
+    function relativeTime(milliseconds, withoutSuffix, lang) {
+        var seconds = round(Math.abs(milliseconds) / 1000),
+            minutes = round(seconds / 60),
+            hours = round(minutes / 60),
+            days = round(hours / 24),
+            years = round(days / 365),
+            args = seconds < 45 && ['s', seconds] ||
                 minutes === 1 && ['m'] ||
-                minutes < relativeTimeThresholds.m && ['mm', minutes] ||
+                minutes < 45 && ['mm', minutes] ||
                 hours === 1 && ['h'] ||
-                hours < relativeTimeThresholds.h && ['hh', hours] ||
+                hours < 22 && ['hh', hours] ||
                 days === 1 && ['d'] ||
-                days < relativeTimeThresholds.d && ['dd', days] ||
-                months === 1 && ['M'] ||
-                months < relativeTimeThresholds.M && ['MM', months] ||
+                days <= 25 && ['dd', days] ||
+                days <= 45 && ['M'] ||
+                days < 345 && ['MM', round(days / 30)] ||
                 years === 1 && ['y'] || ['yy', years];
-
         args[2] = withoutSuffix;
-        args[3] = +posNegDuration > 0;
-        args[4] = locale;
+        args[3] = milliseconds > 0;
+        args[4] = lang;
         return substituteTimeAgo.apply({}, args);
     }
 
@@ -21973,7 +21760,7 @@ return jQuery;
             daysToDayOfWeek += 7;
         }
 
-        adjustedMoment = moment(mom).add(daysToDayOfWeek, 'd');
+        adjustedMoment = moment(mom).add('d', daysToDayOfWeek);
         return {
             week: Math.ceil(adjustedMoment.dayOfYear() / 7),
             year: adjustedMoment.year()
@@ -21984,7 +21771,6 @@ return jQuery;
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
         var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
 
-        d = d === 0 ? 7 : d;
         weekday = weekday != null ? weekday : firstDayOfWeek;
         daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
         dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
@@ -22001,21 +21787,20 @@ return jQuery;
 
     function makeMoment(config) {
         var input = config._i,
-            format = config._f,
-            res;
+            format = config._f;
 
-        config._locale = config._locale || moment.localeData(config._l);
-
-        if (input === null || (format === undefined && input === '')) {
+        if (input === null) {
             return moment.invalid({nullInput: true});
         }
 
         if (typeof input === 'string') {
-            config._i = input = config._locale.preparse(input);
+            config._i = input = getLangDefinition().preparse(input);
         }
 
         if (moment.isMoment(input)) {
-            return new Moment(input, true);
+            config = cloneMoment(input);
+
+            config._d = new Date(+input._d);
         } else if (format) {
             if (isArray(format)) {
                 makeDateFromStringAndArray(config);
@@ -22026,22 +21811,15 @@ return jQuery;
             makeDateFromInput(config);
         }
 
-        res = new Moment(config);
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
+        return new Moment(config);
     }
 
-    moment = function (input, format, locale, strict) {
+    moment = function (input, format, lang, strict) {
         var c;
 
-        if (typeof(locale) === 'boolean') {
-            strict = locale;
-            locale = undefined;
+        if (typeof(lang) === "boolean") {
+            strict = lang;
+            lang = undefined;
         }
         // object construction must be done this way.
         // https://github.com/moment/moment/issues/1423
@@ -22049,7 +21827,7 @@ return jQuery;
         c._isAMomentObject = true;
         c._i = input;
         c._f = format;
-        c._l = locale;
+        c._l = lang;
         c._strict = strict;
         c._isUTC = false;
         c._pf = defaultParsingFlags();
@@ -22057,59 +21835,13 @@ return jQuery;
         return makeMoment(c);
     };
 
-    moment.suppressDeprecationWarnings = false;
-
-    moment.createFromInputFallback = deprecate(
-        'moment construction falls back to js Date. This is ' +
-        'discouraged and will be removed in upcoming major ' +
-        'release. Please refer to ' +
-        'https://github.com/moment/moment/issues/1407 for more info.',
-        function (config) {
-            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
-        }
-    );
-
-    // Pick a moment m from moments so that m[fn](other) is true for all
-    // other. This relies on the function fn to be transitive.
-    //
-    // moments should either be an array of moment objects or an array, whose
-    // first element is an array of moment objects.
-    function pickBy(fn, moments) {
-        var res, i;
-        if (moments.length === 1 && isArray(moments[0])) {
-            moments = moments[0];
-        }
-        if (!moments.length) {
-            return moment();
-        }
-        res = moments[0];
-        for (i = 1; i < moments.length; ++i) {
-            if (moments[i][fn](res)) {
-                res = moments[i];
-            }
-        }
-        return res;
-    }
-
-    moment.min = function () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isBefore', args);
-    };
-
-    moment.max = function () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isAfter', args);
-    };
-
     // creating with utc
-    moment.utc = function (input, format, locale, strict) {
+    moment.utc = function (input, format, lang, strict) {
         var c;
 
-        if (typeof(locale) === 'boolean') {
-            strict = locale;
-            locale = undefined;
+        if (typeof(lang) === "boolean") {
+            strict = lang;
+            lang = undefined;
         }
         // object construction must be done this way.
         // https://github.com/moment/moment/issues/1423
@@ -22117,7 +21849,7 @@ return jQuery;
         c._isAMomentObject = true;
         c._useUTC = true;
         c._isUTC = true;
-        c._l = locale;
+        c._l = lang;
         c._i = input;
         c._f = format;
         c._strict = strict;
@@ -22138,8 +21870,7 @@ return jQuery;
             match = null,
             sign,
             ret,
-            parseIso,
-            diffRes;
+            parseIso;
 
         if (moment.isDuration(input)) {
             duration = {
@@ -22155,7 +21886,7 @@ return jQuery;
                 duration.milliseconds = input;
             }
         } else if (!!(match = aspNetTimeSpanJsonRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
+            sign = (match[1] === "-") ? -1 : 1;
             duration = {
                 y: 0,
                 d: toInt(match[DATE]) * sign,
@@ -22165,7 +21896,7 @@ return jQuery;
                 ms: toInt(match[MILLISECOND]) * sign
             };
         } else if (!!(match = isoDurationRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
+            sign = (match[1] === "-") ? -1 : 1;
             parseIso = function (inp) {
                 // We'd normally use ~~inp for this, but unfortunately it also
                 // converts floats to ints.
@@ -22183,19 +21914,12 @@ return jQuery;
                 s: parseIso(match[7]),
                 w: parseIso(match[8])
             };
-        } else if (typeof duration === 'object' &&
-                ('from' in duration || 'to' in duration)) {
-            diffRes = momentsDifference(moment(duration.from), moment(duration.to));
-
-            duration = {};
-            duration.ms = diffRes.milliseconds;
-            duration.M = diffRes.months;
         }
 
         ret = new Duration(duration);
 
-        if (moment.isDuration(input) && hasOwnProp(input, '_locale')) {
-            ret._locale = input._locale;
+        if (moment.isDuration(input) && input.hasOwnProperty('_lang')) {
+            ret._lang = input._lang;
         }
 
         return ret;
@@ -22207,111 +21931,42 @@ return jQuery;
     // default format
     moment.defaultFormat = isoFormat;
 
-    // constant that refers to the ISO standard
-    moment.ISO_8601 = function () {};
-
-    // Plugins that add properties should also add the key here (null value),
-    // so we can properly clone ourselves.
-    moment.momentProperties = momentProperties;
-
     // This function will be called whenever a moment is mutated.
     // It is intended to keep the offset in sync with the timezone.
     moment.updateOffset = function () {};
 
-    // This function allows you to set a threshold for relative time strings
-    moment.relativeTimeThreshold = function (threshold, limit) {
-        if (relativeTimeThresholds[threshold] === undefined) {
-            return false;
-        }
-        if (limit === undefined) {
-            return relativeTimeThresholds[threshold];
-        }
-        relativeTimeThresholds[threshold] = limit;
-        return true;
-    };
-
-    moment.lang = deprecate(
-        'moment.lang is deprecated. Use moment.locale instead.',
-        function (key, value) {
-            return moment.locale(key, value);
-        }
-    );
-
-    // This function will load locale and then set the global locale.  If
+    // This function will load languages and then set the global language.  If
     // no arguments are passed in, it will simply return the current global
-    // locale key.
-    moment.locale = function (key, values) {
-        var data;
-        if (key) {
-            if (typeof(values) !== 'undefined') {
-                data = moment.defineLocale(key, values);
-            }
-            else {
-                data = moment.localeData(key);
-            }
-
-            if (data) {
-                moment.duration._locale = moment._locale = data;
-            }
-        }
-
-        return moment._locale._abbr;
-    };
-
-    moment.defineLocale = function (name, values) {
-        if (values !== null) {
-            values.abbr = name;
-            if (!locales[name]) {
-                locales[name] = new Locale();
-            }
-            locales[name].set(values);
-
-            // backwards compat for now: also set the locale
-            moment.locale(name);
-
-            return locales[name];
-        } else {
-            // useful for testing
-            delete locales[name];
-            return null;
-        }
-    };
-
-    moment.langData = deprecate(
-        'moment.langData is deprecated. Use moment.localeData instead.',
-        function (key) {
-            return moment.localeData(key);
-        }
-    );
-
-    // returns locale data
-    moment.localeData = function (key) {
-        var locale;
-
-        if (key && key._locale && key._locale._abbr) {
-            key = key._locale._abbr;
-        }
-
+    // language key.
+    moment.lang = function (key, values) {
+        var r;
         if (!key) {
-            return moment._locale;
+            return moment.fn._lang._abbr;
         }
-
-        if (!isArray(key)) {
-            //short-circuit everything else
-            locale = loadLocale(key);
-            if (locale) {
-                return locale;
-            }
-            key = [key];
+        if (values) {
+            loadLang(normalizeLanguage(key), values);
+        } else if (values === null) {
+            unloadLang(key);
+            key = 'en';
+        } else if (!languages[key]) {
+            getLangDefinition(key);
         }
+        r = moment.duration.fn._lang = moment.fn._lang = getLangDefinition(key);
+        return r._abbr;
+    };
 
-        return chooseLocale(key);
+    // returns language data
+    moment.langData = function (key) {
+        if (key && key._lang && key._lang._abbr) {
+            key = key._lang._abbr;
+        }
+        return getLangDefinition(key);
     };
 
     // compare moment object
     moment.isMoment = function (obj) {
         return obj instanceof Moment ||
-            (obj != null && hasOwnProp(obj, '_isAMomentObject'));
+            (obj != null &&  obj.hasOwnProperty('_isAMomentObject'));
     };
 
     // for typechecking Duration objects
@@ -22339,12 +21994,8 @@ return jQuery;
         return m;
     };
 
-    moment.parseZone = function () {
-        return moment.apply(null, arguments).parseZone();
-    };
-
-    moment.parseTwoDigitYear = function (input) {
-        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+    moment.parseZone = function (input) {
+        return moment(input).parseZone();
     };
 
     /************************************
@@ -22367,7 +22018,7 @@ return jQuery;
         },
 
         toString : function () {
-            return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+            return this.clone().lang('en').format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ");
         },
 
         toDate : function () {
@@ -22377,12 +22028,7 @@ return jQuery;
         toISOString : function () {
             var m = moment(this).utc();
             if (0 < m.year() && m.year() <= 9999) {
-                if ('function' === typeof Date.prototype.toISOString) {
-                    // native implementation is ~50x faster, use it when we can
-                    return this.toDate().toISOString();
-                } else {
-                    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
-                }
+                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
             } else {
                 return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
             }
@@ -22406,6 +22052,7 @@ return jQuery;
         },
 
         isDSTShifted : function () {
+
             if (this._a) {
                 return this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0;
             }
@@ -22421,35 +22068,49 @@ return jQuery;
             return this._pf.overflow;
         },
 
-        utc : function (keepLocalTime) {
-            return this.zone(0, keepLocalTime);
+        utc : function () {
+            return this.zone(0);
         },
 
-        local : function (keepLocalTime) {
-            if (this._isUTC) {
-                this.zone(0, keepLocalTime);
-                this._isUTC = false;
-
-                if (keepLocalTime) {
-                    this.add(this._dateTzOffset(), 'm');
-                }
-            }
+        local : function () {
+            this.zone(0);
+            this._isUTC = false;
             return this;
         },
 
         format : function (inputString) {
             var output = formatMoment(this, inputString || moment.defaultFormat);
-            return this.localeData().postformat(output);
+            return this.lang().postformat(output);
         },
 
-        add : createAdder(1, 'add'),
+        add : function (input, val) {
+            var dur;
+            // switch args to support add('s', 1) and add(1, 's')
+            if (typeof input === 'string') {
+                dur = moment.duration(+val, input);
+            } else {
+                dur = moment.duration(input, val);
+            }
+            addOrSubtractDurationFromMoment(this, dur, 1);
+            return this;
+        },
 
-        subtract : createAdder(-1, 'subtract'),
+        subtract : function (input, val) {
+            var dur;
+            // switch args to support subtract('s', 1) and subtract(1, 's')
+            if (typeof input === 'string') {
+                dur = moment.duration(+val, input);
+            } else {
+                dur = moment.duration(input, val);
+            }
+            addOrSubtractDurationFromMoment(this, dur, -1);
+            return this;
+        },
 
         diff : function (input, units, asFloat) {
             var that = makeAs(input, this),
                 zoneDiff = (this.zone() - that.zone()) * 6e4,
-                diff, output, daysAdjust;
+                diff, output;
 
             units = normalizeUnits(units);
 
@@ -22460,12 +22121,11 @@ return jQuery;
                 output = ((this.year() - that.year()) * 12) + (this.month() - that.month());
                 // adjust by taking difference in days, average number of days
                 // and dst in the given months.
-                daysAdjust = (this - moment(this).startOf('month')) -
-                    (that - moment(that).startOf('month'));
+                output += ((this - moment(this).startOf('month')) -
+                        (that - moment(that).startOf('month'))) / diff;
                 // same as above but with zones, to negate all dst
-                daysAdjust -= ((this.zone() - moment(this).startOf('month').zone()) -
-                        (that.zone() - moment(that).startOf('month').zone())) * 6e4;
-                output += daysAdjust / diff;
+                output -= ((this.zone() - moment(this).startOf('month').zone()) -
+                        (that.zone() - moment(that).startOf('month').zone())) * 6e4 / diff;
                 if (units === 'year') {
                     output = output / 12;
                 }
@@ -22482,18 +22142,17 @@ return jQuery;
         },
 
         from : function (time, withoutSuffix) {
-            return moment.duration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+            return moment.duration(this.diff(time)).lang(this.lang()._abbr).humanize(!withoutSuffix);
         },
 
         fromNow : function (withoutSuffix) {
             return this.from(moment(), withoutSuffix);
         },
 
-        calendar : function (time) {
+        calendar : function () {
             // We want to compare the start of today, vs this.
             // Getting start-of-today depends on whether we're zone'd or not.
-            var now = time || moment(),
-                sod = makeAs(now, this).startOf('day'),
+            var sod = makeAs(moment(), this).startOf('day'),
                 diff = this.diff(sod, 'days', true),
                 format = diff < -6 ? 'sameElse' :
                     diff < -1 ? 'lastWeek' :
@@ -22501,7 +22160,7 @@ return jQuery;
                     diff < 1 ? 'sameDay' :
                     diff < 2 ? 'nextDay' :
                     diff < 7 ? 'nextWeek' : 'sameElse';
-            return this.format(this.localeData().calendar(format, this, moment(now)));
+            return this.format(this.lang().calendar(format, this));
         },
 
         isLeapYear : function () {
@@ -22516,16 +22175,38 @@ return jQuery;
         day : function (input) {
             var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
             if (input != null) {
-                input = parseWeekday(input, this.localeData());
-                return this.add(input - day, 'd');
+                input = parseWeekday(input, this.lang());
+                return this.add({ d : input - day });
             } else {
                 return day;
             }
         },
 
-        month : makeAccessor('Month', true),
+        month : function (input) {
+            var utc = this._isUTC ? 'UTC' : '',
+                dayOfMonth;
 
-        startOf : function (units) {
+            if (input != null) {
+                if (typeof input === 'string') {
+                    input = this.lang().monthsParse(input);
+                    if (typeof input !== 'number') {
+                        return this;
+                    }
+                }
+
+                dayOfMonth = this.date();
+                this.date(1);
+                this._d['set' + utc + 'Month'](input);
+                this.date(Math.min(dayOfMonth, this.daysInMonth()));
+
+                moment.updateOffset(this);
+                return this;
+            } else {
+                return this._d['get' + utc + 'Month']();
+            }
+        },
+
+        startOf: function (units) {
             units = normalizeUnits(units);
             // the following switch intentionally omits break keywords
             // to utilize falling through the cases.
@@ -22533,7 +22214,6 @@ return jQuery;
             case 'year':
                 this.month(0);
                 /* falls through */
-            case 'quarter':
             case 'month':
                 this.date(1);
                 /* falls through */
@@ -22560,124 +22240,65 @@ return jQuery;
                 this.isoWeekday(1);
             }
 
-            // quarters are also special
-            if (units === 'quarter') {
-                this.month(Math.floor(this.month() / 3) * 3);
-            }
-
             return this;
         },
 
         endOf: function (units) {
             units = normalizeUnits(units);
-            if (units === undefined || units === 'millisecond') {
-                return this;
-            }
-            return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+            return this.startOf(units).add((units === 'isoWeek' ? 'week' : units), 1).subtract('ms', 1);
         },
 
         isAfter: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this > +input;
-            } else {
-                inputMs = moment.isMoment(input) ? +input : +moment(input);
-                return inputMs < +this.clone().startOf(units);
-            }
+            units = typeof units !== 'undefined' ? units : 'millisecond';
+            return +this.clone().startOf(units) > +moment(input).startOf(units);
         },
 
         isBefore: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this < +input;
-            } else {
-                inputMs = moment.isMoment(input) ? +input : +moment(input);
-                return +this.clone().endOf(units) < inputMs;
-            }
+            units = typeof units !== 'undefined' ? units : 'millisecond';
+            return +this.clone().startOf(units) < +moment(input).startOf(units);
         },
 
         isSame: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(units || 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this === +input;
-            } else {
-                inputMs = +moment(input);
-                return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
-            }
+            units = units || 'ms';
+            return +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
         },
 
-        min: deprecate(
-                 'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
-                 function (other) {
-                     other = moment.apply(null, arguments);
-                     return other < this ? this : other;
-                 }
-         ),
+        min: function (other) {
+            other = moment.apply(null, arguments);
+            return other < this ? this : other;
+        },
 
-        max: deprecate(
-                'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
-                function (other) {
-                    other = moment.apply(null, arguments);
-                    return other > this ? this : other;
-                }
-        ),
+        max: function (other) {
+            other = moment.apply(null, arguments);
+            return other > this ? this : other;
+        },
 
-        // keepLocalTime = true means only change the timezone, without
-        // affecting the local hour. So 5:31:26 +0300 --[zone(2, true)]-->
-        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist int zone
-        // +0200, so we adjust the time as needed, to be valid.
-        //
-        // Keeping the time actually adds/subtracts (one hour)
-        // from the actual represented time. That is why we call updateOffset
-        // a second time. In case it wants us to change the offset again
-        // _changeInProgress == true case, then we have to adjust, because
-        // there is no such time in the given timezone.
-        zone : function (input, keepLocalTime) {
-            var offset = this._offset || 0,
-                localAdjust;
+        zone : function (input) {
+            var offset = this._offset || 0;
             if (input != null) {
-                if (typeof input === 'string') {
+                if (typeof input === "string") {
                     input = timezoneMinutesFromString(input);
                 }
                 if (Math.abs(input) < 16) {
                     input = input * 60;
                 }
-                if (!this._isUTC && keepLocalTime) {
-                    localAdjust = this._dateTzOffset();
-                }
                 this._offset = input;
                 this._isUTC = true;
-                if (localAdjust != null) {
-                    this.subtract(localAdjust, 'm');
-                }
                 if (offset !== input) {
-                    if (!keepLocalTime || this._changeInProgress) {
-                        addOrSubtractDurationFromMoment(this,
-                                moment.duration(offset - input, 'm'), 1, false);
-                    } else if (!this._changeInProgress) {
-                        this._changeInProgress = true;
-                        moment.updateOffset(this, true);
-                        this._changeInProgress = null;
-                    }
+                    addOrSubtractDurationFromMoment(this, moment.duration(offset - input, 'm'), 1, true);
                 }
             } else {
-                return this._isUTC ? offset : this._dateTzOffset();
+                return this._isUTC ? offset : this._d.getTimezoneOffset();
             }
             return this;
         },
 
         zoneAbbr : function () {
-            return this._isUTC ? 'UTC' : '';
+            return this._isUTC ? "UTC" : "";
         },
 
         zoneName : function () {
-            return this._isUTC ? 'Coordinated Universal Time' : '';
+            return this._isUTC ? "Coordinated Universal Time" : "";
         },
 
         parseZone : function () {
@@ -22706,36 +22327,36 @@ return jQuery;
 
         dayOfYear : function (input) {
             var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
-            return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+            return input == null ? dayOfYear : this.add("d", (input - dayOfYear));
         },
 
-        quarter : function (input) {
-            return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+        quarter : function () {
+            return Math.ceil((this.month() + 1.0) / 3.0);
         },
 
         weekYear : function (input) {
-            var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
-            return input == null ? year : this.add((input - year), 'y');
+            var year = weekOfYear(this, this.lang()._week.dow, this.lang()._week.doy).year;
+            return input == null ? year : this.add("y", (input - year));
         },
 
         isoWeekYear : function (input) {
             var year = weekOfYear(this, 1, 4).year;
-            return input == null ? year : this.add((input - year), 'y');
+            return input == null ? year : this.add("y", (input - year));
         },
 
         week : function (input) {
-            var week = this.localeData().week(this);
-            return input == null ? week : this.add((input - week) * 7, 'd');
+            var week = this.lang().week(this);
+            return input == null ? week : this.add("d", (input - week) * 7);
         },
 
         isoWeek : function (input) {
             var week = weekOfYear(this, 1, 4).week;
-            return input == null ? week : this.add((input - week) * 7, 'd');
+            return input == null ? week : this.add("d", (input - week) * 7);
         },
 
         weekday : function (input) {
-            var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
-            return input == null ? weekday : this.add(input - weekday, 'd');
+            var weekday = (this.day() + 7 - this.lang()._week.dow) % 7;
+            return input == null ? weekday : this.add("d", input - weekday);
         },
 
         isoWeekday : function (input) {
@@ -22743,15 +22364,6 @@ return jQuery;
             // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
             // as a setter, sunday should belong to the previous week.
             return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
-        },
-
-        isoWeeksInYear : function () {
-            return weeksInYear(this.year(), 1, 4);
-        },
-
-        weeksInYear : function () {
-            var weekInfo = this.localeData()._week;
-            return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
         },
 
         get : function (units) {
@@ -22767,107 +22379,46 @@ return jQuery;
             return this;
         },
 
-        // If passed a locale key, it will set the locale for this
-        // instance.  Otherwise, it will return the locale configuration
+        // If passed a language key, it will set the language for this
+        // instance.  Otherwise, it will return the language configuration
         // variables for this instance.
-        locale : function (key) {
-            var newLocaleData;
-
+        lang : function (key) {
             if (key === undefined) {
-                return this._locale._abbr;
+                return this._lang;
             } else {
-                newLocaleData = moment.localeData(key);
-                if (newLocaleData != null) {
-                    this._locale = newLocaleData;
-                }
+                this._lang = getLangDefinition(key);
                 return this;
             }
-        },
-
-        lang : deprecate(
-            'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
-            function (key) {
-                if (key === undefined) {
-                    return this.localeData();
-                } else {
-                    return this.locale(key);
-                }
-            }
-        ),
-
-        localeData : function () {
-            return this._locale;
-        },
-
-        _dateTzOffset : function () {
-            // On Firefox.24 Date#getTimezoneOffset returns a floating point.
-            // https://github.com/moment/moment/pull/1871
-            return Math.round(this._d.getTimezoneOffset() / 15) * 15;
         }
     });
 
-    function rawMonthSetter(mom, value) {
-        var dayOfMonth;
-
-        // TODO: Move this out of here!
-        if (typeof value === 'string') {
-            value = mom.localeData().monthsParse(value);
-            // TODO: Another silent failure?
-            if (typeof value !== 'number') {
-                return mom;
-            }
-        }
-
-        dayOfMonth = Math.min(mom.date(),
-                daysInMonth(mom.year(), value));
-        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
-        return mom;
-    }
-
-    function rawGetter(mom, unit) {
-        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
-    }
-
-    function rawSetter(mom, unit, value) {
-        if (unit === 'Month') {
-            return rawMonthSetter(mom, value);
-        } else {
-            return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
-        }
-    }
-
-    function makeAccessor(unit, keepTime) {
-        return function (value) {
-            if (value != null) {
-                rawSetter(this, unit, value);
-                moment.updateOffset(this, keepTime);
+    // helper for adding shortcuts
+    function makeGetterAndSetter(name, key) {
+        moment.fn[name] = moment.fn[name + 's'] = function (input) {
+            var utc = this._isUTC ? 'UTC' : '';
+            if (input != null) {
+                this._d['set' + utc + key](input);
+                moment.updateOffset(this);
                 return this;
             } else {
-                return rawGetter(this, unit);
+                return this._d['get' + utc + key]();
             }
         };
     }
 
-    moment.fn.millisecond = moment.fn.milliseconds = makeAccessor('Milliseconds', false);
-    moment.fn.second = moment.fn.seconds = makeAccessor('Seconds', false);
-    moment.fn.minute = moment.fn.minutes = makeAccessor('Minutes', false);
-    // Setting the hour should keep the time, because the user explicitly
-    // specified which hour he wants. So trying to maintain the same hour (in
-    // a new timezone) makes sense. Adding/subtracting hours does not follow
-    // this rule.
-    moment.fn.hour = moment.fn.hours = makeAccessor('Hours', true);
-    // moment.fn.month is defined separately
-    moment.fn.date = makeAccessor('Date', true);
-    moment.fn.dates = deprecate('dates accessor is deprecated. Use date instead.', makeAccessor('Date', true));
-    moment.fn.year = makeAccessor('FullYear', true);
-    moment.fn.years = deprecate('years accessor is deprecated. Use year instead.', makeAccessor('FullYear', true));
+    // loop through and add shortcuts (Month, Date, Hours, Minutes, Seconds, Milliseconds)
+    for (i = 0; i < proxyGettersAndSetters.length; i ++) {
+        makeGetterAndSetter(proxyGettersAndSetters[i].toLowerCase().replace(/s$/, ''), proxyGettersAndSetters[i]);
+    }
+
+    // add shortcut for year (uses different syntax than the getter/setter 'year' == 'FullYear')
+    makeGetterAndSetter('year', 'FullYear');
 
     // add plural methods
     moment.fn.days = moment.fn.day;
     moment.fn.months = moment.fn.month;
     moment.fn.weeks = moment.fn.week;
     moment.fn.isoWeeks = moment.fn.isoWeek;
-    moment.fn.quarters = moment.fn.quarter;
 
     // add aliased format methods
     moment.fn.toJSON = moment.fn.toISOString;
@@ -22877,17 +22428,6 @@ return jQuery;
     ************************************/
 
 
-    function daysToYears (days) {
-        // 400 years have 146097 days (taking into account leap year rules)
-        return days * 400 / 146097;
-    }
-
-    function yearsToDays (years) {
-        // years * 365 + absRound(years / 4) -
-        //     absRound(years / 100) + absRound(years / 400);
-        return years * 146097 / 400;
-    }
-
     extend(moment.duration.fn = Duration.prototype, {
 
         _bubble : function () {
@@ -22895,7 +22435,7 @@ return jQuery;
                 days = this._days,
                 months = this._months,
                 data = this._data,
-                seconds, minutes, hours, years = 0;
+                seconds, minutes, hours, years;
 
             // The following code bubbles up values, see the tests for
             // examples of what that means.
@@ -22911,38 +22451,13 @@ return jQuery;
             data.hours = hours % 24;
 
             days += absRound(hours / 24);
+            data.days = days % 30;
 
-            // Accurately convert days to years, assume start from year 0.
-            years = absRound(daysToYears(days));
-            days -= absRound(yearsToDays(years));
-
-            // 30 days to a month
-            // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
             months += absRound(days / 30);
-            days %= 30;
+            data.months = months % 12;
 
-            // 12 months -> 1 year
-            years += absRound(months / 12);
-            months %= 12;
-
-            data.days = days;
-            data.months = months;
+            years = absRound(months / 12);
             data.years = years;
-        },
-
-        abs : function () {
-            this._milliseconds = Math.abs(this._milliseconds);
-            this._days = Math.abs(this._days);
-            this._months = Math.abs(this._months);
-
-            this._data.milliseconds = Math.abs(this._data.milliseconds);
-            this._data.seconds = Math.abs(this._data.seconds);
-            this._data.minutes = Math.abs(this._data.minutes);
-            this._data.hours = Math.abs(this._data.hours);
-            this._data.months = Math.abs(this._data.months);
-            this._data.years = Math.abs(this._data.years);
-
-            return this;
         },
 
         weeks : function () {
@@ -22957,13 +22472,14 @@ return jQuery;
         },
 
         humanize : function (withSuffix) {
-            var output = relativeTime(this, !withSuffix, this.localeData());
+            var difference = +this,
+                output = relativeTime(difference, !withSuffix, this.lang());
 
             if (withSuffix) {
-                output = this.localeData().pastFuture(+this, output);
+                output = this.lang().pastFuture(difference, output);
             }
 
-            return this.localeData().postformat(output);
+            return this.lang().postformat(output);
         },
 
         add : function (input, val) {
@@ -22997,41 +22513,13 @@ return jQuery;
         },
 
         as : function (units) {
-            var days, months;
             units = normalizeUnits(units);
-
-            if (units === 'month' || units === 'year') {
-                days = this._days + this._milliseconds / 864e5;
-                months = this._months + daysToYears(days) * 12;
-                return units === 'month' ? months : months / 12;
-            } else {
-                // handle milliseconds separately because of floating point math errors (issue #1867)
-                days = this._days + Math.round(yearsToDays(this._months / 12));
-                switch (units) {
-                    case 'week': return days / 7 + this._milliseconds / 6048e5;
-                    case 'day': return days + this._milliseconds / 864e5;
-                    case 'hour': return days * 24 + this._milliseconds / 36e5;
-                    case 'minute': return days * 24 * 60 + this._milliseconds / 6e4;
-                    case 'second': return days * 24 * 60 * 60 + this._milliseconds / 1000;
-                    // Math.floor prevents floating point math errors here
-                    case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + this._milliseconds;
-                    default: throw new Error('Unknown unit ' + units);
-                }
-            }
+            return this['as' + units.charAt(0).toUpperCase() + units.slice(1) + 's']();
         },
 
         lang : moment.fn.lang,
-        locale : moment.fn.locale,
 
-        toIsoString : deprecate(
-            'toIsoString() is deprecated. Please use toISOString() instead ' +
-            '(notice the capitals)',
-            function () {
-                return this.toISOString();
-            }
-        ),
-
-        toISOString : function () {
+        toIsoString : function () {
             // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
             var years = Math.abs(this.years()),
                 months = Math.abs(this.months()),
@@ -23055,14 +22543,8 @@ return jQuery;
                 (hours ? hours + 'H' : '') +
                 (minutes ? minutes + 'M' : '') +
                 (seconds ? seconds + 'S' : '');
-        },
-
-        localeData : function () {
-            return this._locale;
         }
     });
-
-    moment.duration.fn.toString = moment.duration.fn.toISOString;
 
     function makeDurationGetter(name) {
         moment.duration.fn[name] = function () {
@@ -23070,45 +22552,32 @@ return jQuery;
         };
     }
 
+    function makeDurationAsGetter(name, factor) {
+        moment.duration.fn['as' + name] = function () {
+            return +this / factor;
+        };
+    }
+
     for (i in unitMillisecondFactors) {
-        if (hasOwnProp(unitMillisecondFactors, i)) {
+        if (unitMillisecondFactors.hasOwnProperty(i)) {
+            makeDurationAsGetter(i, unitMillisecondFactors[i]);
             makeDurationGetter(i.toLowerCase());
         }
     }
 
-    moment.duration.fn.asMilliseconds = function () {
-        return this.as('ms');
-    };
-    moment.duration.fn.asSeconds = function () {
-        return this.as('s');
-    };
-    moment.duration.fn.asMinutes = function () {
-        return this.as('m');
-    };
-    moment.duration.fn.asHours = function () {
-        return this.as('h');
-    };
-    moment.duration.fn.asDays = function () {
-        return this.as('d');
-    };
-    moment.duration.fn.asWeeks = function () {
-        return this.as('weeks');
-    };
+    makeDurationAsGetter('Weeks', 6048e5);
     moment.duration.fn.asMonths = function () {
-        return this.as('M');
-    };
-    moment.duration.fn.asYears = function () {
-        return this.as('y');
+        return (+this - this.years() * 31536e6) / 2592e6 + this.years() * 12;
     };
 
+
     /************************************
-        Default Locale
+        Default Lang
     ************************************/
 
 
-    // Set default locale, other locale will inherit from English.
-    moment.locale('en', {
-        ordinalParse: /\d{1,2}(th|st|nd|rd)/,
+    // Set default language, other languages will inherit from English.
+    moment.lang('en', {
         ordinal : function (number) {
             var b = number % 10,
                 output = (toInt(number % 100 / 10) === 1) ? 'th' :
@@ -23119,48 +22588,56 @@ return jQuery;
         }
     });
 
-    /* EMBED_LOCALES */
+    /* EMBED_LANGUAGES */
 
     /************************************
         Exposing Moment
     ************************************/
 
-    function makeGlobal(shouldDeprecate) {
+    function makeGlobal(deprecate) {
+        var warned = false, local_moment = moment;
         /*global ender:false */
         if (typeof ender !== 'undefined') {
             return;
         }
-        oldGlobalMoment = globalScope.moment;
-        if (shouldDeprecate) {
-            globalScope.moment = deprecate(
-                    'Accessing Moment through the global scope is ' +
-                    'deprecated, and will be removed in an upcoming ' +
-                    'release.',
-                    moment);
+        // here, `this` means `window` in the browser, or `global` on the server
+        // add `moment` as a global object via a string identifier,
+        // for Closure Compiler "advanced" mode
+        if (deprecate) {
+            global.moment = function () {
+                if (!warned && console && console.warn) {
+                    warned = true;
+                    console.warn(
+                            "Accessing Moment through the global scope is " +
+                            "deprecated, and will be removed in an upcoming " +
+                            "release.");
+                }
+                return local_moment.apply(null, arguments);
+            };
+            extend(global.moment, local_moment);
         } else {
-            globalScope.moment = moment;
+            global['moment'] = moment;
         }
     }
 
     // CommonJS module is defined
     if (hasModule) {
         module.exports = moment;
-    } else if (typeof define === 'function' && define.amd) {
-        define('moment', function (require, exports, module) {
-            if (module.config && module.config() && module.config().noGlobal === true) {
-                // release the global variable
-                globalScope.moment = oldGlobalMoment;
+        makeGlobal(true);
+    } else if (typeof define === "function" && define.amd) {
+        define("moment", function (require, exports, module) {
+            if (module.config && module.config() && module.config().noGlobal !== true) {
+                // If user provided noGlobal, he is aware of global
+                makeGlobal(module.config().noGlobal === undefined);
             }
 
             return moment;
         });
-        makeGlobal(true);
     } else {
         makeGlobal();
     }
 }).call(this);
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],42:[function(require,module,exports){
 
 module.exports = require('./lib/');
@@ -23254,7 +22731,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":44,"./socket":46,"./url":47,"debug":50,"socket.io-parser":84}],44:[function(require,module,exports){
+},{"./manager":44,"./socket":46,"./url":47,"debug":50,"socket.io-parser":81}],44:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -23269,7 +22746,6 @@ var on = require('./on');
 var bind = require('component-bind');
 var object = require('object-component');
 var debug = require('debug')('socket.io-client:manager');
-var indexOf = require('indexof');
 
 /**
  * Module exports
@@ -23304,7 +22780,7 @@ function Manager(uri, opts){
   this.timeout(null == opts.timeout ? 20000 : opts.timeout);
   this.readyState = 'closed';
   this.uri = uri;
-  this.connected = [];
+  this.connected = 0;
   this.attempts = 0;
   this.encoding = false;
   this.packetBuffer = [];
@@ -23437,7 +22913,6 @@ Manager.prototype.connect = function(fn){
   var socket = this.engine;
   var self = this;
   this.readyState = 'opening';
-  this.skipReconnect = false;
 
   // emit `open`
   var openSub = on(socket, 'open', function() {
@@ -23556,9 +23031,7 @@ Manager.prototype.socket = function(nsp){
     this.nsps[nsp] = socket;
     var self = this;
     socket.on('connect', function(){
-      if (!~indexOf(self.connected, socket)) {
-        self.connected.push(socket);
-      }
+      self.connected++;
     });
   }
   return socket;
@@ -23571,11 +23044,7 @@ Manager.prototype.socket = function(nsp){
  */
 
 Manager.prototype.destroy = function(socket){
-  var index = indexOf(this.connected, socket);
-  if (~index) this.connected.splice(index, 1);
-  if (this.connected.length) return;
-
-  this.close();
+  --this.connected || this.close();
 };
 
 /**
@@ -23643,8 +23112,7 @@ Manager.prototype.cleanup = function(){
 Manager.prototype.close =
 Manager.prototype.disconnect = function(){
   this.skipReconnect = true;
-  this.readyState = 'closed';
-  this.engine && this.engine.close();
+  this.engine.close();
 };
 
 /**
@@ -23670,7 +23138,7 @@ Manager.prototype.onclose = function(reason){
  */
 
 Manager.prototype.reconnect = function(){
-  if (this.reconnecting || this.skipReconnect) return this;
+  if (this.reconnecting) return this;
 
   var self = this;
   this.attempts++;
@@ -23686,15 +23154,9 @@ Manager.prototype.reconnect = function(){
 
     this.reconnecting = true;
     var timer = setTimeout(function(){
-      if (self.skipReconnect) return;
-
       debug('attempting reconnect');
       self.emitAll('reconnect_attempt', self.attempts);
       self.emitAll('reconnecting', self.attempts);
-
-      // check again for the case socket closed in above events
-      if (self.skipReconnect) return;
-
       self.open(function(err){
         if (err) {
           debug('reconnect attempt error');
@@ -23729,7 +23191,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":45,"./socket":46,"./url":47,"component-bind":48,"component-emitter":49,"debug":50,"engine.io-client":51,"indexof":80,"object-component":81,"socket.io-parser":84}],45:[function(require,module,exports){
+},{"./on":45,"./socket":46,"./url":47,"component-bind":48,"component-emitter":49,"debug":50,"engine.io-client":51,"object-component":78,"socket.io-parser":81}],45:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -23768,6 +23230,7 @@ var on = require('./on');
 var bind = require('component-bind');
 var debug = require('debug')('socket.io-client:socket');
 var hasBin = require('has-binary');
+var indexOf = require('indexof');
 
 /**
  * Module exports.
@@ -23818,6 +23281,7 @@ function Socket(io, nsp){
   this.sendBuffer = [];
   this.connected = false;
   this.disconnected = true;
+  this.subEvents();
 }
 
 /**
@@ -23833,8 +23297,6 @@ Emitter(Socket.prototype);
  */
 
 Socket.prototype.subEvents = function() {
-  if (this.subs) return;
-
   var io = this.io;
   this.subs = [
     on(io, 'open', bind(this, 'onopen')),
@@ -23844,16 +23306,15 @@ Socket.prototype.subEvents = function() {
 };
 
 /**
- * "Opens" the socket.
+ * Called upon engine `open`.
  *
- * @api public
+ * @api private
  */
 
 Socket.prototype.open =
 Socket.prototype.connect = function(){
   if (this.connected) return this;
 
-  this.subEvents();
   this.io.open(); // ensure open
   if ('open' == this.io.readyState) this.onopen();
   return this;
@@ -23922,7 +23383,7 @@ Socket.prototype.packet = function(packet){
 };
 
 /**
- * Called upon engine `open`.
+ * "Opens" the socket.
  *
  * @api private
  */
@@ -24106,12 +23567,9 @@ Socket.prototype.ondisconnect = function(){
  */
 
 Socket.prototype.destroy = function(){
-  if (this.subs) {
-    // clean subscriptions to avoid reconnections
-    for (var i = 0; i < this.subs.length; i++) {
-      this.subs[i].destroy();
-    }
-    this.subs = null;
+  // clean subscriptions to avoid reconnections
+  for (var i = 0; i < this.subs.length; i++) {
+    this.subs[i].destroy();
   }
 
   this.io.destroy(this);
@@ -24126,22 +23584,20 @@ Socket.prototype.destroy = function(){
 
 Socket.prototype.close =
 Socket.prototype.disconnect = function(){
-  if (this.connected) {
-    debug('performing disconnect (%s)', this.nsp);
-    this.packet({ type: parser.DISCONNECT });
-  }
+  if (!this.connected) return this;
+
+  debug('performing disconnect (%s)', this.nsp);
+  this.packet({ type: parser.DISCONNECT });
 
   // remove socket from pool
   this.destroy();
 
-  if (this.connected) {
-    // fire events
-    this.onclose('io client disconnect');
-  }
+  // fire events
+  this.onclose('io client disconnect');
   return this;
 };
 
-},{"./on":45,"component-bind":48,"component-emitter":49,"debug":50,"has-binary":78,"socket.io-parser":84,"to-array":88}],47:[function(require,module,exports){
+},{"./on":45,"component-bind":48,"component-emitter":49,"debug":50,"has-binary":75,"indexof":77,"socket.io-parser":81,"to-array":85}],47:[function(require,module,exports){
 (function (global){
 
 /**
@@ -24176,9 +23632,7 @@ function url(uri, loc){
   // relative path support
   if ('string' == typeof uri) {
     if ('/' == uri.charAt(0)) {
-      if ('/' == uri.charAt(1)) {
-        uri = loc.protocol + uri;
-      } else {
+      if ('undefined' != typeof loc) {
         uri = loc.hostname + uri;
       }
     }
@@ -24218,7 +23672,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":50,"parseuri":82}],48:[function(require,module,exports){
+},{"debug":50,"parseuri":79}],48:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -24564,7 +24018,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":53,"engine.io-parser":65}],53:[function(require,module,exports){
+},{"./socket":53,"engine.io-parser":62}],53:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -24831,13 +24285,14 @@ Socket.prototype.probe = function (name) {
         debug('probe transport "%s" pong', name);
         self.upgrading = true;
         self.emit('upgrading', transport);
-        if (!transport) return;
         Socket.priorWebsocketSuccess = 'websocket' == transport.name;
 
         debug('pausing current transport "%s"', self.transport.name);
         self.transport.pause(function () {
           if (failed) return;
-          if ('closed' == self.readyState) return;
+          if ('closed' == self.readyState || 'closing' == self.readyState) {
+            return;
+          }
           debug('changing transport and sending upgrade packet');
 
           cleanup();
@@ -25119,10 +24574,6 @@ Socket.prototype.send = function (msg, fn) {
  */
 
 Socket.prototype.sendPacket = function (type, data, fn) {
-  if ('closing' == this.readyState || 'closed' == this.readyState) {
-    return;
-  }
-
   var packet = { type: type, data: data };
   this.emit('packetCreate', packet);
   this.writeBuffer.push(packet);
@@ -25138,41 +24589,9 @@ Socket.prototype.sendPacket = function (type, data, fn) {
 
 Socket.prototype.close = function () {
   if ('opening' == this.readyState || 'open' == this.readyState) {
-    this.readyState = 'closing';
-
-    var self = this;
-
-    function close() {
-      self.onClose('forced close');
-      debug('socket closing - telling transport to close');
-      self.transport.close();
-    }
-
-    function cleanupAndClose() {
-      self.removeListener('upgrade', cleanupAndClose);
-      self.removeListener('upgradeError', cleanupAndClose);
-      close();
-    }
-
-    function waitForUpgrade() {
-      // wait for upgrade to finish since we can't send packets while pausing a transport
-      self.once('upgrade', cleanupAndClose);
-      self.once('upgradeError', cleanupAndClose);
-    }
-
-    if (this.writeBuffer.length) {
-      this.once('drain', function() {
-        if (this.upgrading) {
-          waitForUpgrade();
-        } else {
-          close();
-        }
-      });
-    } else if (this.upgrading) {
-      waitForUpgrade();
-    } else {
-      close();
-    }
+    this.onClose('forced close');
+    debug('socket closing - telling transport to close');
+    this.transport.close();
   }
 
   return this;
@@ -25198,7 +24617,7 @@ Socket.prototype.onError = function (err) {
  */
 
 Socket.prototype.onClose = function (reason, desc) {
-  if ('opening' == this.readyState || 'open' == this.readyState || 'closing' == this.readyState) {
+  if ('opening' == this.readyState || 'open' == this.readyState) {
     debug('socket close with reason: "%s"', reason);
     var self = this;
 
@@ -25251,7 +24670,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":54,"./transports":55,"component-emitter":49,"debug":62,"engine.io-parser":65,"indexof":80,"parsejson":74,"parseqs":75,"parseuri":76}],54:[function(require,module,exports){
+},{"./transport":54,"./transports":55,"component-emitter":49,"debug":50,"engine.io-parser":62,"indexof":77,"parsejson":71,"parseqs":72,"parseuri":73}],54:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -25403,7 +24822,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":49,"engine.io-parser":65}],55:[function(require,module,exports){
+},{"component-emitter":49,"engine.io-parser":62}],55:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -25537,7 +24956,7 @@ function JSONPPolling (opts) {
   if (global.document && global.addEventListener) {
     global.addEventListener('beforeunload', function () {
       if (self.script) self.script.onerror = empty;
-    }, false);
+    });
   }
 }
 
@@ -25568,7 +24987,6 @@ JSONPPolling.prototype.doClose = function () {
   if (this.form) {
     this.form.parentNode.removeChild(this.form);
     this.form = null;
-    this.iframe = null;
   }
 
   Polling.prototype.doClose.call(this);
@@ -25988,7 +25406,7 @@ Request.prototype.onLoad = function(){
   try {
     var contentType;
     try {
-      contentType = this.xhr.getResponseHeader('Content-Type').split(';')[0];
+      contentType = this.xhr.getResponseHeader('Content-Type');
     } catch (e) {}
     if (contentType === 'application/octet-stream') {
       data = this.xhr.response;
@@ -26039,7 +25457,7 @@ if (global.document) {
   if (global.attachEvent) {
     global.attachEvent('onunload', unloadHandler);
   } else if (global.addEventListener) {
-    global.addEventListener('beforeunload', unloadHandler, false);
+    global.addEventListener('beforeunload', unloadHandler);
   }
 }
 
@@ -26052,7 +25470,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":58,"component-emitter":49,"component-inherit":61,"debug":62,"xmlhttprequest":60}],58:[function(require,module,exports){
+},{"./polling":58,"component-emitter":49,"component-inherit":61,"debug":50,"xmlhttprequest":60}],58:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -26075,7 +25493,7 @@ module.exports = Polling;
 
 var hasXHR2 = (function() {
   var XMLHttpRequest = require('xmlhttprequest');
-  var xhr = new XMLHttpRequest({ xdomain: false });
+  var xhr = new XMLHttpRequest({ agent: this.agent, xdomain: false });
   return null != xhr.responseType;
 })();
 
@@ -26299,7 +25717,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":54,"component-inherit":61,"debug":62,"engine.io-parser":65,"parseqs":75,"xmlhttprequest":60}],59:[function(require,module,exports){
+},{"../transport":54,"component-inherit":61,"debug":50,"engine.io-parser":62,"parseqs":72,"xmlhttprequest":60}],59:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -26530,7 +25948,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":54,"component-inherit":61,"debug":62,"engine.io-parser":65,"parseqs":75,"ws":77}],60:[function(require,module,exports){
+},{"../transport":54,"component-inherit":61,"debug":50,"engine.io-parser":62,"parseqs":72,"ws":74}],60:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -26545,19 +25963,19 @@ module.exports = function(opts) {
   // https://github.com/Automattic/engine.io-client/pull/217
   var enablesXDR = opts.enablesXDR;
 
-  // XMLHttpRequest can be disabled on IE
-  try {
-    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
-      return new XMLHttpRequest();
-    }
-  } catch (e) { }
-
   // Use XDomainRequest for IE8 if enablesXDR is true
   // because loading bar keeps flashing when using jsonp-polling
   // https://github.com/yujiosaka/socke.io-ie8-loading-example
   try {
     if ('undefined' != typeof XDomainRequest && !xscheme && enablesXDR) {
       return new XDomainRequest();
+    }
+  } catch (e) { }
+
+  // XMLHttpRequest can be disabled on IE
+  try {
+    if ('undefined' != typeof XMLHttpRequest && (!xdomain || hasCORS)) {
+      return new XMLHttpRequest();
     }
   } catch (e) { }
 
@@ -26568,7 +25986,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":72}],61:[function(require,module,exports){
+},{"has-cors":69}],61:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -26577,467 +25995,6 @@ module.exports = function(a, b){
   a.prototype.constructor = a;
 };
 },{}],62:[function(require,module,exports){
-
-/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = require('./debug');
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-
-/**
- * Colors.
- */
-
-exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-function useColors() {
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  return ('WebkitAppearance' in document.documentElement.style) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (window.console && (console.firebug || (console.exception && console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
-}
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  return JSON.stringify(v);
-};
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs() {
-  var args = arguments;
-  var useColors = this.useColors;
-
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
-
-  if (!useColors) return args;
-
-  var c = 'color: ' + this.color;
-  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
-
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
-  return args;
-}
-
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-function log() {
-  // This hackery is required for IE8,
-  // where the `console.log` function doesn't have 'apply'
-  return 'object' == typeof console
-    && 'function' == typeof console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      localStorage.removeItem('debug');
-    } else {
-      localStorage.debug = namespaces;
-    }
-  } catch(e) {}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-  var r;
-  try {
-    r = localStorage.debug;
-  } catch(e) {}
-  return r;
-}
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
-
-},{"./debug":63}],63:[function(require,module,exports){
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
-exports = module.exports = debug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = require('ms');
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
-exports.names = [];
-exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lowercased letter, i.e. "n".
- */
-
-exports.formatters = {};
-
-/**
- * Previously assigned color.
- */
-
-var prevColor = 0;
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
-
-/**
- * Select a color.
- *
- * @return {Number}
- * @api private
- */
-
-function selectColor() {
-  return exports.colors[prevColor++ % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function debug(namespace) {
-
-  // define the `disabled` version
-  function disabled() {
-  }
-  disabled.enabled = false;
-
-  // define the `enabled` version
-  function enabled() {
-
-    var self = enabled;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // add the `color` if not set
-    if (null == self.useColors) self.useColors = exports.useColors();
-    if (null == self.color && self.useColors) self.color = selectColor();
-
-    var args = Array.prototype.slice.call(arguments);
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %o
-      args = ['%o'].concat(args);
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
-      }
-      return match;
-    });
-
-    if ('function' === typeof exports.formatArgs) {
-      args = exports.formatArgs.apply(self, args);
-    }
-    var logFn = enabled.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-  enabled.enabled = true;
-
-  var fn = exports.enabled(namespace) ? enabled : disabled;
-
-  fn.namespace = namespace;
-
-  return fn;
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  var split = (namespaces || '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (var i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
-    }
-  }
-}
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
-}
-
-},{"ms":64}],64:[function(require,module,exports){
-/**
- * Helpers.
- */
-
-var s = 1000;
-var m = s * 60;
-var h = m * 60;
-var d = h * 24;
-var y = d * 365.25;
-
-/**
- * Parse or format the given `val`.
- *
- * Options:
- *
- *  - `long` verbose formatting [false]
- *
- * @param {String|Number} val
- * @param {Object} options
- * @return {String|Number}
- * @api public
- */
-
-module.exports = function(val, options){
-  options = options || {};
-  if ('string' == typeof val) return parse(val);
-  return options.long
-    ? long(val)
-    : short(val);
-};
-
-/**
- * Parse the given `str` and return milliseconds.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function parse(str) {
-  var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
-  if (!match) return;
-  var n = parseFloat(match[1]);
-  var type = (match[2] || 'ms').toLowerCase();
-  switch (type) {
-    case 'years':
-    case 'year':
-    case 'y':
-      return n * y;
-    case 'days':
-    case 'day':
-    case 'd':
-      return n * d;
-    case 'hours':
-    case 'hour':
-    case 'h':
-      return n * h;
-    case 'minutes':
-    case 'minute':
-    case 'm':
-      return n * m;
-    case 'seconds':
-    case 'second':
-    case 's':
-      return n * s;
-    case 'ms':
-      return n;
-  }
-}
-
-/**
- * Short format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function short(ms) {
-  if (ms >= d) return Math.round(ms / d) + 'd';
-  if (ms >= h) return Math.round(ms / h) + 'h';
-  if (ms >= m) return Math.round(ms / m) + 'm';
-  if (ms >= s) return Math.round(ms / s) + 's';
-  return ms + 'ms';
-}
-
-/**
- * Long format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function long(ms) {
-  return plural(ms, d, 'day')
-    || plural(ms, h, 'hour')
-    || plural(ms, m, 'minute')
-    || plural(ms, s, 'second')
-    || ms + ' ms';
-}
-
-/**
- * Pluralization helper.
- */
-
-function plural(ms, n, name) {
-  if (ms < n) return;
-  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
-  return Math.ceil(ms / n) + ' ' + name + 's';
-}
-
-},{}],65:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -27607,7 +26564,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":66,"after":67,"arraybuffer.slice":68,"base64-arraybuffer":69,"blob":70,"utf8":71}],66:[function(require,module,exports){
+},{"./keys":63,"after":64,"arraybuffer.slice":65,"base64-arraybuffer":66,"blob":67,"utf8":68}],63:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -27628,7 +26585,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],67:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -27658,7 +26615,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],68:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -27689,7 +26646,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],69:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -27750,7 +26707,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],70:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -27803,7 +26760,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],71:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -28046,7 +27003,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],72:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28071,7 +27028,7 @@ try {
   module.exports = false;
 }
 
-},{"global":73}],73:[function(require,module,exports){
+},{"global":70}],70:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -28081,7 +27038,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],74:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -28116,7 +27073,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],75:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -28155,7 +27112,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],76:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -28196,7 +27153,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],77:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28241,7 +27198,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],78:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (global){
 
 /*
@@ -28303,12 +27260,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":79}],79:[function(require,module,exports){
+},{"isarray":76}],76:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],80:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -28319,7 +27276,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],81:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -28404,7 +27361,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],82:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -28431,7 +27388,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -28576,7 +27533,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":85,"isarray":86}],84:[function(require,module,exports){
+},{"./is-buffer":82,"isarray":83}],81:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -28974,7 +27931,7 @@ function error(data){
   };
 }
 
-},{"./binary":83,"./is-buffer":85,"component-emitter":49,"debug":50,"isarray":86,"json3":87}],85:[function(require,module,exports){
+},{"./binary":80,"./is-buffer":82,"component-emitter":49,"debug":50,"isarray":83,"json3":84}],82:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -28991,9 +27948,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],86:[function(require,module,exports){
-module.exports=require(79)
-},{}],87:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
+module.exports=require(76)
+},{}],84:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -29856,7 +28813,7 @@ module.exports=require(79)
   }
 }(this));
 
-},{}],88:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -29871,7 +28828,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],89:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -30187,7 +29144,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],90:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var lang;
@@ -30248,7 +29205,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 }).call(this);
 
-},{}],91:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var deprecate, hasModule, makeTwix,
@@ -30964,7 +29921,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 }).call(this);
 
-},{"./lang":90,"moment":41}],92:[function(require,module,exports){
+},{"./lang":87,"moment":41}],89:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -32242,7 +31199,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 }).call(this);
 
-},{}],93:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
@@ -32308,7 +31265,7 @@ module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],94:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 /**
  *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
@@ -32445,7 +31402,8 @@ api.fetch = function (tokens, endpoint, objOptions, callback) {
       });
     }
     catch (ex) {
-      console.log('ex', ex);
+      console.log(ex);
+      console.log(ex.stack);
       return callback(ex);
     }
   }
@@ -32593,7 +31551,7 @@ api.getJSON = function (options, objOptions, callback) {
     joola.io.socket.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
-    if (objOptions && (objOptions.realtime || (objOptions.options && objOptions.options.length > 0 && objOptions.options[0].realtime))) {
+    if (objOptions && (objOptions.realtime || (objOptions.options && Array.isArray(objOptions.options) && objOptions.options.length > 0 && objOptions.options[0].realtime))) {
       joola.io.socket.on(routeID + ':done', processResponse);
     }
     else {
@@ -32613,7 +31571,7 @@ joola.events.on('rpc:done', function () {
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
 });
-},{"../index":101,"http":13,"https":17,"querystring":23,"url":32}],95:[function(require,module,exports){
+},{"../index":98,"http":13,"https":17,"querystring":23,"url":32}],92:[function(require,module,exports){
 /**
  *  joola
  *
@@ -32733,7 +31691,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"../../../build/temp/meta.json":1,"../index":101,"cloneextend":35}],96:[function(require,module,exports){
+},{"../../../build/temp/meta.json":1,"../index":98,"cloneextend":35}],93:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -32754,7 +31712,7 @@ _events._id = 'events';
 
 module.exports = exports = _events;
 
-},{"../index":101,"eventemitter2":37}],97:[function(require,module,exports){
+},{"../index":98,"eventemitter2":37}],94:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -32783,7 +31741,7 @@ joola.timezone = function (tz) {
   return offset;
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../index":101}],98:[function(require,module,exports){
+},{"../index":98}],95:[function(require,module,exports){
 (function (Buffer){
 /*jshint -W083 */
 
@@ -33035,10 +31993,55 @@ common.formatMetric = function (value, metric) {
 };
 
 common.percentageChange = function (num1, num2) {
-  return ((num2 - num1) / num1 * 100).toFixed(2);
+  var result = ((num2 - num1) / num1 * 100).toFixed(2);
+  
+  if (num1 === 0)
+    result = '∞';
+  return result;
+};
+
+common.formatDate = function (date) {
+  var format = function (date, formatString) {
+    var formatDate = date;
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var yyyy = formatDate.getFullYear();
+    var yy = yyyy.toString().substring(2);
+    var m = formatDate.getMonth() + 1;
+    var mm = m < 10 ? "0" + m : m;
+    var mmm = months[m - 1];
+    var d = formatDate.getDate();
+    var dd = d < 10 ? "0" + d : d;
+    var fff = formatDate.getMilliseconds().toString();
+    fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
+    var h = formatDate.getHours();
+    var hh = h < 10 ? "0" + h : h;
+    var n = formatDate.getMinutes();
+    var nn = n < 10 ? "0" + n : n;
+    var s = formatDate.getSeconds();
+    var ss = s < 10 ? "0" + s : s;
+
+    formatString = formatString.replace(/yyyy/i, yyyy);
+    formatString = formatString.replace(/yy/i, yy);
+    formatString = formatString.replace(/mmm/i, mmm);
+    formatString = formatString.replace(/mm/i, mm);
+    //formatString = formatString.replace(/m/i, m);
+    formatString = formatString.replace(/dd/i, dd);
+    //formatString = formatString.replace(/d/i, d);
+    formatString = formatString.replace(/hh/i, hh);
+    //formatString = formatString.replace(/h/i, h);
+    formatString = formatString.replace(/nn/i, nn);
+    //formatString = formatString.replace(/n/i, n);
+    formatString = formatString.replace(/ss/i, ss);
+    formatString = formatString.replace(/fff/i, fff);
+    //formatString = formatString.replace(/s/i, s);
+
+    return formatString;
+  };
+
+  return format(date, 'mmm dd, yyyy');
 };
 }).call(this,require("buffer").Buffer)
-},{"../index":101,"./modifiers":100,"buffer":3,"cloneextend":35,"crypto":7,"deep-extend":36,"traverse":89,"underscore":92,"util":34}],99:[function(require,module,exports){
+},{"../index":98,"./modifiers":97,"buffer":3,"cloneextend":35,"crypto":7,"deep-extend":36,"traverse":86,"underscore":89,"util":34}],96:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -33109,7 +32112,7 @@ logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
 
-},{"../index":101}],100:[function(require,module,exports){
+},{"../index":98}],97:[function(require,module,exports){
 /**
  *  @title joola/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola
@@ -33277,7 +32280,7 @@ String.prototype.commas = function () {
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return parts.join(".");
 };
-},{}],101:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -33620,7 +32623,7 @@ joola.on('ready', function () {
 });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":93,"./common/api":94,"./common/dispatch":95,"./common/events":96,"./common/globals":97,"./common/index":98,"./common/logger":99,"./common/modifiers":100,"./viz/index":117,"querystring":23,"socket.io-client":42,"url":32}],102:[function(require,module,exports){
+},{"./../../package.json":90,"./common/api":91,"./common/dispatch":92,"./common/events":93,"./common/globals":94,"./common/index":95,"./common/logger":96,"./common/modifiers":97,"./viz/index":114,"querystring":23,"socket.io-client":42,"url":32}],99:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -33668,7 +32671,7 @@ var BarTable = module.exports = function (options, callback) {
     headers: false,
     include_not_shown: true,
     select: function (point) {
-      self.emit('select', point, this);
+      self.emit('select', point);
     }
   };
   this.verify = function (options) {
@@ -33851,12 +32854,15 @@ var BarTable = module.exports = function (options, callback) {
           return;
         }
 
-        if (compare.missing)
+        if (base.missing || compare.missing)
           percentage = null;
         else
           percentage = ((base.metrics[metrickey] - compare.metrics[metrickey]) / compare.metrics[metrickey] * 100);
-        
-        $tr = $$('<tr data-id="' + base.key + '" data-value="' + base.metrics[metrickey] + '" data-name="' + base.dimensions[dimensionkey] + '" data-value-sort="' + percentage + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
+
+        if (!base.missing)
+          $tr = $$('<tr data-id="' + base.key + '" data-value="' + base.metrics[metrickey] + '" data-name="' + base.dimensions[dimensionkey] + '" data-value-sort="' + percentage + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
+        else
+          $tr = $$('<tr data-id="' + compare.key + '" data-value="' + compare.metrics[metrickey] + '" data-name="' + compare.dimensions[dimensionkey] + '" data-value-sort="' + percentage + '" data-selectable="' + (self.options.select !== false ) + '"></tr>');
         //should we mark this row as active?
         if (self.options.canvas && self.options.canvas.options.filters.length > 0) {
           self.options.canvas.options.filters.forEach(function (filter) {
@@ -33864,7 +32870,10 @@ var BarTable = module.exports = function (options, callback) {
               $tr.addClass('active');
           });
         }
-        base_percentage = parseFloat(base.metrics[metrickey]) / total[0] * 100;
+        if (!base.missing)
+          base_percentage = parseFloat(base.metrics[metrickey]) / total[0] * 100;
+        else
+          base_percentage = null;
         if (base_percentage > 100)
           base_percentage = 100;
         if (!compare.missing) {
@@ -33877,12 +32886,14 @@ var BarTable = module.exports = function (options, callback) {
           compare_percentage = null;
         _query.metrics.forEach(function (m) {
           var $td = $$('<td class="jio bartable value">' +
-            '<div class="barwrapper compare">' +
-            '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
-            '<div style="clear:both"></div>' +
-            '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
-            '</div>' +
-            '</td>');
+                '<div class="barwrapper compare">' +
+                '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + (!base.missing ? joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (base_percentage ? base_percentage.toFixed(2) + '%' : 'N/A') + ')"></div>' +
+                '<div style="clear:both"></div>' +
+                '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
+                '</div>' +
+                '</td>'
+            )
+            ;
           $tr.append($td);
           if (self.options.select) {
             $td.on('click', function () {
@@ -33908,13 +32919,15 @@ var BarTable = module.exports = function (options, callback) {
 
           var text;
           if (joola.common.isNumeric(percentage))
-            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + base.dimensions[dimensionkey], 23);
+            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (!base.missing ? base.dimensions[dimensionkey] : compare.dimensions[dimensionkey]), 23);
           else
-            text = joola.common.ensureLength('N/A ' + base.dimensions[dimensionkey], 23);
+            text = joola.common.ensureLength('N/A ' + (!base.missing ? base.dimensions[dimensionkey] : compare.dimensions[dimensionkey]), 23);
           $td.find('.caption').text(text);
-          if (!compare.missing)
+          if (!base.missing && !compare.missing)
             $td.find('.subcaption').text(joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' vs. ' + joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]));
-          else
+          else if (base.missing)
+            $td.find('.subcaption').text('N/A vs. ' + joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]));
+          else if (compare.missing)
             $td.find('.subcaption').text(joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' vs. N/A');
           $tr.append($td);
           if (self.options.select) {
@@ -34225,7 +33238,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(BarTable, events.EventEmitter);
-},{"../index":101,"events":12,"jquery":40,"underscore":92,"util":34}],103:[function(require,module,exports){
+},{"../index":98,"events":12,"jquery":40,"underscore":89,"util":34}],100:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -34355,13 +33368,15 @@ var Canvas = module.exports = function (options, callback) {
     return $container.find('.active').attr('data-id');
   };
 
-  this.buildFilter = function (point) {
+  this.buildFilter = function (point, dimensionkey) {
     var filters = [];
     Object.keys(point.dimensions).forEach(function (key) {
-      var dimension = point.meta[key];
-      var value = point.dimensions[key];
-      var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
-      filters.push(filter);
+      if (dimensionkey && dimensionkey === key || !dimensionkey) {
+        var dimension = point.meta[key];
+        var value = point.dimensions[key];
+        var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
+        filters.push(filter);
+      }
     });
     return filters;
   };
@@ -34410,21 +33425,31 @@ var Canvas = module.exports = function (options, callback) {
                 new joola.viz.Metric(viz);
                 break;
               case 'table':
-                new joola.viz.Table(viz);
+                new joola.viz.Table(viz).on('select', function (point, dimensionkey) {
+                  var filter = self.buildFilter(point, dimensionkey);
+                  var exist = _.find(self.options.filters, function (filter) {
+                    return filter.key === point.key + dimensionkey;
+                  });
+                  if (exist)
+                    self.emit('removefilter', point.key + dimensionkey);
+                  else {
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                  }
+                });
                 break;
               case 'minitable':
                 new joola.viz.MiniTable(viz);
                 break;
               case 'bartable':
-                new joola.viz.BarTable(viz).on('select', function (point, ref) {
-                  var filter = self.buildFilter(point);
+                new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                  var filter = self.buildFilter(point, dimensionkey);
                   var exist = _.find(self.options.filters, function (filter) {
-                    return filter.key === point.key;
+                    return filter.key === point.key + dimensionkey;
                   });
                   if (exist)
-                    self.emit('removefilter', point.key);
+                    self.emit('removefilter', point.key + dimensionkey);
                   else {
-                    self.emit('addfilter', point.key, point.meta, filter);
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
                   }
                 });
                 break;
@@ -34490,7 +33515,7 @@ var Canvas = module.exports = function (options, callback) {
           var $filter = $$('<div data-id="' + key + '" class="filter"></div>');
           var text = meta[f[0]].name + ': <strong class="value">' + f[2] + '</strong>';
           var $inner = $$('<span class="caption">' + text + '</span>');
-          var $close = $$('<span class="close">x</span>');
+          var $close = $$('<span class="close icon-close"></span>');
           $close.on('click', function () {
             self.emit('removefilter', key);
           });
@@ -34583,7 +33608,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Canvas, events.EventEmitter);
-},{"../index":101,"cloneextend":35,"events":12,"jquery":40,"underscore":92,"util":34}],104:[function(require,module,exports){
+},{"../index":98,"cloneextend":35,"events":12,"jquery":40,"underscore":89,"util":34}],101:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -34595,6 +33620,9 @@ util.inherits(Canvas, events.EventEmitter);
  **/
 
 var
+  events = require('events'),
+  util = require('util'),
+
   joola = require('../index'),
   $$ = require('jquery'),
   _ = require('underscore');
@@ -34686,16 +33714,27 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_fromdate = null;
   this.original_compare_todate = null;
 
-  this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
-  this.min_date.setMonth(this.min_date.getMonth() - 6);
-  this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
+  if (options.mindate)
+    this.min_date = options.min_date;
+  //this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
+  //this.min_date.setMonth(this.min_date.getMonth() - 6);
+  if (options.maxdate)
+    this.max_date = options.maxdate;
+  else
+    this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
   this.max_date.setHours(23);
   this.max_date.setMinutes(59);
   this.max_date.setSeconds(59);
   this.max_date.setMilliseconds(999);
 
-  this.base_todate = new Date(this.max_date);
-  this.base_fromdate = self.addDays(this.base_todate, -90);
+  if (options.todate)
+    this.base_todate = new Date(options.todate);
+  else
+    this.base_todate = new Date(this.max_date);
+  if (options.fromdate)
+    this.base_fromdate = new Date(options.fromdate);
+  else
+    this.base_fromdate = self.addDays(this.base_todate, -30);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -34704,12 +33743,18 @@ var DatePicker = module.exports = function (options, callback) {
   }
 
   var rangelength = Date.dateDiff('d', this.base_fromdate, this.base_todate);
-  this.compare_todate = self.addDays(this.base_fromdate, -1);
+  if (options.compare_todate)
+    this.compare_todate = options.compare_todate;
+  else
+    this.compare_todate = self.addDays(this.base_fromdate, -1);
   this.compare_todate.setHours(23);
   this.compare_todate.setMinutes(59);
   this.compare_todate.setSeconds(59);
   this.compare_todate.setMilliseconds(999);
-  this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
+  if (options.compare_fromdate)
+    this.compare_fromdate = options.compare_fromdate;
+  else
+    this.compare_fromdate = self.addDays(this.compare_todate, (-1 * rangelength));
 
   this.original_base_fromdate = this.base_fromdate;
   this.original_base_todate = this.base_todate;
@@ -34721,8 +33766,8 @@ var DatePicker = module.exports = function (options, callback) {
   this.applied_compare_fromdate = this.compare_fromdate;
   this.applied_compare_todate = this.compare_todate;
 
-  this.comparePeriod = false;
-  this.isCompareChecked = false;
+  this.comparePeriod = options.compare || false;
+  this.isCompareChecked = options.compare || false;
 
   //self.getState(self);
 
@@ -34783,10 +33828,10 @@ var DatePicker = module.exports = function (options, callback) {
     $container.append($table);
 
     var $dates = $table.find('.dates');
-    $dates.append('<span class="datelabel fromdate">' + self.formatDate(self.base_fromdate) + '</span>');
+    $dates.append('<span class="datelabel fromdate">' + joola.common.formatDate(self.base_fromdate) + '</span>');
     $dates.append(' - ');
-    $dates.append('<span class="datelabel todate">' + self.formatDate(self.base_todate) + '</span>');
-    $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + self.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + self.formatDate(self.compare_todate) + '</span></div>');
+    $dates.append('<span class="datelabel todate">' + joola.common.formatDate(self.base_todate) + '</span>');
+    $dates.append('<div class="compare" style="display:none">Compare to: <span class="datelabel compare fromdate">' + joola.common.formatDate(self.compare_fromdate) + '</span> - <span class="datelabel compare todate">' + joola.common.formatDate(self.compare_todate) + '</span></div>');
 
     if (self.comparePeriod) {
       $container.find('.dates .compare').show();
@@ -34932,10 +33977,9 @@ var DatePicker = module.exports = function (options, callback) {
                 $container.find('.compareoption .checker').removeAttr('disabled');
               }
             }
-            //$$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-            $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
             $$($container.find('.daterange.baserange .dateoption')[0]).removeClass('invalid');
-            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_fromdate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_fromdate));
             $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
 
             break;
@@ -34945,8 +33989,7 @@ var DatePicker = module.exports = function (options, callback) {
             self.base_todate.setMinutes(59);
             self.base_todate.setSeconds(59);
             self.base_todate.setMilliseconds(999);
-            //$$($$('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-            $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+            $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
             $$($container.find('.daterange.baserange .dateoption')[1]).removeClass('invalid');
             if (self.isCompareChecked) {
               self.currentMode = 'compare-from';
@@ -34969,10 +34012,10 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
             $$($container.find('.daterange.comparerange .dateoption')[0]).removeClass('invalid');
 
-            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_fromdate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_fromdate));
             $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'compare-to';
             break;
@@ -34982,7 +34025,7 @@ var DatePicker = module.exports = function (options, callback) {
             self.compare_todate.setMinutes(59);
             self.compare_todate.setSeconds(59);
             self.compare_todate.setMilliseconds(999);
-            $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+            $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
             $$($container.find('.daterange.comparerange .dateoption')[1]).removeClass('invalid');
             self.currentMode = 'base-from';
             break;
@@ -35012,10 +34055,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.baserange .dateoption')[0]).blur(function (e) {
-      //if ($$($$('.daterange.baserange .dateoption')[0]).hasClass('invalid')) {
-      //    $$($$('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      //}
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -35037,14 +34077,13 @@ var DatePicker = module.exports = function (options, callback) {
       }
     });
 
-
     $$($container.find('.daterange.baserange .dateoption')[1]).focus(function (e) {
       self.currentMode = 'base-to';
       self.handleChange();
     });
 
     $$($container.find('.daterange.baserange .dateoption')[1]).blur(function (e) {
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -35072,7 +34111,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.comparerange .dateoption')[0]).blur(function (e) {
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -35100,7 +34139,7 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $$($container.find('.daterange.comparerange .dateoption')[1]).blur(function (e) {
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
       $$(this).removeClass('invalid');
       $container.find('.btn.apply').removeClass('disabled');
       $container.find('.btn.apply').prop('disabled', false);
@@ -35141,10 +34180,10 @@ var DatePicker = module.exports = function (options, callback) {
           $container.find('.compareoption .checker').prop('checked', true);
         }
       }
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
 
@@ -35210,17 +34249,17 @@ var DatePicker = module.exports = function (options, callback) {
       self.compare_todate = self.addDays(self.base_fromdate, -1);
       self.compare_fromdate = self.addDays(self.compare_todate, (-1 * rangelength));
 
-      $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-      $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-      $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+      $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+      $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
     });
-    $$($container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
-    $$($container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
-    $$($container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-    $$($container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+    $$($container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
+    $$($container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
+    $$($container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+    $$($container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
     var $dateboxcontainer = $container.find('.jcontainer');
     $dateboxcontainer.off('click');
@@ -35329,8 +34368,8 @@ var DatePicker = module.exports = function (options, callback) {
     var $fromdate = $$(self.options.$container.find('.dates .datelabel.fromdate')[0]);
     var todate = $$(self.options.$container.find('.dates .datelabel.todate')[0]);
 
-    $fromdate.text(self.formatDate(_this.applied_base_fromdate));
-    todate.text(self.formatDate(_this.applied_base_todate));
+    $fromdate.text(joola.common.formatDate(_this.applied_base_fromdate));
+    todate.text(joola.common.formatDate(_this.applied_base_todate));
 
     $$(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
@@ -35344,47 +34383,6 @@ var DatePicker = module.exports = function (options, callback) {
 
     if (self.options.onUpdate)
       window[self.options.onUpdate](self.container, self);
-  };
-
-  this.formatDate = function (date) {
-    var format = function (date, formatString) {
-      var formatDate = date;
-      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      var yyyy = formatDate.getFullYear();
-      var yy = yyyy.toString().substring(2);
-      var m = formatDate.getMonth() + 1;
-      var mm = m < 10 ? "0" + m : m;
-      var mmm = months[m - 1];
-      var d = formatDate.getDate();
-      var dd = d < 10 ? "0" + d : d;
-      var fff = formatDate.getMilliseconds().toString();
-      fff = (fff < 100 ? fff < 10 ? '00' + fff : +'0' + fff : fff);
-      var h = formatDate.getHours();
-      var hh = h < 10 ? "0" + h : h;
-      var n = formatDate.getMinutes();
-      var nn = n < 10 ? "0" + n : n;
-      var s = formatDate.getSeconds();
-      var ss = s < 10 ? "0" + s : s;
-
-      formatString = formatString.replace(/yyyy/i, yyyy);
-      formatString = formatString.replace(/yy/i, yy);
-      formatString = formatString.replace(/mmm/i, mmm);
-      formatString = formatString.replace(/mm/i, mm);
-      //formatString = formatString.replace(/m/i, m);
-      formatString = formatString.replace(/dd/i, dd);
-      //formatString = formatString.replace(/d/i, d);
-      formatString = formatString.replace(/hh/i, hh);
-      //formatString = formatString.replace(/h/i, h);
-      formatString = formatString.replace(/nn/i, nn);
-      //formatString = formatString.replace(/n/i, n);
-      formatString = formatString.replace(/ss/i, ss);
-      formatString = formatString.replace(/fff/i, fff);
-      //formatString = formatString.replace(/s/i, s);
-
-      return formatString;
-    };
-
-    return format(date, 'mmm dd, yyyy');
   };
 
   this.drawCell = function (date) {
@@ -35465,11 +34463,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'base-from':
         if (self.base_fromdate < self.min_date) {
           self.base_fromdate = self.min_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
         }
         if (self.base_fromdate > self.max_date) {
           self.base_fromdate = self.max_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(self.formatDate(self.base_fromdate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).val(joola.common.formatDate(self.base_fromdate));
         }
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).addClass('active');
         $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).removeClass('active');
@@ -35480,11 +34478,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'base-to':
         if (self.base_todate < self.min_date) {
           self.base_todate = self.min_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
         }
         if (self.base_todate > self.max_date) {
           self.base_todate = self.max_date;
-          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(self.formatDate(self.base_todate));
+          $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).val(joola.common.formatDate(self.base_todate));
         }
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
         $$(self.options.$container.find('.daterange.baserange .dateoption')[1]).addClass('active');
@@ -35495,11 +34493,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'compare-from':
         if (self.compare_fromdate < self.min_date) {
           self.compare_fromdate = self.min_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
         }
         if (self.compare_fromdate > self.max_date) {
           self.compare_fromdate = self.max_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
         }
 
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
@@ -35511,11 +34509,11 @@ var DatePicker = module.exports = function (options, callback) {
       case 'compare-to':
         if (self.compare_todate < self.min_date) {
           self.compare_todate = self.min_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
         }
         if (self.compare_todate > self.max_date) {
           self.compare_todate = self.max_date;
-          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+          $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
         }
 
         $$(self.options.$container.find('.daterange.baserange .dateoption')[0]).removeClass('active');
@@ -35535,8 +34533,8 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
 
       if (this.currentMode == 'compare-to')
@@ -35571,8 +34569,8 @@ var DatePicker = module.exports = function (options, callback) {
       if (self.compare_fromdate < self.min_date) {
         self.compare_fromdate = self.min_date;
       }
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(self.formatDate(self.compare_fromdate));
-      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(self.formatDate(self.compare_todate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[0]).val(joola.common.formatDate(self.compare_fromdate));
+      $$(self.options.$container.find('.daterange.comparerange .dateoption')[1]).val(joola.common.formatDate(self.compare_todate));
 
       self.handleChange();
     });
@@ -35675,7 +34673,9 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"./_proto":116,"jquery":40,"jquery-ui/datepicker":39,"underscore":92}],105:[function(require,module,exports){
+
+util.inherits(DatePicker, events.EventEmitter);
+},{"../index":98,"./_proto":113,"events":12,"jquery":40,"jquery-ui/datepicker":39,"underscore":89,"util":34}],102:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -35686,73 +34686,65 @@ joola.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+
 var
-  EventEmitter2 = require('eventemitter2').EventEmitter2;
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  joola = require('../index'),
+  $$ = require('jquery');
 
 var DimensionPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
   joola.events.emit('dimensionpicker.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = ce.clone(require('./_proto')[x]);
-    this._super[x] = ce.clone(require('./_proto')[x]);
-  }
-
   var self = this;
-  self.events = new EventEmitter2({wildcard: true, newListener: true});
 
-  self.on = self.events.on;
-  self.emit = self.events.emit;
-
-  this._id = 'dimensionpicker';
+  this.type = 'dimensionpicker';
   this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
     $container: null,
     dimensions: [],
-    selected: null
-  };
-  this.drawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('' +
-      '<div class="jio-dimensionpicker-wrapper">\n' +
-      '  <button class="btn jio-dimensionpicker-button"></button>' +
-      '  <button class="close">×</button>' +
-      '  <div class="jio-dimensionpicker-container">' +
+    disabled: [],
+    selected: null,
+    allowRemove: true,
+    allowSelect: true,
+    template: '<div class="jio-dimensionpicker-wrapper">\n' +
+      '  <button class="btn jio-dimensionpicker-button">' +
+      '   <span class="caption"></span>' +
+      '   <span class="close">×</span>' +
+      '  </button>' +
+      '  <div class="picker-container">' +
       '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
       '    <div class="clear"></div>' +
       '  </div>' +
       '  <div class="clear"></div>' +
-      '</div>\n');
+      '</div>'
+  };
+  this.drawn = false;
 
-    if (this.options.fixed) {
-      $html.find('.close').remove();
-    }
+  this.verify = function (options) {
 
-    return $html;
+    return null;
   };
 
   this.draw = function (options, callback) {
     if (!self.drawn) {
+      self.options.$container = $$(self.options.container);
       self.options.$container.append(self.options.template || self.template());
-      var $ul = $(self.options.$container.find('.jio-dimensionpicker-container'));
-      var $btn = $(self.options.$container.find('.jio-dimensionpicker-button'));
-      var $close = $(self.options.$container.find('.close'));
-      var $search = $(self.options.$container.find('.quicksearch'));
+      var $ul = $$(self.options.$container.find('.picker-container'));
+      var $btn = $$(self.options.$container.find('.jio-dimensionpicker-button'));
+      var $close = $$(self.options.$container.find('.close'));
+      if (!self.options.allowRemove)
+        $close.remove();
+      var $search = $$(self.options.$container.find('.quicksearch'));
+      if (self.options.caption)
+        $btn.find('.caption').text(self.options.caption);
       if (self.options.dimensions.length === 0)
         joola.dimensions.list(function (err, list) {
-          console.log('done', err, list);
           if (err)
             throw err;
 
@@ -35760,21 +34752,32 @@ var DimensionPicker = module.exports = function (options, callback) {
           var mSkipOne = false;
           var mlasttarget = null;
 
+          var keys = [];
+          list = list.filter(function (item) {
+            if (keys.indexOf(item.key) === -1) {
+              if (item.key !== 'timestamp') {
+                keys.push(item.key);
+                return item;
+              }
+            }
+          });
+
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-
-            var $li = $('<div class="dimensionOption" data-member="' + collection.key + '.' + dimension.key + '">' + dimension.name + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + dimension.name + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
-              var $this = $(this);
+              var $this = $$(this);
               e.stopPropagation();
 
+              if ($this.hasClass('active'))
+                return;
               if ($this.hasClass('disabled'))
                 return;
 
               self.options.selected = dimension;
-              var $content = dimension.name;
-              $btn.html($content);
+              //var $content = '<span class="name">' + dimension.name + '</span>';
+              //$btn.find('.caption').html((self.options.prefix || '' ) + $content);
               $btn.removeClass('active');
               $ul.removeClass('active');
               mOpen = false;
@@ -35794,7 +34797,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           $search.keyup(function () {
-            var $this = $(this);
+            var $this = $$(this);
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
@@ -35805,7 +34808,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function (e) {
-            var $this = $(this);
+            var $this = $$(this);
             e.stopPropagation();
 
             if (mOpen && mlasttarget == this.id) {
@@ -35838,7 +34841,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           $ul.on('click', function (e) {
             e.stopPropagation();
           });
-          $('body').on('click', function () {
+          $$('body').on('click', function () {
             $btn.removeClass('active');
             $ul.removeClass('active');
             mlasttarget = null;
@@ -35846,7 +34849,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function () {
-            var $this = $(this);
+            var $this = $$(this);
             $this.toggleClass('active');
           });
 
@@ -35864,13 +34867,13 @@ var DimensionPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.selected) {
-        $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
-        self.options.$container.find('.jio-dimensionpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+      if (self.options.allowSelect&&self.options.selected) {
+        $ul.find('div[data-member="' + self.options.selected.key + '"]').addClass('active');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-dimensionpicker-button').html('Choose a dimension...' + '');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html('Choose a dimension...' + '');
         self.options.$container.find('.close').hide();
       }
 
@@ -35880,7 +34883,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           self.options.disabled = [self.options.disabled];
 
         self.options.disabled.forEach(function (disable) {
-          $ul.find('div[data-member="' + disable.collection + '.' + disable.key + '"]').addClass('disabled');
+          $ul.find('div[data-member="' + disable.key + '"]').addClass('disabled');
         });
       }
     };
@@ -35888,47 +34891,28 @@ var DimensionPicker = module.exports = function (options, callback) {
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+  self.draw();
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'dimensionpicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
-        if (err)
-          return callback(err);
-        joola.viz.onscreen.push(self);
-
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
-          }
-        }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-
-        joola.events.emit('dimensionpicker.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
+    }
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
   }
 
-  //callback(null, self);
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
 
@@ -35983,15 +34967,8 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-DimensionPicker.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio dimensionbox caption"></div>\n' +
-    '  <div class="jio dimensionbox value"></div>\n' +
-    '</div>';
-  return html;
-};
-
-},{"./_proto":116,"cloneextend":35,"eventemitter2":37}],106:[function(require,module,exports){
+util.inherits(DimensionPicker, events.EventEmitter);
+},{"../index":98,"cloneextend":35,"events":12,"jquery":40,"util":34}],103:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -36108,7 +35085,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"jquery":40,"underscore":92}],107:[function(require,module,exports){
+},{"../index":98,"jquery":40,"underscore":89}],104:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -36248,7 +35225,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"./_proto":116}],108:[function(require,module,exports){
+},{"../index":98,"./_proto":113}],105:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -36260,6 +35237,9 @@ joola.events.on('core.init.finish', function () {
  **/
 
 var
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery'),
   _ = require('underscore');
@@ -36275,14 +35255,14 @@ var Metric = module.exports = function (options, callback) {
     container: null,
     caption: '',
     template: '<div class="jio metricbox">' +
-    '<div class="value"></div>' +
-    '<div class="summary" style="display:none;">' +
-    '<span class="base"></span>' +
-    '<span class="sep">vs.</span>' +
-    '<span class="compare"></span>' +
-    '</div>' +
-    '<div class="caption"></div>' +
-    '</div>',
+      '<div class="value"></div>' +
+      '<div class="summary" style="display:none;">' +
+      '<span class="base"></span>' +
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>' +
+      '</div>' +
+      '<div class="caption"></div>' +
+      '</div>',
     query: null,
     strings: {
       loading: '---',
@@ -36296,7 +35276,7 @@ var Metric = module.exports = function (options, callback) {
       if (!Array.isArray(self.options.query))
         self.options.query = [self.options.query];
       if (self.options.query[0].dimensions && self.options.query[0].dimensions.length > 0)
-        return 'Please specify a single dimension.';
+        return 'Please don\'t specify a dimension.';
       if (self.options.query[0].metrics && (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1) || !self.options.query[0].metrics)
         return 'Please specify a single metric.';
     }
@@ -36314,31 +35294,66 @@ var Metric = module.exports = function (options, callback) {
     if (self.options.enter)
       self.options.enter.apply(self, [data, alldata]);
 
+    var value, $$summary, total;
     if (data.length === 1) {
-      $$(self.options.container).find('.summary').hide();
-      var value = data[0].metrics[metrickey];
+      $$(self.options.container).find('.summary').show();
+      value = data[0].metrics[metrickey];
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+      $$summary = $$($$(self.options.container).find('.summary'));
+      total = data[0].metrics[metrickey];
+      if (metric.aggregation === 'sum')
+        $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
+      else if (metric.aggregation === 'avg')
+        $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (0%)');
+    }
+    else if (data.length === 2 && data[1].type === 'overall') {
+      $$(self.options.container).find('.summary').show();
+      if (!data[0].missing)
+        value = data[0].metrics[metrickey];
+      else
+        value = 0;
+      $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
+      $$summary = $$($$(self.options.container).find('.summary'));
+      if (data[1].type === 'overall') {
+        total = data[1].metrics[metrickey];
+        var percentage;
+        if (metric.aggregation === 'sum') {
+          percentage = (value / total * 100).toFixed() + '%';
+          $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
+        }
+        else if (metric.aggregation === 'avg') {
+          percentage = joola.common.percentageChange(total, value);
+          $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (' + percentage + '%)');
+        }
+        self.options.query.splice(1, 1);
+      }
     }
     else {
       $$(self.options.container).find('.summary').show();
-      var base = data[0].metrics[metrickey];
-      var compare = null;
-      var change = 0;
-      if (!data[1].missing) {
+      var base, compare, change = 0;
+      if (!data[0].missing)
+        base = data[0].metrics[metrickey];
+      if (!data[1].missing)
         compare = data[1].metrics[metrickey];
+      if (base && compare)
         change = joola.common.percentageChange(compare, base) + '%';
-      }
-      else {
+      else
         change = 'N/A';
-      }
+
+      $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary.html('<span class="base"></span>' +
+        '<span class="sep">vs.</span>' +
+        '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
-      $$(self.options.container).find('.base').html(joola.common.formatMetric(base, metric));
+      $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
+
       if (compare) {
         $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
       }
       else {
         $$(self.options.container).find('.compare').html('N/A');
       }
+
     }
   };
 
@@ -36362,6 +35377,10 @@ var Metric = module.exports = function (options, callback) {
     $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
   };
 
+  this.done = function () {
+    self.emit('done');
+  };
+
   this.destroy = function () {
     $$(self.options.container).empty();
   };
@@ -36375,10 +35394,23 @@ var Metric = module.exports = function (options, callback) {
     }
     $html.find('.value').html(self.options.strings.nodata);
     //visualization specific drawing
+    //if we have a filter, let's add a query for the overall
+    if (self.options.query.length === 1) {
+      var q = self.options.query[0];
+      if (!q.filter)
+        q.filter = [];
+      if (q.filter.length > 0) {
+        var _q = ce.clone(q);
+        _q.filter = [];
+        _q.type = 'overall';
+        self.options.query.push(_q);
+      }
+    }
   };
 
   if (options && options.query && !Array.isArray(options.query))
     options.query = [options.query];
+
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
@@ -36450,7 +35482,9 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"jquery":40,"underscore":92}],109:[function(require,module,exports){
+
+util.inherits(Metric, events.EventEmitter);
+},{"../index":98,"cloneextend":35,"events":12,"jquery":40,"underscore":89,"util":34}],106:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -36461,70 +35495,63 @@ joola.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+
 var
-  EventEmitter2 = require('eventemitter2').EventEmitter2;
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  joola = require('../index'),
+  $$ = require('jquery');
 
 var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
   joola.events.emit('metricpicker.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = ce.clone(require('./_proto')[x]);
-    this._super[x] = ce.clone(require('./_proto')[x]);
-  }
-
   var self = this;
-  self.events = new EventEmitter2({wildcard: true, newListener: true});
 
-  self.on = self.events.on;
-  self.emit = self.events.emit;
-
-  this._id = 'metricpicker';
+  this.type = 'metricpicker';
   this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
     $container: null,
     metrics: [],
-    selected: null
-  };
-  this.drawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('' +
-      '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button"></button>' +
-      '  <button class="close">×</button>' +
-      '  <div class="jio-metricpicker-container">' +
+    disabled: [],
+    selected: null,
+    allowRemove: true,
+    allowSelect: true,
+    template: '<div class="jio-metricpicker-wrapper">\n' +
+      '  <button class="btn jio-metricpicker-button">' +
+      '   <span class="caption"></span>' +
+      '   <span class="close">×</span>' +
+      '  </button>' +
+      '  <div class="picker-container">' +
       '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
       '    <div class="clear"></div>' +
       '  </div>' +
       '  <div class="clear"></div>' +
-      '</div>\n');
+      '</div>'
+  };
+  this.drawn = false;
 
-    if (this.options.fixed) {
-      $html.find('.close').remove();
-    }
+  this.verify = function (options) {
 
-    return $html;
+    return null;
   };
 
   this.draw = function (options, callback) {
     if (!self.drawn) {
+      self.options.$container = $$(self.options.container);
       self.options.$container.append(self.options.template || self.template());
-      var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
-      var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
-      var $close = $(self.options.$container.find('.close'));
-      var $search = $(self.options.$container.find('.quicksearch'));
+      var $ul = $$(self.options.$container.find('.picker-container'));
+      var $btn = $$(self.options.$container.find('.jio-metricpicker-button'));
+      var $close = $$(self.options.$container.find('.close'));
+      if (!self.options.allowRemove)
+        $close.remove();
+      var $search = $$(self.options.$container.find('.quicksearch'));
+      if (self.options.caption)
+        $btn.find('.caption').text(self.options.caption);
       if (self.options.metrics.length === 0)
         joola.metrics.list(function (err, list) {
           if (err)
@@ -36536,19 +35563,20 @@ var MetricPicker = module.exports = function (options, callback) {
 
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
-
-            var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
-              var $this = $(this);
+              var $this = $$(this);
               e.stopPropagation();
 
+              if ($this.hasClass('active'))
+                return;
               if ($this.hasClass('disabled'))
                 return;
 
               self.options.selected = metric;
-              var $content = metric.name;
-              $btn.html($content);
+              //var $content = '<span class="name">' + metric.name + '</span>';
+              //$btn.find('.caption').html((self.options.prefix || '' ) + $content);
               $btn.removeClass('active');
               $ul.removeClass('active');
               mOpen = false;
@@ -36568,7 +35596,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $search.keyup(function () {
-            var $this = $(this);
+            var $this = $$(this);
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
@@ -36579,7 +35607,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function (e) {
-            var $this = $(this);
+            var $this = $$(this);
             e.stopPropagation();
 
             if (mOpen && mlasttarget == this.id) {
@@ -36612,7 +35640,7 @@ var MetricPicker = module.exports = function (options, callback) {
           $ul.on('click', function (e) {
             e.stopPropagation();
           });
-          $('body').on('click', function () {
+          $$('body').on('click', function () {
             $btn.removeClass('active');
             $ul.removeClass('active');
             mlasttarget = null;
@@ -36620,7 +35648,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function () {
-            var $this = $(this);
+            var $this = $$(this);
             $this.toggleClass('active');
           });
 
@@ -36638,13 +35666,13 @@ var MetricPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.selected) {
+      if (self.options.allowSelect&&self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
-        self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html('Choose a metric...' + '');
         self.options.$container.find('.close').hide();
       }
 
@@ -36662,47 +35690,28 @@ var MetricPicker = module.exports = function (options, callback) {
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+  self.draw();
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'metricpicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
-        if (err)
-          return callback(err);
-        joola.viz.onscreen.push(self);
-
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
-          }
-        }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-
-        joola.events.emit('metricpicker.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
+    }
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
   }
 
-  //callback(null, self);
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
 
@@ -36757,15 +35766,8 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-MetricPicker.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
-    '</div>';
-  return html;
-};
-
-},{"./_proto":116,"cloneextend":35,"eventemitter2":37}],110:[function(require,module,exports){
+util.inherits(MetricPicker, events.EventEmitter);
+},{"../index":98,"cloneextend":35,"events":12,"jquery":40,"util":34}],107:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37068,7 +36070,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"./_proto":116,"underscore":92}],111:[function(require,module,exports){
+},{"../index":98,"./_proto":113,"underscore":89}],108:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37300,7 +36302,7 @@ Pie.template = function (options) {
   return html;
 };
 
-},{"../index":101,"./_proto":116,"underscore":92}],112:[function(require,module,exports){
+},{"../index":98,"./_proto":113,"underscore":89}],109:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -37527,7 +36529,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":101,"./_proto":116,"underscore":92}],113:[function(require,module,exports){
+},{"../index":98,"./_proto":113,"underscore":89}],110:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37789,7 +36791,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"./_proto":116}],114:[function(require,module,exports){
+},{"../index":98,"./_proto":113}],111:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37803,285 +36805,810 @@ joola.events.on('core.init.finish', function () {
 var
   joola = require('../index'),
   $$ = require('jquery'),
+  events = require('events'),
   ce = require('cloneextend'),
+  util = require('util'),
+  async = require('async'),
   _ = require('underscore');
 
 var Table = module.exports = function (options, callback) {
-  var self = this;
+    var self = this;
 
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
+    //mixin
+    this._super = {};
+    for (var x in require('./_proto')) {
+      this[x] = require('./_proto')[x];
+      this._super[x] = require('./_proto')[x];
+    }
 
-  this.type = 'table';
-  this.uuid = joola.common.uuid();
-  this.initialized = false;
-  this.data = [];
-  this.options = {
-    container: null,
-    colors: [],
-    offcolors: [],
-    paging: {
-      currentPage: 1,
-      sizes: [10, 25, 50, 100, 250, 500, 1000],
-      currentSize: 10
-    },
-    template: '<div class="table-caption"></div>' +
-      '<div class="controls">' +
-      ' <div class="primary-dimension-picker">Primary dimension picker</div>' +
-      ' <div class="add-dimension-picker">Add dimension...</div>' +
-      ' <div class="add-metric-picker">Add metric...</div>' +
-      ' <div class="search-wrapper">' +
-      '   <input class="search" type="text" placeholder="Search..."/>' +
-      ' </div>' +
-      '</div>' +
-      '<table class="jio table">' +
-      ' <thead></thead>' +
-      ' <tbody></tbody>' +
-      '</table>' +
-      '<div class="paging">' +
-      ' <div class="paging-wrapper">' +
-      '   <div class="page-size">' +
-      '     <span class="caption">Page size: </span>' +
-      '     <select>' +
-      '     </select>' +
-      '   </div>' +
-      ' </div>' +
-      ' <div class="showing"></div>' +
-      ' <div class="navigation">' +
-      '   <div class="prev chevron left"></div>' +
-      '   <div class="next chevron right"></div>' +
-      ' </div>' +
-      '</div>',
-    query: null,
-    strings: {
-      loading: 'No data available.',
-      nodata: 'No data available.',
-      not_shown: 'Not shown'
-    },
-    limit: 10,
-    headers: false,
-    include_not_shown: true
-  };
-  this.verify = function (options) {
-    if (!self.options)
-      return 'Failed to verify [options].';
-    if (self.options.query) {
-      if (!Array.isArray(self.options.query))
-        self.options.query = [self.options.query];
+    this.type = 'table';
+    this.uuid = joola.common.uuid();
+    this.initialized = false;
+    this.data = [];
+    this.sortIndex = -1;
+    this.options = {
+      container: null,
+      colors: [],
+      offcolors: [],
+      paging: {
+        currentPage: 1,
+        sizes: [10, 25, 50, 100, 250, 500, 1000],
+        currentSize: 10
+      },
+      template: '<div class="table-caption"></div>' +
+        '<div class="controls">' +
+        ' <div class="primary-dimension-picker"></div>' +
+        ' <div class="add-dimension-picker"></div>' +
+        ' <div class="add-metric-picker"></div>' +
+        ' <div class="search-wrapper">' +
+        '   <input class="search" type="text" placeholder="Search..."/>' +
+        ' </div>' +
+        ' <div class="clearfix"></div>' +
+        '</div>' +
+        '<div class="table-wrapper">' +
+        ' <table class="jio table">' +
+        '   <thead></thead>' +
+        '   <tbody></tbody>' +
+        ' </table>' +
+        '</div>' +
+        '<div class="paging">' +
+        ' <div class="paging-wrapper">' +
+        '   <div class="page-size">' +
+        '     <span class="caption">Page size: </span>' +
+        '     <select>' +
+        '     </select>' +
+        '   </div>' +
+        ' </div>' +
+        ' <div class="showing"></div>' +
+        ' <div class="navigation">' +
+        '   <div class="prev chevron left"></div>' +
+        '   <div class="next chevron right"></div>' +
+        ' </div>' +
+        '</div>',
+      query: null,
+      strings: {
+        loading: 'No data available.',
+        nodata: 'No data available.',
+        not_shown: 'Not shown'
+      },
+      limit: 10,
+      headers: false,
+      include_not_shown: true,
+      summary: {
+        enabled: true,
+        placement: 'top'
+      }
+    };
+    this.verify = function (options) {
+      if (!self.options)
+        return 'Failed to verify [options].';
+      if (self.options.query) {
+        if (!Array.isArray(self.options.query))
+          self.options.query = [self.options.query];
+
+      }
+      return null;
+    };
+
+    this.enter = function (data, alldata) {
 
     }
-    return null;
-  };
+    ;
+    this.exit = function (data, alldata) {
 
-  this.enter = function (data, alldata) {
+    };
+    this.update = function (data, alldata) {
 
+    };
+
+    this.destroy = function () {
+      $$(self.options.container).find('table').empty();
+    };
+
+    this.filter = function (data, filter) {
+      return _.filter(data, function (item) {
+        var found = false;
+        Object.keys(item.dimensions).forEach(function (key) {
+          if (item.dimensions[key].toLowerCase().indexOf(filter.toLowerCase()) > -1)
+            found = true;
+        });
+        return found;
+      });
+    };
+
+    this.paint = function () {
+      var _query = self.options.query[0];
+      var $table = $$($$(self.options.container).find('table')[0]);
+      var $search = $$($$(self.options.container).find('input.search')[0]);
+      var $tbody = $$($table.find('tbody')[0]);
+      if (self.data[0].length > 0 || (self.data.length > 1 && self.data[1].length > 0)) {
+        $tbody.find('tr.data-row').remove();
+      }
+      else {
+
+      }
+
+      if (self.sortIndex === -1) {
+        self.sortIndex = self.options.query[0].dimensions.length + 1;
+        self.sortDir = 'desc';
+      }
+
+      var start = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize) + 1;
+      var length = self.options.paging.currentSize;
+      var search, text;
+      if (self.data.length === 1) {
+        var _data;
+        var _total = [];
+        search = $search.val();
+        if (search && search.length > 2)
+          _data = self.filter(self.data[0], search);
+        else
+          _data = self.data[0];
+        self._data = [];
+        self._data[0] = _data.slice(0);
+        _data = _data.slice(start - 1, (start - 1) + length);
+        _data.forEach(function (point) {
+          //we have a simple row
+          var $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+          var lastIndex = 0;
+          _query.dimensions.forEach(function (d, di) {
+            lastIndex++;
+            var dimensionkey = d.key || d;
+            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            $td.find('.filter').on('click', function () {
+              self.emit('select', point, dimensionkey);
+            });
+            if (di === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+          $tbody.append($tr);
+          _query.metrics.forEach(function (m, mi) {
+            var metrickey = m.key || m;
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+              '<span class="summary"></span>' +
+              '</td>');
+            if (lastIndex + mi === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+        });
+      }
+      else if (self.data.length === 2) {
+        var _comparequery = self.options.query[1];
+        var base;
+        var compare;
+        search = $search.val();
+        if (search && search.length > 2) {
+          base = self.filter(self.data[0], search);
+          compare = self.filter(self.data[1], search);
+        }
+        else {
+          base = self.data[0];
+          compare = self.data[1];
+        }
+        self._data = [];
+        self._data[0] = self.data[0].slice(0);
+        self._data[1] = self.data[1].slice(0);
+        base = base.slice(start - 1, (start - 1) + length);
+        var handled = [];
+        base.forEach(function (point, index) {
+          handled.push(point.key);
+          var $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+          var lastIndex = 0;
+          _query.dimensions.forEach(function (d, di) {
+            var dimensionkey = d.key || d;
+            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            lastIndex++;
+            if (di === self.sortIndex)
+              $td.addClass('sorted');
+            $td.find('.filter').on('click', function () {
+              self.emit('select', point, dimensionkey);
+            });
+            $tr.append($td);
+          });
+          _query.metrics.forEach(function (m, mi) {
+            var $td = $$('<td class="value metric empty"></td>');
+            if (lastIndex + mi === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+          $tbody.append($tr);
+
+          text = joola.common.formatDate(_query.timeframe.start) + ' - ';
+          text += joola.common.formatDate(_query.timeframe.end);
+          $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+          var $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+          $tr.append($td);
+
+          $tbody.append($tr);
+          lastIndex = _query.dimensions.length;
+          _query.metrics.forEach(function (m, mi) {
+            var metrickey = m.key || m;
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+              '<span class="summary"></span>' +
+              '</td>');
+            if (lastIndex + mi === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+
+          var comparePoint = compare[index];
+          text = joola.common.formatDate(_comparequery.timeframe.start) + ' - ';
+          text += joola.common.formatDate(_comparequery.timeframe.end);
+          $tr = $$('<tr class="data-row" data-id="' + (comparePoint ? comparePoint.key : 'missing') + '"></tr>');
+          $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+          $tr.append($td);
+
+          $tbody.append($tr);
+          _query.metrics.forEach(function (m, mi) {
+            var metrickey = m.key || m;
+            var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
+              '<span class="summary"></span></td>');
+            if (lastIndex + mi === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+
+          $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+          $td = $$('<td class="caption change" colspan="' + _query.dimensions.length + '">% Change</td>');
+          $tr.append($td);
+
+          _query.metrics.forEach(function (m, mi) {
+            var metrickey = m.key || m;
+            var $td = $$('<td class="value change">' + (point && comparePoint ? joola.common.percentageChange(comparePoint.metrics[metrickey], point.metrics[metrickey]) : 'N/A') + '%</td>');
+            if (lastIndex + mi === self.sortIndex)
+              $td.addClass('sorted');
+            $tr.append($td);
+          });
+          $tbody.append($tr);
+        });
+
+        compare.forEach(function (comparePoint, index) {
+          if (handled.indexOf(comparePoint.key) === -1) {
+            var $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
+            _query.dimensions.forEach(function (d) {
+              var dimensionkey = d.key || d;
+              var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + comparePoint.dimensions[dimensionkey] + '</a></td>');
+              $td.find('.filter').on('click', function () {
+                self.emit('select', comparePoint, dimensionkey);
+              });
+              $tr.append($td);
+            });
+            _query.metrics.forEach(function (m) {
+              var $td = $$('<td class="value metric empty"></td>');
+              $tr.append($td);
+            });
+            $tbody.append($tr);
+
+            text = joola.common.formatDate(_query.timeframe.start) + ' - ';
+            text += joola.common.formatDate(_query.timeframe.end);
+            $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
+            var $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+            $tr.append($td);
+
+            $tbody.append($tr);
+            _query.metrics.forEach(function (m) {
+              var metrickey = m.key || m;
+              var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + 'N/A' + '">' + 'N/A' + '' +
+                '<span class="summary"></span>' +
+                '</td>');
+              $tr.append($td);
+            });
+
+            text = joola.common.formatDate(_comparequery.timeframe.start) + ' - ';
+            text += joola.common.formatDate(_comparequery.timeframe.end);
+            $tr = $$('<tr class="data-row" data-id="' + (comparePoint ? comparePoint.key : 'missing') + '"></tr>');
+            $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+            $tr.append($td);
+
+            $tbody.append($tr);
+            _query.metrics.forEach(function (m) {
+              var metrickey = m.key || m;
+              var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
+                '<span class="summary"></span></td>');
+              $tr.append($td);
+            });
+
+            $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
+            $td = $$('<td class="caption change" colspan="' + _query.dimensions.length + '">% Change</td>');
+            $tr.append($td);
+
+            _query.metrics.forEach(function (m) {
+              var metrickey = m.key || m;
+              var $td = $$('<td class="value change">N/A</td>');
+              $tr.append($td);
+            });
+            $tbody.append($tr);
+          }
+        });
+      }
+
+      self.handleHeaders();
+      self.summarize();
+      self.handlePaging();
+    };
+
+    this.done = function () {
+      self.paint();
+    };
+
+    this.handleHeaders = function () {
+      var lastIndex = 0;
+      self.options.query[0].dimensions.forEach(function (d, i) {
+        var name = d.name || d.key || d;
+        var $th = $$(self.options.$container.find('table th')[i]);
+        if (!$th.hasClass('dimension')) {
+          $th.after($th.clone(true));
+        }
+        $th.find('.name').text(name);
+        if (!d.description)
+          $th.find('.icon-help').hide();
+        else {
+          $th.find('.icon-help').show();
+          $th.find('.icon-help span').text(d.description);
+        }
+        lastIndex++;
+      });
+      self.options.query[0].metrics.forEach(function (m, i) {
+        var name = m.name || m.key || m;
+        var $th = $$(self.options.$container.find('table th')[i + lastIndex]);
+        if (!m.description)
+          $th.find('.icon-help').hide();
+        else {
+          $th.find('.icon-help').show();
+          $th.find('.icon-help span').text(m.description);
+        }
+        $th.find('.name').text(name);
+      });
+
+      var $html = self.options.$container;
+      var $thead = $$($html.find('thead'));
+      var $head_tr = $$('<tr class="captions"></tr>');
+      lastIndex = 0;
+      self.options.query[0].dimensions.forEach(function (d, di) {
+        lastIndex++;
+        var $th = $$('<th class="caption dimension"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
+        $th.find('.name').text(d.name || d.key || d);
+        if (d.allowremove) {
+          $th.find('.icon-close').off('click');
+          $th.find('.icon-close').on('click', function (e) {
+            e.stopPropagation();
+            self.options.query.forEach(function (q) {
+              var index = -1;
+              q.dimensions.forEach(function (item, i) {
+                if (item.key === d.key)
+                  index = i;
+              });
+              if (index > -1)
+                q.dimensions.splice(index, 1);
+            });
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex--;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
+          });
+        }
+        else
+          $th.find('.icon-close').remove();
+        if (!d.description)
+          $th.find('.icon-help').hide();
+        else {
+          $th.find('.icon-help').show();
+          $th.find('.icon-help span').text(d.description);
+        }
+        $th.find('.icon-help').on('click', function (e) {
+          e.stopPropagation();
+        });
+        $th.attr('data-sort-dir', null);
+        $th.attr('data-sort', null);
+        $th.find('.caret-sort').removeClass('icon-sort-desc');
+        $th.find('.caret-sort').removeClass('icon-sort-asc');
+        if (di === self.sortIndex) {
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', self.sortDir);
+          $th.find('.caret-sort').addClass('icon-sort-' + self.sortDir);
+        }
+        $th.on('click', function () {
+          self.sortIndex = di;
+          Object.keys(self.summaries).forEach(function (key, index) {
+            var summary = self.summaries[key];
+            summary.options.$container.removeClass('sorted');
+          });
+
+          self.data[0] = _.sortBy(self.data[0], function (item) {
+            return item.dimensions[d.key || d];
+          });
+          var sortDir = $th.attr('data-sort-dir') || 'desc';
+          if (sortDir === 'desc') {
+            sortDir = 'asc';
+          }
+          else {
+            self.data[0] = _.sortBy(self.data[0], function (item) {
+              return item.dimensions[d.key || d];
+            });
+            self.data[0].reverse();
+            sortDir = 'desc';
+          }
+          self.sortDir = sortDir;
+          $head_tr.find('th').attr('data-sort-dir', null);
+          $head_tr.find('th').attr('data-sort', null);
+          $head_tr.find('th .caret-sort').removeClass('icon-sort-desc');
+          $head_tr.find('th .caret-sort').removeClass('icon-sort-asc');
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', self.sortDir);
+          $th.find('.caret-sort').addClass('icon-sort-' + self.sortDir);
+          self.paint();
+        });
+        $head_tr.append($th);
+      });
+      self.options.query[0].metrics.forEach(function (m, mi) {
+        var $th = $$('<th class="caption metric"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
+        $th.find('.name').text(m.name || m.key || m);
+        if (m.allowremove) {
+          $th.find('.icon-close').off('click');
+          $th.find('.icon-close').on('click', function (e) {
+            e.stopPropagation();
+            self.options.query.forEach(function (q) {
+              var index = -1;
+              q.metrics.forEach(function (item, i) {
+                if (item.key === m.key)
+                  index = i;
+              });
+              if (index > -1)
+                q.metrics.splice(index, 1);
+            });
+            var _summaries = {};
+            Object.keys(self.summaries).forEach(function (key) {
+              item = self.summaries[key];
+              if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
+              }
+              else
+                _summaries[key] = self.summaries[key];
+            });
+            self.summaries = _summaries;
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex--;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
+          });
+        }
+        else
+          $th.find('.icon-close').remove();
+        if (!m.description)
+          $th.find('.icon-help').hide();
+        else {
+          $th.find('.icon-help').show();
+          $th.find('.icon-help span').text(m.description);
+        }
+        if (self.sortIndex === -1) {
+          self.sortIndex = lastIndex;
+          self.sortDir = 'desc';
+        }
+
+        $th.attr('data-sort-dir', null);
+        $th.attr('data-sort', null);
+        $th.find('.caret-sort').removeClass('icon-sort-desc');
+        $th.find('.caret-sort').removeClass('icon-sort-asc');
+        if (lastIndex + mi === self.sortIndex) {
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', self.sortDir);
+          $th.find('.caret-sort').addClass('icon-sort-' + self.sortDir);
+        }
+
+        $th.on('click', function () {
+          self.sortIndex = lastIndex + mi;
+          Object.keys(self.summaries).forEach(function (key) {
+            var summary = self.summaries[key];
+            summary.options.$container.removeClass('sorted');
+            if (key === (m.key || m))
+              summary.options.$container.addClass('sorted');
+          });
+          self.data[0] = _.sortBy(self.data[0], function (item) {
+            return item.metrics[m.key || m];
+          });
+          var sortDir = $th.attr('data-sort-dir') || 'desc';
+          if (sortDir === 'desc') {
+            sortDir = 'asc';
+          }
+          else {
+            self.data[0] = _.sortBy(self.data[0], function (item) {
+              return item.metrics[m.key || m];
+            });
+            self.data[0].reverse();
+            sortDir = 'desc';
+          }
+          self.sortDir = sortDir;
+          $head_tr.find('th').attr('data-sort-dir', null);
+          $head_tr.find('th').attr('data-sort', null);
+          $head_tr.find('th .caret-sort').removeClass('icon-sort-desc');
+          $head_tr.find('th .caret-sort').removeClass('icon-sort-asc');
+          $th.attr('data-sort', true);
+          $th.attr('data-sort-dir', self.sortDir);
+          $th.find('.caret-sort').addClass('icon-sort-' + self.sortDir);
+          self.paint();
+        });
+        $head_tr.append($th);
+      });
+      $thead.html($head_tr);
+      $html.find('table tbody').before($thead);
+    };
+
+    this.handleMetricBoxes = function () {
+      var $html = self.options.$container;
+      var $tbody = $html.find('tbody');
+      $tbody = $$($tbody);
+      var $metric_tr = $$('<tr class="metricboxes"></tr>');
+      var lastIndex = 0;
+      self.options.query[0].dimensions.forEach(function (d) {
+        var $td = $$('<td class="metricbox dimension"></td>');
+        $metric_tr.append($td);
+        lastIndex++;
+      });
+
+      var index = 0;
+      async.mapSeries(self.options.query[0].metrics, function (m, cb) {
+        var $td = $$('<td class="metricbox metric"></td>');
+        $metric_tr.append($td);
+        var _query = ce.clone(self.options.query);
+        _query.forEach(function (q) {
+          q.dimensions = [];
+          q.metrics = [m];
+          if (!q.filter)
+            q.filter = [];
+          if (q.filter.length > 0) {
+            var _q = ce.clone(q);
+            _q.filter = [];
+            _q.type = 'overall';
+            _query.push(_q);
+          }
+        });
+
+        if (!self.summaries)
+          self.summaries = {};
+        self.summaries[m.key] = new joola.viz.Metric({
+          container: $td.get(0),
+          css: lastIndex + index === self.sortIndex ? 'sorted' : '',
+          query: _query
+        });
+        self.summaries[m.key].on('done', function () {
+          self.summaries[m.key].options.$container.addClass(lastIndex + index === self.sortIndex ? 'sorted' : '');
+          self.summarize();
+          return cb(null);
+        });
+        index++;
+      }, function (err, results) {
+      });
+      if ($tbody.find('.metricboxes').length > 0)
+        $tbody.find('.metricboxes').replaceWith($metric_tr);
+      else
+        $$($tbody.find('tr.data-row')[0]).before($metric_tr);
+    };
+
+    this.handlePaging = function () {
+      var $showing = $$(self.options.$container.find('.showing'));
+
+      var total = self._data[0].length;
+      var to = self.options.paging.currentPage * self.options.paging.currentSize;
+      if (to > total)
+        to = total;
+      var showingText = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize + 1) + ' - ' + to + ' of ' + total;
+
+      $showing.text(showingText);
+
+      var $prev = $$(self.options.$container.find('.prev'));
+      var $next = $$(self.options.$container.find('.next'));
+      if (self.options.paging.currentPage > 1) {
+        $prev.removeClass('disabled');
+        $prev.off('click');
+        $prev.on('click', function () {
+          if (self.options.paging.currentPage > 1) {
+            self.options.paging.currentPage--;
+            self.paint();
+          }
+        });
+      }
+      else {
+        $prev.addClass('disabled');
+        $prev.off('click');
+      }
+      var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize);
+      if (nextIndex < self._data[0].length) {
+        $next.removeClass('disabled');
+        $next.off('click');
+        $next.on('click', function () {
+          var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize);
+          if (nextIndex < self._data[0].length) {
+            self.options.paging.currentPage++;
+            self.paint();
+          }
+        });
+      }
+      else {
+        $next.addClass('disabled');
+        $next.off('click');
+      }
+    };
+
+    this.sort = function () {
+
+    };
+
+    this.summarize = function () {
+      Object.keys(self.summaries).forEach(function (key, mindex) {
+        var ref = self.summaries[key];
+        var m = self.options.query[0].metrics[mindex];
+
+        if ((m.aggregation || 'sum') === 'sum' && ref.data.length > 0) {
+          var total, comparetotal;
+          if (ref.data[0].length > 0)
+            total = ref.data[0][0].metrics[m.key];
+          if (ref.data.length > 1 && ref.data[1].length > 0 && ref.data[1].type !== 'overall') {
+            comparetotal = ref.data[1][0].metrics[m.key];
+          }
+          var $summaries = $$('.value.metric[data-key="' + m.key + '"]');
+          $summaries.each(function (index, summary) {
+            var $summary = $$(summary);
+            var value = $summary.attr('data-value');
+            if (value === 'N/A') {
+              $summary.find('span.summary').text(' (N/A)');
+            }
+            else {
+              if ($summary.hasClass('compare'))
+                value = (value / comparetotal * 100).toFixed(2) + '%';
+              else
+                value = (value / total * 100).toFixed(2) + '%';
+              $summary.find('span.summary').text(' (' + value + ')');
+            }
+          });
+        }
+      });
+    };
+
+    this.draw = function (options) {
+      //we draw the template into the container
+      var $html = $$(self.options.template);
+      $$(self.options.container).html($html);
+      if (self.options.caption)
+        $$(self.options.container).find('.table-caption').text(self.options.caption);
+      //visualization specific drawing
+      if (self.options.pickers && self.options.pickers.primary && self.options.pickers.primary.enabled) {
+        var $primary_dimension_picker = $$($html.find('.primary-dimension-picker'));
+        self.options.pickers.primary.css = 'table-picker';
+        self.options.pickers.primary.container = $primary_dimension_picker.get(0);
+        var dimension = self.options.query[0].dimensions[0];
+        if (!dimension.key)
+          dimension = {key: dimension};
+        if (!dimension.collection)
+          dimension.collection = self.options.query[0].collection;
+        self.options.pickers.primary.selected = dimension;
+        self.options.pickers.primary.disabled = self.options.query[0].dimensions;
+        self.options.pickers.primary.prefix = 'Primary dimension: ';
+        self.primary_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.primary).on('change', function (dimension) {
+          self.options.query.forEach(function (q) {
+            if (dimension)
+              q.dimensions[0] = dimension;
+            else
+              q.dimensions.splice(0, 1);
+          });
+          self.options.paging.currentPage = 1;
+          self.data = [];
+          joola.viz.initialize(self, self.options);
+        });
+      }
+      if (self.options.pickers && self.options.pickers.add_dimension && self.options.pickers.add_dimension.enabled) {
+        var $add_dimension_picker = $$($html.find('.add-dimension-picker'));
+        self.options.pickers.add_dimension.css = 'table-picker';
+        self.options.pickers.add_dimension.container = $add_dimension_picker.get(0);
+        self.options.pickers.add_dimension.caption = self.options.pickers.add_dimension.caption || 'Add dimension...';
+        self.options.pickers.add_dimension.disabled = self.options.query[0].dimensions;
+        self.add_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.add_dimension).on('change', function (dimension) {
+          self.options.query.forEach(function (q) {
+            if (dimension) {
+              dimension.allowremove = true;
+              q.dimensions.push(dimension);
+            }
+          });
+          self.data = [];
+          self.options.paging.currentPage = 1;
+          self.sortIndex++;
+          self.handleMetricBoxes();
+          joola.viz.initialize(self, self.options);
+        });
+      }
+      if (self.options.pickers && self.options.pickers.add_metric && self.options.pickers.add_metric.enabled) {
+        var $add_metric_picker = $$($html.find('.add-metric-picker'));
+        self.options.pickers.add_metric.css = 'table-picker';
+        self.options.pickers.add_metric.container = $add_metric_picker.get(0);
+        self.options.pickers.add_metric.caption = self.options.pickers.add_metric.caption || 'Add metric...';
+        self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
+        self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
+          self.options.query.forEach(function (q) {
+            if (metric) {
+              metric.allowremove = true;
+              q.metrics.push(metric);
+            }
+          });
+          self.data = [];
+          self.options.paging.currentPage = 1;
+          self.sortIndex++;
+          self.handleMetricBoxes();
+          joola.viz.initialize(self, self.options);
+        });
+      }
+      var $thead = $$($html.find('thead'));
+      $html.find('table').append($thead);
+
+      var $tbody = $html.find('tbody');
+      $tbody = $$($tbody);
+      $tbody.empty();
+
+      var $metric_tr = $$('<tr class="metricboxes"></tr>');
+      $tbody.append($metric_tr);
+      self.handleHeaders();
+      self.handleMetricBoxes();
+      var $tr = $$('<tr class="data-row loading"></tr>');
+      var $td = $$('<td class="loading" colspan="' + (self.options.query[0].dimensions.length + self.options.query[0].metrics.length) + '">' + self.options.strings.loading + '</td>');
+      $tr.append($td);
+      $tbody.append($tr);
+      $html.find('table').append($tbody);
+
+      var $pageSize = $$($html.find('.page-size select'));
+      self.options.paging.sizes.forEach(function (size) {
+        var $option = $$('<option value="' + size + '">' + size + '</option>');
+        $pageSize.append($option);
+      });
+      $pageSize.on('change', function () {
+        self.options.paging.currentPage = 1;
+        self.options.paging.currentSize = parseInt($pageSize.val(), 10);
+        self.paint();
+      });
+
+      var $search = $$($html.find('input.search'));
+      $search.on('keyup', function () {
+        if ($search.val().length > 2)
+          self.options.paging.currentPage = 1;
+        self.paint();
+      });
+    };
+
+    if (options && options.query && !Array.isArray(options.query))
+      options.query = [options.query];
+
+    options.query[0].sort = [
+      [options.query[0].metrics[0].key || options.query[0].metrics[0], 'DESC']
+    ];
+//we call the core initialize option
+    joola.viz.initialize(self, options || {});
+
+    if (self.options.colors.length === 0)
+      self.options.colors = joola.colors;
+    if (self.options.offcolors.length === 0)
+      self.options.offcolors = joola.offcolors;
+
+    self.draw();
+
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
+    }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
+
+//wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, self);
+
+    return self;
   }
   ;
-  this.exit = function (data, alldata) {
-
-  };
-  this.update = function (data, alldata) {
-
-  };
-
-  this.destroy = function () {
-    $$(self.options.container).find('table').empty();
-  };
-
-  this.filter = function (data, filter) {
-    return _.filter(data, function (item) {
-      var found = false;
-      Object.keys(item.dimensions).forEach(function (key) {
-        if (item.dimensions[key].toLowerCase().indexOf(filter.toLowerCase()) > -1)
-          found = true;
-      });
-      return found;
-    });
-  };
-
-  this.paint = function () {
-    console.log('paint');
-    var _query = self.options.query[0];
-    var $table = $$($$(self.options.container).find('table')[0]);
-    var $search = $$($$(self.options.container).find('input.search')[0]);
-    var $tbody = $$($table.find('tbody')[0]);
-    if (self.data[0].length > 0) {
-      $tbody.find('tr').remove();
-    }
-    else {
-
-    }
-
-    var start = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize) + 1;
-    var length = self.options.paging.currentSize;
-    if (self.data.length === 1) {
-      var _data;
-      var search = $search.val();
-      if (search && search.length > 2)
-        _data = self.filter(self.data[0], search);
-      else
-        _data = self.data[0];
-      self._data = [];
-      self._data[0] = ce.clone(_data);
-      _data = _data.slice(start - 1, (start - 1) + length);
-      _data.forEach(function (point) {
-        //we have a simple row
-        var $tr = $$('<tr data-id="' + point.key + '"></tr>');
-        _query.dimensions.forEach(function (d) {
-          var dimensionkey = d.key || d;
-          var $td = $$('<td class="value dimension">' + point.dimensions[dimensionkey] + '</td>');
-          $tr.append($td);
-        });
-        $tbody.append($tr);
-        _query.metrics.forEach(function (m) {
-          var metrickey = m.key || m;
-          var $td = $$('<td class="value metric">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '</td>');
-          $tr.append($td);
-        });
-      });
-    }
-
-    self.handlePaging();
-  };
-
-  this.done = function () {
-    self.paint();
-  };
-
-  this.handlePaging = function () {
-    var $showing = $$(self.options.$container.find('.showing'));
-
-    var total = self._data[0].length;
-    var to = self.options.paging.currentPage * self.options.paging.currentSize;
-    if (to > total)
-      to = total;
-    var showingText = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize + 1) + ' - ' + to + ' of ' + total;
-    $showing.text(showingText);
-
-    var $prev = $$(self.options.$container.find('.prev'));
-    var $next = $$(self.options.$container.find('.next'));
-    if (self.options.paging.currentPage > 1) {
-      $prev.removeClass('disabled');
-      $prev.on('click', function () {
-        if (self.options.paging.currentPage > 1) {
-          self.options.paging.currentPage--;
-          self.paint();
-        }
-      });
-    }
-    else {
-      $prev.addClass('disabled');
-      $prev.off('click');
-    }
-    var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
-    if (nextIndex < self._data[0].length) {
-      $next.removeClass('disabled');
-      $next.on('click', function () {
-        var nextIndex = ((self.options.paging.currentPage ) * self.options.paging.currentSize) + 1;
-        if (nextIndex < self._data[0].length) {
-          self.options.paging.currentPage++;
-          self.paint();
-        }
-      });
-    }
-    else {
-      $next.addClass('disabled');
-      $next.off('click');
-    }
-  };
-
-  this.sort = function () {
-
-  };
-
-  this.draw = function (options) {
-    //we draw the template into the container
-    var $html = $$(self.options.template);
-    $$(self.options.container).html($html);
-    if (self.options.caption)
-      $$(self.options.container).find('.table-caption').text(self.options.caption);
-    //visualization specific drawing
-
-    var $thead = $$($html.find('thead'));
-    var $head_tr = $$('<tr class="captions"></tr>');
-    self.options.query[0].dimensions.forEach(function (d) {
-      var $th = $$('<th class="caption dimension"></th>');
-      $th.text(d.name || d.key || d);
-      $head_tr.append($th);
-    });
-    self.options.query[0].metrics.forEach(function (m) {
-      var $th = $$('<th class="caption metric"></th>');
-      $th.text(m.name || m.key || m);
-      $head_tr.append($th);
-    });
-    $thead.append($head_tr);
-    $html.find('table').append($thead);
-
-    var $tbody = $html.find('tbody');
-    $tbody = $$($tbody);
-    $tbody.empty();
-    var $tr = $$('<tr class="loading"></tr>');
-    var $td = $$('<td class="loading" colspan="' + (self.options.query[0].dimensions.length + self.options.query[0].metrics.length) + '">' + self.options.strings.loading + '</td>');
-    $tr.append($td);
-    $tbody.append($tr);
-    $html.find('table').append($tbody);
-
-    var $pageSize = $$($html.find('.page-size select'));
-    self.options.paging.sizes.forEach(function (size) {
-      var $option = $$('<option value="' + size + '">' + size + '</option>');
-      $pageSize.append($option);
-    });
-    $pageSize.on('change', function () {
-      self.options.paging.currentPage = 1;
-      self.options.paging.currentSize = parseInt($pageSize.val(), 10);
-      self.paint();
-    });
-
-    var $search = $$($html.find('input.search'));
-    $search.on('keyup', function () {
-      if ($search.val().length > 2) {
-        self.options.paging.currentPage = 1;
-        self.paint();
-      }
-      else
-        self.paint();
-    });
-  };
-
-  if (options && options.query && !Array.isArray(options.query))
-    options.query = [options.query];
-  //we call the core initialize option
-  joola.viz.initialize(self, options || {});
-
-  if (self.options.colors.length === 0)
-    self.options.colors = joola.colors;
-  if (self.options.offcolors.length === 0)
-    self.options.offcolors = joola.offcolors;
-
-  self.draw();
-
-  joola.viz.onscreen.push(self);
-  if (!self.options.canvas) {
-    var elem = $$(self.options.$container).parent();
-    if (elem.attr('jio-type') == 'canvas') {
-      self.options.canvas = $$(elem).Canvas();
-    }
-  }
-  if (self.options.canvas) {
-    self.options.canvas.addVisualization(self);
-  }
-
-  //wrap up
-  self.initialized = true;
-  if (typeof callback === 'function')
-    return callback(null, self);
-
-  return self;
-};
 
 joola.events.on('core.init.finish', function () {
   var found;
@@ -38131,7 +37658,9 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":101,"./_proto":116,"cloneextend":35,"jquery":40,"underscore":92}],115:[function(require,module,exports){
+
+util.inherits(Table, events.EventEmitter);
+},{"../index":98,"./_proto":113,"async":2,"cloneextend":35,"events":12,"jquery":40,"underscore":89,"util":34}],112:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38143,432 +37672,515 @@ joola.events.on('core.init.finish', function () {
  **/
 
 var
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  $$ = require('jquery'),
   joola = require('../index'),
   moment = require('moment'),
   _ = require('underscore');
 
+require('twix');
+
 var Timeline = module.exports = function (options, callback) {
-    if (!callback)
-      callback = function () {
-      };
-    joola.events.emit('timeline.init.start');
+  if (!callback)
+    callback = function () {
+    };
+  joola.events.emit('timeline.init.start');
+  var self = this;
 
-    //mixin
-    this._super = {};
-    for (var x in require('./_proto')) {
-      this[x] = require('./_proto')[x];
-      this._super[x] = require('./_proto')[x];
+  this.type = 'timeline';
+  this.uuid = joola.common.uuid();
+  this.data = [];
+  this.options = {
+    legend: true,
+    canvas: null,
+    template: '<div class="caption"></div>' +
+      '<div class="chartwrapper">' +
+      ' <div class="controls">' +
+      '   <div class="primary-metric-picker"></div>' +
+      '   <div class="secondary-metric-picker"></div>' +
+      ' </div>' +
+      ' <div id="thechart"></div>' +
+      '</div>',
+    container: null,
+    $container: null,
+    query: null,
+    pickers: {
+      main: {enabled: false},
+      secondary: {enabled: false}
     }
+  };
+  this.chartDrawn = false;
 
+  this.verify = function () {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (!Array.isArray(self.options.query))
+        self.options.query = [self.options.query];
+    }
+    else
+      return 'Failed to verify query [options.query].';
+
+    if (self.options.query[0].dimensions.length === 0)
+      return 'Failed to verify dimensions [options.query.dimensions].';
+    if (self.options.query[0].dimensions[0] === 'timestamp' || self.options.query[0].dimensions[0].key === 'timestamp' || self.options.query[0].dimensions[0].datatype === 'date') {
+
+    }
+    else
+      return 'Dimension must be of timestamp type.';
+
+    return null;
+  };
+
+  this.reply = function (data) {
+    if (self.chart) {
+
+      //self.chart.addData([data[0].metrics[Object.keys(data[0].metrics)[0]]], new Date(data[0].dimensions.timestamp))
+    }
+  };
+
+  this.enter = function (data, alldata) {
+  };
+
+  this.update = function (data, alldata) {
+    console.log('update', data);
+  };
+
+  this.exit = function (data, alldata) {
+    console.log('exit', data);
+  };
+
+  this.done = function (data, raw) {
+    if (self.initialChartDrawn)
+      return;
+    self.initialChartDrawn = true;
+
+    self.chartData = self.makeChartTimelineSeries(raw);
+    self.paint();
+  };
+
+  this.makeChartTimelineSeries = function (message) {
+    if (message[0].metrics.length === 0) {
+      return [
+        {
+          type: 'line',
+          name: 'no data',
+          data: []
+        }
+      ];
+    }
     var self = this;
+    var yAxis = [null, null];
+    var series = [];
+    var seriesIndex = -1;
+    var interval = self.options.query.interval;
 
-    this._id = '_timeline';
-    this.uuid = joola.common.uuid();
-    this.options = {
-      legend: true,
-      canvas: null,
-      container: null,
-      $container: null,
-      query: null,
-      pickers: {
-        main: {enabled: false},
-        secondary: {enabled: false}
-      }
-    };
-    this.chartDrawn = false;
-    this.realtimeQueries = [];
-
-    this.verify = function (options, callback) {
-      return this._super.verify(options, callback);
-    };
-
-    this.template = function () {
-      var $html = $('<div class="jio timeline caption"></div>' +
-      '<div class="jio timeline chartwrapper">' +
-      ' <div class="jio timeline controls">' +
-      '     <div class="jio timeline primary-metric-picker"></div>' +
-      '     <div class="jio timeline secondary-metric-picker"></div>' +
-      '   </div>' +
-      '<div class="jio timeline thechart" style="width:100%;margin:0 auto"></div> </div > ');
-      return $html;
-    };
-
-    this.draw = function (options, callback) {
-      if (!Array.isArray(this.options.query))
-        this.options.query = [this.options.query];
-
-      self.stop();
-      var extremes_0, extremes_1;
-      if (!self.options.query[0].dimensions)
-        self.options.query[0].dimensions = [];
-      if (self.options.query[0].dimensions.length === 0)
-        self.options.query[0].dimensions.push('timestamp');
-
-      return this._super.fetch(self, this.options.query, function (err, message) {
-        if (err) {
-          if (typeof callback === 'function')
-            return callback(err);
+    var checkExists = function (timestampDimension, documents, date) {
+      return _.find(documents, function (document) {
+        if (!document.values[timestampDimension.key])
           return;
-        }
-        if (!Array.isArray(message)) {
-          message = [message];
-        }
-        if (message[0].realtime && self.realtimeQueries.indexOf(message[0].realtime) == -1)
-          self.realtimeQueries.push(message[0].realtime);
-        var series = self._super.makeChartTimelineSeries.call(self, message);
-        var linear = (message[0].dimensions && message[0].dimensions.length > 0 && message[0].dimensions[0].datatype == 'date');
-        if (!self.chartDrawn) {
-          var chartOptions = joola.common._mixin({
-            title: {
-              text: null
-            },
-            chart: {
-              backgroundColor: 'transparent',
-              /*marginTop: 0,
-               marginBottom: 0,
-               marginLeft: 0,
-               marginRight: 0,
-               spacingTop: 0,
-               spacingBottom: 0,
-               spacingLeft: 0,
-               spacingRight: 0,*/
-              borderWidth: 0,
-              plotBorderWidth: 0,
-              type: 'area',
-              height: self.options.height || self.options.$container.height() || 250
-            },
-            lang: {
-              noData: 'No data to display'
-            },
-            noData: {
-              style: {
-                fontWeight: 'bold',
-                fontSize: '15px',
-                color: '#303030'
-              }
-            },
-            series: series,
-            xAxis: {
-              type: (linear ? 'datetime' : 'category'),
-              endOnTick: false,
 
-              tickWidth: 0,
-              dateTimeLabelFormats: {
-                day: '%B %e'
-              },
-              labels: {
-                enabled: true,
-                staggerLines: 1,
-                style: {
-                  color: '#b3b3b1'
-                }
-              }
-            },
-            yAxis: [
-              {
-                endOnTick: false,
-                title: {
-                  text: null
-                },
-                labels: {
-                  enabled: true,
-                  style: {
-                    color: '#b3b3b1'
-                  }
-                },
-                gridLineDashStyle: 'Dot'
-              },
-              {
-                endOnTick: false,
-                title: {
-                  text: null
-                },
-                labels: {
-                  enabled: true,
-                  style: {
-                    color: '#b3b3b1'
-                  }
-                },
-                gridLineDashStyle: 'Dot',
-                gridLineWidth: 0,
-                opposite: true
-              }
-            ],
-            legend: {enabled: false},
-            credits: {enabled: false},
-            exporting: {enabled: true},
-            plotOptions: {
-              column: {allowPointSelect: true},
-              line: {
-                turboThreshold: message.documents ? message.documents.length + 1000 : 0,
-                color: '#333333',
-                fillOpacity: 0.1,
-                lineWidth: 3,
-                connectNulls: true,
-                marker: {
-                  enabled: false,
-                  symbol: 'circle',
-                  states: {
-                    hover: {
-                      enabled: true
-                    }
-                  }
-                }
-              }
-            }
-          }, self.options.chart);
-          self.options.$container.append(self.options.template || self.template());
-          self.options.$container.find('.caption').text(self.options.caption || '');
-
-          //pickers
-          if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
-            var $primary_metric_container;
-            if (self.options.pickers.main.container)
-              $primary_metric_container = $(self.options.pickers.main.container);
-            else
-              $primary_metric_container = $(self.options.$container.find('.primary-metric-picker')[0]);
-
-            if ($primary_metric_container) {
-              $primary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
-                if (err)
-                  throw err;
-                _picker.on('change', function (metric) {
-                  if (Array.isArray(self.options.query)) {
-                    self.options.query.forEach(function (query) {
-                      query.metrics[0] = metric;
-                    });
-                  }
-                  else
-                    self.options.query.metrics[0] = metric;
-
-                  self.destroy();
-                  self.draw(self.options);
-                });
-              });
-            }
+        try {
+          var _date = new Date(date);
+          var _basedate = new Date(document.values[timestampDimension.key]);
+          switch (interval) {
+            case 'month':
+            case 'day':
+              _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+              //console.log(_basedate.getTime(), _date.getTime());
+              return _basedate.getTime() === _date.getTime();
+            case 'minute':
+              _basedate.setSeconds(0);
+              _basedate.setMilliseconds(0);
+              //console.log(_basedate.getTime(), _date.getTime());
+              return _basedate.getTime() === _date.getTime();
+            case 'second':
+              _basedate.setMilliseconds(0);
+              //console.log(_basedate.getTime(), _date.getTime());
+              return _basedate.getTime() === _date.getTime();
+            default:
+              return _basedate.getTime() === _date.getTime();
           }
-
-          if (self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled) {
-            var $secondary_metric_container;
-            if (self.options.pickers.secondary.container)
-              $secondary_metric_container = $(self.options.pickers.secondary.container);
-            else
-              $secondary_metric_container = $(self.options.$container.find('.secondary-metric-picker')[0]);
-
-            if ($secondary_metric_container) {
-              $secondary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
-                if (err)
-                  throw err;
-                _picker.on('change', function (metric) {
-                  if (Array.isArray(self.options.query)) {
-                    self.options.query.forEach(function (query) {
-                      query.metrics[1] = metric;
-                    });
-                  }
-                  else
-                    self.options.query.metrics[1] = metric;
-
-                  self.destroy();
-                  self.draw(self.options);
-                });
-              });
-            }
-          }
-          self.chart = self.options.$container.find('.thechart').highcharts(chartOptions);
-          self.chart = self.chart.highcharts();
-
-          extremes_0 = self.chart.yAxis[0].getExtremes();
-          extremes_0.min = 0;
-          extremes_0.max = extremes_0.dataMax * 1.1;
-          if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
-            extremes_0.min = 0;
-            extremes_0.max = 1;
-          }
-
-          self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-          if (self.chart.yAxis.length > 1) {
-            extremes_1 = self.chart.yAxis[1].getExtremes();
-            extremes_1.min = 0;
-            extremes_1.max = extremes_1.dataMax * 1.1;
-            if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-              extremes_1.min = 0;
-              extremes_1.max = 1;
-            }
-            self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-          }
-          self.chartDrawn = true;
-          if (self.options.onDraw)
-            window[self.options.onDraw](self.options.container, self);
-
-          if (typeof callback === 'function')
-            return callback(null);
         }
-        else if (self.options.query[0].realtime) {
-          //we're dealing with realtime
-          series.forEach(function (ser, serIndex) {
-            ser.data.forEach(function (datapoint) {
-              var found = false;
-              var nameBased = false;
-              var y;
-              self.chart.series[serIndex].points.forEach(function (point, pIndex) {
-                if (point) {
-                  if (datapoint.x) {
-                    if (point.x.getTime() == datapoint.x.getTime()) {
-                      y = self.chart.series[serIndex].data[pIndex].y;
-                      found = true;
-                      if (y != datapoint.y)
-                        self.chart.series[serIndex].data[pIndex].update(datapoint.y);
-                    }
-                  }
-                  else {
-                    nameBased = true;
-                    if (point.name == datapoint.name) {
-                      y = self.chart.series[serIndex].data[pIndex].y;
-                      found = true;
-                      if (y != datapoint.y)
-                        self.chart.series[serIndex].data[pIndex].update(datapoint.y);
-                    }
-                  }
-                }
-              });
-              if (!found) {
-                if (nameBased)
-                  self.chart.series[serIndex].addPoint({name: datapoint.name, y: datapoint.y}, true);
-                else
-                  self.chart.series[serIndex].addPoint({x: datapoint.x, y: datapoint.y}, true, true);
-              }
-            });
-          });
+        catch (ex) {
+          console.log('exception while checkExists', ex);
         }
-
-        extremes_0 = self.chart.yAxis[0].getExtremes();
-        extremes_0.min = 0;
-        extremes_0.max = extremes_0.dataMax * 1.1;
-        if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
-          extremes_0.min = 0;
-          extremes_0.max = 1;
+      });
+    };
+    var fill = function (resultRow, row, timestampDimension) {
+      Object.keys(resultRow).forEach(function (key) {
+        if (key !== timestampDimension.key) {
+          row.values[key] = 0;
+          row.fvalues[key] = 0;
         }
-
-        self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-        if (self.chart.yAxis.length > 1) {
-          extremes_1 = self.chart.yAxis[1].getExtremes();
-          extremes_1.min = 0;
-          extremes_1.max = extremes_1.dataMax * 1.1;
-          if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-            extremes_1.min = 0;
-            extremes_1.max = 1;
-          }
-          self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-        }
-        if (self.options.onUpdate)
-          window[self.options.onUpdate](self.options.container, self, series);
-
       });
     };
 
+    message.forEach(function (result, resultIndex) {
 
-    this.hasData = function () {
-      var self = this;
-      return self.chart.hasData();
-    };
+      if (result.documents.length === 0) {
+        result.documents.push({values: {}, fvalues: {}});
+        result.dimensions.forEach(function (d) {
+          result.documents[0].values[d.name] = null;
+          result.documents[0].fvalues[d.name] = null;
+        });
+        result.metrics.forEach(function (m) {
+          result.documents[0].values[m.name] = null;
+          result.documents[0].fvalues[m.name] = null;
+        });
+      }
 
-    //here we go
-    try {
-      joola.common.mixin(self.options, options, true);
-      self.verify(self.options, function (err) {
-          if (err)
-            return callback(err);
+      var dimensions = result.dimensions;
+      var metrics = result.metrics;
+      var documents = ce.clone(result.documents);
+      //should we fill the date range
+      var query = ce.clone(result.query);
 
-          self.options.$container = $(self.options.container);
-          self.markContainer(self.options.$container, [
-            {'type': 'timeline'},
-            {'uuid': self.uuid},
-            {css: self.options.css}
-          ], function (err) {
-            if (err)
-              return callback(err);
+      var timestampDimension = _.find(result.dimensions, function (item) {
+        return item.datatype === 'date';
+      });
+      if (timestampDimension) {
+        //validate and fill the date range;
+        interval = interval === 'ddate' ? 'day' : (interval || 'day');
+        if (!query.timeframe) {
+          query.timeframe = {};
+          query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
+          query.timeframe.end = result.documents[0].values.timestamp;
+        }
 
-            joola.viz.onscreen.push(self);
+        var counter = 0;
+        var fixed = [];
+        var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
+        while (itr.hasNext() && counter++ < 1000) {
+          var _d = new Date(itr.next()._d.getTime());
+          var exists;
 
-            if (!self.options.canvas) {
-              var elem = self.options.$container.parent();
-              if (elem.attr('jio-type') == 'canvas') {
-                self.options.canvas = $(elem).Canvas();
-              }
-            }
+          switch (interval) {
+            case 'day':
+              _d.setHours(0);
+              _d.setSeconds(0);
+              _d.setMilliseconds(0);
+              break;
+            case 'minute':
+              _d.setSeconds(0);
+              _d.setMilliseconds(0);
+              break;
+            case 'second':
+              _d.setMilliseconds(0);
+              break;
+            default:
+              break;
+          }
 
-            if (self.options.canvas) {
-              self.options.canvas.addVisualization(self);
-              self.options.canvas.on('datechange', function (dates) {
-                if (!Array.isArray(self.options.query))
-                  self.options.query = [self.options.query];
-                //let's change our query and fetch again
-                self.options.query[0].timeframe = {};
-                self.options.query[0].timeframe.start = new Date(dates.base_fromdate);
-                self.options.query[0].timeframe.end = new Date(dates.base_todate);
+          exists = checkExists(timestampDimension, result.documents, _d);
+          if (!exists) {
+            exists = {values: {}, fvalues: {}};
+            exists.values[timestampDimension.key] = _d.toISOString();
+            exists.fvalues[timestampDimension.key] = _d.toISOString();
+            fill(result.documents[0].values, exists, timestampDimension);
+          }
+          fixed.push(exists);
+        }
+        documents = fixed;
+      }
 
-                self.destroy();
-                self.draw(self.options);
-              });
-              self.options.canvas.on('intervalchange', function (interval) {
-                //let's change our query and fetch again
-                self.options.query[0].interval = interval;
-
-                self.destroy();
-                self.draw(self.options);
-              });
-              self.options.canvas.on('addplot', function (sender, filter) {
-                if (!Array.isArray(self.options.query))
-                  self.options.query = [self.options.query];
-                var query = joola.common.extend({}, self.options.query[0]);
-                self.options.query.push(query);
-                query.reason = 'added_plot';
-                query.abc = 'abc';
-                query.filter = filter;
-                self.destroy();
-                self.draw(self.options);
-              });
-              self.options.canvas.on('removeplot', function (sender, filter) {
-                var _queries = [];
-                self.options.query.forEach(function (query) {
-                  if (query.filter) {
-                    if (_.isEqual(query.filter, filter)) {
-                      //console.log('removing filter');
-                    }
-                    else
-                      _queries.push(query);
-                  }
-                  else
-                    _queries.push(query);
-                });
-                self.options.query = _queries;
-                self.destroy();
-                self.draw(self.options);
-              });
-              self.options.canvas.on('metricselect', function (sender, metric) {
-                self.options.query[0].metrics[0] = metric;
-                self.destroy();
-                self.draw(self.options);
-              });
-            }
-
-            joola.events.emit('timeline.init.finish', self);
-            if (typeof callback === 'function')
-              return callback(null, self);
+      if (!metrics)
+        return series;
+      metrics.forEach(function (metric, index) {
+        var _yaxis = 0;
+        yAxis[index % 2] = yAxis [index % 2] || metric.dependsOn || metric.key;
+        if (yAxis[0] === (yAxis [index % 2] || metric.dependsOn || metric.key))
+          _yaxis = 0;
+        else
+          _yaxis = 1;
+        var metric_name = metric.name;
+        if (result.query.filter) {
+          result.query.filter.forEach(function (f) {
+            metric_name = f[2] + ': ' + metric_name;
           });
         }
-      );
-    }
-    catch
-      (err) {
-      callback(err);
-      return self.onError(err, callback);
+        series[++seriesIndex] = {
+          name: metric_name,
+          data: [],
+          yAxis: _yaxis,
+          color: joola.colors[seriesIndex]
+        };
+        documents.forEach(function (document, docIndex) {
+          var x = document.fvalues[dimensions[0].key];
+          var nameBased = true;
+          if (dimensions[0].datatype === 'date') {
+            x = new Date(document.fvalues[dimensions[0].key]);
+            nameBased = false;
+          }
+
+          if (nameBased) {
+            series[seriesIndex].data.push({
+              name: x,
+              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+            });
+          }
+          else {
+            if (seriesIndex === 0) {
+              series[seriesIndex].data.push({
+                x: x,
+                y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+              });
+            }
+            else {
+              series[seriesIndex].data.push({
+                x: series[0].data[docIndex].x,
+                y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+              });
+            }
+          }
+        });
+      });
+    });
+
+    return series;
+  };
+
+  this.paint = function () {
+    console.log('paint', self.chartData);
+    /*
+     var ctx = self.options.$container.find('.thechart').get(0).getContext("2d");
+     self.chart = new Chart(ctx).Line(self.chartData, {
+     animation: false,
+     responsive: true,
+     bezierCurve: false,
+     maintainAspectRatio: false,
+     annotateDisplay: true
+     });*/
+  };
+
+  this.draw = function (options, callback) {
+    self.chartOptions = joola.common._mixin({}, self.options.chart);
+    self.options.$container.append(self.options.template || self.template());
+    self.options.$container.find('.caption').text(self.options.caption || '');
+
+    //pickers
+    if (self.options.pickers && self.options.pickers.main && self.options.pickers.main.enabled) {
+      var $primary_metric_container;
+      if (self.options.pickers.main.container)
+        $primary_metric_container = $(self.options.pickers.main.container);
+      else
+        $primary_metric_container = $(self.options.$container.find('.primary-metric-picker')[0]);
+
+      if ($primary_metric_container) {
+        $primary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
+          if (err)
+            throw err;
+          _picker.on('change', function (metric) {
+            if (Array.isArray(self.options.query)) {
+              self.options.query.forEach(function (query) {
+                query.metrics[0] = metric;
+              });
+            }
+            else
+              self.options.query.metrics[0] = metric;
+
+            self.destroy();
+            self.draw(self.options);
+          });
+        });
+      }
     }
 
-//callback(null, self);
-    return self;
+    if (self.options.pickers && self.options.pickers.secondary && self.options.pickers.secondary.enabled) {
+      var $secondary_metric_container;
+      if (self.options.pickers.secondary.container)
+        $secondary_metric_container = $(self.options.pickers.secondary.container);
+      else
+        $secondary_metric_container = $(self.options.$container.find('.secondary-metric-picker')[0]);
+
+      if ($secondary_metric_container) {
+        $secondary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
+          if (err)
+            throw err;
+          _picker.on('change', function (metric) {
+            if (Array.isArray(self.options.query)) {
+              self.options.query.forEach(function (query) {
+                query.metrics[1] = metric;
+              });
+            }
+            else
+              self.options.query.metrics[1] = metric;
+
+            self.destroy();
+            self.draw(self.options);
+          });
+        });
+      }
+    }
+
+    var chartOptions = joola.common._mixin({
+      title: {
+        text: null
+      },
+      chart: {
+        backgroundColor: 'transparent',
+        /*marginTop: 0,
+         marginBottom: 0,
+         marginLeft: 0,
+         marginRight: 0,
+         spacingTop: 0,
+         spacingBottom: 0,
+         spacingLeft: 0,
+         spacingRight: 0,*/
+        borderWidth: 0,
+        plotBorderWidth: 0,
+        type: 'area',
+        height: self.options.height || self.options.$container.height() || 250
+      },
+      lang: {
+        noData: 'No data to display'
+      },
+      noData: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '15px',
+          color: '#303030'
+        }
+      },
+      series: [
+        {
+          data: []
+        }
+      ],
+      xAxis: {
+        type: 'datetime',
+        endOnTick: false,
+
+        tickWidth: 0,
+        dateTimeLabelFormats: {
+          day: '%B %e'
+        },
+        labels: {
+          enabled: true,
+          staggerLines: 1,
+          style: {
+            color: '#b3b3b1'
+          }
+        }
+      },
+      yAxis: [
+        {
+          endOnTick: false,
+          title: {
+            text: null
+          },
+          labels: {
+            enabled: true,
+            style: {
+              color: '#b3b3b1'
+            }
+          },
+          gridLineDashStyle: 'Dot'
+        },
+        {
+          endOnTick: false,
+          title: {
+            text: null
+          },
+          labels: {
+            enabled: true,
+            style: {
+              color: '#b3b3b1'
+            }
+          },
+          gridLineDashStyle: 'Dot',
+          gridLineWidth: 0,
+          opposite: true
+        }
+      ],
+      legend: {enabled: false},
+      credits: {enabled: false},
+      exporting: {enabled: true},
+      plotOptions: {
+        column: {allowPointSelect: true},
+        line: {
+          //turboThreshold: message.documents ? message.documents.length + 1000 : 0,
+          color: '#333333',
+          fillOpacity: 0.1,
+          lineWidth: 3,
+          connectNulls: true,
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            states: {
+              hover: {
+                enabled: true
+              }
+            }
+          }
+        }
+      }
+    }, self.options.chart);
+
+    if (!self.options.$container)
+      self.options.$container = $$(self.options.container);
+    console.log(self.options.$container.find('#thechart').get(0));
+    self.chart = new Highcharts.Chart({
+      chart: {
+        renderTo: 'thechart'
+      }});
+
+    extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0.min = 0;
+    extremes_0.max = extremes_0.dataMax * 1.1;
+    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+      extremes_0.min = 0;
+      extremes_0.max = 1;
+    }
+
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    if (self.chart.yAxis.length > 1) {
+      extremes_1 = self.chart.yAxis[1].getExtremes();
+      extremes_1.min = 0;
+      extremes_1.max = extremes_1.dataMax * 1.1;
+      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+        extremes_1.min = 0;
+        extremes_1.max = 1;
+      }
+      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+    }
+    self.chartDrawn = true;
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
+
+    if (typeof callback === 'function')
+      return callback(null);
+  };
+
+  //here we go
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+
+  self.draw();
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
+    }
   }
-  ;
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
+  }
+
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
+  return self;
+};
 
 joola.events.on('core.init.finish', function () {
   var found;
@@ -38618,17 +38230,8 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-Timeline.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="timeline" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio timeline caption"></div>\n' +
-    '  <div class="jio timeline chartwrapper">\n' +
-    '    <div class="jio timeline thechart"></div>\n' +
-    '  </div>\n' +
-    '</div>';
-  return html;
-};
-
-},{"../index":101,"./_proto":116,"moment":41,"underscore":92}],116:[function(require,module,exports){
+util.inherits(Timeline, events.EventEmitter);
+},{"../index":98,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":88,"underscore":89,"util":34}],113:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -39023,7 +38626,7 @@ proto.find = function (obj) {
 };
 
 
-},{"../index":101,"cloneextend":35,"jquery":40,"moment":41,"twix":91,"underscore":92}],117:[function(require,module,exports){
+},{"../index":98,"cloneextend":35,"jquery":40,"moment":41,"twix":88,"underscore":89}],114:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -39060,7 +38663,7 @@ viz.Pie = require('./Pie');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');
-viz.Table = require('./Table2');
+viz.Table = require('./Table');
 viz.Timeline = require('./Timeline');
 
 //onscreen
@@ -39192,6 +38795,8 @@ viz.fetch = function (context, query, callback) {
       if (!Array.isArray(messages))
         messages = [messages];
       messages.forEach(function (message, mindex) {
+        if (!context.data)
+          context.data = [];
         var _data = [];
         if (context.data[mindex]) {
           _data = context.data[mindex];
@@ -39210,7 +38815,8 @@ viz.fetch = function (context, query, callback) {
             meta: {},
             raw: ce.clone(doc),
             state: 'enter',
-            type: message.query.type
+            type: message.query.type,
+            realtime: message.query.realtime
           };
           var key = '';
           message.dimensions.forEach(function (d) {
@@ -39245,7 +38851,9 @@ viz.fetch = function (context, query, callback) {
         context.data[mindex] = _data;
       });
 
+      var handled = [];
       context.data[0].forEach(function (data, pointIndex) {
+        handled.push(data.key);
         var point = [data];
         var paired = {
           missing: true,
@@ -39264,7 +38872,8 @@ viz.fetch = function (context, query, callback) {
           if (paired || context.data.length > 1)
             point = [data, paired];
         }
-
+        if (context.reply)
+          context.reply(point, context.data);
         if (data.state === 'enter' || paired.state === 'enter') {
           if (context.options.enter)
             context.options.enter.apply(context, [point, context.data]);
@@ -39282,10 +38891,41 @@ viz.fetch = function (context, query, callback) {
           context.exit(point, context.data);
         }
       });
+      if (context.data.length > 1) {
+        context.data[1].forEach(function (data, pointIndex) {
+          if (handled.indexOf(data.key) === -1) {
+            var paired = data;
+            var point = [
+              {
+                missing: true,
+                meta: paired.meta
+              },
+              data
+            ];
+
+            if (data.state === 'enter' || paired.state === 'enter') {
+              if (context.options.enter)
+                context.options.enter.apply(context, [point, context.data]);
+              context.enter(point, context.data);
+            }
+            else if (data.state === 'update' || paired.state === 'update') {
+              if (context.options.update)
+                context.options.update.apply(context, [point, context.data]);
+              context.update(point, context.data);
+            }
+            else if (data.state === 'exit' || paired.state === 'exit') {
+              context.data[1].splice(pointIndex, 1);
+              if (context.options.exit)
+                context.options.exit.apply(context, [point, context.data]);
+              context.exit(point, context.data);
+            }
+          }
+        });
+      }
       if (context.options.done)
         context.options.done.apply(context, context.data);
       if (context.done)
-        context.done(context.data);
+        context.done(context.data, messages);
       return callback(null, context.data);
     });
 
@@ -39324,43 +38964,44 @@ viz.destroy = function (self, vizOptions) {
 };
 
 //this is a magic function for picking up namespace'd items
-joola.on('ready', function (err) {
-  if (err)
-    return;
+/*
+ joola.on('ready', function (err) {
+ if (err)
+ return;
 
-  Object.keys(joola.viz).forEach(function (key) {
-    var visualization = joola.viz[key];
-    var joola_elements = $$('joola\\:' + key.toLowerCase());
-    if (joola_elements.length > 0) {
-      $.each(joola_elements, function (index, element) {
-        var $element = $$(element);
-        //check not nested under a canvas
-        if ($element.parents('joola\\:canvas').length === 0) {
-          var attributes = $element.get(0).attributes;
-          var options = {
-            container: $element
-          };
-          for (var i = 0; i < attributes.length; i++) {
-            var attribute = attributes[i];
+ Object.keys(joola.viz).forEach(function (key) {
+ var visualization = joola.viz[key];
+ var joola_elements = $$('joola\\:' + key.toLowerCase());
+ if (joola_elements.length > 0) {
+ $.each(joola_elements, function (index, element) {
+ var $element = $$(element);
+ //check not nested under a canvas
+ if ($element.parents('joola\\:canvas').length === 0) {
+ var attributes = $element.get(0).attributes;
+ var options = {
+ container: $element
+ };
+ for (var i = 0; i < attributes.length; i++) {
+ var attribute = attributes[i];
 
-            var value = null;
-            try {
-              value = JSON.parse(attribute.value);
-            }
-            catch (ex) {
-              try {
-                value = JSON.parse(attribute.value.replace(/\'/ig, '"'));
-              }
-              catch (ex2) {
-                value = attribute.value;
-              }
-            }
-            joola.common.flatGetSet(options, attribute.name, value);
-          }
-          new visualization(options);
-        }
-      });
-    }
-  });
-});
-},{"../index":101,"./BarTable":102,"./Canvas":103,"./DatePicker":104,"./DimensionPicker":105,"./FilterBox":106,"./Geo":107,"./Metric":108,"./MetricPicker":109,"./MiniTable":110,"./Pie":111,"./PunchCard":112,"./Sparkline":113,"./Table2":114,"./Timeline":115,"async":2,"cloneextend":35,"jquery":40,"underscore":92}]},{},[101])
+ var value = null;
+ try {
+ value = JSON.parse(attribute.value);
+ }
+ catch (ex) {
+ try {
+ value = JSON.parse(attribute.value.replace(/\'/ig, '"'));
+ }
+ catch (ex2) {
+ value = attribute.value;
+ }
+ }
+ joola.common.flatGetSet(options, attribute.name, value);
+ }
+ new visualization(options);
+ }
+ });
+ }
+ });
+ });*/
+},{"../index":98,"./BarTable":99,"./Canvas":100,"./DatePicker":101,"./DimensionPicker":102,"./FilterBox":103,"./Geo":104,"./Metric":105,"./MetricPicker":106,"./MiniTable":107,"./Pie":108,"./PunchCard":109,"./Sparkline":110,"./Table":111,"./Timeline":112,"async":2,"cloneextend":35,"jquery":40,"underscore":89}]},{},[98])

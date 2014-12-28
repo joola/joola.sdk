@@ -66,13 +66,13 @@ var Metric = module.exports = function (options, callback) {
     if (self.options.enter)
       self.options.enter.apply(self, [data, alldata]);
 
-
+    var value, $$summary, total;
     if (data.length === 1) {
       $$(self.options.container).find('.summary').show();
-      var value = data[0].metrics[metrickey];
+      value = data[0].metrics[metrickey];
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
-      var $$summary = $$($$(self.options.container).find('.summary'));
-      var total = data[0].metrics[metrickey];
+      $$summary = $$($$(self.options.container).find('.summary'));
+      total = data[0].metrics[metrickey];
       if (metric.aggregation === 'sum')
         $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
       else if (metric.aggregation === 'avg')
@@ -80,15 +80,14 @@ var Metric = module.exports = function (options, callback) {
     }
     else if (data.length === 2 && data[1].type === 'overall') {
       $$(self.options.container).find('.summary').show();
-      var value;
       if (!data[0].missing)
         value = data[0].metrics[metrickey];
       else
         value = 0;
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
-      var $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary = $$($$(self.options.container).find('.summary'));
       if (data[1].type === 'overall') {
-        var total = data[1].metrics[metrickey];
+        total = data[1].metrics[metrickey];
         var percentage;
         if (metric.aggregation === 'sum') {
           percentage = (value / total * 100).toFixed() + '%';
@@ -113,7 +112,7 @@ var Metric = module.exports = function (options, callback) {
       else
         change = 'N/A';
 
-      var $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary = $$($$(self.options.container).find('.summary'));
       $$summary.html('<span class="base"></span>' +
         '<span class="sep">vs.</span>' +
         '<span class="compare"></span>');
