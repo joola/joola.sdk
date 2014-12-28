@@ -48,6 +48,7 @@ joola.globals = require('./common/globals');
 joola.logger = require('./common/logger');
 joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
+joola.memory = require('./common/memory');
 joola.events = require('./common/events');
 joola.events.setMaxListeners(100);
 joola.on = function (event, cb) {
