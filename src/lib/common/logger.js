@@ -23,6 +23,9 @@ logger._log = function (level, message, callback) {
     case 'silly':
       level = 'debug';
       break;
+    case 'trace':
+      level = 'debug';
+      break;
     default:
       break;
   }
@@ -48,6 +51,10 @@ logger._log = function (level, message, callback) {
     return callback(null);
 };
 
+logger.trace = function (message, callback) {
+  return this._log('trace', message, callback);
+};
+
 logger.silly = function (message, callback) {
   return this._log('silly', message, callback);
 };
@@ -67,3 +74,4 @@ logger.warn = function (message, callback) {
 logger.error = function (message, callback) {
   return this._log('error', message, callback);
 };
+
