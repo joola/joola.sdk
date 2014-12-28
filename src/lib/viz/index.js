@@ -71,7 +71,7 @@ viz.initialize = function (self, options, callback) {
     if (self.options.canvas) {
       self.options.canvas.addVisualization(self);
       //subscribe to default events
-
+      self.options.canvas.setMaxListeners(100);
       self.options.canvas.on('datechange', function (dates) {
         if (!self.options)
           return;
@@ -165,6 +165,10 @@ viz.fetch = function (context, query, callback) {
         return callback(err);
       if (!Array.isArray(messages))
         messages = [messages];
+
+      if (context.reply)
+        context.reply(messages, context.data);
+      
       messages.forEach(function (message, mindex) {
         if (!context.data)
           context.data = [];
@@ -243,8 +247,6 @@ viz.fetch = function (context, query, callback) {
           if (paired || context.data.length > 1)
             point = [data, paired];
         }
-        if (context.reply)
-          context.reply(point, context.data);
         if (data.state === 'enter' || paired.state === 'enter') {
           if (context.options.enter)
             context.options.enter.apply(context, [point, context.data]);

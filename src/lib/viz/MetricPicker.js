@@ -35,16 +35,16 @@ var MetricPicker = module.exports = function (options, callback) {
     allowRemove: true,
     allowSelect: true,
     template: '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button">' +
-      '   <span class="caption"></span>' +
-      '   <span class="close">×</span>' +
-      '  </button>' +
-      '  <div class="picker-container">' +
-      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-      '    <div class="clear"></div>' +
-      '  </div>' +
-      '  <div class="clear"></div>' +
-      '</div>'
+    '  <button class="btn jio-metricpicker-button">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
+    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+    '    <div class="clear"></div>' +
+    '  </div>' +
+    '  <div class="clear"></div>' +
+    '</div>'
   };
   this.drawn = false;
 
@@ -103,6 +103,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $close.on('click', function (e) {
+            e.stopPropagation();
             self.options.selected = null;
             self.markSelected();
             self.emit('change', null);
@@ -179,7 +180,7 @@ var MetricPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.allowSelect&&self.options.selected) {
+      if (self.options.allowSelect && self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
         self.options.$container.find('.jio-metricpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();

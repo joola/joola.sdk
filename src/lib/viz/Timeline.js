@@ -33,13 +33,15 @@ var Timeline = module.exports = function (options, callback) {
     legend: true,
     canvas: null,
     template: '<div class="caption"></div>' +
-      '<div class="chartwrapper">' +
-      ' <div class="controls">' +
-      '   <div class="primary-metric-picker"></div>' +
-      '   <div class="secondary-metric-picker"></div>' +
-      ' </div>' +
-      ' <div class="thechart"></div>' +
-      '</div>',
+    '<div class="chartwrapper">' +
+    ' <div class="controls">' +
+    '   <div class="primary-metric-picker"></div>' +
+    '   <div class="sep">vs.</div>' +
+    '   <div class="secondary-metric-picker"></div>' +
+    ' </div>' +
+    ' ' +
+    ' <div class="thechart"></div>' +
+    '</div>',
     container: null,
     $container: null,
     query: null,
@@ -76,14 +78,76 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.reply = function (data) {
+    if (self.initialChartDrawn && self.options.query[0].realtime === true && self.options.query[0].interval.indexOf('second') > -1) {
+      self.chart.series.forEach(function (series, serIndex) {
+        series.addPoint({x: new Date(), y: 0}, false, true, false);
+      });
+      self.chart.redraw(true);
+    }
   };
 
   this.enter = function (data, alldata) {
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+    self.chart.redraw();
+    /*extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0.min = 0;
+    extremes_0.max = extremes_0.dataMax * 1.1;
+    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+      extremes_0.min = 0;
+      extremes_0.max = 1;
+    }
 
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    if (self.chart.yAxis.length > 1) {
+      extremes_1 = self.chart.yAxis[1].getExtremes();
+      extremes_1.min = 0;
+      extremes_1.max = extremes_1.dataMax * 1.1;
+      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+        extremes_1.min = 0;
+        extremes_1.max = 1;
+      }
+      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+    }*/
   };
 
   this.update = function (data, alldata) {
-    //console.log('update', data);
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+    self.chart.redraw(true);
+    /*extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0.min = 0;
+    extremes_0.max = extremes_0.dataMax * 1.1;
+    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+      extremes_0.min = 0;
+      extremes_0.max = 1;
+    }
+
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    if (self.chart.yAxis.length > 1) {
+      extremes_1 = self.chart.yAxis[1].getExtremes();
+      extremes_1.min = 0;
+      extremes_1.max = extremes_1.dataMax * 1.1;
+      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+        extremes_1.min = 0;
+        extremes_1.max = 1;
+      }
+      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+    }*/
   };
 
   this.exit = function (data, alldata) {
@@ -91,9 +155,9 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.done = function (data, raw) {
-    //if (self.initialChartDrawn)
-    //  return;
-    //self.initialChartDrawn = true;
+    if (self.initialChartDrawn)
+      return;
+    self.initialChartDrawn = true;
 
     self.chartData = self.makeChartTimelineSeries(raw);
     self.paint();
@@ -113,7 +177,7 @@ var Timeline = module.exports = function (options, callback) {
     var yAxis = [null, null];
     var series = [];
     var seriesIndex = -1;
-    var interval = self.options.query.interval;
+    var interval = Array.isArray(self.options.query) ? self.options.query[0].interval : self.options.query.interval;
 
     var checkExists = function (timestampDimension, documents, date) {
       return _.find(documents, function (document) {
@@ -127,16 +191,13 @@ var Timeline = module.exports = function (options, callback) {
             case 'month':
             case 'day':
               _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
-              //console.log(_basedate.getTime(), _date.getTime());
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
               _basedate.setMilliseconds(0);
-              //console.log(_basedate.getTime(), _date.getTime());
               return _basedate.getTime() === _date.getTime();
             case 'second':
               _basedate.setMilliseconds(0);
-              //console.log(_basedate.getTime(), _date.getTime());
               return _basedate.getTime() === _date.getTime();
             default:
               return _basedate.getTime() === _date.getTime();
@@ -280,19 +341,36 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.paint = function () {
-    console.log('paint', self.chartData);
+    //if (self.chart.series.length === 0) {
+    self.chartData.forEach(function (s) {
+      self.chart.addSeries(s);
+    });
 
-    if (self.chart.series.length === 0) {
-      self.chartData.forEach(function (s) {
-        self.chart.addSeries(s);
-      });
-
-      self.chart.redraw();
+    self.chart.redraw();
+    extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0.min = 0;
+    extremes_0.max = extremes_0.dataMax * 1.1;
+    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+      extremes_0.min = 0;
+      extremes_0.max = 1;
     }
-  }
+
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    if (self.chart.yAxis.length > 1) {
+      extremes_1 = self.chart.yAxis[1].getExtremes();
+      extremes_1.min = 0;
+      extremes_1.max = extremes_1.dataMax * 1.1;
+      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+        extremes_1.min = 0;
+        extremes_1.max = 1;
+      }
+      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+    }
+    //self.chart.setSize( $$(self.chart.container).parent().width(), self.chart.options.height);
+    //}
+  };
 
   this.draw = function (options, callback) {
-    console.log('draw');
     self.chartOptions = joola.common._mixin({}, self.options.chart);
     self.options.$container.append(self.options.template || self.template());
     self.options.$container.find('.caption').text(self.options.caption || '');
@@ -306,11 +384,15 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
-        new joola.viz.MetricPicker({container: $primary_metric_container, canvas: self.options.canvas}, function (err, _picker) {
+        self.primary_metric_container = new joola.viz.MetricPicker({
+          container: $primary_metric_container,
+          canvas: self.options.canvas,
+          selected: self.options.query[0].metrics[0],
+          allowRemove: false
+        }, function (err, _picker) {
           if (err)
             throw err;
           _picker.on('change', function (metric) {
-            console.log('metric', metric);
             if (Array.isArray(self.options.query)) {
               self.options.query.forEach(function (query) {
                 query.metrics[0] = metric;
@@ -319,10 +401,15 @@ var Timeline = module.exports = function (options, callback) {
             else
               self.options.query.metrics[0] = metric;
 
+            self.secondary_metric_container.options.disabled = [metric];
+            self.secondary_metric_container.markSelected();
+
             self.data = [];
-            self.chart.series.forEach(function (s) {
-              s.remove();
-            })
+            self.chartData = [];
+            self.initialChartDrawn = false;
+            while (self.chart.series.length > 0) {
+              self.chart.series[0].remove();
+            }
             joola.viz.initialize(self, self.options);
           });
         });
@@ -337,23 +424,55 @@ var Timeline = module.exports = function (options, callback) {
         $secondary_metric_container = $$(self.options.$container.find('.secondary-metric-picker')[0]);
 
       if ($secondary_metric_container) {
-        $secondary_metric_container.MetricPicker({canvas: self.options.canvas}, function (err, _picker) {
+        self.secondary_metric_container = new joola.viz.MetricPicker({
+          container: $secondary_metric_container,
+          canvas: self.options.canvas,
+          selected: self.options.query[0].metrics[1],
+          disabled: self.options.query[0].metrics[0],
+          allowRemove: true
+        }, function (err, _picker) {
           if (err)
             throw err;
           _picker.on('change', function (metric) {
-            if (Array.isArray(self.options.query)) {
-              self.options.query.forEach(function (query) {
-                query.metrics[1] = metric;
-              });
-            }
-            else
-              self.options.query.metrics[1] = metric;
+            if (!metric) {
+              if (Array.isArray(self.options.query)) {
+                self.options.query.forEach(function (query) {
+                  query.metrics.splice(1, 1);
+                });
+              }
+              else
+                self.options.query.metrics.splice(1, 1);
 
-            self.destroy();
-            self.draw(self.options);
+              self.primary_metric_container.options.disabled = [];
+              self.primary_metric_container.markSelected();
+            }
+            else {
+              if (Array.isArray(self.options.query)) {
+                self.options.query.forEach(function (query) {
+                  query.metrics[1] = metric;
+                });
+              }
+              else
+                self.options.query.metrics[1] = metric;
+
+              self.primary_metric_container.options.disabled = [metric];
+              self.primary_metric_container.markSelected();
+            }
+            self.data = [];
+            self.chartData = [];
+            self.initialChartDrawn = false;
+            while (self.chart.series.length > 0) {
+              self.chart.series[0].remove();
+            }
+
+            joola.viz.initialize(self, self.options);
           });
         });
       }
+    }
+    else {
+      $$(self.options.$container.find('.sep')).hide();
+      $$(self.options.$container.find('.secondary-metric-picker')).hide();
     }
 
     self.chartOptions = joola.common._mixin({
@@ -372,8 +491,9 @@ var Timeline = module.exports = function (options, callback) {
          spacingRight: 0,*/
         borderWidth: 0,
         plotBorderWidth: 0,
-        type: 'area',
-        height: 250// self.options.height || self.options.$container.height() || 250
+        type: 'line',
+        height: self.options.height || self.options.$container.height() || 250,
+        //width: self.options.width || self.options.$container.width() || null
       },
       lang: {
         noData: 'No data to display'
@@ -460,27 +580,7 @@ var Timeline = module.exports = function (options, callback) {
       self.options.$container = $$(self.options.container);
     self.chartOptions.chart.renderTo = self.options.$container.find('.thechart').get(0);
     self.chart = new Highcharts.Chart(self.chartOptions);
-    console.log('draw', self.chart);
-    /*
-     extremes_0 = self.chart.yAxis[0].getExtremes();
-     extremes_0.min = 0;
-     extremes_0.max = extremes_0.dataMax * 1.1;
-     if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
-     extremes_0.min = 0;
-     extremes_0.max = 1;
-     }
-
-     self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-     if (self.chart.yAxis.length > 1) {
-     extremes_1 = self.chart.yAxis[1].getExtremes();
-     extremes_1.min = 0;
-     extremes_1.max = extremes_1.dataMax * 1.1;
-     if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-     extremes_1.min = 0;
-     extremes_1.max = 1;
-     }
-     self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-     }*/
+    //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
 
     if (self.options.onDraw)

@@ -49,7 +49,7 @@ joola.logger = require('./common/logger');
 joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
 joola.events = require('./common/events');
-joola.events.setMaxListeners(1000);
+joola.events.setMaxListeners(100);
 joola.on = function (event, cb) {
   joola.events.on(event, cb);
 };
@@ -231,7 +231,7 @@ joola.browser3rd = function (callback) {
 
   var script;
   if (joola.options.isBrowser) {
-    
+
     //css
     if (joola.options.includecss) {
       var css = document.createElement('link');
@@ -246,7 +246,7 @@ joola.browser3rd = function (callback) {
       //done('css');
     }
     //if (expected === 0)
-      return done('none');
+    return done('none');
   }
   else {
     return done('not browser');

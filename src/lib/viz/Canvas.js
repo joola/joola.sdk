@@ -58,7 +58,7 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(_query[0].dimensions, function (m) {
-            return m.key === key;
+            return (m.key || m)  === key;
           });
           if (exist)
             _query[0].dimensions[i] = exist;
@@ -76,7 +76,7 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(self.options.metrics, function (m) {
-            return m.key === key;
+            return (m.key || m) === key;
           });
           if (exist)
             _query[0].metrics[i] = exist;
