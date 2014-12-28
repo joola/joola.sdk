@@ -74,6 +74,7 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.destroy = function () {
+    self.initialChartDrawn = false;
     $$(self.options.container).empty();
   };
 
@@ -96,26 +97,26 @@ var Timeline = module.exports = function (options, callback) {
       var series = self.chart.series[pointIndex];
       series.data[series.data.length - 1].update(point.metrics[key]);
     });
-    self.chart.redraw();
+    //self.chart.redraw();
     /*extremes_0 = self.chart.yAxis[0].getExtremes();
-    extremes_0.min = 0;
-    extremes_0.max = extremes_0.dataMax * 1.1;
-    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
-      extremes_0.min = 0;
-      extremes_0.max = 1;
-    }
+     extremes_0.min = 0;
+     extremes_0.max = extremes_0.dataMax * 1.1;
+     if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+     extremes_0.min = 0;
+     extremes_0.max = 1;
+     }
 
-    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-    if (self.chart.yAxis.length > 1) {
-      extremes_1 = self.chart.yAxis[1].getExtremes();
-      extremes_1.min = 0;
-      extremes_1.max = extremes_1.dataMax * 1.1;
-      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-        extremes_1.min = 0;
-        extremes_1.max = 1;
-      }
-      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-    }*/
+     self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+     if (self.chart.yAxis.length > 1) {
+     extremes_1 = self.chart.yAxis[1].getExtremes();
+     extremes_1.min = 0;
+     extremes_1.max = extremes_1.dataMax * 1.1;
+     if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+     extremes_1.min = 0;
+     extremes_1.max = 1;
+     }
+     self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+     }*/
   };
 
   this.update = function (data, alldata) {
@@ -129,7 +130,7 @@ var Timeline = module.exports = function (options, callback) {
       series.data[series.data.length - 1].update(point.metrics[key]);
     });
     self.chart.redraw(true);
-    /*extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
     extremes_0.max = extremes_0.dataMax * 1.1;
     if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
@@ -147,7 +148,7 @@ var Timeline = module.exports = function (options, callback) {
         extremes_1.max = 1;
       }
       self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-    }*/
+    }
   };
 
   this.exit = function (data, alldata) {
@@ -158,8 +159,8 @@ var Timeline = module.exports = function (options, callback) {
     if (self.initialChartDrawn)
       return;
     self.initialChartDrawn = true;
-
     self.chartData = self.makeChartTimelineSeries(raw);
+    console.log('chartData', self.chartData);
     self.paint();
   };
 
@@ -341,33 +342,32 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.paint = function () {
-    //if (self.chart.series.length === 0) {
     self.chartData.forEach(function (s) {
       self.chart.addSeries(s);
     });
 
     self.chart.redraw();
-    extremes_0 = self.chart.yAxis[0].getExtremes();
-    extremes_0.min = 0;
-    extremes_0.max = extremes_0.dataMax * 1.1;
-    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+    if (!self.options.query[0].realtime) {
+      extremes_0 = self.chart.yAxis[0].getExtremes();
       extremes_0.min = 0;
-      extremes_0.max = 1;
-    }
-
-    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-    if (self.chart.yAxis.length > 1) {
-      extremes_1 = self.chart.yAxis[1].getExtremes();
-      extremes_1.min = 0;
-      extremes_1.max = extremes_1.dataMax * 1.1;
-      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-        extremes_1.min = 0;
-        extremes_1.max = 1;
+      extremes_0.max = extremes_0.dataMax * 1.1;
+      if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
+        extremes_0.min = 0;
+        extremes_0.max = 1;
       }
-      self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+
+      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+      if (self.chart.yAxis.length > 1) {
+        extremes_1 = self.chart.yAxis[1].getExtremes();
+        extremes_1.min = 0;
+        extremes_1.max = extremes_1.dataMax * 1.1;
+        if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+          extremes_1.min = 0;
+          extremes_1.max = 1;
+        }
+        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+      }
     }
-    //self.chart.setSize( $$(self.chart.container).parent().width(), self.chart.options.height);
-    //}
   };
 
   this.draw = function (options, callback) {

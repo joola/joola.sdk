@@ -27,14 +27,14 @@ var Metric = module.exports = function (options, callback) {
     container: null,
     caption: '',
     template: '<div class="jio metricbox">' +
-      '<div class="value"></div>' +
-      '<div class="summary" style="display:none;">' +
-      '<span class="base"></span>' +
-      '<span class="sep">vs.</span>' +
-      '<span class="compare"></span>' +
-      '</div>' +
-      '<div class="caption"></div>' +
-      '</div>',
+    '<div class="value"></div>' +
+    '<div class="summary" style="display:none;">' +
+    '<span class="base"></span>' +
+    '<span class="sep">vs.</span>' +
+    '<span class="compare"></span>' +
+    '</div>' +
+    '<div class="caption"></div>' +
+    '</div>',
     query: null,
     strings: {
       loading: '---',
@@ -68,7 +68,8 @@ var Metric = module.exports = function (options, callback) {
 
     var value, $$summary, total;
     if (data.length === 1) {
-      $$(self.options.container).find('.summary').show();
+      if (self.options.query[0].filter && self.options.query[0].filter.length > 0)
+        $$(self.options.container).find('.summary').show();
       value = data[0].metrics[metrickey];
       $$(self.options.container).find('.value').html(joola.common.formatMetric(value, metric));
       $$summary = $$($$(self.options.container).find('.summary'));
@@ -114,8 +115,8 @@ var Metric = module.exports = function (options, callback) {
 
       $$summary = $$($$(self.options.container).find('.summary'));
       $$summary.html('<span class="base"></span>' +
-        '<span class="sep">vs.</span>' +
-        '<span class="compare"></span>');
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
       $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
