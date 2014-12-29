@@ -1,5 +1,3 @@
-'use strict';
-
 var memory = function () {
   this.content = {};
 
