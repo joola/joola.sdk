@@ -58,7 +58,7 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(_query[0].dimensions, function (m) {
-            return (m.key || m)  === key;
+            return (m.key || m) === key;
           });
           if (exist)
             _query[0].dimensions[i] = exist;
@@ -109,7 +109,9 @@ var Canvas = module.exports = function (options, callback) {
       if (self.options.datepicker && self.options.datepicker._interval)
         _query[0].interval = self.options.datepicker._interval;
     }
+    _query[0].realtime = _query[0].realtime || self.options.realtime || false;
     if (self._datepicker.comparePeriod) {
+      _query[0].realtime = false;
       var cquery = ce.clone(_query[0]);
       cquery.type = 'compare';
       cquery.timeframe = {};
