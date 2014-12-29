@@ -33,15 +33,15 @@ var Timeline = module.exports = function (options, callback) {
     legend: true,
     canvas: null,
     template: '<div class="caption"></div>' +
-    '<div class="chartwrapper">' +
-    ' <div class="controls">' +
-    '   <div class="primary-metric-picker"></div>' +
-    '   <div class="sep">vs.</div>' +
-    '   <div class="secondary-metric-picker"></div>' +
-    ' </div>' +
-    ' ' +
-    ' <div class="thechart"></div>' +
-    '</div>',
+      '<div class="chartwrapper">' +
+      ' <div class="controls">' +
+      '   <div class="primary-metric-picker"></div>' +
+      '   <div class="sep">vs.</div>' +
+      '   <div class="secondary-metric-picker"></div>' +
+      ' </div>' +
+      ' ' +
+      ' <div class="thechart"></div>' +
+      '</div>',
     container: null,
     $container: null,
     query: null,
@@ -160,7 +160,6 @@ var Timeline = module.exports = function (options, callback) {
       return;
     self.initialChartDrawn = true;
     self.chartData = self.makeChartTimelineSeries(raw);
-    console.log('chartData', self.chartData);
     self.paint();
   };
 
@@ -272,9 +271,10 @@ var Timeline = module.exports = function (options, callback) {
             default:
               break;
           }
-
+          var offset = new Date().getTimezoneOffset() / 60;
           exists = checkExists(timestampDimension, result.documents, _d);
           if (!exists) {
+            _d.setHours(_d.getHours() + (offset * -1));
             exists = {values: {}, fvalues: {}};
             exists.values[timestampDimension.key] = _d.toISOString();
             exists.fvalues[timestampDimension.key] = _d.toISOString();
