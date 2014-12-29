@@ -33,15 +33,15 @@ var Timeline = module.exports = function (options, callback) {
     legend: true,
     canvas: null,
     template: '<div class="caption"></div>' +
-      '<div class="chartwrapper">' +
-      ' <div class="controls">' +
-      '   <div class="primary-metric-picker"></div>' +
-      '   <div class="sep">vs.</div>' +
-      '   <div class="secondary-metric-picker"></div>' +
-      ' </div>' +
-      ' ' +
-      ' <div class="thechart"></div>' +
-      '</div>',
+    '<div class="chartwrapper">' +
+    ' <div class="controls">' +
+    '   <div class="primary-metric-picker"></div>' +
+    '   <div class="sep">vs.</div>' +
+    '   <div class="secondary-metric-picker"></div>' +
+    ' </div>' +
+    ' ' +
+    ' <div class="thechart"></div>' +
+    '</div>',
     container: null,
     $container: null,
     query: null,
@@ -62,18 +62,12 @@ var Timeline = module.exports = function (options, callback) {
     else
       return 'Failed to verify query [options.query].';
 
-    if (self.options.query[0].dimensions.length === 0)
-      return 'Failed to verify dimensions [options.query.dimensions].';
-    if (self.options.query[0].dimensions[0] === 'timestamp' || self.options.query[0].dimensions[0].key === 'timestamp' || self.options.query[0].dimensions[0].datatype === 'date') {
-
-    }
-    else
-      return 'Dimension must be of timestamp type.';
-
+    self.options.query[0].dimensions = ['timestamp'];
     return null;
   };
 
   this.destroy = function () {
+    joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
   };
@@ -187,6 +181,7 @@ var Timeline = module.exports = function (options, callback) {
         try {
           var _date = new Date(date);
           var _basedate = new Date(document.values[timestampDimension.key]);
+
           switch (interval) {
             case 'month':
             case 'day':
@@ -254,7 +249,6 @@ var Timeline = module.exports = function (options, callback) {
         while (itr.hasNext() && counter++ < 1000) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
-
           switch (interval) {
             case 'day':
               _d.setHours(0);
@@ -274,7 +268,7 @@ var Timeline = module.exports = function (options, callback) {
           var offset = new Date().getTimezoneOffset() / 60;
           exists = checkExists(timestampDimension, result.documents, _d);
           if (!exists) {
-            _d.setHours(_d.getHours() + (offset * -1));
+            //_d.setHours(_d.getHours() + (offset * -1));
             exists = {values: {}, fvalues: {}};
             exists.values[timestampDimension.key] = _d.toISOString();
             exists.fvalues[timestampDimension.key] = _d.toISOString();
@@ -337,37 +331,46 @@ var Timeline = module.exports = function (options, callback) {
         });
       });
     });
-
     return series;
+
   };
 
-  this.paint = function () {
+  this.paint = function (rescale) {
     self.chartData.forEach(function (s) {
       self.chart.addSeries(s);
     });
 
+    //var colWidth = ($$(self.options.container).width() / self.chartData[0].data.length) + 1;
+    //console.log(colWidth, self.chart);
+    //self.chart.options.plotOptions.column.pointWidth = colWidth;
     self.chart.redraw();
-    if (!self.options.query[0].realtime) {
-      extremes_0 = self.chart.yAxis[0].getExtremes();
+    //if (!self.options.query[0].realtime || rescale) {
+    extremes_0 = self.chart.yAxis[0].getExtremes();
+    extremes_0.min = 0;
+    extremes_0.max = extremes_0.dataMax * 1.1;
+    if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
       extremes_0.min = 0;
-      extremes_0.max = extremes_0.dataMax * 1.1;
-      if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
-        extremes_0.min = 0;
-        extremes_0.max = 1;
-      }
-
-      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
-      if (self.chart.yAxis.length > 1) {
-        extremes_1 = self.chart.yAxis[1].getExtremes();
-        extremes_1.min = 0;
-        extremes_1.max = extremes_1.dataMax * 1.1;
-        if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
-          extremes_1.min = 0;
-          extremes_1.max = 1;
-        }
-        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
-      }
+      extremes_0.max = 1;
     }
+
+    if (!self.last_extremes_0)
+      self.last_extremes_0 = extremes_0;
+    if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
+      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    if (self.chart.yAxis.length > 1) {
+      extremes_1 = self.chart.yAxis[1].getExtremes();
+      extremes_1.min = 0;
+      extremes_1.max = extremes_1.dataMax * 1.1;
+      if (extremes_1.dataMin === 0 && extremes_1.dataMax === 0) {
+        extremes_1.min = 0;
+        extremes_1.max = 1;
+      }
+      if (!self.last_extremes_1)
+        self.last_extremes_1 = extremes_1;
+      if (self.last_extremes_1.min !== extremes_1.min || self.last_extremes_1.max !== extremes_1.max)
+        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+    }
+    //}
   };
 
   this.draw = function (options, callback) {
@@ -401,8 +404,10 @@ var Timeline = module.exports = function (options, callback) {
             else
               self.options.query.metrics[0] = metric;
 
-            self.secondary_metric_container.options.disabled = [metric];
-            self.secondary_metric_container.markSelected();
+            if (self.secondary_metric_container) {
+              self.secondary_metric_container.options.disabled = [metric];
+              self.secondary_metric_container.markSelected();
+            }
 
             self.data = [];
             self.chartData = [];
@@ -556,7 +561,12 @@ var Timeline = module.exports = function (options, callback) {
       credits: {enabled: false},
       exporting: {enabled: true},
       plotOptions: {
-        column: {allowPointSelect: true},
+        column: {
+          allowPointSelect: true,
+          groupPadding: 0.05,
+          pointPadding: 0,
+          borderWidth: 0
+        },
         line: {
           //turboThreshold: message.documents ? message.documents.length + 1000 : 0,
           color: '#333333',

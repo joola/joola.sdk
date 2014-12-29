@@ -168,7 +168,7 @@ viz.fetch = function (context, query, callback) {
 
       if (context.reply)
         context.reply(messages, context.data);
-      
+
       messages.forEach(function (message, mindex) {
         if (!context.data)
           context.data = [];
@@ -308,6 +308,9 @@ viz.fetch = function (context, query, callback) {
 };
 
 viz.stop = function (self, callback) {
+  if (!callback)
+    callback = function () {
+    };
   if (self.realtimeQueries) {
     async.map(self.realtimeQueries, function (q, callback) {
       joola.logger.debug('Stopping realtime query [' + q + '].');

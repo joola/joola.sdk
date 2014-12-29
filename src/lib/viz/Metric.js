@@ -155,6 +155,7 @@ var Metric = module.exports = function (options, callback) {
   };
 
   this.destroy = function () {
+    joola.viz.stop(self);
     $$(self.options.container).empty();
   };
 

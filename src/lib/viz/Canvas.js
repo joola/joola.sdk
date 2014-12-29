@@ -44,7 +44,7 @@ var Canvas = module.exports = function (options, callback) {
       dates = {};
     var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = joola.common.extend(self.options.query, _query);
+      _query = joola.common._extend(ce.clone(self.options.query), _query);
     }
     if (!Array.isArray(_query))
       _query = [_query];
@@ -110,7 +110,7 @@ var Canvas = module.exports = function (options, callback) {
         _query[0].interval = self.options.datepicker._interval;
     }
     _query[0].realtime = _query[0].realtime || self.options.realtime || false;
-    if (self._datepicker.comparePeriod) {
+    if (self._datepicker && self._datepicker.comparePeriod) {
       _query[0].realtime = false;
       var cquery = ce.clone(_query[0]);
       cquery.type = 'compare';
@@ -139,6 +139,7 @@ var Canvas = module.exports = function (options, callback) {
         filters.push(filter);
       }
     });
+    console.log('build filter', filters);
     return filters;
   };
 
@@ -203,6 +204,9 @@ var Canvas = module.exports = function (options, callback) {
                 break;
               case 'bartable':
                 new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                  console.log('selected');
+                  if (Array.isArray(point))
+                    point = point[0];
                   var filter = self.buildFilter(point, dimensionkey);
                   var exist = _.find(self.options.filters, function (filter) {
                     return filter.key === point.key + dimensionkey;
@@ -242,13 +246,36 @@ var Canvas = module.exports = function (options, callback) {
               new joola.viz.Metric(viz);
               break;
             case 'table':
-              new joola.viz.Table(viz);
+              new joola.viz.Table(viz).on('select', function (point, dimensionkey) {
+                var filter = self.buildFilter(point, dimensionkey);
+                var exist = _.find(self.options.filters, function (filter) {
+                  return filter.key === point.key + dimensionkey;
+                });
+                if (exist)
+                  self.emit('removefilter', point.key + dimensionkey);
+                else {
+                  self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                }
+              });
               break;
             case 'minitable':
               new joola.viz.MiniTable(viz);
               break;
             case 'bartable':
-              new joola.viz.BarTable(viz);
+              new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                console.log('selected');
+                if (Array.isArray(point))
+                  point = point[0];
+                var filter = self.buildFilter(point, dimensionkey);
+                var exist = _.find(self.options.filters, function (filter) {
+                  return filter.key === point.key + dimensionkey;
+                });
+                if (exist)
+                  self.emit('removefilter', point.key + dimensionkey);
+                else {
+                  self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                }
+              });
               break;
             case 'pie':
               new joola.viz.Pie(viz);

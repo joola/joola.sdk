@@ -42,35 +42,35 @@ var Table = module.exports = function (options, callback) {
         currentSize: 10
       },
       template: '<div class="table-caption"></div>' +
-        '<div class="controls">' +
-        ' <div class="primary-dimension-picker"></div>' +
-        ' <div class="add-dimension-picker"></div>' +
-        ' <div class="add-metric-picker"></div>' +
-        ' <div class="search-wrapper">' +
-        '   <input class="search" type="text" placeholder="Search..."/>' +
-        ' </div>' +
-        ' <div class="clearfix"></div>' +
-        '</div>' +
-        '<div class="table-wrapper">' +
-        ' <table class="jio table">' +
-        '   <thead></thead>' +
-        '   <tbody></tbody>' +
-        ' </table>' +
-        '</div>' +
-        '<div class="paging">' +
-        ' <div class="paging-wrapper">' +
-        '   <div class="page-size">' +
-        '     <span class="caption">Page size: </span>' +
-        '     <select>' +
-        '     </select>' +
-        '   </div>' +
-        ' </div>' +
-        ' <div class="showing"></div>' +
-        ' <div class="navigation">' +
-        '   <div class="prev chevron left"></div>' +
-        '   <div class="next chevron right"></div>' +
-        ' </div>' +
-        '</div>',
+      '<div class="controls">' +
+      ' <div class="primary-dimension-picker"></div>' +
+      ' <div class="add-dimension-picker"></div>' +
+      ' <div class="add-metric-picker"></div>' +
+      ' <div class="search-wrapper">' +
+      '   <input class="search" type="text" placeholder="Search..."/>' +
+      ' </div>' +
+      ' <div class="clearfix"></div>' +
+      '</div>' +
+      '<div class="table-wrapper">' +
+      ' <table class="jio table">' +
+      '   <thead></thead>' +
+      '   <tbody></tbody>' +
+      ' </table>' +
+      '</div>' +
+      '<div class="paging">' +
+      ' <div class="paging-wrapper">' +
+      '   <div class="page-size">' +
+      '     <span class="caption">Page size: </span>' +
+      '     <select>' +
+      '     </select>' +
+      '   </div>' +
+      ' </div>' +
+      ' <div class="showing"></div>' +
+      ' <div class="navigation">' +
+      '   <div class="prev chevron left"></div>' +
+      '   <div class="next chevron right"></div>' +
+      ' </div>' +
+      '</div>',
       query: null,
       strings: {
         loading: 'No data available.',
@@ -108,6 +108,12 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.destroy = function () {
+      joola.viz.stop(self);
+      Object.keys(self.summaries).forEach(function (key, index) {
+        var summary = self.summaries[key];
+        summary.destroy();
+      })
+
       $$(self.options.container).find('table').empty();
     };
 
@@ -172,8 +178,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-              '<span class="summary"></span>' +
-              '</td>');
+            '<span class="summary"></span>' +
+            '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -232,8 +238,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-              '<span class="summary"></span>' +
-              '</td>');
+            '<span class="summary"></span>' +
+            '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -250,7 +256,7 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-              '<span class="summary"></span></td>');
+            '<span class="summary"></span></td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -297,8 +303,8 @@ var Table = module.exports = function (options, callback) {
             _query.metrics.forEach(function (m) {
               var metrickey = m.key || m;
               var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + 'N/A' + '">' + 'N/A' + '' +
-                '<span class="summary"></span>' +
-                '</td>');
+              '<span class="summary"></span>' +
+              '</td>');
               $tr.append($td);
             });
 
@@ -312,7 +318,7 @@ var Table = module.exports = function (options, callback) {
             _query.metrics.forEach(function (m) {
               var metrickey = m.key || m;
               var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-                '<span class="summary"></span></td>');
+              '<span class="summary"></span></td>');
               $tr.append($td);
             });
 
