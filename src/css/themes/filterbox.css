@@ -1,0 +1,35 @@
+[jio-type="filterbox"] {
+
+}
+
+[jio-type="filterbox"] .filterbox {
+  padding: 5px;
+  margin: 0;
+  
+  border-top: 0;
+  min-height: 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  display:none;
+}
+
+[jio-type="filterbox"] .filterbox:not(:empty) {
+  display: block;
+}
+
+[jio-type="filterbox"] .filter {
+  display:inline-block;
+  padding: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border: 1px solid #ddd;
+}
+
+[jio-type="filterbox"] .filter:not(:first-of-type) {
+  margin-left: 10px;
+}
+
+[jio-type="filterbox"] .close {
+  padding-left: 5px;
+  cursor: pointer;
+}

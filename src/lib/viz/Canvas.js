@@ -10,29 +10,17 @@
 
 var
   joola = require('../index'),
-  EventEmitter2 = require('eventemitter2').EventEmitter2,
-
+  events = require('events'),
+  util = require('util'),
   _ = require('underscore'),
   ce = require('cloneextend'),
-  _events = new EventEmitter2({wildcard: true, newListener: true});
+  $$ = require('jquery');
 
 var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
   joola.events.emit('canvas.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-  for (var y in _events) {
-    this[y] = _events[y];
-    this._super[y] = _events[y];
-  }
-
   var self = this;
 
   this._id = '_canvas';
@@ -43,11 +31,12 @@ var Canvas = module.exports = function (options, callback) {
     visualizations: {},
     metrics: [],
     dimensions: [],
+    filters: [],
     state: {}
   };
 
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
+  this.verify = function (options) {
+    return null;
   };
 
   this.prepareQuery = function (query, dates) {
@@ -55,7 +44,7 @@ var Canvas = module.exports = function (options, callback) {
       dates = {};
     var _query = ce.extend({}, query);
     if (self.options.query) {
-      _query = joola.common.extend(self.options.query, _query);
+      _query = joola.common._extend(ce.clone(self.options.query), _query);
     }
     if (!Array.isArray(_query))
       _query = [_query];
@@ -69,7 +58,7 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(_query[0].dimensions, function (m) {
-            return m.key === key;
+            return (m.key || m) === key;
           });
           if (exist)
             _query[0].dimensions[i] = exist;
@@ -87,7 +76,7 @@ var Canvas = module.exports = function (options, callback) {
 
         if (key) {
           var exist = _.find(self.options.metrics, function (m) {
-            return m.key === key;
+            return (m.key || m) === key;
           });
           if (exist)
             _query[0].metrics[i] = exist;
@@ -107,6 +96,12 @@ var Canvas = module.exports = function (options, callback) {
       });
     _query[0].hash = joola.common.hash(_query[0].hash);
     if (self.options.datepicker && self.options.datepicker.container) {
+      dates = {
+        base_fromdate: self.options.$datepicker.base_fromdate,
+        base_todate: self.options.$datepicker.base_todate,
+        compare_fromdate: self.options.$datepicker.compare_fromdate,
+        compare_todate: self.options.$datepicker.compare_todate
+      };
       _query[0].timeframe = {};
       _query[0].timeframe.start = dates.base_fromdate || self._datepicker.base_fromdate;
       _query[0].timeframe.end = dates.base_todate || self._datepicker.base_todate;
@@ -114,7 +109,9 @@ var Canvas = module.exports = function (options, callback) {
       if (self.options.datepicker && self.options.datepicker._interval)
         _query[0].interval = self.options.datepicker._interval;
     }
-    if (self._datepicker.comparePeriod) {
+    _query[0].realtime = _query[0].realtime || self.options.realtime || false;
+    if (self._datepicker && self._datepicker.comparePeriod) {
+      _query[0].realtime = false;
       var cquery = ce.clone(_query[0]);
       cquery.type = 'compare';
       cquery.timeframe = {};
@@ -132,22 +129,42 @@ var Canvas = module.exports = function (options, callback) {
     return $container.find('.active').attr('data-id');
   };
 
+  this.buildFilter = function (point, dimensionkey) {
+    var filters = [];
+    Object.keys(point.dimensions).forEach(function (key) {
+      if (dimensionkey && dimensionkey === key || !dimensionkey) {
+        var dimension = point.meta[key];
+        var value = point.dimensions[key];
+        var filter = [dimension.key, 'eq', dimension.datatype === 'date' ? new Date(value) : value];
+        filters.push(filter);
+      }
+    });
+    console.log('build filter', filters);
+    return filters;
+  };
+
   this.draw = function (options, callback) {
     var self = this;
     if (self.options.onDraw)
       window[self.options.onDraw](self);
+    if (self.options.filterbox && self.options.filterbox.container) {
+      self.options.filterbox.canvas = self;
+      new joola.viz.FilterBox(self.options.filterbox, function (err, ref) {
+        self.options.filterbox.ref = ref;
+      });
+    }
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
-      $(self.options.datepicker.container).DatePicker(self.options.datepicker, function (err, ref) {
+      new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
         self._datepicker = ref;
-
+        self.options.$datepicker = ref;
         if (self.options.datepicker.interval) {
-          self.options.datepicker.$interval = $(self.options.datepicker.interval);
+          self.options.datepicker.$interval = $$(self.options.datepicker.interval);
           self.options.datepicker._interval = self.parseInterval(self.options.datepicker.$interval);
           self.options.datepicker.$interval.find('.btn').on('click', function () {
-            var $this = $(this);
+            var $this = $$(this);
             self.options.datepicker.$interval.find('.btn').removeClass('active');
             $this.addClass('active');
 
@@ -164,25 +181,48 @@ var Canvas = module.exports = function (options, callback) {
             viz.canvas = self;
             switch (viz.type.toLowerCase()) {
               case 'timeline':
-                $(viz.container).Timeline(viz);
+                new joola.viz.Timeline(viz);
                 break;
               case 'metric':
-                $(viz.container).Metric(viz);
+                new joola.viz.Metric(viz);
                 break;
               case 'table':
-                $(viz.container).Table(viz);
+                new joola.viz.Table(viz).on('select', function (point, dimensionkey) {
+                  var filter = self.buildFilter(point, dimensionkey);
+                  var exist = _.find(self.options.filters, function (filter) {
+                    return filter.key === point.key + dimensionkey;
+                  });
+                  if (exist)
+                    self.emit('removefilter', point.key + dimensionkey);
+                  else {
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                  }
+                });
                 break;
               case 'minitable':
-                $(viz.container).MiniTable(viz);
+                new joola.viz.MiniTable(viz);
                 break;
               case 'bartable':
-                $(viz.container).BarTable(viz);
+                new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                  console.log('selected');
+                  if (Array.isArray(point))
+                    point = point[0];
+                  var filter = self.buildFilter(point, dimensionkey);
+                  var exist = _.find(self.options.filters, function (filter) {
+                    return filter.key === point.key + dimensionkey;
+                  });
+                  if (exist)
+                    self.emit('removefilter', point.key + dimensionkey);
+                  else {
+                    self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                  }
+                });
                 break;
               case 'pie':
-                $(viz.container).Pie(viz);
+                new joola.viz.Pie(viz);
                 break;
               case 'geo':
-                $(viz.container).Geo(viz);
+                new joola.viz.Geo(viz);
                 break;
               default:
                 break;
@@ -191,6 +231,101 @@ var Canvas = module.exports = function (options, callback) {
         });
       });
     }
+    else {
+      Object.keys(self.options.visualizations).forEach(function (key) {
+        var viz = self.options.visualizations[key];
+        if (viz.container) {
+          viz.query = self.prepareQuery(viz.query);
+          viz.force = true;
+          viz.canvas = self;
+          switch (viz.type.toLowerCase()) {
+            case 'timeline':
+              new joola.viz.Timeline(viz);
+              break;
+            case 'metric':
+              new joola.viz.Metric(viz);
+              break;
+            case 'table':
+              new joola.viz.Table(viz).on('select', function (point, dimensionkey) {
+                var filter = self.buildFilter(point, dimensionkey);
+                var exist = _.find(self.options.filters, function (filter) {
+                  return filter.key === point.key + dimensionkey;
+                });
+                if (exist)
+                  self.emit('removefilter', point.key + dimensionkey);
+                else {
+                  self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                }
+              });
+              break;
+            case 'minitable':
+              new joola.viz.MiniTable(viz);
+              break;
+            case 'bartable':
+              new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
+                console.log('selected');
+                if (Array.isArray(point))
+                  point = point[0];
+                var filter = self.buildFilter(point, dimensionkey);
+                var exist = _.find(self.options.filters, function (filter) {
+                  return filter.key === point.key + dimensionkey;
+                });
+                if (exist)
+                  self.emit('removefilter', point.key + dimensionkey);
+                else {
+                  self.emit('addfilter', point.key + dimensionkey, point.meta, filter);
+                }
+              });
+              break;
+            case 'pie':
+              new joola.viz.Pie(viz);
+              break;
+            case 'geo':
+              new joola.viz.Geo(viz);
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    }
+
+    self.on('addfilter', function (key, meta, filter) {
+      var found = false;
+      for (var i = 0; i < self.options.filters.length; i++) {
+        if (self.options.filters[i].key === key) {
+          found = true;
+        }
+      }
+      if (!found) {
+        self.options.filters.push({key: key, filters: filter});
+        filter.forEach(function (f) {
+          var $filter = $$('<div data-id="' + key + '" class="filter"></div>');
+          var text = meta[f[0]].name + ': <strong class="value">' + f[2] + '</strong>';
+          var $inner = $$('<span class="caption">' + text + '</span>');
+          var $close = $$('<span class="close icon-close"></span>');
+          $close.on('click', function () {
+            self.emit('removefilter', key);
+          });
+          $filter.append($inner);
+          $filter.append($close);
+          if (self.options.filterbox && self.options.filterbox.ref)
+            self.options.filterbox.ref.options.$container.find('.filterbox').append($filter);
+          self.emit('filterchange');
+        });
+      }
+    });
+    self.on('removefilter', function (key) {
+      for (var i = 0; i < self.options.filters.length; i++) {
+        if (self.options.filters[i].key === key) {
+          self.options.filters.splice(i, 1);
+          if (self.options.filterbox && self.options.filterbox.ref)
+            self.options.filterbox.ref.options.$container.find('[data-id="' + key + '"]').remove();
+          i = self.options.filters.length;
+          self.emit('filterchange');
+        }
+      }
+    });
     if (typeof callback === 'function') {
       return callback(null, self);
     }
@@ -203,32 +338,24 @@ var Canvas = module.exports = function (options, callback) {
   };
 
   //here we go
-  joola.common.mixin(self.options, options, true);
-  self.verify(self.options, function (err) {
-    if (err) {
-      return callback(err);
+  joola.viz.initialize(self, options || {});
+
+  self.draw();
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
     }
+  }
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
+  }
 
-    self.options.$container = $(self.options.container);
-    self.markContainer(self.options.$container, {
-      attr: [
-        {'type': 'canvas'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ],
-      css: self.options.css
-    }, function (err) {
-      if (err) {
-        return callback(err);
-      }
-
-      joola.viz.onscreen.push(self);
-      joola.events.emit('canvas.init.finish', self);
-      if (typeof callback === 'function') {
-        return callback(null, self);
-      }
-    });
-  });
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
 
   return self;
 };
@@ -267,3 +394,5 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
+
+util.inherits(Canvas, events.EventEmitter);

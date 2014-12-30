@@ -1,0 +1,65 @@
+[jio-type="metricpicker"] {
+  float: left;
+  position: relative;
+}
+
+[jio-type="metricpicker"] .picker-container {
+  position: absolute;
+
+  background-color: white;
+  display: none;
+
+  border: 1px solid #ddd;
+  padding: 5px;
+  z-index: 1000;
+}
+
+[jio-type="metricpicker"] .picker-container.active {
+  display: block;
+}
+
+[jio-type="metricpicker"] .name {
+  font-weight: bold;
+}
+
+
+[jio-type="metricpicker"] .metricOption {
+  padding: 5px;
+  background-color: #c5dcfe;
+  border: 1px solid #2f67b4;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  color: #2f67b4;
+}
+
+[jio-type="metricpicker"] .metricOption:hover, [jio-type="metricpicker"] .metricOption.active {
+  background-color: #6faefd;
+  color: white;
+}
+
+[jio-type="metricpicker"] .metricOption.disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+[jio-type="metricpicker"] .metricOption.active {
+  opacity: 1;
+  cursor: default;
+}
+
+[jio-type="metricpicker"] input.quicksearch {
+  padding: 5px;
+  border: 1px solid #DDD;
+  font-family: Signika, helvetica, arial, sans-serif;
+  font-size: 14px;
+  background-color: #FFF;
+  margin-left: 7px;
+}
+
+[jio-type="metricpicker"] input.quicksearch {
+  margin-bottom: 5px;
+}

@@ -1,0 +1,64 @@
+[jio-type="dimensionpicker"] {
+  float: left;
+  position: relative;
+}
+
+[jio-type="dimensionpicker"] .picker-container {
+  position: absolute;
+
+  background-color: white;
+  display: none;
+
+  border: 1px solid #ddd;
+  padding: 5px;
+  z-index: 1000;
+}
+
+[jio-type="dimensionpicker"] .picker-container.active {
+  display: block;
+}
+
+[jio-type="dimensionpicker"] .name {
+  font-weight: bold;
+}
+
+[jio-type="dimensionpicker"] .dimensionOption {
+  padding: 5px;
+  background-color: #dae2cb;
+  border: 1px solid #738d68;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  color: #738d68;
+}
+
+[jio-type="dimensionpicker"] .dimensionOption:hover, [jio-type="dimensionpicker"] .dimensionOption.active {
+  background-color: #9bb47a;
+  color: white;
+}
+
+[jio-type="dimensionpicker"] .dimensionOption.disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+[jio-type="dimensionpicker"] .dimensionOption.active {
+  opacity: 1;
+  cursor: default;
+}
+
+[jio-type="dimensionpicker"] input.quicksearch {
+  padding: 5px;
+  border: 1px solid #DDD;
+  font-family: Signika, helvetica, arial, sans-serif;
+  font-size: 14px;
+  background-color: #FFF;
+  margin-left: 7px;
+}
+
+[jio-type="dimensionpicker"] input.quicksearch {
+  margin-bottom: 5px;
+}

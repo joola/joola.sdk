@@ -58,13 +58,13 @@
   text-align: center;
 }
 
-[jio-type="bartable"] .jio.bartable.nodata, [jio-type="bartable"] .jio.bartable.loading {
+[jio-type="bartable"] .nodata, [jio-type="bartable"] .loading {
   text-align: center;
 }
 
 [jio-type="bartable"] .barwrapper {
   float: left;
-  width: 100%;
+  width: 95%;
 }
 
 [jio-type="bartable"] .barwrapper.compare .tablebar {
@@ -79,4 +79,16 @@
   background-color: rgb(5, 141, 199);
   float: left;
   height: 30px;
+}
+
+[jio-type="bartable"] tr[data-selectable="true"] td {
+  cursor: pointer;
+}
+
+[jio-type="bartable"] tr[data-selectable="true"]:hover {
+  background-color: #efefef;
+}
+
+[jio-type="bartable"] tr[data-selectable="true"].active td {
+  background-color: #efefef;
 }

@@ -18,14 +18,6 @@ var Pie = module.exports = function (options, callback) {
     callback = function () {
     };
   joola.events.emit('pie.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-
   var self = this;
 
   this._id = '_pie';

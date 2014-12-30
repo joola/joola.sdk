@@ -8,70 +8,63 @@
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
-var ce = require('cloneextend');
+
 var
-  EventEmitter2 = require('eventemitter2').EventEmitter2;
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  joola = require('../index'),
+  $$ = require('jquery');
 
 var MetricPicker = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
   joola.events.emit('metricpicker.init.start');
-
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = ce.clone(require('./_proto')[x]);
-    this._super[x] = ce.clone(require('./_proto')[x]);
-  }
-
   var self = this;
-  self.events = new EventEmitter2({wildcard: true, newListener: true});
 
-  self.on = self.events.on;
-  self.emit = self.events.emit;
-
-  this._id = 'metricpicker';
+  this.type = 'metricpicker';
   this.uuid = joola.common.uuid();
   this.options = {
     canvas: null,
     container: null,
     $container: null,
     metrics: [],
-    selected: null
-  };
-  this.drawn = false;
-
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
-  };
-
-  this.template = function () {
-    var $html = $('' +
-      '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button"></button>' +
-      '  <button class="close">×</button>' +
-      '  <div class="jio-metricpicker-container">' +
+    disabled: [],
+    selected: null,
+    allowRemove: true,
+    allowSelect: true,
+    template: '<div class="jio-metricpicker-wrapper">\n' +
+      '  <button class="btn jio-metricpicker-button">' +
+      '   <span class="caption"></span>' +
+      '   <span class="close">×</span>' +
+      '  </button>' +
+      '  <div class="picker-container">' +
       '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
       '    <div class="clear"></div>' +
       '  </div>' +
       '  <div class="clear"></div>' +
-      '</div>\n');
+      '</div>'
+  };
+  this.drawn = false;
 
-    if (this.options.fixed) {
-      $html.find('.close').remove();
-    }
+  this.verify = function (options) {
 
-    return $html;
+    return null;
   };
 
   this.draw = function (options, callback) {
     if (!self.drawn) {
+      self.options.$container = $$(self.options.container);
       self.options.$container.append(self.options.template || self.template());
-      var $ul = $(self.options.$container.find('.jio-metricpicker-container'));
-      var $btn = $(self.options.$container.find('.jio-metricpicker-button'));
-      var $close = $(self.options.$container.find('.close'));
-      var $search = $(self.options.$container.find('.quicksearch'));
+      var $ul = $$(self.options.$container.find('.picker-container'));
+      var $btn = $$(self.options.$container.find('.jio-metricpicker-button'));
+      var $close = $$(self.options.$container.find('.close'));
+      if (!self.options.allowRemove)
+        $close.remove();
+      var $search = $$(self.options.$container.find('.quicksearch'));
+      if (self.options.caption)
+        $btn.find('.caption').text(self.options.caption);
       if (self.options.metrics.length === 0)
         joola.metrics.list(function (err, list) {
           if (err)
@@ -83,19 +76,23 @@ var MetricPicker = module.exports = function (options, callback) {
 
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
+            if (typeof collection !== 'object')
+              collection = {key: collection};
 
-            var $li = $('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + metric.name + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
-              var $this = $(this);
+              var $this = $$(this);
               e.stopPropagation();
 
+              if ($this.hasClass('active'))
+                return;
               if ($this.hasClass('disabled'))
                 return;
 
               self.options.selected = metric;
-              var $content = metric.name;
-              $btn.html($content);
+              //var $content = '<span class="name">' + metric.name + '</span>';
+              //$btn.find('.caption').html((self.options.prefix || '' ) + $content);
               $btn.removeClass('active');
               $ul.removeClass('active');
               mOpen = false;
@@ -109,13 +106,14 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $close.on('click', function (e) {
+            e.stopPropagation();
             self.options.selected = null;
             self.markSelected();
             self.emit('change', null);
           });
 
           $search.keyup(function () {
-            var $this = $(this);
+            var $this = $$(this);
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
@@ -126,7 +124,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function (e) {
-            var $this = $(this);
+            var $this = $$(this);
             e.stopPropagation();
 
             if (mOpen && mlasttarget == this.id) {
@@ -159,7 +157,7 @@ var MetricPicker = module.exports = function (options, callback) {
           $ul.on('click', function (e) {
             e.stopPropagation();
           });
-          $('body').on('click', function () {
+          $$('body').on('click', function () {
             $btn.removeClass('active');
             $ul.removeClass('active');
             mlasttarget = null;
@@ -167,7 +165,7 @@ var MetricPicker = module.exports = function (options, callback) {
           });
 
           $btn.on('click', function () {
-            var $this = $(this);
+            var $this = $$(this);
             $this.toggleClass('active');
           });
 
@@ -185,13 +183,13 @@ var MetricPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.selected) {
+      if (self.options.allowSelect && self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.collection + '.' + self.options.selected.key + '"]').addClass('active');
-        self.options.$container.find('.jio-metricpicker-button').html((self.options.selected.name || self.options.selected.key || self.options.selected) + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-metricpicker-button').html('Choose a metric...' + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html('Choose a metric...' + '');
         self.options.$container.find('.close').hide();
       }
 
@@ -209,47 +207,28 @@ var MetricPicker = module.exports = function (options, callback) {
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+  self.draw();
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'metricpicker'},
-          {'uuid': self.uuid}
-        ],
-        css: self.options.css
-      }, function (err) {
-        if (err)
-          return callback(err);
-        joola.viz.onscreen.push(self);
-
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $(elem).Canvas();
-          }
-        }
-
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-
-        joola.events.emit('metricpicker.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
+  joola.viz.onscreen.push(self);
+  if (!self.options.canvas) {
+    var elem = $$(self.options.$container).parent();
+    if (elem.attr('jio-type') == 'canvas') {
+      self.options.canvas = $$(elem).Canvas();
+    }
   }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
+  if (self.options.canvas) {
+    self.options.canvas.addVisualization(self);
   }
 
-  //callback(null, self);
+  //wrap up
+  self.initialized = true;
+  if (typeof callback === 'function')
+    return callback(null, self);
+
   return self;
 };
 
@@ -304,10 +283,4 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-MetricPicker.template = function (options) {
-  var html = '<div id="example" jio-domain="joola" jio-type="table" jio-uuid="25TnLNzFe">\n' +
-    '  <div class="jio metricbox caption"></div>\n' +
-    '  <div class="jio metricbox value"></div>\n' +
-    '</div>';
-  return html;
-};
+util.inherits(MetricPicker, events.EventEmitter);

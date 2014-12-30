@@ -1,7 +1,7 @@
 {
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.7.26",
+  "version": "0.8.1",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -31,7 +31,6 @@
   "dependencies": {
     "async": "~0.2.10",
     "cloneextend": "^0.0.3",
-    "d3": "^3.4.13",
     "deep-extend": "^0.2.10",
     "eventemitter2": "~0.4.13",
     "jquery": "^2.1.1",

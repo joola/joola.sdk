@@ -1,9 +1,10 @@
-[jio-type="metric"] .wrapper {
+[jio-type="metric"] {
   padding: 5px;
   margin: 0;
   float: none;
   border-top: 0;
   min-height: 0;
+  text-align: center;
 }
 
 [jio-type="metric"] .caption {
@@ -11,8 +12,7 @@
   margin: 0 0 10px;
   padding: 0;
   text-transform: uppercase;
-
-  text-align: center;
+  padding-top: 10px;
   color: #999;
   font-size: 18px;
   font-weight: 300;
@@ -23,8 +23,17 @@
   color: #666;
   font-weight: 300;
   font-size: 32px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  text-align: center;
   text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+[jio-type="metric"] .summary {
+  color: #999;
+}
+
+[jio-type="metric"] .base {
+  padding-right: 5px;
+}
+
+[jio-type="metric"] .compare {
+  padding-left: 5px;
 }
