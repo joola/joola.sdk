@@ -48,8 +48,9 @@ joola.globals = require('./common/globals');
 joola.logger = require('./common/logger');
 joola.dispatch = require('./common/dispatch');
 joola.common = require('./common/index');
+joola.memory = require('./common/memory');
 joola.events = require('./common/events');
-joola.events.setMaxListeners(1000);
+joola.events.setMaxListeners(100);
 joola.on = function (event, cb) {
   joola.events.on(event, cb);
 };
@@ -231,77 +232,11 @@ joola.browser3rd = function (callback) {
 
   var script;
   if (joola.options.isBrowser) {
-    if (typeof (jQuery) === 'undefined') {
-      script = document.createElement('script');
-      expected++;
-
-      script.onload = function () {
-        //jQuery.noConflict(true);
-
-        script = document.createElement('script');
-        expected++;
-        script.onload = function () {
-
-          var script = document.createElement('script');
-          expected++;
-          script.onload = function () {
-            var script = document.createElement('script');
-            expected++;
-            script.onload = function () {
-              done('highcharts-nodata');
-            };
-            script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
-            document.head.appendChild(script);
-
-            done('highcharts');
-          };
-          script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
-          document.head.appendChild(script);
-
-
-          done('jquery-ui');
-        };
-        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js';
-        document.head.appendChild(script);
-
-        done('jquery');
-      };
-      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js';
-      document.head.appendChild(script);
-    }
-    else if (typeof (Highcharts) === 'undefined') {
-      script = document.createElement('script');
-      expected++;
-      script.onload = function () {
-        var script = document.createElement('script');
-        expected++;
-        script.onload = function () {
-          done('highcharts-nodata-2');
-        };
-        script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/modules/no-data-to-display.js';
-        document.head.appendChild(script);
-
-        done('highcharts-2');
-      };
-      script.src = (location.protocol === 'file:' ? 'http://' : '') + '//code.highcharts.com/highcharts.js';
-      document.head.appendChild(script);
-    }
-
-    /*
-     if (typeof (Tablesort) === 'undefined') {
-     script = document.createElement('script');
-     expected++;
-     script.onload = function () {
-     done('tablesort');
-     };
-     script.src = (location.protocol === 'file:' ? 'http://' : '') + '//cdn.rawgit.com/tristen/tablesort/gh-pages/tablesort.min.js';
-     document.head.appendChild(script);
-     }*/
 
     //css
     if (joola.options.includecss) {
       var css = document.createElement('link');
-      expected++;
+      //expected++;
       css.onload = function () {
         //jQuery.noConflict(true);
         //done('css');
@@ -309,10 +244,10 @@ joola.browser3rd = function (callback) {
       css.rel = 'stylesheet';
       css.href = joola.options.host + '/joola.min.css';
       document.head.appendChild(css);
-      done('css');
+      //done('css');
     }
-    if (expected === 0)
-      return done('none');
+    //if (expected === 0)
+    return done('none');
   }
   else {
     return done('not browser');
@@ -396,7 +331,7 @@ joola.get = function (key) {
   return joola.options[key];
 };
 
-joola.colors = ['#058DC7', '#50B432', '#ED7E17', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC' ];
+joola.colors = ['#058DC7', '#50B432', '#ED7E17', '#AF49C5', '#EDEF00', '#8080FF', '#A0A424', '#E3071C', '#6AF9C4', '#B2DEFF', '#64E572', '#CCCCCC'];
 joola.offcolors = ['#AADFF3', '#C9E7BE', '#F2D5BD', '#E1C9E8', '#F6F3B1', '#DADBFB', '#E7E6B4', '#F4B3BC', '#AADFF3', '#F2D5BD', '#C9E7BE', '#EEEEEE'];
 
 var start = new Date().getTime();
