@@ -29,12 +29,12 @@ var BarTable = module.exports = function (options, callback) {
     colors: [],
     offcolors: [],
     template: '<div class="bartable-caption"></div>' +
-    '<table class="jio bartable table">' +
-    '<thead>' +
-    '</thead>' +
-    '<tbody>' +
-    '</tbody>' +
-    '</table>',
+      '<table class="jio bartable table">' +
+      '<thead>' +
+      '</thead>' +
+      '<tbody>' +
+      '</tbody>' +
+      '</table>',
     query: null,
     strings: {
       loading: 'No data available.',
@@ -44,7 +44,7 @@ var BarTable = module.exports = function (options, callback) {
     limit: 10,
     headers: false,
     include_not_shown: true,
-    allowSelect: false
+    allowSelect: true
   };
   this.verify = function (options) {
     if (!self.options)
@@ -88,10 +88,10 @@ var BarTable = module.exports = function (options, callback) {
           $tr = $$('<tr data-id="other" data-value="' + notshown[0] + '" data-name="' + self.options.strings.not_shown + '" data-value-sort="' + percentage + '"></tr>');
           Object.keys(point.metrics).forEach(function (m) {
             var $td = $$('<td class="jio bartable value metric">' +
-            '<div class="barwrapper">' +
-            '<div class="tablebar" style="width:' + percentage + '%" title="' + joola.common.formatMetric(notshown[0], data[0].meta[metrickey]) + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
-            '</div>' +
-            '</td>');
+              '<div class="barwrapper">' +
+              '<div class="tablebar" style="width:' + percentage + '%" title="' + joola.common.formatMetric(notshown[0], data[0].meta[metrickey]) + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
+              '</div>' +
+              '</td>');
             $td.find('.tablebar').css({'background-color': self.options.colors[11]});
             $tr.append($td);
           });
@@ -104,9 +104,9 @@ var BarTable = module.exports = function (options, callback) {
             else
               title = d.name || d.key;
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-            '<div class="caption" title="' + title + '"></div>' +
-            '<div class="subcaption"></div>' +
-            '</td>');
+              '<div class="caption" title="' + title + '"></div>' +
+              '<div class="subcaption"></div>' +
+              '</td>');
 
             $td.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));
             $td.find('.subcaption').text(joola.common.formatMetric(notshown[0], point.meta[metrickey]) + ' ' + metricname);
@@ -132,10 +132,10 @@ var BarTable = module.exports = function (options, callback) {
 
         _query.metrics.forEach(function (m) {
           var $td = $$('<td class="jio bartable value">' +
-          '<div class="barwrapper">' +
-          '<div class="tablebar" style="width:' + percentage + '%;background-color:' + self.options.colors[0] + '" title="' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
-          '</div>' +
-          '</td>');
+            '<div class="barwrapper">' +
+            '<div class="tablebar" style="width:' + percentage + '%;background-color:' + self.options.colors[0] + '" title="' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + ' ' + metricname + ' (' + percentage.toFixed(2) + '%)"></div>' +
+            '</div>' +
+            '</td>');
           $tr.append($td);
           if (self.options.allowSelect) {
             $td.on('click', function () {
@@ -158,11 +158,11 @@ var BarTable = module.exports = function (options, callback) {
           else
             title = d.name || d.key;
           var $td = $$('<td class="jio bartable value dimension">' +
-          '<div class="caption" title="' + title + '"></div>' +
-          '<div class="subcaption"></div>' +
-          '</td>');
+            '<div class="caption" title="' + title + '"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
-          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + point.dimensions[dimensionkey], 23));
+          $td.find('.caption').text(joola.common.ensureLength(percentage.toFixed(2) + '% ' + (point.dimensions[dimensionkey] || '(not set)'), 23));
           $td.find('.subcaption').text(joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + ' ' + metricname);
           $tr.append($td);
           if (self.options.allowSelect) {
@@ -199,12 +199,12 @@ var BarTable = module.exports = function (options, callback) {
             compare_percentage = 100;
           Object.keys(base.metrics).forEach(function (m) {
             var $td = $$('<td class="jio bartable value">' +
-                '<div class="barwrapper compare">' +
-                '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
-                '<div style="clear:both"></div>' +
-                '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '"  title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
-                '</div>' +
-                '</td>'
+                  '<div class="barwrapper compare">' +
+                  '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' ' + metricname + ' (' + base_percentage.toFixed(2) + '%)"></div>' +
+                  '<div style="clear:both"></div>' +
+                  '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '"  title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
+                  '</div>' +
+                  '</td>'
               )
               ;
             $tr.append($td);
@@ -218,9 +218,9 @@ var BarTable = module.exports = function (options, callback) {
             else
               title = d.name || d.key;
             var $td = $$('<td class="jio bartable value dimension notshown">' +
-            '<div class="caption" title="' + title + '"></div>' +
-            '<div class="subcaption"></div>' +
-            '</td>');
+              '<div class="caption" title="' + title + '"></div>' +
+              '<div class="subcaption"></div>' +
+              '</td>');
 
             $td.find('.caption').text('N/A ' + (self.options.strings.not_shown || 'Not shown'));
             $td.find('.subcaption').text(joola.common.formatMetric(notshown[0], base.meta[metrickey]) + ' vs. ' + (compare.missing ? 'N/A' : joola.common.formatMetric(notshown[1], beta.meta[metrickey])));
@@ -263,12 +263,12 @@ var BarTable = module.exports = function (options, callback) {
           compare_percentage = null;
         _query.metrics.forEach(function (m) {
           var $td = $$('<td class="jio bartable value">' +
-              '<div class="barwrapper compare">' +
-              '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + (!base.missing ? joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (base_percentage ? base_percentage.toFixed(2) + '%' : 'N/A') + ')"></div>' +
-              '<div style="clear:both"></div>' +
-              '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
-              '</div>' +
-              '</td>'
+                '<div class="barwrapper compare">' +
+                '<div class="tablebar" style="width:' + (joola.common.isNumeric(base_percentage) ? (base_percentage > 100 ? '100%' : base_percentage + '%') : 0) + ';background-color: ' + self.options.colors[0] + ';" title="' + (!base.missing ? joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (base_percentage ? base_percentage.toFixed(2) + '%' : 'N/A') + ')"></div>' +
+                '<div style="clear:both"></div>' +
+                '<div class="tablebar compare_ratio" style="width:' + (joola.common.isNumeric(compare_percentage) ? (compare_percentage > 100 ? '100%' : compare_percentage + '%') : 0) + ';background-color: ' + self.options.offcolors[0] + '" title="' + (compare.metrics && compare.metrics[metrickey] ? joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]) : 'N/A') + ' ' + metricname + ' (' + (compare_percentage ? compare_percentage.toFixed(2) + '%' : 'N/A') + ')">&nbsp;</div>' +
+                '</div>' +
+                '</td>'
             )
             ;
           $tr.append($td);
@@ -292,15 +292,15 @@ var BarTable = module.exports = function (options, callback) {
           else
             title = d.name || d.key;
           var $td = $$('<td class="jio bartable value dimension">' +
-          '<div class="caption" title="' + title + '"></div>' +
-          '<div class="subcaption"></div>' +
-          '</td>');
+            '<div class="caption" title="' + title + '"></div>' +
+            '<div class="subcaption"></div>' +
+            '</td>');
 
           var text;
           if (joola.common.isNumeric(percentage))
-            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (!base.missing ? base.dimensions[dimensionkey] : compare.dimensions[dimensionkey]), 23);
+            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (!base.missing ? base.dimensions[dimensionkey] : (compare.dimensions[dimensionkey] || '(not set)')), 23);
           else
-            text = joola.common.ensureLength('N/A ' + (!base.missing ? base.dimensions[dimensionkey] : compare.dimensions[dimensionkey]), 23);
+            text = joola.common.ensureLength('N/A ' + (!base.missing ? base.dimensions[dimensionkey] : (compare.dimensions[dimensionkey] || '(not set)')), 23);
           $td.find('.caption').text(text);
           if (!base.missing && !compare.missing)
             $td.find('.subcaption').text(joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' vs. ' + joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]));
@@ -391,9 +391,9 @@ var BarTable = module.exports = function (options, callback) {
         $elem.attr('data-value-sort', percentage);
 
         if (joola.common.isNumeric(percentage))
-          text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + name, 23);
+          text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (name || '(not set)'), 23);
         else
-          text = joola.common.ensureLength('N/A ' + name, 23);
+          text = joola.common.ensureLength('N/A ' + (name || '(not set)'), 23);
         $elem.find('.tablebar').css('width', (joola.common.isNumeric(percentage) ? (percentage > 100 ? '100%' : percentage + '%') : 0));
         if ($elem.attr('data-id') === 'other')
           $elem.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));
@@ -459,9 +459,9 @@ var BarTable = module.exports = function (options, callback) {
         $elem.attr('data-value-sort', percentage);
 
         if (joola.common.isNumeric(percentage))
-          text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + name, 23);
+          text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (name || '(not set)'), 23);
         else
-          text = joola.common.ensureLength('N/A ' + name, 23);
+          text = joola.common.ensureLength('N/A ' + (name || '(not set)'), 23);
         $elem.find('.tablebar').css('width', (joola.common.isNumeric(percentage) ? (percentage > 100 ? '100%' : percentage + '%') : 0));
         if ($elem.attr('data-id') === 'other')
           $elem.find('.caption').text(percentage.toFixed(2) + '% ' + (self.options.strings.not_shown || 'Not shown'));

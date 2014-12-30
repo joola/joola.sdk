@@ -20,13 +20,6 @@ var
 var Table = module.exports = function (options, callback) {
     var self = this;
 
-    //mixin
-    this._super = {};
-    for (var x in require('./_proto')) {
-      this[x] = require('./_proto')[x];
-      this._super[x] = require('./_proto')[x];
-    }
-
     this.type = 'table';
     this.uuid = joola.common.uuid();
     this.initialized = false;
@@ -112,7 +105,7 @@ var Table = module.exports = function (options, callback) {
       Object.keys(self.summaries).forEach(function (key, index) {
         var summary = self.summaries[key];
         summary.destroy();
-      })
+      });
 
       $$(self.options.container).find('table').empty();
     };

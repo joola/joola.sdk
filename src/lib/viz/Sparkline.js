@@ -16,13 +16,6 @@ var Sparkline = module.exports = function (options, callback) {
     };
   joola.events.emit('sparkline.init.start');
 
-  //mixin
-  this._super = {};
-  for (var x in require('./_proto')) {
-    this[x] = require('./_proto')[x];
-    this._super[x] = require('./_proto')[x];
-  }
-
   var self = this;
 
   this._id = '_sparkline';
