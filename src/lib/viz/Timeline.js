@@ -301,10 +301,10 @@ var Timeline = module.exports = function (options, callback) {
           color: joola.colors[seriesIndex]
         };
         documents.forEach(function (document, docIndex) {
-          var x = document.fvalues[dimensions[0].key];
+          var x = document[dimensions[0].key];
           var nameBased = true;
           if (dimensions[0].datatype === 'date') {
-            x = new Date(document.fvalues[dimensions[0].key]);
+            x = new Date(document[dimensions[0].key]);
             nameBased = false;
           }
 

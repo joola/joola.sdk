@@ -104,7 +104,7 @@ viz.initialize = function (self, options, callback) {
     }
   }
   if (self.options.query) {
-    console.log('qqq', self.options.query);
+    //console.log('qqq', self.options.query);
     viz.fetch(self, self.options.query, function () {
       if (callback && typeof callback === 'function')
         return callback(null, self);
@@ -195,7 +195,6 @@ viz.fetch = function (context, query, callback) {
             realtime: message.query.realtime
           };
           var key = '';
-          console.log(doc);
           message.dimensions.forEach(function (d) {
             key += doc.raw[d.key];
             doc.dimensions[d.key] = doc.raw[d.key];
