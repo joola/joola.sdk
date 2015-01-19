@@ -194,13 +194,14 @@ viz.fetch = function (context, query, callback) {
             realtime: message.query.realtime
           };
           var key = '';
+          console.log(doc);
           message.dimensions.forEach(function (d) {
-            key += doc.raw.values[d.key];
-            doc.dimensions[d.key] = doc.raw.values[d.key];
+            key += doc.raw[d.key];
+            doc.dimensions[d.key] = doc.raw[d.key];
             doc.meta[d.key] = d;
           });
           message.metrics.forEach(function (m) {
-            doc.metrics[m.key] = doc.raw.values[m.key];
+            doc.metrics[m.key] = doc.raw[m.key];
             doc.meta[m.key] = m;
           });
           doc.key = joola.common.hash(key);
