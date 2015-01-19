@@ -201,6 +201,7 @@ var DatePicker = module.exports = function (options, callback) {
       window[self.options.onDraw](self.options.container, self);
 
     var $container = self.options.$container;
+    $container.empty();
     //self.options.$container.append(self.template());
     var $table = $$('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +

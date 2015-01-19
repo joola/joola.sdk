@@ -375,6 +375,7 @@ var Timeline = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
+    self.options.$container.empty();
     self.options.$container.append(self.options.template || self.template());
     self.options.$container.find('.caption').text(self.options.caption || '');
 
@@ -607,23 +608,25 @@ var Timeline = module.exports = function (options, callback) {
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
-  self.draw();
-  joola.viz.onscreen.push(self);
-  if (!self.options.canvas) {
-    var elem = $$(self.options.$container).parent();
-    if (elem.attr('jio-type') == 'canvas') {
-      self.options.canvas = $$(elem).Canvas();
+  self.draw(null, function (err, ref) {
+    if (err)
+      return callback(err);
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
     }
-  }
-  if (self.options.canvas) {
-    self.options.canvas.addVisualization(self);
-  }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
 
-  //wrap up
-  self.initialized = true;
-  if (typeof callback === 'function')
-    return callback(null, self);
-
+    //wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, ref);
+  });
   return self;
 };
 
@@ -657,7 +660,10 @@ joola.events.on('core.init.finish', function () {
         result = new joola.viz.Timeline(options, function (err, timeline) {
           if (err)
             throw err;
-          timeline.draw(options, callback);
+          //timeline.draw(options, callback);
+          if (callback)
+            return callback(null, timeline);
+
         }).options.$container;
       }
       else {
