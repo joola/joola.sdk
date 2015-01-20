@@ -32,7 +32,7 @@ var Table = module.exports = function (options, callback) {
       paging: {
         currentPage: 1,
         sizes: [10, 25, 50, 100, 250, 500, 1000],
-        currentSize: 10
+        currentSize: 50
       },
       template: '<div class="table-caption"></div>' +
       '<div class="controls">' +
@@ -60,8 +60,8 @@ var Table = module.exports = function (options, callback) {
       ' </div>' +
       ' <div class="showing"></div>' +
       ' <div class="navigation">' +
-      '   <div class="prev chevron left"></div>' +
-      '   <div class="next chevron right"></div>' +
+      '   <div class="prev chevron before left"></div>' +
+      '   <div class="next chevron before right"></div>' +
       ' </div>' +
       '</div>',
       query: null,
@@ -70,7 +70,7 @@ var Table = module.exports = function (options, callback) {
         nodata: 'No data available.',
         not_shown: 'Not shown'
       },
-      limit: 10,
+      limit: 1000,
       headers: false,
       include_not_shown: true,
       summary: {
@@ -334,7 +334,22 @@ var Table = module.exports = function (options, callback) {
       self.handlePaging();
     };
 
-    this.done = function () {
+    this.done = function (ctx, messages) {
+      messages.forEach(function (message, messageIndex) {
+        message.metrics.forEach(function (metric, metricIndex) {
+          self.options.query[messageIndex].metrics[metricIndex] = metric;
+        });
+      });
+      if (self.add_metric_picker) {
+        self.options.query[0].metrics.forEach(function (m, i) {
+          if (typeof m !== 'object')
+            m = {key: m};
+          m.collection = m.collection || self.options.query[0].collection;
+          self.options.query[0].metrics[i] = m;
+        });
+        self.add_metric_picker.options.disabled = self.options.query[0].metrics;
+        self.add_metric_picker.markSelected();
+      }
       self.paint();
     };
 
@@ -417,10 +432,12 @@ var Table = module.exports = function (options, callback) {
         }
         $th.on('click', function () {
           self.sortIndex = di;
-          Object.keys(self.summaries).forEach(function (key, index) {
-            var summary = self.summaries[key];
-            summary.options.$container.removeClass('sorted');
-          });
+          if (self.summaries) {
+            Object.keys(self.summaries).forEach(function (key, index) {
+              var summary = self.summaries[key];
+              summary.options.$container.removeClass('sorted');
+            });
+          }
 
           self.data[0] = _.sortBy(self.data[0], function (item) {
             return item.dimensions[d.key || d];
@@ -465,18 +482,20 @@ var Table = module.exports = function (options, callback) {
                 q.metrics.splice(index, 1);
             });
             var _summaries = {};
-            Object.keys(self.summaries).forEach(function (key) {
-              item = self.summaries[key];
-              if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
-              }
-              else
-                _summaries[key] = self.summaries[key];
-            });
-            self.summaries = _summaries;
-            self.data = [];
-            self.options.paging.currentPage = 1;
-            self.sortIndex--;
-            self.handleMetricBoxes();
+            if (self.summaries) {
+              Object.keys(self.summaries).forEach(function (key) {
+                item = self.summaries[key];
+                if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
+                }
+                else
+                  _summaries[key] = self.summaries[key];
+              });
+              self.summaries = _summaries;
+              self.data = [];
+              self.options.paging.currentPage = 1;
+              self.sortIndex--;
+              self.handleMetricBoxes();
+            }
             joola.viz.initialize(self, self.options);
           });
         }
@@ -505,12 +524,14 @@ var Table = module.exports = function (options, callback) {
 
         $th.on('click', function () {
           self.sortIndex = lastIndex + mi;
+          if (self.summaries){
           Object.keys(self.summaries).forEach(function (key) {
             var summary = self.summaries[key];
             summary.options.$container.removeClass('sorted');
             if (key === (m.key || m))
               summary.options.$container.addClass('sorted');
           });
+          }
           self.data[0] = _.sortBy(self.data[0], function (item) {
             return item.metrics[m.key || m];
           });
@@ -542,6 +563,9 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.handleMetricBoxes = function () {
+      if (!self.options.summary.enabled)
+        return;
+
       var $html = self.options.$container;
       var $tbody = $html.find('tbody');
       $tbody = $$($tbody);
@@ -597,6 +621,7 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.handlePaging = function () {
+
       var $showing = $$(self.options.$container.find('.showing'));
 
       var total = self._data[0].length;
@@ -646,6 +671,8 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.summarize = function () {
+      if (!self.options.summary.enabled)
+        return;
       Object.keys(self.summaries).forEach(function (key, mindex) {
         var ref = self.summaries[key];
         var m = self.options.query[0].metrics[mindex];
@@ -738,21 +765,24 @@ var Table = module.exports = function (options, callback) {
           m.collection = m.collection || self.options.query[0].collection;
           self.options.query[0].metrics[i] = m;
         });
-        console.log(self.options.query[0].metrics);
         self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
-        self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
-          self.options.query.forEach(function (q) {
-            if (metric) {
-              metric.allowremove = true;
-              q.metrics.push(metric);
-            }
+        new joola.viz.MetricPicker(self.options.pickers.add_metric, function (err, ref) {
+          if (err)
+            throw err;
+          self.add_metric_picker = ref;
+        }).on('change', function (metric) {
+            self.options.query.forEach(function (q) {
+              if (metric) {
+                metric.allowremove = true;
+                q.metrics.push(metric);
+              }
+            });
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex++;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
           });
-          self.data = [];
-          self.options.paging.currentPage = 1;
-          self.sortIndex++;
-          self.handleMetricBoxes();
-          joola.viz.initialize(self, self.options);
-        });
       }
       var $thead = $$($html.find('thead'));
       $html.find('table').append($thead);

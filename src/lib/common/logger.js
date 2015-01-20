@@ -30,8 +30,8 @@ logger._log = function (level, message, callback) {
       break;
   }
 
-  if (!joola.options.debug.enabled)
-    return;
+  //if (!joola.options.debug.enabled)
+  //  return;
 
   if (typeof message === 'object')
     message = '[' + new Date().format('hh:nn:ss.fff') + '] ' + JSON.stringify(message);

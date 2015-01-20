@@ -34,22 +34,28 @@ var MetricPicker = module.exports = function (options, callback) {
     selected: null,
     allowRemove: true,
     allowSelect: true,
+    caption: 'Choose a metric...',
     template: '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button">' +
-      '   <span class="caption"></span>' +
-      '   <span class="close">×</span>' +
-      '  </button>' +
-      '  <div class="picker-container">' +
-      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-      '    <div class="clear"></div>' +
-      '  </div>' +
-      '  <div class="clear"></div>' +
-      '</div>'
+    '  <button class="btn jio-metricpicker-button chevron after bottom">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
+    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+    '    <div class="clear"></div>' +
+    '  </div>' +
+    '  <div class="clear"></div>' +
+    '</div>'
   };
   this.drawn = false;
 
   this.verify = function (options) {
 
+    return null;
+  };
+
+  this.destroy = function () {
+    self.options.$container.empty();
     return null;
   };
 
@@ -189,7 +195,7 @@ var MetricPicker = module.exports = function (options, callback) {
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-metricpicker-button').find('.caption').html('Choose a metric...' + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html(self.options.caption);
         self.options.$container.find('.close').hide();
       }
 
