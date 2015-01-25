@@ -40,14 +40,19 @@ var Canvas = module.exports = function (options, callback) {
   };
 
   this.prepareQuery = function (query, dates) {
+    var _query;
     if (!dates)
       dates = {};
-    var _query = ce.extend({}, query);
-    if (self.options.query) {
-      _query = joola.common._extend(ce.clone(self.options.query), _query);
-    }
-    if (!Array.isArray(_query))
+    if (Array.isArray(query))
+      _query = [ce.extend({}, query[0])];
+    else {
+      _query = ce.extend({}, query);
       _query = [_query];
+    }
+    if (self.options.query) {
+      _query[0] = joola.common._extend(ce.clone(self.options.query), _query[0]);
+    }
+
     if (_query[0].dimensions && _query[0].dimensions.length > 0 && _query[0].dimensions && _query[0].dimensions.length > 0) {
       _query[0].dimensions.forEach(function (dimension, i) {
         var key;
@@ -122,6 +127,7 @@ var Canvas = module.exports = function (options, callback) {
         cquery.interval = self.options.datepicker._interval;
       _query = [_query[0], cquery];
     }
+
     return _query;
   };
 
@@ -139,7 +145,6 @@ var Canvas = module.exports = function (options, callback) {
         filters.push(filter);
       }
     });
-    console.log('build filter', filters);
     return filters;
   };
 
@@ -204,7 +209,6 @@ var Canvas = module.exports = function (options, callback) {
                 break;
               case 'bartable':
                 new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
-                  console.log('selected');
                   if (Array.isArray(point))
                     point = point[0];
                   var filter = self.buildFilter(point, dimensionkey);
@@ -263,7 +267,6 @@ var Canvas = module.exports = function (options, callback) {
               break;
             case 'bartable':
               new joola.viz.BarTable(viz).on('select', function (point, dimensionkey) {
-                console.log('selected');
                 if (Array.isArray(point))
                   point = point[0];
                 var filter = self.buildFilter(point, dimensionkey);
@@ -340,23 +343,25 @@ var Canvas = module.exports = function (options, callback) {
   //here we go
   joola.viz.initialize(self, options || {});
 
-  self.draw();
-  joola.viz.onscreen.push(self);
-  if (!self.options.canvas) {
-    var elem = $$(self.options.$container).parent();
-    if (elem.attr('jio-type') == 'canvas') {
-      self.options.canvas = $$(elem).Canvas();
+  self.draw(null, function (err, ref) {
+    if (err)
+      return callback(err);
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
     }
-  }
-  if (self.options.canvas) {
-    self.options.canvas.addVisualization(self);
-  }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
 
-  //wrap up
-  self.initialized = true;
-  if (typeof callback === 'function')
-    return callback(null, self);
-
+    //wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, ref);
+  });
   return self;
 };
 
@@ -377,7 +382,9 @@ joola.events.on('core.init.finish', function () {
         result = new joola.viz.Canvas(options, function (err, canvas) {
           if (err)
             throw new Error('Failed to initialize canvas.', err);
-          canvas.draw(options, callback);
+          //canvas.draw(options, callback);
+          if (callback)
+            return callback(null, canvas);
         }).options.$container;
       }
       else {

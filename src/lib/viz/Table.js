@@ -558,7 +558,11 @@ var Table = module.exports = function (options, callback) {
         var $td = $$('<td class="metricbox metric"></td>');
         $metric_tr.append($td);
         var _query = ce.clone(self.options.query);
+
         _query.forEach(function (q) {
+          delete q.sort;
+          delete q.order;
+          delete q.orderby;
           q.dimensions = [];
           q.metrics = [m];
           if (!q.filter)
@@ -728,6 +732,13 @@ var Table = module.exports = function (options, callback) {
         self.options.pickers.add_metric.css = 'table-picker';
         self.options.pickers.add_metric.container = $add_metric_picker.get(0);
         self.options.pickers.add_metric.caption = self.options.pickers.add_metric.caption || 'Add metric...';
+        self.options.query[0].metrics.forEach(function (m, i) {
+          if (typeof m !== 'object')
+            m = {key: m};
+          m.collection = m.collection || self.options.query[0].collection;
+          self.options.query[0].metrics[i] = m;
+        });
+        console.log(self.options.query[0].metrics);
         self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
         self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
           self.options.query.forEach(function (q) {

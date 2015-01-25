@@ -104,6 +104,7 @@ viz.initialize = function (self, options, callback) {
     }
   }
   if (self.options.query) {
+    //console.log('qqq', self.options.query);
     viz.fetch(self, self.options.query, function () {
       if (callback && typeof callback === 'function')
         return callback(null, self);
@@ -195,12 +196,12 @@ viz.fetch = function (context, query, callback) {
           };
           var key = '';
           message.dimensions.forEach(function (d) {
-            key += doc.raw.values[d.key];
-            doc.dimensions[d.key] = doc.raw.values[d.key];
+            key += doc.raw[d.key];
+            doc.dimensions[d.key] = doc.raw[d.key];
             doc.meta[d.key] = d;
           });
           message.metrics.forEach(function (m) {
-            doc.metrics[m.key] = doc.raw.values[m.key];
+            doc.metrics[m.key] = doc.raw[m.key];
             doc.meta[m.key] = m;
           });
           doc.key = joola.common.hash(key);
