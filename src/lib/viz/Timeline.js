@@ -175,12 +175,12 @@ var Timeline = module.exports = function (options, callback) {
 
     var checkExists = function (timestampDimension, documents, date) {
       return _.find(documents, function (document) {
-        if (!document.values[timestampDimension.key])
+        if (!document[timestampDimension.key])
           return;
 
         try {
           var _date = new Date(date);
-          var _basedate = new Date(document.values[timestampDimension.key]);
+          var _basedate = new Date(document[timestampDimension.key]);
 
           switch (interval) {
             case 'month':
@@ -206,8 +206,8 @@ var Timeline = module.exports = function (options, callback) {
     var fill = function (resultRow, row, timestampDimension) {
       Object.keys(resultRow).forEach(function (key) {
         if (key !== timestampDimension.key) {
-          row.values[key] = 0;
-          row.fvalues[key] = 0;
+          row[key] = 0;
+          //row.fvalues[key] = 0;
         }
       });
     };
@@ -216,12 +216,12 @@ var Timeline = module.exports = function (options, callback) {
       if (result.documents.length === 0) {
         result.documents.push({values: {}, fvalues: {}});
         result.dimensions.forEach(function (d) {
-          result.documents[0].values[d.name] = null;
-          result.documents[0].fvalues[d.name] = null;
+          result.documents[0][d.name] = null;
+          //result.documents[0].fvalues[d.name] = null;
         });
         result.metrics.forEach(function (m) {
-          result.documents[0].values[m.name] = null;
-          result.documents[0].fvalues[m.name] = null;
+          result.documents[0][m.name] = null;
+          //result.documents[0].fvalues[m.name] = null;
         });
       }
 
@@ -239,8 +239,8 @@ var Timeline = module.exports = function (options, callback) {
         interval = interval === 'ddate' ? 'day' : (interval || 'day');
         if (!query.timeframe) {
           query.timeframe = {};
-          query.timeframe.start = result.documents[result.documents.length - 1].values.timestamp;
-          query.timeframe.end = result.documents[0].values.timestamp;
+          query.timeframe.start = result.documents[result.documents.length - 1].timestamp;
+          query.timeframe.end = result.documents[0].timestamp;
         }
 
         var counter = 0;
@@ -270,9 +270,9 @@ var Timeline = module.exports = function (options, callback) {
           if (!exists) {
             //_d.setHours(_d.getHours() + (offset * -1));
             exists = {values: {}, fvalues: {}};
-            exists.values[timestampDimension.key] = _d.toISOString();
-            exists.fvalues[timestampDimension.key] = _d.toISOString();
-            fill(result.documents[0].values, exists, timestampDimension);
+            exists[timestampDimension.key] = _d.toISOString();
+            //exists.fvalues[timestampDimension.key] = _d.toISOString();
+            fill(result.documents[0], exists, timestampDimension);
           }
           fixed.push(exists);
         }
@@ -301,30 +301,30 @@ var Timeline = module.exports = function (options, callback) {
           color: joola.colors[seriesIndex]
         };
         documents.forEach(function (document, docIndex) {
-          var x = document.fvalues[dimensions[0].key];
+          var x = document[dimensions[0].key];
           var nameBased = true;
           if (dimensions[0].datatype === 'date') {
-            x = new Date(document.fvalues[dimensions[0].key]);
+            x = new Date(document[dimensions[0].key]);
             nameBased = false;
           }
 
           if (nameBased) {
             series[seriesIndex].data.push({
               name: x,
-              y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+              y: document[metrics[index].key] ? document[metrics[index].key] : 0
             });
           }
           else {
             if (seriesIndex === 0) {
               series[seriesIndex].data.push({
                 x: x,
-                y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+                y: document[metrics[index].key] ? document[metrics[index].key] : 0
               });
             }
             else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
-                y: document.values[metrics[index].key] ? document.values[metrics[index].key] : 0
+                y: document[metrics[index].key] ? document[metrics[index].key] : 0
               });
             }
           }
@@ -375,6 +375,7 @@ var Timeline = module.exports = function (options, callback) {
 
   this.draw = function (options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
+    self.options.$container.empty();
     self.options.$container.append(self.options.template || self.template());
     self.options.$container.find('.caption').text(self.options.caption || '');
 
@@ -607,23 +608,25 @@ var Timeline = module.exports = function (options, callback) {
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
-  self.draw();
-  joola.viz.onscreen.push(self);
-  if (!self.options.canvas) {
-    var elem = $$(self.options.$container).parent();
-    if (elem.attr('jio-type') == 'canvas') {
-      self.options.canvas = $$(elem).Canvas();
+  self.draw(null, function (err, ref) {
+    if (err)
+      return callback(err);
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
     }
-  }
-  if (self.options.canvas) {
-    self.options.canvas.addVisualization(self);
-  }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
 
-  //wrap up
-  self.initialized = true;
-  if (typeof callback === 'function')
-    return callback(null, self);
-
+    //wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, ref);
+  });
   return self;
 };
 
@@ -657,7 +660,10 @@ joola.events.on('core.init.finish', function () {
         result = new joola.viz.Timeline(options, function (err, timeline) {
           if (err)
             throw err;
-          timeline.draw(options, callback);
+          //timeline.draw(options, callback);
+          if (callback)
+            return callback(null, timeline);
+
         }).options.$container;
       }
       else {

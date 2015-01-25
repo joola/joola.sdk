@@ -116,7 +116,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
-    this.base_fromdate = self.addDays(this.base_todate, -30);
+    this.base_fromdate = self.addDays(this.base_todate, -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -201,6 +201,7 @@ var DatePicker = module.exports = function (options, callback) {
       window[self.options.onDraw](self.options.container, self);
 
     var $container = self.options.$container;
+    $container.empty();
     //self.options.$container.append(self.template());
     var $table = $$('<div class="datebox jcontainer"><table class="datetable unselectable">' +
       '<tr>' +
