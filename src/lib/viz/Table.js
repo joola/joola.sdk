@@ -102,11 +102,12 @@ var Table = module.exports = function (options, callback) {
 
     this.destroy = function () {
       joola.viz.stop(self);
-      Object.keys(self.summaries).forEach(function (key, index) {
-        var summary = self.summaries[key];
-        summary.destroy();
-      });
-
+      if (self.summaries) {
+        Object.keys(self.summaries).forEach(function (key, index) {
+          var summary = self.summaries[key];
+          summary.destroy();
+        });
+      }
       $$(self.options.container).find('table').empty();
     };
 
@@ -261,7 +262,21 @@ var Table = module.exports = function (options, callback) {
 
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value change">' + (point && comparePoint ? joola.common.percentageChange(comparePoint.metrics[metrickey], point.metrics[metrickey]) : 'N/A') + '%</td>');
+            var value, cssClass;
+
+            if (point && comparePoint) {
+              value = joola.common.percentageChange(comparePoint.metrics[metrickey], point.metrics[metrickey]);
+              if (value < 0)
+                cssClass = 'negative';
+              else if (value > 0)
+                cssClass = 'positive';
+              else
+                cssClass = 'neutral';
+              value+='%';
+            }
+            else
+              value = 'N/A';
+            var $td = $$('<td class="value change '+cssClass+'">' + value + '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -524,13 +539,13 @@ var Table = module.exports = function (options, callback) {
 
         $th.on('click', function () {
           self.sortIndex = lastIndex + mi;
-          if (self.summaries){
-          Object.keys(self.summaries).forEach(function (key) {
-            var summary = self.summaries[key];
-            summary.options.$container.removeClass('sorted');
-            if (key === (m.key || m))
-              summary.options.$container.addClass('sorted');
-          });
+          if (self.summaries) {
+            Object.keys(self.summaries).forEach(function (key) {
+              var summary = self.summaries[key];
+              summary.options.$container.removeClass('sorted');
+              if (key === (m.key || m))
+                summary.options.$container.addClass('sorted');
+            });
           }
           self.data[0] = _.sortBy(self.data[0], function (item) {
             return item.metrics[m.key || m];
