@@ -29,9 +29,9 @@
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "async": "~0.2.10",
+    "async": "^0.2.10",
     "cloneextend": "^0.0.3",
-    "deep-extend": "^0.2.10",
+    "deep-extend": "^0.2.11",
     "eventemitter2": "~0.4.13",
     "jquery": "^2.1.1",
     "jquery-ui": "^1.10.5",
@@ -39,7 +39,7 @@
     "socket.io-client": "^1.0.2",
     "traverse": "^0.6.6",
     "twix": "^0.5.1",
-    "underscore": "~1.5.2"
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "chai": "~1.9.1",
