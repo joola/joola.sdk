@@ -248,7 +248,10 @@ api.getJSON = function (options, objOptions, callback) {
           joola.events.emit('latency', headers['X-joola-Duration'] - headers['X-joola-Duration-Fulfilled']);
       }
 
-      if (headers && headers.StatusCode && headers.StatusCode == 401) {
+      if (headers && headers.StatusCode && headers.StatusCode === 200) {
+        return callback(null, message, headers);
+      }
+      else if (headers && headers.StatusCode && headers.StatusCode == 401) {
         //let's redirect to login
         if (joola.options.logouturl)
           location.href = joola.options.logouturl;
@@ -257,8 +260,9 @@ api.getJSON = function (options, objOptions, callback) {
       }
       else if (headers && headers.StatusCode && headers.StatusCode == 500)
         return callback(message.message ? message.message : 'unknown error');
+      else
+        return callback(message);
 
-      return callback(null, message, headers);
     };
 
 
