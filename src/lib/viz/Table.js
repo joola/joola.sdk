@@ -53,7 +53,7 @@ var Table = module.exports = function (options, callback) {
       '<div class="paging">' +
       ' <div class="paging-wrapper">' +
       '   <div class="page-size">' +
-      '     <span class="caption">Page size: </span>' +
+      '     <span class="caption">Show rows: </span>' +
       '     <select>' +
       '     </select>' +
       '   </div>' +
