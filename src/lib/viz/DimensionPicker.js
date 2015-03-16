@@ -34,22 +34,28 @@ var DimensionPicker = module.exports = function (options, callback) {
     selected: null,
     allowRemove: true,
     allowSelect: true,
+    caption: 'Choose a dimension...',
     template: '<div class="jio-dimensionpicker-wrapper">\n' +
-      '  <button class="btn jio-dimensionpicker-button">' +
-      '   <span class="caption"></span>' +
-      '   <span class="close">×</span>' +
-      '  </button>' +
-      '  <div class="picker-container">' +
-      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-      '    <div class="clear"></div>' +
-      '  </div>' +
-      '  <div class="clear"></div>' +
-      '</div>'
+    '  <button class="btn jio-dimensionpicker-button chevron after bottom">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
+    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+    '    <div class="clear"></div>' +
+    '  </div>' +
+    '  <div class="clear"></div>' +
+    '</div>'
   };
   this.drawn = false;
 
   this.verify = function (options) {
 
+    return null;
+  };
+
+  this.destroy = function () {
+    self.options.$container.empty();
     return null;
   };
 
@@ -109,7 +115,13 @@ var DimensionPicker = module.exports = function (options, callback) {
 
               self.emit('change', dimension);
             });
-            $ul.append($li);
+            console.log(dimension, dimension.visible);
+            var visible = true;
+            if (dimension.hasOwnProperty('visible') && dimension.visible !== null)
+              visible = dimension.visible;
+            if (visible)
+              $ul.append($li);
+
           });
 
           $close.on('click', function (e) {
@@ -189,13 +201,13 @@ var DimensionPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.allowSelect&&self.options.selected) {
+      if (self.options.allowSelect && self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.key + '"]').addClass('active');
         self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html('Choose a dimension...' + '');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html(self.options.caption);
         self.options.$container.find('.close').hide();
       }
 

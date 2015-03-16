@@ -34,8 +34,9 @@ var MetricPicker = module.exports = function (options, callback) {
     selected: null,
     allowRemove: true,
     allowSelect: true,
+    caption: 'Choose a metric...',
     template: '<div class="jio-metricpicker-wrapper">\n' +
-    '  <button class="btn jio-metricpicker-button">' +
+    '  <button class="btn jio-metricpicker-button chevron after bottom">' +
     '   <span class="caption"></span>' +
     '   <span class="close">×</span>' +
     '  </button>' +
@@ -194,7 +195,7 @@ var MetricPicker = module.exports = function (options, callback) {
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-metricpicker-button').find('.caption').html('Choose a metric...' + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html(self.options.caption);
         self.options.$container.find('.close').hide();
       }
 

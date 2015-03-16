@@ -104,7 +104,6 @@ viz.initialize = function (self, options, callback) {
     }
   }
   if (self.options.query) {
-    //console.log('qqq', self.options.query);
     viz.fetch(self, self.options.query, function () {
       if (callback && typeof callback === 'function')
         return callback(null, self);

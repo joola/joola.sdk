@@ -136,8 +136,19 @@ var Metric = module.exports = function (options, callback) {
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
         compare = data[1].metrics[metrickey];
-      if (base && compare)
-        change = joola.common.percentageChange(compare, base) + '%';
+      var cssClass = '';
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;'
+        change += '%';
+      }
       else
         change = 'N/A';
 
@@ -146,6 +157,7 @@ var Metric = module.exports = function (options, callback) {
       '<span class="sep">vs.</span>' +
       '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
       $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
       if (compare) {

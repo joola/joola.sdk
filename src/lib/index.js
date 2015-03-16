@@ -161,7 +161,7 @@ joola.init = function (options, callback) {
     }
   }
   joola.events.emit('core.init.start');
-  joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
+  joola.logger.info('joola client SDK, version ' + joola.VERSION);
 
   if (!joola.options.host && joola.options.isBrowser) {
     joola.options.host = location.protocol + '//' + location.host;

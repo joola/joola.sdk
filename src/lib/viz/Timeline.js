@@ -155,8 +155,18 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.done = function (data, raw) {
+    raw.forEach(function (message, messageIndex) {
+      message.metrics.forEach(function (metric, metricIndex) {
+        self.options.query[messageIndex].metrics[metricIndex] = metric;
+      });
+    });
+    if (self.primary_metric_container) {
+      self.primary_metric_container.options.selected = self.options.query[0].metrics[0];
+      self.primary_metric_container.markSelected();
+    }
     if (self.initialChartDrawn)
       return;
+
     self.initialChartDrawn = true;
     self.chartData = self.makeChartTimelineSeries(raw);
     self.paint();
@@ -336,6 +346,7 @@ var Timeline = module.exports = function (options, callback) {
         });
       });
     });
+    //console.log(series);
     return series;
 
   };
@@ -381,6 +392,10 @@ var Timeline = module.exports = function (options, callback) {
   this.draw = function (options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
     self.options.$container.empty();
+    if (self.primary_metric_container)
+      self.primary_metric_container.destroy();
+    if (self.secondary_metric_container)
+      self.secondary_metric_container.destroy();
     self.options.$container.append(self.options.template || self.template());
     self.options.$container.find('.caption').text(self.options.caption || '');
 
@@ -393,7 +408,7 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
-        self.primary_metric_container = new joola.viz.MetricPicker({
+        new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,
           selected: self.options.query[0].metrics[0],
@@ -401,6 +416,7 @@ var Timeline = module.exports = function (options, callback) {
         }, function (err, _picker) {
           if (err)
             throw err;
+          self.primary_metric_container = _picker;
           _picker.on('change', function (metric) {
             if (Array.isArray(self.options.query)) {
               self.options.query.forEach(function (query) {
@@ -435,7 +451,7 @@ var Timeline = module.exports = function (options, callback) {
         $secondary_metric_container = $$(self.options.$container.find('.secondary-metric-picker')[0]);
 
       if ($secondary_metric_container) {
-        self.secondary_metric_container = new joola.viz.MetricPicker({
+        new joola.viz.MetricPicker({
           container: $secondary_metric_container,
           canvas: self.options.canvas,
           selected: self.options.query[0].metrics[1],
@@ -444,6 +460,7 @@ var Timeline = module.exports = function (options, callback) {
         }, function (err, _picker) {
           if (err)
             throw err;
+          self.secondary_metric_container = _picker;
           _picker.on('change', function (metric) {
             if (!metric) {
               if (Array.isArray(self.options.query)) {
