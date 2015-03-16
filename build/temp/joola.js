@@ -36444,6 +36444,8 @@ var Metric = module.exports = function (options, callback) {
     if (self.options.enter)
       self.options.enter.apply(self, [data, alldata]);
 
+    console.log(data);
+
     var value, $$summary, total;
     if (data.length === 1) {
       if (self.options.query[0].filter && self.options.query[0].filter.length > 0)
@@ -36468,7 +36470,8 @@ var Metric = module.exports = function (options, callback) {
       if (data[1].type === 'overall') {
         total = data[1].metrics[metrickey];
         var percentage;
-        if (metric.aggregation === 'sum') {
+        metric.aggregation = metric.aggregation || 'sum';
+        if (['sum', 'ucount'].indexOf(metric.aggregation) > -1) {
           percentage = (value / total * 100).toFixed() + '%';
           $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
         }
@@ -36674,21 +36677,26 @@ var MetricPicker = module.exports = function (options, callback) {
     allowRemove: true,
     allowSelect: true,
     template: '<div class="jio-metricpicker-wrapper">\n' +
-      '  <button class="btn jio-metricpicker-button">' +
-      '   <span class="caption"></span>' +
-      '   <span class="close">×</span>' +
-      '  </button>' +
-      '  <div class="picker-container">' +
-      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-      '    <div class="clear"></div>' +
-      '  </div>' +
-      '  <div class="clear"></div>' +
-      '</div>'
+    '  <button class="btn jio-metricpicker-button">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
+    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+    '    <div class="clear"></div>' +
+    '  </div>' +
+    '  <div class="clear"></div>' +
+    '</div>'
   };
   this.drawn = false;
 
   this.verify = function (options) {
 
+    return null;
+  };
+
+  this.destroy = function (options) {
+    $$(this.options.container).empty();
     return null;
   };
 
@@ -38658,7 +38666,7 @@ var Table = module.exports = function (options, callback) {
           m.collection = m.collection || self.options.query[0].collection;
           self.options.query[0].metrics[i] = m;
         });
-        console.log(self.options.query[0].metrics);
+        //console.log(self.options.query[0].metrics);
         self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
         self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
           self.options.query.forEach(function (q) {
@@ -38870,6 +38878,11 @@ var Timeline = module.exports = function (options, callback) {
     joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
+
+    if (self.primary_metric_container)
+      self.primary_metric_container.destroy();
+    if (self.secondary_metric_container)
+      self.secondary_metric_container.destroy();
   };
 
   this.reply = function (data) {

@@ -1190,6 +1190,7 @@
 
 [jio-type="metric"] .summary {
   color: #999;
+  padding-top: 10px;
 }
 
 [jio-type="metric"] .base {
