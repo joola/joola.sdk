@@ -70,6 +70,11 @@ var Timeline = module.exports = function (options, callback) {
     joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
+
+    if (self.primary_metric_container)
+      self.primary_metric_container.destroy();
+    if (self.secondary_metric_container)
+      self.secondary_metric_container.destroy();
   };
 
   this.reply = function (data) {

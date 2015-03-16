@@ -54,8 +54,8 @@ var MetricPicker = module.exports = function (options, callback) {
     return null;
   };
 
-  this.destroy = function () {
-    self.options.$container.empty();
+  this.destroy = function (options) {
+    $$(this.options.container).empty();
     return null;
   };
 

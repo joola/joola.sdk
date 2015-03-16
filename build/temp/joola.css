@@ -1216,6 +1216,7 @@
 
 [jio-type="metric"] .summary {
   color: #999;
+  padding-top: 10px;
 }
 
 [jio-type="metric"] .base {
@@ -1340,7 +1341,7 @@
 }
 
 [jio-type="table"] .table th .caret-sort {
-  float: right;
+  margin-left: 15px;
   margin-right: 15px;
 }
 
