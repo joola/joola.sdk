@@ -155,6 +155,8 @@ var DatePicker = module.exports = function (options, callback) {
 
   this.offsetX = 0;
   this.offsetY = 0;
+  if (options.offsetTop)
+    this.options.offsetTop = options.offsetTop;
 
   this.verify = function (options, callback) {
     if (callback)
@@ -204,11 +206,11 @@ var DatePicker = module.exports = function (options, callback) {
     $container.empty();
     //self.options.$container.append(self.template());
     var $table = $$('<div class="datebox jcontainer"><table class="datetable unselectable">' +
-      '<tr>' +
-      '<td class="dates"></td>' +
-      '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
-      '</tr>' +
-      '</table></div></div>');
+    '<tr>' +
+    '<td class="dates"></td>' +
+    '<td class="dropdownmarker-wrapper"><div class="dropdownmarker"></div></td>' +
+    '</tr>' +
+    '</table></div></div>');
 
     $container.append($table);
 
@@ -229,56 +231,56 @@ var DatePicker = module.exports = function (options, callback) {
     var $item = $$('<div class="picker" style="display:none"></div>');
 
     $item.append('<table class="wrapper"><tr valign=top>' +
-      '<td class="calendars"></td>' +
-      '<td class="control"><div class="optionscontainer"></div></td>' +
-      '</tr></table>');
+    '<td class="calendars"></td>' +
+    '<td class="control"><div class="optionscontainer"></div></td>' +
+    '</tr></table>');
 
     $container.append($item);
     var $optionscontainer = $container.find('.optionscontainer');
     $optionscontainer.append('<div class="customdate">Date Range:' +
-      '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
-      '</div>');
+    '<select class="selector"><option value="custom">Custom</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="lastweek">Last week</option><option value="lastmonth">Last Month</option></select>' +
+    '</div>');
     $optionscontainer.append('<hr class="divider" style="margin-bottom: 5px;">');
 
     $optionscontainer.append('<div class="daterange baserange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('<div class="compareoption visible"">' +
-      '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
-      '</div>');
+    '<input type="checkbox" class="checker"/><span style="padding-left:5px;">Compare to past</span>' +
+    '</div>');
     if (self.options.disableCompare) {
       $optionscontainer.find('.compareoption').removeClass('visible');
     }
     $optionscontainer.append('<div class="daterange comparerange"">' +
-      '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
-      ' - ' +
-      '<input class="dateoption" type="text" value="Jan 1, 2012">' +
-      '</div>');
+    '<input class="dateoption active" type="text" value="Jan 1, 2012">' +
+    ' - ' +
+    '<input class="dateoption" type="text" value="Jan 1, 2012">' +
+    '</div>');
 
     $optionscontainer.append('' +
-      '<hr class="divider">' +
-      '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
-      '<span class="cancel">Cancel</span></div>');
+    '<hr class="divider">' +
+    '<div class="_buttons"><button class="btn apply" value="Apply">Apply</button>' +
+    '<span class="cancel">Cancel</span></div>');
 
     var $calendars = $container.find('.calendars');
     //$item = $$('<div class="datepicker"></div>');
 
     $item = $$('<table><tr valign=top>' +
-      '<td class="datetable-prev unselectable"></td>' +
-      '<td class="datetable"><div class="datepicker dp1"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp2"></div></td>' +
-      '<td class="datetable"><div class="datepicker dp3"></div></td>' +
-      '<td class="datetable-next unselectable"></td>' +
-      '</tr></table>');
+    '<td class="datetable-prev unselectable"></td>' +
+    '<td class="datetable"><div class="datepicker dp1"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp2"></div></td>' +
+    '<td class="datetable"><div class="datepicker dp3"></div></td>' +
+    '<td class="datetable-next unselectable"></td>' +
+    '</tr></table>');
     $calendars.append($item);
 
     $container.find('.datetable-prev').append('<div class="prev">' +
-      '<div class="inline-block prev">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block prev">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-prev .prev').off('click');
     $container.find('.datetable-prev .prev').on('click', function (e) {
       e.stopPropagation();
@@ -302,9 +304,9 @@ var DatePicker = module.exports = function (options, callback) {
     });
 
     $container.find('.datetable-next').append('<div class="next">' +
-      '<div class="inline-block next">' +
-      '</div>' +
-      '</div>');
+    '<div class="inline-block next">' +
+    '</div>' +
+    '</div>');
     $container.find('.datetable-next .next').off('click');
     $container.find('.datetable-next .next').on('click', function (e) {
       e.stopPropagation();
@@ -669,7 +671,7 @@ var DatePicker = module.exports = function (options, callback) {
 
         $picker.show();
         $picker.offset({
-          top: $container.offset().top + $container.height() - 1,
+          top: $container.offset().top + $container.height() + (self.options.offsetTop || 1),
           left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
         });
       }
@@ -968,49 +970,50 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   /*try {
-    joola.common._extend(self.options, options, true);
-    console.log(self.options);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+   joola.common._extend(self.options, options, true);
+   console.log(self.options);
+   self.verify(self.options, function (err) {
+   if (err)
+   return callback(err);
 
-      self.options.$container = $$(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'datepicker'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
+   self.options.$container = $$(self.options.container);
+   self.markContainer(self.options.$container, [
+   {'type': 'datepicker'},
+   {'uuid': self.uuid},
+   {css: self.options.css}
+   ], function (err) {
+   if (err)
+   return callback(err);
 
-        joola.viz.onscreen.push(self);
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $$(elem).Canvas();
-          }
-        }
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-        self.draw(options, function () {
-          joola.events.emit('datepicker.init.finish', self);
-          if (typeof callback === 'function')
-            return callback(null, self);
-        });
-      });
-    });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+   joola.viz.onscreen.push(self);
+   if (!self.options.canvas) {
+   var elem = self.options.$container.parent();
+   if (elem.attr('jio-type') == 'canvas') {
+   self.options.canvas = $$(elem).Canvas();
+   }
+   }
+   if (self.options.canvas) {
+   self.options.canvas.addVisualization(self);
+   }
+   self.draw(options, function () {
+   joola.events.emit('datepicker.init.finish', self);
+   if (typeof callback === 'function')
+   return callback(null, self);
+   });
+   });
+   });
+   }
+   catch (err) {
+   callback(err);
+   return self.onError(err, callback);
+   }
 
-  //callback(null, self);
-  return self;*/
+   //callback(null, self);
+   return self;*/
 //we call the core initialize option
   joola.viz.initialize(self, options || {});
-  self.draw(self.options,function(){});
+  self.draw(self.options, function () {
+  });
 
   joola.viz.onscreen.push(self);
   if (!self.options.canvas) {

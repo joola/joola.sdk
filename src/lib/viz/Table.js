@@ -738,7 +738,7 @@ var Table = module.exports = function (options, callback) {
           m.collection = m.collection || self.options.query[0].collection;
           self.options.query[0].metrics[i] = m;
         });
-        console.log(self.options.query[0].metrics);
+        //console.log(self.options.query[0].metrics);
         self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
         self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
           self.options.query.forEach(function (q) {
