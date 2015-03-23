@@ -54272,7 +54272,7 @@ var DimensionPicker = module.exports = function (options, callback) {
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + dimension.name + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + (dimension.name||dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -56539,6 +56539,7 @@ var Table = module.exports = function (options, callback) {
       var start = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize) + 1;
       var length = self.options.paging.currentSize;
       var search, text;
+      
       if (self.data.length === 1) {
         var _data;
         var _total = [];
@@ -56556,8 +56557,9 @@ var Table = module.exports = function (options, callback) {
           var lastIndex = 0;
           _query.dimensions.forEach(function (d, di) {
             lastIndex++;
-            var dimensionkey = d.key || d;
-            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            var dimensionkey = (d.key || d).replace(/\./ig,'_');
+           
+             var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
               self.emit('select', point, dimensionkey);
             });
