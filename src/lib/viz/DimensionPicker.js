@@ -115,13 +115,11 @@ var DimensionPicker = module.exports = function (options, callback) {
 
               self.emit('change', dimension);
             });
-            console.log(dimension, dimension.visible);
             var visible = true;
             if (dimension.hasOwnProperty('visible') && dimension.visible !== null)
               visible = dimension.visible;
             if (visible)
               $ul.append($li);
-
           });
 
           $close.on('click', function (e) {

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}},"subscribe":{"name":"/beacon/subscribe","description":"I subscribe to socket.io","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["beacon:subscribe"],"_dispatch":{"message":"subscribe","limit":-1,"criteria":"notme"}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
 },{}],2:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
@@ -32707,7 +32707,7 @@ dispatch.buildstub = function (callback) {
           });
 
           args = _args;
-          joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+          //joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
 
           var _callback = ce.clone(callback);//.clone();
           try {
@@ -33333,7 +33333,7 @@ Object.defineProperty(Error.prototype, 'toJSON', {
  return result;
  };
  */
-
+/*
 // attach the .equals method to Array's prototype to call it on any array
 Array.prototype.equals = function (array) {
   // if the other array is a falsy value, return
@@ -33358,7 +33358,7 @@ Array.prototype.equals = function (array) {
   }
   return true;
 };
-
+*/
 Number.prototype.commas = function () {
   var x = this;
   var parts = x.toString().split(".");
@@ -33537,7 +33537,7 @@ joola.init = function (options, callback) {
     }
   }
   joola.events.emit('core.init.start');
-  joola.logger.info('Starting joola client SDK, version ' + joola.VERSION);
+  joola.logger.info('joola client SDK, version ' + joola.VERSION);
 
   if (!joola.options.host && joola.options.isBrowser) {
     joola.options.host = location.protocol + '//' + location.host;
@@ -34256,6 +34256,9 @@ var BarTable = module.exports = function (options, callback) {
     $tr.append($td);
     $tbody.append($tr);
     $html.find('table').append($tbody);
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
   };
 
   if (options && options.query && !Array.isArray(options.query))
@@ -35371,7 +35374,7 @@ var DatePicker = module.exports = function (options, callback) {
           self.base_todate.setSeconds(59);
           self.base_todate.setMilliseconds(999);
           self.base_fromdate = new Date(self.base_todate);
-          self.base_fromdate.setDate(self.base_fromdate.getDate() - 30);
+          self.base_fromdate.setDate(self.base_fromdate.getDate() - 90);
           self.base_fromdate.setHours(0);
           self.base_fromdate.setMinutes(0);
           self.base_fromdate.setSeconds(0);
@@ -35870,22 +35873,28 @@ var DimensionPicker = module.exports = function (options, callback) {
     selected: null,
     allowRemove: true,
     allowSelect: true,
+    caption: 'Choose a dimension...',
     template: '<div class="jio-dimensionpicker-wrapper">\n' +
-      '  <button class="btn jio-dimensionpicker-button">' +
-      '   <span class="caption"></span>' +
-      '   <span class="close">×</span>' +
-      '  </button>' +
-      '  <div class="picker-container">' +
-      '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
-      '    <div class="clear"></div>' +
-      '  </div>' +
-      '  <div class="clear"></div>' +
-      '</div>'
+    '  <button class="btn jio-dimensionpicker-button chevron after bottom">' +
+    '   <span class="caption"></span>' +
+    '   <span class="close">×</span>' +
+    '  </button>' +
+    '  <div class="picker-container">' +
+    '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
+    '    <div class="clear"></div>' +
+    '  </div>' +
+    '  <div class="clear"></div>' +
+    '</div>'
   };
   this.drawn = false;
 
   this.verify = function (options) {
 
+    return null;
+  };
+
+  this.destroy = function () {
+    self.options.$container.empty();
     return null;
   };
 
@@ -35945,7 +35954,11 @@ var DimensionPicker = module.exports = function (options, callback) {
 
               self.emit('change', dimension);
             });
-            $ul.append($li);
+            var visible = true;
+            if (dimension.hasOwnProperty('visible') && dimension.visible !== null)
+              visible = dimension.visible;
+            if (visible)
+              $ul.append($li);
           });
 
           $close.on('click', function (e) {
@@ -36025,13 +36038,13 @@ var DimensionPicker = module.exports = function (options, callback) {
 
     self.markSelected = function () {
       $ul.find('div').removeClass('active');
-      if (self.options.allowSelect&&self.options.selected) {
+      if (self.options.allowSelect && self.options.selected) {
         $ul.find('div[data-member="' + self.options.selected.key + '"]').addClass('active');
         self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html((self.options.prefix || '' ) + '<span class="name">' + (self.options.selected.name || self.options.selected.key || self.options.selected) + '</span>');
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html('Choose a dimension...' + '');
+        self.options.$container.find('.jio-dimensionpicker-button').find('.caption').html(self.options.caption);
         self.options.$container.find('.close').hide();
       }
 
@@ -36438,13 +36451,13 @@ var Metric = module.exports = function (options, callback) {
     if (Array.isArray(self.options.query))
       _query = _query[0];
 
+    var base, compare, change = 0;
+    var cssClass = '';
     var metrickey = _query.metrics[0].key || _query.metrics[0];
     var metric = data[0].meta[metrickey];
     var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
     if (self.options.enter)
       self.options.enter.apply(self, [data, alldata]);
-
-    console.log(data);
 
     var value, $$summary, total;
     if (data.length === 1) {
@@ -36458,6 +36471,48 @@ var Metric = module.exports = function (options, callback) {
         $$summary.html('% of total: 100% (' + joola.common.formatMetric(total, metric) + ')');
       else if (metric.aggregation === 'avg')
         $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (0%)');
+    }
+    else if (data.length === 2 && data[1].type == 'compare') {
+      $$(self.options.container).find('.summary').show();
+
+      if (!data[0].missing)
+        base = data[0].metrics[metrickey];
+      if (!data[1].missing)
+        compare = data[1].metrics[metrickey];
+      if (base && compare)
+        change = joola.common.percentageChange(compare, base) + '%';
+      else
+        change = 'N/A';
+
+
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;';
+        change += '%';
+      }
+      
+      $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary.html('<span class="base"></span>' +
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>');
+      $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
+      $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
+
+      if (compare) {
+        $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
+      }
+      else {
+        $$(self.options.container).find('.compare').html('N/A');
+      }
+
     }
     else if (data.length === 2 && data[1].type === 'overall') {
       $$(self.options.container).find('.summary').show();
@@ -36484,13 +36539,24 @@ var Metric = module.exports = function (options, callback) {
     }
     else {
       $$(self.options.container).find('.summary').show();
-      var base, compare, change = 0;
+      
       if (!data[0].missing)
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
         compare = data[1].metrics[metrickey];
-      if (base && compare)
-        change = joola.common.percentageChange(compare, base) + '%';
+
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;';
+        change += '%';
+      }
       else
         change = 'N/A';
 
@@ -36499,6 +36565,7 @@ var Metric = module.exports = function (options, callback) {
       '<span class="sep">vs.</span>' +
       '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
       $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
       if (compare) {
@@ -36561,6 +36628,9 @@ var Metric = module.exports = function (options, callback) {
         self.options.query.push(_q);
       }
     }
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
   };
 
   if (options && options.query && !Array.isArray(options.query))
@@ -36676,10 +36746,11 @@ var MetricPicker = module.exports = function (options, callback) {
     selected: null,
     allowRemove: true,
     allowSelect: true,
+    caption: 'Choose a metric...',
     template: '<div class="jio-metricpicker-wrapper">\n' +
-    '  <button class="btn jio-metricpicker-button">' +
+    '  <button class="btn jio-metricpicker-button chevron after bottom">' +
     '   <span class="caption"></span>' +
-    '   <span class="close">×</span>' +
+    '   <span class="close icon-close"></span>' +
     '  </button>' +
     '  <div class="picker-container">' +
     '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
@@ -36749,7 +36820,13 @@ var MetricPicker = module.exports = function (options, callback) {
 
               self.emit('change', metric);
             });
-            $ul.append($li);
+            var visible = true;
+            if (metric.hasOwnProperty('visible') && metric.visible !== null)
+              visible = metric.visible;
+            console.log(visible);
+            if (visible)
+              $ul.append($li);
+
           });
 
           $close.on('click', function (e) {
@@ -36836,7 +36913,7 @@ var MetricPicker = module.exports = function (options, callback) {
         self.options.$container.find('.close').show();
       }
       else {
-        self.options.$container.find('.jio-metricpicker-button').find('.caption').html('Choose a metric...' + '');
+        self.options.$container.find('.jio-metricpicker-button').find('.caption').html(self.options.caption);
         self.options.$container.find('.close').hide();
       }
 
@@ -37960,13 +38037,17 @@ var Table = module.exports = function (options, callback) {
       paging: {
         currentPage: 1,
         sizes: [10, 25, 50, 100, 250, 500, 1000],
-        currentSize: 10
+        currentSize: 50
       },
       template: '<div class="table-caption"></div>' +
       '<div class="controls">' +
       ' <div class="primary-dimension-picker"></div>' +
       ' <div class="add-dimension-picker"></div>' +
       ' <div class="add-metric-picker"></div>' +
+      ' <button class="btn export" style="float:right">' +
+      '   <span class="icon icon-download"></span>' +
+      ' </button>' +
+
       ' <div class="search-wrapper">' +
       '   <input class="search" type="text" placeholder="Search..."/>' +
       ' </div>' +
@@ -37988,8 +38069,8 @@ var Table = module.exports = function (options, callback) {
       ' </div>' +
       ' <div class="showing"></div>' +
       ' <div class="navigation">' +
-      '   <div class="prev chevron left"></div>' +
-      '   <div class="next chevron right"></div>' +
+      '   <div class="prev chevron before left"></div>' +
+      '   <div class="next chevron before right"></div>' +
       ' </div>' +
       '</div>',
       query: null,
@@ -37998,7 +38079,7 @@ var Table = module.exports = function (options, callback) {
         nodata: 'No data available.',
         not_shown: 'Not shown'
       },
-      limit: 10,
+      limit: 1000,
       headers: false,
       include_not_shown: true,
       summary: {
@@ -38028,13 +38109,61 @@ var Table = module.exports = function (options, callback) {
 
     };
 
+    this.export = function (canvas) {
+      var data = [];
+      var dimensions = [self.options.query[0].dimensions[0]];
+      var collection = [self.options.query[0].collection];
+      var metrics = [];
+      var headers = [];
+      self.options.query[0].dimensions.forEach(function (d) {
+        headers.push(d.name || d.key || d);
+        dimensions.push(d);
+      });
+      self.options.query[0].metrics.forEach(function (m) {
+        headers.push(m.name || m.key || m);
+        metrics.push(m);
+      });
+      joola.query.fetch(self.options.query, function (err, results) {
+        var csvContent = "data:text/csv;charset=utf-8,";
+        var dataString = '';
+        data.push(headers);
+        results[0].documents.forEach(function (doc) {
+          var row = [];
+          dimensions.forEach(function (d) {
+            if (doc[d.key])
+              row.push(doc[d.key]);
+            else
+              row.push('n/a');
+          });
+          metrics.forEach(function (m) {
+            if (doc[m.key])
+              row.push(doc[m.key]);
+            else
+              row.push(0);
+          });
+          data.push(row);
+        });
+        data.forEach(function (infoArray, index) {
+          dataString = infoArray.join(",");
+          csvContent += dataString + '\n';//index < infoArray.length ? dataString + "\n" : dataString;
+        });
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Odobo_Analytics.csv");
+        link.click(); // This will download the data file named "my_data.csv".
+      });
+    };
+
     this.destroy = function () {
       joola.viz.stop(self);
-      Object.keys(self.summaries).forEach(function (key, index) {
-        var summary = self.summaries[key];
-        summary.destroy();
-      });
-
+      if (self.summaries) {
+        Object.keys(self.summaries).forEach(function (key, index) {
+          var summary = self.summaries[key];
+          summary.destroy();
+        });
+      }
       $$(self.options.container).find('table').empty();
     };
 
@@ -38189,7 +38318,21 @@ var Table = module.exports = function (options, callback) {
 
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value change">' + (point && comparePoint ? joola.common.percentageChange(comparePoint.metrics[metrickey], point.metrics[metrickey]) : 'N/A') + '%</td>');
+            var value, cssClass;
+
+            if (point && comparePoint) {
+              value = joola.common.percentageChange(comparePoint.metrics[metrickey], point.metrics[metrickey]);
+              if (value < 0)
+                cssClass = 'negative';
+              else if (value > 0)
+                cssClass = 'positive';
+              else
+                cssClass = 'neutral';
+              value += '%';
+            }
+            else
+              value = 'N/A';
+            var $td = $$('<td class="value change ' + cssClass + '">' + value + '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -38262,7 +38405,22 @@ var Table = module.exports = function (options, callback) {
       self.handlePaging();
     };
 
-    this.done = function () {
+    this.done = function (ctx, messages) {
+      messages.forEach(function (message, messageIndex) {
+        message.metrics.forEach(function (metric, metricIndex) {
+          self.options.query[messageIndex].metrics[metricIndex] = metric;
+        });
+      });
+      if (self.add_metric_picker) {
+        self.options.query[0].metrics.forEach(function (m, i) {
+          if (typeof m !== 'object')
+            m = {key: m};
+          m.collection = m.collection || self.options.query[0].collection;
+          self.options.query[0].metrics[i] = m;
+        });
+        self.add_metric_picker.options.disabled = self.options.query[0].metrics;
+        self.add_metric_picker.markSelected();
+      }
       self.paint();
     };
 
@@ -38345,10 +38503,12 @@ var Table = module.exports = function (options, callback) {
         }
         $th.on('click', function () {
           self.sortIndex = di;
-          Object.keys(self.summaries).forEach(function (key, index) {
-            var summary = self.summaries[key];
-            summary.options.$container.removeClass('sorted');
-          });
+          if (self.summaries) {
+            Object.keys(self.summaries).forEach(function (key, index) {
+              var summary = self.summaries[key];
+              summary.options.$container.removeClass('sorted');
+            });
+          }
 
           self.data[0] = _.sortBy(self.data[0], function (item) {
             return item.dimensions[d.key || d];
@@ -38393,18 +38553,20 @@ var Table = module.exports = function (options, callback) {
                 q.metrics.splice(index, 1);
             });
             var _summaries = {};
-            Object.keys(self.summaries).forEach(function (key) {
-              item = self.summaries[key];
-              if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
-              }
-              else
-                _summaries[key] = self.summaries[key];
-            });
-            self.summaries = _summaries;
-            self.data = [];
-            self.options.paging.currentPage = 1;
-            self.sortIndex--;
-            self.handleMetricBoxes();
+            if (self.summaries) {
+              Object.keys(self.summaries).forEach(function (key) {
+                item = self.summaries[key];
+                if ((item.options.query[0].metrics[0].key || item.options.query[0].metrics[0]) === m.key) {
+                }
+                else
+                  _summaries[key] = self.summaries[key];
+              });
+              self.summaries = _summaries;
+              self.data = [];
+              self.options.paging.currentPage = 1;
+              self.sortIndex--;
+              self.handleMetricBoxes();
+            }
             joola.viz.initialize(self, self.options);
           });
         }
@@ -38433,12 +38595,14 @@ var Table = module.exports = function (options, callback) {
 
         $th.on('click', function () {
           self.sortIndex = lastIndex + mi;
-          Object.keys(self.summaries).forEach(function (key) {
-            var summary = self.summaries[key];
-            summary.options.$container.removeClass('sorted');
-            if (key === (m.key || m))
-              summary.options.$container.addClass('sorted');
-          });
+          if (self.summaries) {
+            Object.keys(self.summaries).forEach(function (key) {
+              var summary = self.summaries[key];
+              summary.options.$container.removeClass('sorted');
+              if (key === (m.key || m))
+                summary.options.$container.addClass('sorted');
+            });
+          }
           self.data[0] = _.sortBy(self.data[0], function (item) {
             return item.metrics[m.key || m];
           });
@@ -38470,6 +38634,9 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.handleMetricBoxes = function () {
+      if (!self.options.summary.enabled)
+        return;
+
       var $html = self.options.$container;
       var $tbody = $html.find('tbody');
       $tbody = $$($tbody);
@@ -38525,6 +38692,7 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.handlePaging = function () {
+
       var $showing = $$(self.options.$container.find('.showing'));
 
       var total = self._data[0].length;
@@ -38574,6 +38742,8 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.summarize = function () {
+      if (!self.options.summary.enabled)
+        return;
       Object.keys(self.summaries).forEach(function (key, mindex) {
         var ref = self.summaries[key];
         var m = self.options.query[0].metrics[mindex];
@@ -38608,6 +38778,14 @@ var Table = module.exports = function (options, callback) {
       //we draw the template into the container
       var $html = $$(self.options.template);
       $$(self.options.container).html($html);
+
+      var $export = $html.find('.export .icon-download');
+      $export.off('click');
+      $export.on('click', function (e) {
+        console.log('click');
+        self.export();
+      });
+
       if (self.options.caption)
         $$(self.options.container).find('.table-caption').text(self.options.caption);
       //visualization specific drawing
@@ -38666,24 +38844,28 @@ var Table = module.exports = function (options, callback) {
           m.collection = m.collection || self.options.query[0].collection;
           self.options.query[0].metrics[i] = m;
         });
-        //console.log(self.options.query[0].metrics);
         self.options.pickers.add_metric.disabled = self.options.query[0].metrics;
-        self.add_metric_picker = new joola.viz.MetricPicker(self.options.pickers.add_metric).on('change', function (metric) {
-          self.options.query.forEach(function (q) {
-            if (metric) {
-              metric.allowremove = true;
-              q.metrics.push(metric);
-            }
+        new joola.viz.MetricPicker(self.options.pickers.add_metric, function (err, ref) {
+          if (err)
+            throw err;
+          self.add_metric_picker = ref;
+        }).on('change', function (metric) {
+            self.options.query.forEach(function (q) {
+              if (metric) {
+                metric.allowremove = true;
+                q.metrics.push(metric);
+              }
+            });
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex++;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
           });
-          self.data = [];
-          self.options.paging.currentPage = 1;
-          self.sortIndex++;
-          self.handleMetricBoxes();
-          joola.viz.initialize(self, self.options);
-        });
       }
       var $thead = $$($html.find('thead'));
       $html.find('table').append($thead);
+
 
       var $tbody = $html.find('tbody');
       $tbody = $$($tbody);
@@ -38883,6 +39065,7 @@ var Timeline = module.exports = function (options, callback) {
       self.primary_metric_container.destroy();
     if (self.secondary_metric_container)
       self.secondary_metric_container.destroy();
+
   };
 
   this.reply = function (data) {
@@ -39201,6 +39384,8 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
+        console.log('draw primary');
+        console.trace();
         self.primary_metric_container = new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,
@@ -39602,7 +39787,6 @@ viz.initialize = function (self, options, callback) {
     }
   }
   if (self.options.query) {
-    //console.log('qqq', self.options.query);
     viz.fetch(self, self.options.query, function () {
       if (callback && typeof callback === 'function')
         return callback(null, self);

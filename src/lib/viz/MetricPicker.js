@@ -38,7 +38,7 @@ var MetricPicker = module.exports = function (options, callback) {
     template: '<div class="jio-metricpicker-wrapper">\n' +
     '  <button class="btn jio-metricpicker-button chevron after bottom">' +
     '   <span class="caption"></span>' +
-    '   <span class="close">×</span>' +
+    '   <span class="close icon-close"></span>' +
     '  </button>' +
     '  <div class="picker-container">' +
     '    <div class="search input-prepend"><input type="text" class="quicksearch" placeholder="Search..."><span class="add-on"><i class="searchicon icon-search"></i></span></div>' +
@@ -108,7 +108,13 @@ var MetricPicker = module.exports = function (options, callback) {
 
               self.emit('change', metric);
             });
-            $ul.append($li);
+            var visible = true;
+            if (metric.hasOwnProperty('visible') && metric.visible !== null)
+              visible = metric.visible;
+            console.log(visible);
+            if (visible)
+              $ul.append($li);
+
           });
 
           $close.on('click', function (e) {

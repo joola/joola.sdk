@@ -39,6 +39,10 @@ var Table = module.exports = function (options, callback) {
       ' <div class="primary-dimension-picker"></div>' +
       ' <div class="add-dimension-picker"></div>' +
       ' <div class="add-metric-picker"></div>' +
+      ' <button class="btn export" style="float:right">' +
+      '   <span class="icon icon-download"></span>' +
+      ' </button>' +
+
       ' <div class="search-wrapper">' +
       '   <input class="search" type="text" placeholder="Search..."/>' +
       ' </div>' +
@@ -98,6 +102,53 @@ var Table = module.exports = function (options, callback) {
     };
     this.update = function (data, alldata) {
 
+    };
+
+    this.export = function (canvas) {
+      var data = [];
+      var dimensions = [self.options.query[0].dimensions[0]];
+      var collection = [self.options.query[0].collection];
+      var metrics = [];
+      var headers = [];
+      self.options.query[0].dimensions.forEach(function (d) {
+        headers.push(d.name || d.key || d);
+        dimensions.push(d);
+      });
+      self.options.query[0].metrics.forEach(function (m) {
+        headers.push(m.name || m.key || m);
+        metrics.push(m);
+      });
+      joola.query.fetch(self.options.query, function (err, results) {
+        var csvContent = "data:text/csv;charset=utf-8,";
+        var dataString = '';
+        data.push(headers);
+        results[0].documents.forEach(function (doc) {
+          var row = [];
+          dimensions.forEach(function (d) {
+            if (doc[d.key])
+              row.push(doc[d.key]);
+            else
+              row.push('n/a');
+          });
+          metrics.forEach(function (m) {
+            if (doc[m.key])
+              row.push(doc[m.key]);
+            else
+              row.push(0);
+          });
+          data.push(row);
+        });
+        data.forEach(function (infoArray, index) {
+          dataString = infoArray.join(",");
+          csvContent += dataString + '\n';//index < infoArray.length ? dataString + "\n" : dataString;
+        });
+
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Odobo_Analytics.csv");
+        link.click(); // This will download the data file named "my_data.csv".
+      });
     };
 
     this.destroy = function () {
@@ -272,11 +323,11 @@ var Table = module.exports = function (options, callback) {
                 cssClass = 'positive';
               else
                 cssClass = 'neutral';
-              value+='%';
+              value += '%';
             }
             else
               value = 'N/A';
-            var $td = $$('<td class="value change '+cssClass+'">' + value + '</td>');
+            var $td = $$('<td class="value change ' + cssClass + '">' + value + '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -722,6 +773,14 @@ var Table = module.exports = function (options, callback) {
       //we draw the template into the container
       var $html = $$(self.options.template);
       $$(self.options.container).html($html);
+
+      var $export = $html.find('.export .icon-download');
+      $export.off('click');
+      $export.on('click', function (e) {
+        console.log('click');
+        self.export();
+      });
+
       if (self.options.caption)
         $$(self.options.container).find('.table-caption').text(self.options.caption);
       //visualization specific drawing
@@ -801,6 +860,7 @@ var Table = module.exports = function (options, callback) {
       }
       var $thead = $$($html.find('thead'));
       $html.find('table').append($thead);
+
 
       var $tbody = $html.find('tbody');
       $tbody = $$($tbody);

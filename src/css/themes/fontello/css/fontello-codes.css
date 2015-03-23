@@ -1,5 +1,6 @@
 
-.help:before { content: '\e800'; } /* '' */
-.icon-close:before { content: '\e803'; } /* '' */
-.sort-desc:before { content: '\e801'; } /* '' */
-.sort-asc:before { content: '\e802'; } /* '' */
+.icon-help:before { content: '\e800'; } /* '' */
+.icon-sort-desc:before { content: '\e801'; } /* '' */
+.icon-sort-asc:before { content: '\e802'; } /* '' */
+.icon-close:before { content: '\e803'; } /* '' */
+.icon-download:before { content: '\e804'; } /* '' */

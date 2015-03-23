@@ -116,7 +116,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
-    this.base_fromdate = self.addDays(this.base_todate, -30);
+    this.base_fromdate = self.addDays(this.base_todate, -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -623,7 +623,7 @@ var DatePicker = module.exports = function (options, callback) {
           self.base_todate.setSeconds(59);
           self.base_todate.setMilliseconds(999);
           self.base_fromdate = new Date(self.base_todate);
-          self.base_fromdate.setDate(self.base_fromdate.getDate() - 30);
+          self.base_fromdate.setDate(self.base_fromdate.getDate() - 90);
           self.base_fromdate.setHours(0);
           self.base_fromdate.setMinutes(0);
           self.base_fromdate.setSeconds(0);

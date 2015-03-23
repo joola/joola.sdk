@@ -537,6 +537,9 @@ var BarTable = module.exports = function (options, callback) {
     $tr.append($td);
     $tbody.append($tr);
     $html.find('table').append($tbody);
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
   };
 
   if (options && options.query && !Array.isArray(options.query))

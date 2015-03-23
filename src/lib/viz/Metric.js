@@ -60,6 +60,8 @@ var Metric = module.exports = function (options, callback) {
     if (Array.isArray(self.options.query))
       _query = _query[0];
 
+    var base, compare, change = 0;
+    var cssClass = '';
     var metrickey = _query.metrics[0].key || _query.metrics[0];
     var metric = data[0].meta[metrickey];
     var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
@@ -81,7 +83,7 @@ var Metric = module.exports = function (options, callback) {
     }
     else if (data.length === 2 && data[1].type == 'compare') {
       $$(self.options.container).find('.summary').show();
-      var base, compare, change = 0;
+
       if (!data[0].missing)
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
@@ -91,11 +93,26 @@ var Metric = module.exports = function (options, callback) {
       else
         change = 'N/A';
 
+
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;';
+        change += '%';
+      }
+      
       $$summary = $$($$(self.options.container).find('.summary'));
       $$summary.html('<span class="base"></span>' +
       '<span class="sep">vs.</span>' +
       '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
       $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
       if (compare) {
@@ -131,12 +148,12 @@ var Metric = module.exports = function (options, callback) {
     }
     else {
       $$(self.options.container).find('.summary').show();
-      var base, compare, change = 0;
+      
       if (!data[0].missing)
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
         compare = data[1].metrics[metrickey];
-      var cssClass = '';
+
       if (base && compare) {
         change = joola.common.percentageChange(compare, base);
         if (change > 0) {
@@ -146,7 +163,7 @@ var Metric = module.exports = function (options, callback) {
           cssClass = 'negative';
         }
         else
-          cssClass = 'neutral;'
+          cssClass = 'neutral;';
         change += '%';
       }
       else
@@ -220,6 +237,9 @@ var Metric = module.exports = function (options, callback) {
         self.options.query.push(_q);
       }
     }
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
   };
 
   if (options && options.query && !Array.isArray(options.query))
