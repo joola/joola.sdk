@@ -104,7 +104,6 @@ viz.initialize = function (self, options, callback) {
     }
   }
   if (self.options.query) {
-    //console.log('qqq', self.options.query);
     viz.fetch(self, self.options.query, function () {
       if (callback && typeof callback === 'function')
         return callback(null, self);
@@ -297,7 +296,7 @@ viz.fetch = function (context, query, callback) {
         });
       }
       if (context.options.done)
-        context.options.done.apply(context, context.data);
+        context.options.done.apply(context, [context.data,messages]);
       if (context.done)
         context.done(context.data, messages);
       return callback(null, context.data);

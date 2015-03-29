@@ -60,6 +60,8 @@ var Metric = module.exports = function (options, callback) {
     if (Array.isArray(self.options.query))
       _query = _query[0];
 
+    var base, compare, change = 0;
+    var cssClass = '';
     var metrickey = _query.metrics[0].key || _query.metrics[0];
     var metric = data[0].meta[metrickey];
     var metricname = metric.name || _query.metrics[0].name || _query.metrics[0];
@@ -79,6 +81,48 @@ var Metric = module.exports = function (options, callback) {
       else if (metric.aggregation === 'avg')
         $$summary.html('Overall avg: ' + joola.common.formatMetric(total, metric) + ' (0%)');
     }
+    else if (data.length === 2 && data[1].type == 'compare') {
+      $$(self.options.container).find('.summary').show();
+
+      if (!data[0].missing)
+        base = data[0].metrics[metrickey];
+      if (!data[1].missing)
+        compare = data[1].metrics[metrickey];
+      if (base && compare)
+        change = joola.common.percentageChange(compare, base) + '%';
+      else
+        change = 'N/A';
+
+
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;';
+        change += '%';
+      }
+      
+      $$summary = $$($$(self.options.container).find('.summary'));
+      $$summary.html('<span class="base"></span>' +
+      '<span class="sep">vs.</span>' +
+      '<span class="compare"></span>');
+      $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
+      $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
+
+      if (compare) {
+        $$(self.options.container).find('.compare').html(joola.common.formatMetric(compare, metric));
+      }
+      else {
+        $$(self.options.container).find('.compare').html('N/A');
+      }
+
+    }
     else if (data.length === 2 && data[1].type === 'overall') {
       $$(self.options.container).find('.summary').show();
       if (!data[0].missing)
@@ -90,7 +134,8 @@ var Metric = module.exports = function (options, callback) {
       if (data[1].type === 'overall') {
         total = data[1].metrics[metrickey];
         var percentage;
-        if (metric.aggregation === 'sum') {
+        metric.aggregation = metric.aggregation || 'sum';
+        if (['sum', 'ucount'].indexOf(metric.aggregation) > -1) {
           percentage = (value / total * 100).toFixed() + '%';
           $$summary.html('% of total: ' + percentage + ' (' + joola.common.formatMetric(total, metric) + ')');
         }
@@ -103,13 +148,24 @@ var Metric = module.exports = function (options, callback) {
     }
     else {
       $$(self.options.container).find('.summary').show();
-      var base, compare, change = 0;
+      
       if (!data[0].missing)
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
         compare = data[1].metrics[metrickey];
-      if (base && compare)
-        change = joola.common.percentageChange(compare, base) + '%';
+
+      if (base && compare) {
+        change = joola.common.percentageChange(compare, base);
+        if (change > 0) {
+          cssClass = 'positive';
+        }
+        else if (change < 0) {
+          cssClass = 'negative';
+        }
+        else
+          cssClass = 'neutral;';
+        change += '%';
+      }
       else
         change = 'N/A';
 
@@ -118,6 +174,7 @@ var Metric = module.exports = function (options, callback) {
       '<span class="sep">vs.</span>' +
       '<span class="compare"></span>');
       $$(self.options.container).find('.value').html(change);
+      $$(self.options.container).find('.value').addClass(cssClass);
       $$(self.options.container).find('.base').html(base ? joola.common.formatMetric(base, metric) : 'N/A');
 
       if (compare) {
@@ -180,6 +237,9 @@ var Metric = module.exports = function (options, callback) {
         self.options.query.push(_q);
       }
     }
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
   };
 
   if (options && options.query && !Array.isArray(options.query))

@@ -126,7 +126,7 @@ Object.defineProperty(Error.prototype, 'toJSON', {
  return result;
  };
  */
-
+/*
 // attach the .equals method to Array's prototype to call it on any array
 Array.prototype.equals = function (array) {
   // if the other array is a falsy value, return
@@ -151,7 +151,7 @@ Array.prototype.equals = function (array) {
   }
   return true;
 };
-
+*/
 Number.prototype.commas = function () {
   var x = this;
   var parts = x.toString().split(".");

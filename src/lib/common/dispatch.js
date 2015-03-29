@@ -84,7 +84,7 @@ dispatch.buildstub = function (callback) {
           });
 
           args = _args;
-          joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
+          //joola.logger.debug('[' + endpoints + ':' + fn + '] called with: ' + JSON.stringify(args));
 
           var _callback = ce.clone(callback);//.clone();
           try {

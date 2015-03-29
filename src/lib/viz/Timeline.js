@@ -70,6 +70,12 @@ var Timeline = module.exports = function (options, callback) {
     joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
+
+    if (self.primary_metric_container)
+      self.primary_metric_container.destroy();
+    if (self.secondary_metric_container)
+      self.secondary_metric_container.destroy();
+
   };
 
   this.reply = function (data) {
@@ -388,6 +394,8 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
+        console.log('draw primary');
+        console.trace();
         self.primary_metric_container = new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,
