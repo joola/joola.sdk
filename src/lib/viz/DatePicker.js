@@ -116,7 +116,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
-    this.base_fromdate = self.addDays(this.base_todate, -90);
+    this.base_fromdate = self.addDays(this.base_todate, options.daysback|| -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -153,10 +153,8 @@ var DatePicker = module.exports = function (options, callback) {
 
   //self.getState(self);
 
-  this.offsetX = 0;
-  this.offsetY = 0;
-  if (options.offsetTop)
-    this.options.offsetTop = options.offsetTop;
+  this.offsetX = options.offsetX || 0;
+  this.offsetY = options.offsetY || 0;
 
   this.verify = function (options, callback) {
     if (callback)
@@ -671,8 +669,8 @@ var DatePicker = module.exports = function (options, callback) {
 
         $picker.show();
         $picker.offset({
-          top: $container.offset().top + $container.height() + (self.options.offsetTop || 1),
-          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
+          top: $container.offset().top + $container.height() - 1 + self.offsetY,
+          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth() + self.offsetX
         });
       }
     });
@@ -713,7 +711,8 @@ var DatePicker = module.exports = function (options, callback) {
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
 
-    return callback(null, self);
+    callback(null, self);
+    return self;
 
   };
 
@@ -765,7 +764,7 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
-    $$(self).trigger("datechange", options);
+    self.emit("datechange", options);
     //$$(joola).trigger("datechange", options);
 
     if (self.options.onUpdate)
@@ -1059,13 +1058,15 @@ joola.events.on('core.init.finish', function () {
             existing.destroy();
           }
         }
+
         //create new
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.DatePicker(options, function (err) {
+        result = new joola.viz.DatePicker(options, function (err, ref) {
           if (err)
             throw err;
+          return callback(null, ref);
           //bartable.draw(options, callback);
         }).options.$container;
       }
