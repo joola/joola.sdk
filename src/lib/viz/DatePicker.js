@@ -116,7 +116,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
-    this.base_fromdate = self.addDays(this.base_todate, -90);
+    this.base_fromdate = self.addDays(this.base_todate, options.daysback|| -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -153,8 +153,8 @@ var DatePicker = module.exports = function (options, callback) {
 
   //self.getState(self);
 
-  this.offsetX = 0;
-  this.offsetY = 0;
+  this.offsetX = options.offsetX || 0;
+  this.offsetY = options.offsetY || 0;
 
   this.verify = function (options, callback) {
     if (callback)
@@ -668,9 +668,10 @@ var DatePicker = module.exports = function (options, callback) {
         self.original_compare_todate = self.applied_compare_todate;
 
         $picker.show();
+        console.log('offset',self.offsetX);
         $picker.offset({
-          top: $container.offset().top + $container.height() - 1,
-          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth()
+          top: $container.offset().top + $container.height() - 1 + self.offsetY,
+          left: $dateboxcontainer.offset().left - $picker.outerWidth() + $dateboxcontainer.outerWidth() + self.offsetX
         });
       }
     });
@@ -711,7 +712,8 @@ var DatePicker = module.exports = function (options, callback) {
     //this.registerDateUpdate(this.updateLabels);
     this.handleChange();
 
-    return callback(null, self);
+    callback(null, self);
+    return self;
 
   };
 
@@ -763,7 +765,7 @@ var DatePicker = module.exports = function (options, callback) {
     if (self.options.canvas) {
       self.options.canvas.emit('datechange', options);
     }
-    $$(self).trigger("datechange", options);
+    self.emit("datechange", options);
     //$$(joola).trigger("datechange", options);
 
     if (self.options.onUpdate)
@@ -968,49 +970,50 @@ var DatePicker = module.exports = function (options, callback) {
 
   //here we go
   /*try {
-    joola.common._extend(self.options, options, true);
-    console.log(self.options);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+   joola.common._extend(self.options, options, true);
+   console.log(self.options);
+   self.verify(self.options, function (err) {
+   if (err)
+   return callback(err);
 
-      self.options.$container = $$(self.options.container);
-      self.markContainer(self.options.$container, [
-        {'type': 'datepicker'},
-        {'uuid': self.uuid},
-        {css: self.options.css}
-      ], function (err) {
-        if (err)
-          return callback(err);
+   self.options.$container = $$(self.options.container);
+   self.markContainer(self.options.$container, [
+   {'type': 'datepicker'},
+   {'uuid': self.uuid},
+   {css: self.options.css}
+   ], function (err) {
+   if (err)
+   return callback(err);
 
-        joola.viz.onscreen.push(self);
-        if (!self.options.canvas) {
-          var elem = self.options.$container.parent();
-          if (elem.attr('jio-type') == 'canvas') {
-            self.options.canvas = $$(elem).Canvas();
-          }
-        }
-        if (self.options.canvas) {
-          self.options.canvas.addVisualization(self);
-        }
-        self.draw(options, function () {
-          joola.events.emit('datepicker.init.finish', self);
-          if (typeof callback === 'function')
-            return callback(null, self);
-        });
-      });
-    });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
+   joola.viz.onscreen.push(self);
+   if (!self.options.canvas) {
+   var elem = self.options.$container.parent();
+   if (elem.attr('jio-type') == 'canvas') {
+   self.options.canvas = $$(elem).Canvas();
+   }
+   }
+   if (self.options.canvas) {
+   self.options.canvas.addVisualization(self);
+   }
+   self.draw(options, function () {
+   joola.events.emit('datepicker.init.finish', self);
+   if (typeof callback === 'function')
+   return callback(null, self);
+   });
+   });
+   });
+   }
+   catch (err) {
+   callback(err);
+   return self.onError(err, callback);
+   }
 
-  //callback(null, self);
-  return self;*/
+   //callback(null, self);
+   return self;*/
 //we call the core initialize option
   joola.viz.initialize(self, options || {});
-  self.draw(self.options,function(){});
+  self.draw(self.options, function () {
+  });
 
   joola.viz.onscreen.push(self);
   if (!self.options.canvas) {
@@ -1056,13 +1059,15 @@ joola.events.on('core.init.finish', function () {
             existing.destroy();
           }
         }
+
         //create new
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.DatePicker(options, function (err) {
+        result = new joola.viz.DatePicker(options, function (err, ref) {
           if (err)
             throw err;
+          return callback(null, ref);
           //bartable.draw(options, callback);
         }).options.$container;
       }
