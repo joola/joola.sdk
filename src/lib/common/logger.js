@@ -9,21 +9,57 @@
  **/
 
 var joola = require('../index');
-  
+
 var logger = exports;
 logger._id = 'logger';
 
 logger._log = function (level, message, callback) {
+  var iLevel = 0;
   switch (level) {
     case 'debug':
+      iLevel = 0;
+      break;
     case 'info':
+      iLevel = 1;
+      break;
     case 'warn':
+      iLevel = 2;
+      break;
     case 'error':
+      iLevel = 3;
       break;
     case 'silly':
+      iLevel = 0;
       level = 'debug';
       break;
     case 'trace':
+      iLevel = 0;
+      level = 'debug';
+      break;
+    default:
+      break;
+  }
+
+  var logLevel = 0;
+  switch (joola.options.debug.level) {
+    case 'debug':
+      logLevel = 0;
+      break;
+    case 'info':
+      logLevel = 1;
+      break;
+    case 'warn':
+      logLevel = 2;
+      break;
+    case 'error':
+      logLevel = 3;
+      break;
+    case 'silly':
+      logLevel = 0;
+      level = 'debug';
+      break;
+    case 'trace':
+      logLevel = 0;
       level = 'debug';
       break;
     default:
@@ -31,6 +67,8 @@ logger._log = function (level, message, callback) {
   }
 
   if (!joola.options.debug.enabled)
+    return;
+  if (iLevel < logLevel)
     return;
 
   if (typeof message === 'object')
