@@ -26,6 +26,8 @@
   "main": "./src/lib/index.js",
   "scripts": {
     "test": "make test",
+    "publish": "npm run publish:do",
+    "publish:do": "npm shrinkwrap && npm publish && rm npm-shrinkwrap.json",
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
