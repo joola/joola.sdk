@@ -31,6 +31,7 @@ viz.Sparkline = require('./Sparkline');
 viz.Metric = require('./Metric');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
+viz.Gauge = require('./Gauge');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');

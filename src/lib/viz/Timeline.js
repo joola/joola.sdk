@@ -31,6 +31,7 @@ var Timeline = module.exports = function (options, callback) {
   this.data = [];
   this.options = {
     legend: true,
+    colors: joola.colors,
     canvas: null,
     template: '<div class="caption"></div>' +
     '<div class="chartwrapper">' +
@@ -304,7 +305,7 @@ var Timeline = module.exports = function (options, callback) {
           name: metric_name,
           data: [],
           yAxis: _yaxis,
-          color: joola.colors[seriesIndex]
+          color: self.options.colors[seriesIndex]
         };
         documents.forEach(function (document, docIndex) {
           var x = document[dimensions[0].key];
@@ -337,6 +338,7 @@ var Timeline = module.exports = function (options, callback) {
         });
       });
     });
+    console.log(series);
     return series;
 
   };
@@ -394,8 +396,6 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
-        console.log('draw primary');
-        console.trace();
         self.primary_metric_container = new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,

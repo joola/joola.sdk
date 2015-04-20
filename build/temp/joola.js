@@ -33092,7 +33092,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.8.4",
+  "version": "0.8.6-develop",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -33117,6 +33117,8 @@ module.exports={
   "main": "./src/lib/index.js",
   "scripts": {
     "test": "make test",
+    "publish": "npm run publish:do",
+    "publish:do": "npm shrinkwrap && npm publish && rm npm-shrinkwrap.json",
     "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | node ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
@@ -34600,7 +34602,7 @@ joola.on('ready', function () {
 });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":99,"./common/api":100,"./common/dispatch":101,"./common/events":102,"./common/globals":103,"./common/index":104,"./common/logger":105,"./common/memory":106,"./common/modifiers":107,"./viz/index":123,"querystring":23,"socket.io-client":42,"url":32}],109:[function(require,module,exports){
+},{"./../../package.json":99,"./common/api":100,"./common/dispatch":101,"./common/events":102,"./common/globals":103,"./common/index":104,"./common/logger":105,"./common/memory":106,"./common/modifiers":107,"./viz/index":124,"querystring":23,"socket.io-client":42,"url":32}],109:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37152,6 +37154,341 @@ joola.events.on('core.init.finish', function () {
  *  Some rights reserved. See LICENSE, AUTHORS.
  **/
 
+var
+  joola = require('../index'),
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  $$ = require('jquery'),
+  _ = require('underscore');
+
+
+var Gauge = module.exports = function (options, callback) {
+  if (!callback)
+    callback = function () {
+    };
+  joola.events.emit('gauge.init.start');
+  var self = this;
+
+  this._id = '_gauge';
+  this.uuid = joola.common.uuid();
+  this.options = {
+    legend: true,
+    limit: 5,
+    colors: joola.colors,
+    container: null,
+    $container: null,
+    query: null,
+    template: '<div jio-domain="joola" jio-type="gauge">\n' +
+    '  <div class="jio-gauge-caption"></div>\n' +
+    '  <div class="jio-gauge-chart thechart"></div>\n' +
+    '</div>'
+  };
+  this.chartDrawn = false;
+  this.realtimeQueries = [];
+
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (!Array.isArray(self.options.query))
+        self.options.query = [self.options.query];
+      if (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1)
+        return 'Please specify a single metric.';
+    }
+    return null;
+  };
+
+  this.destroy = function () {
+    joola.viz.stop(self);
+    $$(self.options.container).empty();
+  };
+
+  this.reply = function (data) {
+    if (self.initialChartDrawn && self.options.query[0].realtime === true && self.options.query[0].interval.indexOf('second') > -1) {
+      self.chart.series.forEach(function (series, serIndex) {
+        series.addPoint({x: new Date(), y: 0}, false, true, false);
+      });
+      self.chart.redraw(true);
+    }
+  };
+
+  this.enter = function (data, alldata) {
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+  };
+
+  this.update = function (data, alldata) {
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+    self.chart.redraw(true);
+  };
+
+  this.exit = function (data, alldata) {
+    //console.log('exit', data);
+  };
+
+  this.done = function (data, raw) {
+    if (self.initialChartDrawn)
+      return;
+    self.initialChartDrawn = true;
+    self.chartData = self.makeChartGaugeSeries(raw);
+    self.paint();
+  };
+
+  this.makeChartGaugeSeries = function (message) {
+    console.log(message);
+    if (message[0].metrics.length === 0) {
+      return [
+        {
+          type: 'line',
+          name: 'no data',
+          data: []
+        }
+      ];
+    }
+    var self = this;
+    var series = [];
+    var seriesIndex = -1;
+
+    message.forEach(function (result, resultIndex) {
+      if (result.documents.length === 0) {
+        result.documents.push({values: {}, fvalues: {}});
+        result.metrics.forEach(function (m) {
+          result.documents[0][m.name] = null;
+          //result.documents[0].fvalues[m.name] = null;
+        });
+      }
+
+      var metrics = result.metrics;
+      var documents = ce.clone(result.documents);
+      //should we fill the date range
+      var query = ce.clone(result.query);
+      var data = [];
+      documents.forEach(function (doc) {
+        data.push(doc[metrics[0].key]);
+      });
+      series[++seriesIndex] = {
+        name: metrics[0].name,
+        data: data,
+        color: self.options.colors[seriesIndex]
+      };
+    });
+    console.log(series);
+    return series;
+  };
+
+  this.paint = function (rescale) {
+    self.chartData.forEach(function (s) {
+      self.chart.addSeries(s);
+    });
+    self.chart.redraw();
+  };
+
+  this.draw = function (options, callback) {
+    self.chartOptions = joola.common._mixin({}, self.options.chart);
+    self.options.$container.empty();
+    self.options.$container.append(self.options.template || self.template());
+    self.options.$container.find('.caption').text(self.options.caption || '');
+
+    self.chartOptions = joola.common._mixin({
+      title: {
+        text: null
+      },
+      chart: {
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        plotBorderWidth: 0,
+        type: 'solidgauge',
+        height: self.options.height || self.options.$container.height() || 250
+      },
+      lang: {
+        noData: 'No data to display'
+      },
+      noData: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '15px',
+          color: '#303030'
+        }
+      },
+      pane: {
+        center: ['50%', '85%'],
+        size: '150%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+          backgroundColor: '#EEE',
+          innerRadius: '60%',
+          outerRadius: '100%',
+          shape: 'arc'
+        }
+      },
+      yAxis: {
+        stops: [
+          [0.1, '#28D8B2'], // green
+          [0.5, '#FBD046'], // yellow
+          [0.9, '#FA6B5B'] // red
+        ],
+        min: 0,
+        max: 150000,
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: {
+          y: -70
+        },
+        labels: {
+          enabled: false,
+          y: 16
+        }
+      },
+      plotOptions: {
+        solidgauge: {
+          dataLabels: {
+            y: 5,
+            borderWidth: 0,
+            useHTML: true
+          }
+        }
+      },
+      series: [{
+        name: 'series',
+        data: [0],
+        dataLabels: {
+          format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+          ('white') + '">{y}</span><br/>'// +
+          //'<span style="font-size:12px;color:silver">km/h</span></div>'
+        }/*,
+        tooltip: {
+          valueSuffix: ' km/h'
+        }*/
+      }],
+      legend: {enabled: false},
+      credits: {enabled: false},
+      exporting: {enabled: true}
+    }, self.options.chart);
+
+    if (!self.options.$container)
+      self.options.$container = $$(self.options.container);
+    self.chartOptions.chart.renderTo = self.options.$container.find('.thechart').get(0);
+    self.chart = new Highcharts.Chart(self.chartOptions);
+    //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
+    self.chartDrawn = true;
+
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
+
+    if (typeof callback === 'function')
+      return callback(null);
+  };
+
+  //here we go
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
+
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
+
+  self.draw(null, function (err, ref) {
+    if (err)
+      return callback(err);
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
+    }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
+
+    //wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, ref);
+  });
+  return self;
+};
+
+joola.events.on('core.init.finish', function () {
+  var found;
+  if (typeof (jQuery) != 'undefined') {
+    $.fn.Gauge = function (options, callback) {
+      if (!options)
+        options = {force: false};
+      else if (!options.hasOwnProperty('force'))
+        options.force = true;
+      var result = null;
+      var uuid = this.attr('jio-uuid');
+      if (!uuid || options.force) {
+        if (options.force && uuid) {
+          var existing = null;
+          found = false;
+          joola.viz.onscreen.forEach(function (viz) {
+            if (viz.uuid == uuid && !found) {
+              found = true;
+              existing = viz;
+            }
+          });
+
+          if (found && existing) {
+            existing.destroy();
+          }
+        }
+        //create new
+        if (!options)
+          options = {};
+        options.container = this.get(0);
+        result = new joola.viz.Gauge(options, function (err, gauge) {
+          if (err)
+            throw err;
+          gauge.draw(options, callback);
+        }).options.$container;
+      }
+      else {
+        //return existing
+        found = false;
+        joola.viz.onscreen.forEach(function (viz) {
+          if (viz.uuid == uuid && !found) {
+            found = true;
+            result = viz;
+          }
+        });
+      }
+      return result;
+    };
+  }
+});
+
+util.inherits(Gauge, events.EventEmitter);
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],115:[function(require,module,exports){
+/**
+ *  @title joola
+ *  @overview the open-source data analytics framework
+ *  @copyright Joola Smart Solutions, Ltd. <info@joo.la>
+ *  @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+ *
+ *  Licensed under GNU General Public License 3.0 or later.
+ *  Some rights reserved. See LICENSE, AUTHORS.
+ **/
+
 var joola = require('../index');
   
 var Geo = module.exports = function (options, callback) {
@@ -37273,7 +37610,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":108}],115:[function(require,module,exports){
+},{"../index":108}],116:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37594,7 +37931,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Metric, events.EventEmitter);
-},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],116:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],117:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37893,7 +38230,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(MetricPicker, events.EventEmitter);
-},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"util":34}],117:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"util":34}],118:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38188,7 +38525,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":108,"underscore":98}],118:[function(require,module,exports){
+},{"../index":108,"underscore":98}],119:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38201,6 +38538,10 @@ joola.events.on('core.init.finish', function () {
 
 var
   joola = require('../index'),
+  events = require('events'),
+  util = require('util'),
+  ce = require('cloneextend'),
+  $$ = require('jquery'),
   _ = require('underscore');
 
 
@@ -38216,141 +38557,221 @@ var Pie = module.exports = function (options, callback) {
   this.options = {
     legend: true,
     limit: 5,
+    colors: joola.colors,
     container: null,
     $container: null,
-    query: null
+    query: null,
+    template: '<div jio-domain="joola" jio-type="pie">\n' +
+    '  <div class="jio-pie-caption"></div>\n' +
+    '  <div class="jio-pie-chart thechart"></div>\n' +
+    '</div>'
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
 
-  this.verify = function (options, callback) {
-    return this._super.verify(options, callback);
+  this.verify = function (options) {
+    if (!self.options)
+      return 'Failed to verify [options].';
+    if (self.options.query) {
+      if (!Array.isArray(self.options.query))
+        self.options.query = [self.options.query];
+      if (self.options.query[0].dimensions.length === 0 || self.options.query[0].dimensions.length > 1)
+        return 'Please specify a single dimension.';
+      if (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1)
+        return 'Please specify a single metric.';
+    }
+    return null;
+  };
+
+  this.destroy = function () {
+    joola.viz.stop(self);
+    $$(self.options.container).empty();
+  };
+
+  this.reply = function (data) {
+    if (self.initialChartDrawn && self.options.query[0].realtime === true && self.options.query[0].interval.indexOf('second') > -1) {
+      self.chart.series.forEach(function (series, serIndex) {
+        series.addPoint({x: new Date(), y: 0}, false, true, false);
+      });
+      self.chart.redraw(true);
+    }
+  };
+
+  this.enter = function (data, alldata) {
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+  };
+
+  this.update = function (data, alldata) {
+    if (self.chart.series.length === 0)
+      return;
+    if (self.data.length > 1)
+      return;
+    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+      var point = data[0];
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
+    });
+    self.chart.redraw(true);
+  };
+
+  this.exit = function (data, alldata) {
+    //console.log('exit', data);
+  };
+
+  this.done = function (data, raw) {
+    if (self.initialChartDrawn)
+      return;
+    self.initialChartDrawn = true;
+    self.chartData = self.makeChartPieSeries(raw);
+    self.paint();
+  };
+
+  this.makeChartPieSeries = function (message) {
+    if (message[0].metrics.length === 0) {
+      return [
+        {
+          type: 'line',
+          name: 'no data',
+          data: []
+        }
+      ];
+    }
+    var self = this;
+    var series = [];
+    var seriesIndex = -1;
+
+    message.forEach(function (result, resultIndex) {
+      if (result.documents.length === 0) {
+        result.documents.push({values: {}, fvalues: {}});
+        result.dimensions.forEach(function (d) {
+          result.documents[0][d.name] = null;
+          //result.documents[0].fvalues[d.name] = null;
+        });
+        result.metrics.forEach(function (m) {
+          result.documents[0][m.name] = null;
+          //result.documents[0].fvalues[m.name] = null;
+        });
+      }
+
+      var dimensions = result.dimensions;
+      var metrics = result.metrics;
+      var documents = ce.clone(result.documents);
+      //should we fill the date range
+      var query = ce.clone(result.query);
+      var data = [];
+      documents.forEach(function (doc, i) {
+        data.push({
+          name: doc[dimensions[0].key],
+          y: doc[metrics[0].key],
+          color: self.options.colors[i]
+        });
+      });
+      series[++seriesIndex] = {
+        name: metrics[0].name,
+        data: data
+      };
+    });
+    return series;
+  };
+
+  this.paint = function (rescale) {
+    self.chartData.forEach(function (s) {
+      self.chart.addSeries(s);
+    });
+    self.chart.redraw();
   };
 
   this.draw = function (options, callback) {
-    self.stop();
-    return this._super.fetch(this.options.query, function (err, message) {
-      if (err) {
-        if (typeof callback === 'function')
-          return callback(err);
+    self.chartOptions = joola.common._mixin({}, self.options.chart);
+    self.options.$container.empty();
+    self.options.$container.append(self.options.template || self.template());
+    self.options.$container.find('.caption').text(self.options.caption || '');
 
-        return;
-      }
+    self.chartOptions = joola.common._mixin({
+      title: {
+        text: null
+      },
+      chart: {
+        backgroundColor: 'transparent',
+        /*marginTop: 0,
+         marginBottom: 0,
+         marginLeft: 0,
+         marginRight: 0,
+         spacingTop: 0,
+         spacingBottom: 0,
+         spacingLeft: 0,
+         spacingRight: 0,*/
+        borderWidth: 0,
+        plotBorderWidth: 0,
+        type: 'pie',
+        height: self.options.height || self.options.$container.height() || 250,
+        //width: self.options.width || self.options.$container.width() || null
+      },
+      lang: {
+        noData: 'No data to display'
+      },
+      noData: {
+        style: {
+          fontWeight: 'bold',
+          fontSize: '15px',
+          color: '#303030'
+        }
+      },
+      series: [],
 
-      if (message.realtime && self.realtimeQueries.indexOf(message.realtime) == -1)
-        self.realtimeQueries.push(message.realtime);
+      legend: {enabled: false},
+      credits: {enabled: false},
+      exporting: {enabled: true},
+    }, self.options.chart);
 
-      var series = self._super.makePieChartSeries(message.dimensions, message.metrics, message.documents);
-      if (!self.chartDrawn) {
-        if (self.options.onDraw)
-          window[self.options.onDraw](self);
-        self.options.$container.append(self.options.template || Pie.template());
-        self.options.$container.find('.caption').text(self.options.caption || '');
-        var chartOptions = joola.common._mixin({
-          title: {
-            text: null
-          },
-          chart: {
-            /*marginTop: 0,
-             marginBottom: 0,
-             marginLeft: 0,
-             marginRight: 0,
-             spacingTop: 0,
-             spacingBottom: 0,
-             spacingLeft: 0,
-             spacingRight: 0,*/
-            borderWidth: 0,
-            plotBorderWidth: 0,
-            type: 'pie',
-            backgroundColor: 'transparent'
-          },
-          series: series,
+    if (!self.options.$container)
+      self.options.$container = $$(self.options.container);
+    self.chartOptions.chart.renderTo = self.options.$container.find('.thechart').get(0);
+    self.chart = new Highcharts.Chart(self.chartOptions);
+    //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
+    self.chartDrawn = true;
 
-          legend: {enabled: self.options.legend},
-          credits: {enabled: false},
-          exporting: {enabled: true},
-          plotOptions: {
-            pie: {
-              allowPointSelect: true,
-              cursor: 'pointer',
-              dataLabels: {
-                enabled: false,
-                color: '#000000',
-                connectorColor: '#000000',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-              },
-              showInLegend: true
-            }
-          }
-        }, self.options.chart);
-        if (self.options.caption)
-          self.options.$container.find('.jio-pie-caption').text(self.options.caption);
-        self.chart = self.options.$container.find('.jio-pie-chart').highcharts(chartOptions);
+    if (self.options.onDraw)
+      window[self.options.onDraw](self.options.container, self);
 
-        self.chart = self.chart.highcharts();
-        self.chartDrawn = true;
-        if (typeof callback === 'function')
-          return callback(null);
-      }
-      else if (self.options.query.realtime) {
-        if (self.options.onUpdate)
-          window[self.options.onUpdate](self);
-        //we're dealing with realtime
-        series.forEach(function (ser, serIndex) {
-          self.chart.series[serIndex].points.forEach(function (point) {
-            var exist = _.find(ser.data, function (p) {
-              return p[0] == point.name;
-            });
-            if (exist)
-              point.update(exist[1], false);
-            else
-              point.remove(false);
-          });
-          ser.data.forEach(function (point) {
-            var exist = _.find(self.chart.series[serIndex].points, function (p) {
-              return p.name == point[0];
-            });
-            if (!exist)
-              self.chart.series[serIndex].addPoint([point[0], point[1]], false, false);
-          });
-        });
-        self.chart.redraw();
-      }
-    });
+    if (typeof callback === 'function')
+      return callback(null);
   };
 
   //here we go
-  try {
-    joola.common.mixin(self.options, options, true);
-    self.verify(self.options, function (err) {
-      if (err)
-        return callback(err);
+  if (options && options.query && !Array.isArray(options.query))
+    options.query = [options.query];
 
-      self.options.$container = $(self.options.container);
-      self.markContainer(self.options.$container, {
-        attr: [
-          {'type': 'pie'},
-          {'uuid': self.uuid},
-          {css: self.options.css}
-        ],
-        css: self.options.css}, function (err) {
-        if (err)
-          return callback(err);
+  //we call the core initialize option
+  joola.viz.initialize(self, options || {});
 
-        joola.viz.onscreen.push(self);
+  self.draw(null, function (err, ref) {
+    if (err)
+      return callback(err);
+    joola.viz.onscreen.push(self);
+    if (!self.options.canvas) {
+      var elem = $$(self.options.$container).parent();
+      if (elem.attr('jio-type') == 'canvas') {
+        self.options.canvas = $$(elem).Canvas();
+      }
+    }
+    if (self.options.canvas) {
+      self.options.canvas.addVisualization(self);
+    }
 
-        joola.events.emit('pie.init.finish', self);
-        if (typeof callback === 'function')
-          return callback(null, self);
-      });
-    });
-  }
-  catch (err) {
-    callback(err);
-    return self.onError(err, callback);
-  }
-
-  //callback(null, self);
+    //wrap up
+    self.initialized = true;
+    if (typeof callback === 'function')
+      return callback(null, ref);
+  });
   return self;
 };
 
@@ -38404,15 +38825,8 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-Pie.template = function (options) {
-  var html = '<div jio-domain="joola" jio-type="pie">\n' +
-    '  <div class="jio-pie-caption"></div>\n' +
-    '  <div class="jio-pie-chart"></div>\n' +
-    '</div>';
-  return html;
-};
-
-},{"../index":108,"underscore":98}],119:[function(require,module,exports){
+util.inherits(Pie, events.EventEmitter);
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],120:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -38632,7 +39046,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":108,"underscore":98}],120:[function(require,module,exports){
+},{"../index":108,"underscore":98}],121:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38887,7 +39301,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":108}],121:[function(require,module,exports){
+},{"../index":108}],122:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -39874,7 +40288,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(Table, events.EventEmitter);
 
-},{"../index":108,"async":2,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],122:[function(require,module,exports){
+},{"../index":108,"async":2,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],123:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -39908,6 +40322,7 @@ var Timeline = module.exports = function (options, callback) {
   this.data = [];
   this.options = {
     legend: true,
+    colors: joola.colors,
     canvas: null,
     template: '<div class="caption"></div>' +
     '<div class="chartwrapper">' +
@@ -40181,7 +40596,7 @@ var Timeline = module.exports = function (options, callback) {
           name: metric_name,
           data: [],
           yAxis: _yaxis,
-          color: joola.colors[seriesIndex]
+          color: self.options.colors[seriesIndex]
         };
         documents.forEach(function (document, docIndex) {
           var x = document[dimensions[0].key];
@@ -40214,6 +40629,7 @@ var Timeline = module.exports = function (options, callback) {
         });
       });
     });
+    console.log(series);
     return series;
 
   };
@@ -40271,8 +40687,6 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
-        console.log('draw primary');
-        console.trace();
         self.primary_metric_container = new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,
@@ -40567,7 +40981,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Timeline, events.EventEmitter);
-},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":97,"underscore":98,"util":34}],123:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":97,"underscore":98,"util":34}],124:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -40601,6 +41015,7 @@ viz.Sparkline = require('./Sparkline');
 viz.Metric = require('./Metric');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
+viz.Gauge = require('./Gauge');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');
@@ -40950,4 +41365,4 @@ viz.destroy = function (self, vizOptions) {
  }
  });
  });*/
-},{"../index":108,"./BarTable":109,"./Canvas":110,"./DatePicker":111,"./DimensionPicker":112,"./FilterBox":113,"./Geo":114,"./Metric":115,"./MetricPicker":116,"./MiniTable":117,"./Pie":118,"./PunchCard":119,"./Sparkline":120,"./Table":121,"./Timeline":122,"async":2,"cloneextend":35,"jquery":40,"underscore":98}]},{},[108])
+},{"../index":108,"./BarTable":109,"./Canvas":110,"./DatePicker":111,"./DimensionPicker":112,"./FilterBox":113,"./Gauge":114,"./Geo":115,"./Metric":116,"./MetricPicker":117,"./MiniTable":118,"./Pie":119,"./PunchCard":120,"./Sparkline":121,"./Table":122,"./Timeline":123,"async":2,"cloneextend":35,"jquery":40,"underscore":98}]},{},[108])
