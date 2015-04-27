@@ -34,9 +34,9 @@ var Pie = module.exports = function (options, callback) {
     $container: null,
     query: null,
     template: '<div jio-domain="joola" jio-type="pie">\n' +
-    '  <div class="jio-pie-caption"></div>\n' +
-    '  <div class="jio-pie-chart thechart"></div>\n' +
-    '</div>'
+      '  <div class="jio-pie-caption"></div>\n' +
+      '  <div class="jio-pie-chart thechart"></div>\n' +
+      '</div>'
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -88,9 +88,21 @@ var Pie = module.exports = function (options, callback) {
       return;
     Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
       var point = data[0];
-      var series = self.chart.series[pointIndex];
-      series.data[series.data.length - 1].update(point.metrics[key]);
+      //var series = self.chart.series[pointIndex];
+      self.chart.series.forEach(function (series) {
+        var dm_value = point.raw[self.options.query[0].dimensions[0].key || self.options.query[0].dimensions[0]];
+        var _data = [];
+        series.data.forEach(function (d, i) {
+          if (d.name === dm_value) {
+            _data.push(point.metrics[key]);
+          }
+          else
+            _data.push(series.data[i].y);
+        });
+        series.setData(_data, false);
+      });
     });
+
     self.chart.redraw(true);
   };
 

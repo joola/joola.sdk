@@ -38,7 +38,6 @@ var Sparkline = module.exports = function (options, callback) {
     self.stop();
     return this._super.fetch(self, this.options.query, function (err, message) {
       if (err) {
-        console.log('err', err);
         if (typeof callback === 'function')
           return callback(err);
         //else
@@ -181,7 +180,6 @@ var Sparkline = module.exports = function (options, callback) {
         if (self.options.canvas) {
           self.options.canvas.addVisualization(self);
           self.options.canvas.on('datechange', function (dates) {
-            console.log('sparkline', 'datechange', dates);
 
             //let's change our query and fetch again
             self.options.query.timeframe = {};

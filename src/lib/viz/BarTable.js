@@ -171,7 +171,6 @@ var BarTable = module.exports = function (options, callback) {
                 $tr.removeClass('active');
               else
                 $tr.addClass('active');
-              console.log('emit');
               self.emit('select', [point]);
               if (self.options.select)
                 self.options.select.apply(this, [point]);

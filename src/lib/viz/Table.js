@@ -779,7 +779,6 @@ var Table = module.exports = function (options, callback) {
       var $export = $html.find('.export .icon-download');
       $export.off('click');
       $export.on('click', function (e) {
-        console.log('click');
         self.export();
       });
 

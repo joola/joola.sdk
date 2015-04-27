@@ -34,9 +34,9 @@ var Gauge = module.exports = function (options, callback) {
     $container: null,
     query: null,
     template: '<div jio-domain="joola" jio-type="gauge">\n' +
-    '  <div class="jio-gauge-caption"></div>\n' +
-    '  <div class="jio-gauge-chart thechart"></div>\n' +
-    '</div>'
+      '  <div class="jio-gauge-caption"></div>\n' +
+      '  <div class="jio-gauge-chart thechart"></div>\n' +
+      '</div>'
   };
   this.chartDrawn = false;
   this.realtimeQueries = [];
@@ -105,7 +105,6 @@ var Gauge = module.exports = function (options, callback) {
   };
 
   this.makeChartGaugeSeries = function (message) {
-    console.log(message);
     if (message[0].metrics.length === 0) {
       return [
         {
@@ -139,10 +138,13 @@ var Gauge = module.exports = function (options, callback) {
       series[++seriesIndex] = {
         name: metrics[0].name,
         data: data,
-        color: self.options.colors[seriesIndex]
+        color: self.options.colors[seriesIndex],
+        dataLabels: {
+          format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+            ('white') + '">' + joola.common.formatMetric(data[0], self.options.query[0].metrics[0]) + '</span><br/>'
+        }
       };
     });
-    console.log(series);
     return series;
   };
 
@@ -221,18 +223,16 @@ var Gauge = module.exports = function (options, callback) {
           }
         }
       },
-      series: [{
-        name: 'series',
-        data: [0],
-        dataLabels: {
-          format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-          ('white') + '">{y}</span><br/>'// +
-          //'<span style="font-size:12px;color:silver">km/h</span></div>'
-        }/*,
-        tooltip: {
-          valueSuffix: ' km/h'
-        }*/
-      }],
+      series: [
+        {
+          name: 'series',
+          data: [0],
+          dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+              ('white') + '">{y}</span><br/>'
+          }
+        }
+      ],
       legend: {enabled: false},
       credits: {enabled: false},
       exporting: {enabled: true}

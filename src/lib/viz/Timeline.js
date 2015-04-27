@@ -338,9 +338,7 @@ var Timeline = module.exports = function (options, callback) {
         });
       });
     });
-    console.log(series);
     return series;
-
   };
 
   this.paint = function (rescale) {
