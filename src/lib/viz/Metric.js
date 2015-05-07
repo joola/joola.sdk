@@ -69,6 +69,7 @@ var Metric = module.exports = function (options, callback) {
       self.options.enter.apply(self, [data, alldata]);
 
     var value, $$summary, total;
+
     if (data.length === 1) {
       if (self.options.query[0].filter && self.options.query[0].filter.length > 0)
         $$(self.options.container).find('.summary').show();
@@ -106,7 +107,7 @@ var Metric = module.exports = function (options, callback) {
           cssClass = 'neutral;';
         change += '%';
       }
-      
+
       $$summary = $$($$(self.options.container).find('.summary'));
       $$summary.html('<span class="base"></span>' +
       '<span class="sep">vs.</span>' +
@@ -148,7 +149,7 @@ var Metric = module.exports = function (options, callback) {
     }
     else {
       $$(self.options.container).find('.summary').show();
-      
+
       if (!data[0].missing)
         base = data[0].metrics[metrickey];
       if (!data[1].missing)
