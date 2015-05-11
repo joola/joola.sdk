@@ -14,7 +14,7 @@ var
   util = require('util'),
   ce = require('cloneextend'),
   joola = require('../index'),
-  $$ = require('jquery');
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow);
 
 var DimensionPicker = module.exports = function (options, callback) {
   if (!callback)

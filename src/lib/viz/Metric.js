@@ -13,7 +13,7 @@ var
   util = require('util'),
   ce = require('cloneextend'),
   joola = require('../index'),
-  $$ = require('jquery'),
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow),
   _ = require('underscore');
 
 var Metric = module.exports = function (options, callback) {

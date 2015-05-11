@@ -10,7 +10,7 @@
 
 var
   joola = require('../index'),
-  $$ = require('jquery'),
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow),
   events = require('events'),
   ce = require('cloneextend'),
   util = require('util'),

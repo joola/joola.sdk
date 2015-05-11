@@ -13,7 +13,7 @@ var
   events = require('events'),
   util = require('util'),
   ce = require('cloneextend'),
-  $$ = require('jquery'),
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow),
   _ = require('underscore');
 
 

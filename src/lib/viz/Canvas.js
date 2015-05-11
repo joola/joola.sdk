@@ -14,7 +14,7 @@ var
   util = require('util'),
   _ = require('underscore'),
   ce = require('cloneextend'),
-  $$ = require('jquery');
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow);
 
 var Canvas = module.exports = function (options, callback) {
   if (!callback)

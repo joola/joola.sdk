@@ -10,7 +10,7 @@
 
 var
   joola = require('../index'),
-  $$ = require('jquery'),
+  $$ = require('jquery')(require('jsdom').jsdom().parentWindow),
   _ = require('underscore');
 
 var FilterBox = module.exports = function (options, callback) {
