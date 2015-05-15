@@ -14,7 +14,7 @@ var
   util = require('util'),
   ce = require('cloneextend'),
   joola = require('../index'),
-  $$ = require('jquery')(require('jsdom').jsdom().parentWindow);
+  $$ = require('jquery');
 
 var MetricPicker = module.exports = function (options, callback) {
   if (!callback)

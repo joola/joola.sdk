@@ -59,7 +59,9 @@ joola.emit = function (event, message) {
 };
 joola.api = require('./common/api');
 joola.state = {};
-joola.viz = require('./viz/index');
+
+if (isBrowser())
+  joola.viz = require('./viz/index');
 
 joola.VERSION = require('./../../package.json').version;
 joola._token = null;

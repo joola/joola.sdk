@@ -13,7 +13,7 @@ var
   async = require('async'),
   ce = require('cloneextend'),
   _ = require('underscore'),
-  $$ = require('jquery')(require('jsdom').jsdom().parentWindow);
+  $$ = require('jquery');
 
 var viz = exports;
 viz._id = 'viz';

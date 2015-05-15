@@ -13,7 +13,7 @@ var
   util = require('util'),
 
   joola = require('../index'),
-  $$ = require('jquery')(require('jsdom').jsdom().parentWindow),
+  $$ = require('jquery'),
   _ = require('underscore');
 
 var DatePicker = module.exports = function (options, callback) {
