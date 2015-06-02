@@ -162,6 +162,9 @@ var Timeline = module.exports = function (options, callback) {
     self.initialChartDrawn = true;
     self.chartData = self.makeChartTimelineSeries(raw);
     self.paint();
+
+    if (self.options.onUpdate)
+      window[self.options.onUpdate](self.options.container, self, self.chart.series);
   };
 
   this.makeChartTimelineSeries = function (message) {
@@ -302,6 +305,8 @@ var Timeline = module.exports = function (options, callback) {
           });
         }
         series[++seriesIndex] = {
+          key: metric.key,
+          _name: metric.name,
           name: metric_name,
           data: [],
           yAxis: _yaxis,

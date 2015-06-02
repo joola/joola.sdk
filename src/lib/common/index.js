@@ -293,5 +293,5 @@ common.formatDate = function (date) {
     return formatString;
   };
 
-  return format(date, 'mmm dd, yyyy');
+  return format(date, joola.options.dateFormat || 'mmm dd, yyyy');
 };

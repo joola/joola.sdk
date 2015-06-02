@@ -162,7 +162,6 @@ var DatePicker = module.exports = function (options, callback) {
     return null;
   };
 
-
   this.template = function () {
     var bindKey = function (btn) {
       var $btn = $$(btn);
