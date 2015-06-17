@@ -42,15 +42,38 @@ module.exports = function (grunt) {
         }
       }
     },
+    watch: {
+      scripts: {
+        files: ['./src/**/*.js'],
+        tasks: ['dev'],
+        options: {
+          spawn: false
+        }
+      },
+      css: {
+        files: ['./src/**/*.css'],
+        tasks: ['css'],
+        options: {
+          spawn: false
+        }
+      }
+    },
     watchify: {
       options: {
         keepalive: true,
         verbose: true,
-        debug: true
+        debug: true,
+
+        callback: function (b) {
+          // configure the browserify instance here
+          b.add('./build/temp/vendor.js', {expose: 'Highcharts'});
+          b.require('./build/temp/vendor.js', {expose: 'Highcharts'});
+          // return it
+          return b;
+        }
       },
       all: {
-        src: ['./build/temp/vendor.js', './src/lib/index.js'],
-
+        src: ['./src/lib/index.js'],
         dest: 'build/release/joola.js'
       }
     },
@@ -105,7 +128,7 @@ module.exports = function (grunt) {
     cssmin: {
       options: {
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-          '<%= grunt.template.today("yyyy-mm-dd") %> */',
+        '<%= grunt.template.today("yyyy-mm-dd") %> */',
         keepSpecialComments: 0
       },
       my_target: {
@@ -178,8 +201,9 @@ module.exports = function (grunt) {
       grunt.loadNpmTasks(key);
   }
 
-  grunt.registerTask('default', [ 'clean', 'http', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
-  grunt.registerTask('dev', ['connect', 'watchify']);
+  grunt.registerTask('default', ['clean', 'http', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
+  grunt.registerTask('dev', ['short', 'watch']);
+  grunt.registerTask('short', ['browserify', 'concat', 'copy']);
   grunt.registerTask('css', ['concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);
