@@ -68,11 +68,11 @@ joola._token = null;
 joola._apitoken = null;
 
 require('./common/modifiers');
-
+  
 Object.defineProperty(joola, 'TOKEN', {
   get: function () {
     return joola._token;
-  },
+  }, 
   set: function (value) {
     joola._token = value;
     joola.events.emit('core.init.finish');
