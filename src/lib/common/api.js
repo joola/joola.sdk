@@ -303,10 +303,17 @@ joola.events.on('rpc:start', function () {
   if (!joola.usage)
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls++;
+
+  joola.events.emit('rpc:event', 'start');
 });
 
 joola.events.on('rpc:done', function () {
   if (!joola.usage)
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
+
+  if (joola.usage.currentCalls < 0)
+    joola.usage.currentCalls = 0;
+
+  joola.events.emit('rpc:event', 'done');
 });
