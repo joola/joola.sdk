@@ -284,17 +284,17 @@ api.getJSON = function (options, objOptions, callback) {
 
     objOptions._path = options.path;
 
-    joola.io.socket.emit(routeID, objOptions);
+    joola.io.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
     var shouldOn = objOptions && (objOptions.realtime || (objOptions.options && Array.isArray(objOptions.options) && objOptions.options.length > 0 && objOptions.options[0].realtime));
     if (objOptions && objOptions.options && objOptions.options.realtime)
       shouldOn = true;
     if (shouldOn) {
-      joola.io.socket.on(routeID + ':done', processResponse);
+      joola.io.on(routeID + ':done', processResponse);
     }
     else {
-      joola.io.socket.once(routeID + ':done', processResponse);
+      joola.io.once(routeID + ':done', processResponse);
     }
   }
 };
