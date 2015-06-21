@@ -33092,7 +33092,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.8.6-develop",
+  "version": "0.8.7-develop",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -33126,6 +33126,7 @@ module.exports={
     "cloneextend": "^0.0.3",
     "deep-extend": "^0.2.11",
     "eventemitter2": "~0.4.13",
+
     "jquery": "^2.1.3",
     "jquery-ui": "^1.10.5",
     "jsdom": "^3.1.2",
@@ -33144,6 +33145,7 @@ module.exports={
     "grunt-contrib-copy": "~0.5.0",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-css": "~0.5.4",
     "grunt-http": "^1.4.2",
     "grunt-mocha": "~0.4.10",
@@ -35265,7 +35267,9 @@ var Canvas = module.exports = function (options, callback) {
     metrics: [],
     dimensions: [],
     filters: [],
-    state: {}
+    state: {},
+    overlay: null,
+    $overlay: null
   };
 
   this.verify = function (options) {
@@ -35391,7 +35395,10 @@ var Canvas = module.exports = function (options, callback) {
         self.options.filterbox.ref = ref;
       });
     }
-    
+
+    if (self.options.overlay)
+      self.options.overlay = $(self.options.overlay.container);
+
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
@@ -35545,7 +35552,7 @@ var Canvas = module.exports = function (options, callback) {
             self.emit('removefilter', key);
           });
           $filter.append($inner);
-          
+
           $filter.append($close);
           if (self.options.filterbox && self.options.filterbox.ref)
             self.options.filterbox.ref.options.$container.find('.filterbox').append($filter);

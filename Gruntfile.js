@@ -42,6 +42,22 @@ module.exports = function (grunt) {
         }
       }
     },
+    watch: {
+      scripts: {
+        files: ['./src/**/*.js'],
+        tasks: ['build'],
+        options: {
+          spawn: false
+        }
+      },
+      css: {
+        files: ['./src/**/*.css'],
+        tasks: ['cssmin'],
+        options: {
+          spawn: false
+        }
+      }
+    },
     watchify: {
       options: {
         keepalive: true,
@@ -105,7 +121,7 @@ module.exports = function (grunt) {
     cssmin: {
       options: {
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-          '<%= grunt.template.today("yyyy-mm-dd") %> */',
+        '<%= grunt.template.today("yyyy-mm-dd") %> */',
         keepSpecialComments: 0
       },
       my_target: {
@@ -178,8 +194,9 @@ module.exports = function (grunt) {
       grunt.loadNpmTasks(key);
   }
 
-  grunt.registerTask('default', [ 'clean', 'http', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
-  grunt.registerTask('dev', ['connect', 'watchify']);
+  grunt.registerTask('default', ['clean', 'http', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
+  grunt.registerTask('build', ['browserify', 'concat', 'copy']);
+  grunt.registerTask('dev', ['build', 'cssmin','watch']);
   grunt.registerTask('css', ['concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);

@@ -32,7 +32,9 @@ var Canvas = module.exports = function (options, callback) {
     metrics: [],
     dimensions: [],
     filters: [],
-    state: {}
+    state: {},
+    overlay: null,
+    $overlay: null
   };
 
   this.verify = function (options) {
@@ -158,7 +160,10 @@ var Canvas = module.exports = function (options, callback) {
         self.options.filterbox.ref = ref;
       });
     }
-    
+
+    if (self.options.overlay)
+      self.options.overlay = $(self.options.overlay.container);
+
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
@@ -312,7 +317,7 @@ var Canvas = module.exports = function (options, callback) {
             self.emit('removefilter', key);
           });
           $filter.append($inner);
-          
+
           $filter.append($close);
           if (self.options.filterbox && self.options.filterbox.ref)
             self.options.filterbox.ref.options.$container.find('.filterbox').append($filter);
