@@ -27,7 +27,7 @@ var DatePicker = module.exports = function (options, callback) {
   var self = this;
 
   this.addDays = function (o, days) {
-// keep in mind, months in javascript are 0-11
+   // keep in mind, months in javascript are 0-11
     return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
   };
 

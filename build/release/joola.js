@@ -37043,17 +37043,17 @@ api.getJSON = function (options, objOptions, callback) {
 
     objOptions._path = options.path;
 
-    joola.io.socket.emit(routeID, objOptions);
+    joola.io.emit(routeID, objOptions);
     joola.events.emit('rpc:start', 1);
     joola.events.emit('bandwidth', lengthInUtf8Bytes(JSON.stringify(objOptions)));
     var shouldOn = objOptions && (objOptions.realtime || (objOptions.options && Array.isArray(objOptions.options) && objOptions.options.length > 0 && objOptions.options[0].realtime));
     if (objOptions && objOptions.options && objOptions.options.realtime)
       shouldOn = true;
     if (shouldOn) {
-      joola.io.socket.on(routeID + ':done', processResponse);
+      joola.io.on(routeID + ':done', processResponse);
     }
     else {
-      joola.io.socket.once(routeID + ':done', processResponse);
+      joola.io.once(routeID + ':done', processResponse);
     }
   }
 };
@@ -37062,12 +37062,19 @@ joola.events.on('rpc:start', function () {
   if (!joola.usage)
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls++;
+
+  joola.events.emit('rpc:event', 'start');
 });
 
 joola.events.on('rpc:done', function () {
   if (!joola.usage)
     joola.usage = {currentCalls: 0};
   joola.usage.currentCalls--;
+
+  if (joola.usage.currentCalls < 0)
+    joola.usage.currentCalls = 0;
+
+  joola.events.emit('rpc:event', 'done');
 });
 },{"../index":108,"http":13,"https":17,"querystring":23,"url":32}],101:[function(require,module,exports){
 /**
@@ -37931,11 +37938,11 @@ joola._token = null;
 joola._apitoken = null;
 
 require('./common/modifiers');
-
+  
 Object.defineProperty(joola, 'TOKEN', {
   get: function () {
     return joola._token;
-  },
+  }, 
   set: function (value) {
     joola._token = value;
     joola.events.emit('core.init.finish');
@@ -38035,31 +38042,32 @@ joola.init = function (options, callback) {
     throw new Error('joola host not specified');
 
   var io = require('socket.io-client');
-  joola.io = io;
-  joola.io.socket = joola.io.connect(joola.options.host);
-  joola.io.socket.on('event', function (data) {
-  });
-  joola.io.socket.on('disconnect', function (reason) {
+  joola.io = io.connect(joola.options.host, {'force new connection': true });
+  joola.io.on('error', function (reason) {
     joola.connected = false;
     joola.emit('disconnected', reason);
   });
-  joola.io.socket.on('connect_error', function (err) {
+  joola.io.on('disconnect', function (reason) {
+    joola.connected = false;
+    joola.emit('disconnected', reason);
+  });
+  joola.io.on('connect_error', function (err) {
     joola.connected = false;
     if (!joola.online)
       throw new Error('Failed to connect to Joola engine: ' + err);
     joola.emit('disconnected', err);
   });
-  joola.io.socket.on('connect_timeout', function (err) {
+  joola.io.on('connect_timeout', function (err) {
     joola.connected = false;
     if (!joola.online)
       throw new Error('Failed to connect to Joola engine: Timeout');
     joola.emit('disconnected', 'timeout');
   });
-  joola.io.socket.on('connect', function () {
+  joola.io.on('connect', function () {
     joola.connected = true;
     if (!joola.online) {
       joola.online = true;
-      joola.bringOnline(callback);
+      joola.bringOnline(callback); 
     }
     joola.emit('connected');
   });
@@ -39183,6 +39191,27 @@ var Canvas = module.exports = function (options, callback) {
   //here we go
   joola.viz.initialize(self, options || {});
 
+  //handle loading overlay
+  joola.events.on('rpc:event', function () {
+    if (joola.options.overlay && joola.options.isBrowser) {
+      if (joola.usage.currentCalls > 0) {
+        joola.logger.trace('show overlay');
+        if (self.options.overlay.timer)
+          window.clearTimeout(self.options.overlay.timer);
+        self.options.overlay.timer = setTimeout(function () {
+          $$(self.options.overlay.container).fadeIn('fast');
+        }, self.options.overlay.delay || 0);
+      }
+      else {
+        joola.logger.trace('hide overlay');
+        if (self.options.overlay.timer)
+          window.clearTimeout(self.options.overlay.timer);
+
+        $$(self.options.overlay.container).fadeOut('fast');
+      }
+    }
+  });
+
   self.draw(null, function (err, ref) {
     if (err)
       return callback(err);
@@ -39273,7 +39302,7 @@ var DatePicker = module.exports = function (options, callback) {
   var self = this;
 
   this.addDays = function (o, days) {
-// keep in mind, months in javascript are 0-11
+   // keep in mind, months in javascript are 0-11
     return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
   };
 

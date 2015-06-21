@@ -350,6 +350,27 @@ var Canvas = module.exports = function (options, callback) {
   //here we go
   joola.viz.initialize(self, options || {});
 
+  //handle loading overlay
+  joola.events.on('rpc:event', function () {
+    if (joola.options.overlay && joola.options.isBrowser) {
+      if (joola.usage.currentCalls > 0) {
+        joola.logger.trace('show overlay');
+        if (self.options.overlay.timer)
+          window.clearTimeout(self.options.overlay.timer);
+        self.options.overlay.timer = setTimeout(function () {
+          $$(self.options.overlay.container).fadeIn('fast');
+        }, self.options.overlay.delay || 0);
+      }
+      else {
+        joola.logger.trace('hide overlay');
+        if (self.options.overlay.timer)
+          window.clearTimeout(self.options.overlay.timer);
+
+        $$(self.options.overlay.container).fadeOut('fast');
+      }
+    }
+  });
+
   self.draw(null, function (err, ref) {
     if (err)
       return callback(err);

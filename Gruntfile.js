@@ -62,11 +62,18 @@ module.exports = function (grunt) {
       options: {
         keepalive: true,
         verbose: true,
-        debug: true
+        debug: true,
+
+        callback: function (b) {
+          // configure the browserify instance here
+          b.add('./build/temp/vendor.js', {expose: 'Highcharts'});
+          b.require('./build/temp/vendor.js', {expose: 'Highcharts'});
+          // return it
+          return b;
+        }
       },
       all: {
-        src: ['./build/temp/vendor.js', './src/lib/index.js'],
-
+        src: ['./src/lib/index.js'],
         dest: 'build/release/joola.js'
       }
     },
