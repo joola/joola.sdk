@@ -27,7 +27,7 @@ var DatePicker = module.exports = function (options, callback) {
   var self = this;
 
   this.addDays = function (o, days) {
-   // keep in mind, months in javascript are 0-11
+    // keep in mind, months in javascript are 0-11
     return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
   };
 
@@ -116,7 +116,7 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
-    this.base_fromdate = self.addDays(this.base_todate, options.daysback|| -90);
+    this.base_fromdate = self.addDays(this.base_todate, options.daysback || -90);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -751,10 +751,17 @@ var DatePicker = module.exports = function (options, callback) {
     }
 
     var $fromdate = $$(self.options.$container.find('.dates .datelabel.fromdate')[0]);
-    var todate = $$(self.options.$container.find('.dates .datelabel.todate')[0]);
+    var $todate = $$(self.options.$container.find('.dates .datelabel.todate')[0]);
 
     $fromdate.text(joola.common.formatDate(_this.applied_base_fromdate));
-    todate.text(joola.common.formatDate(_this.applied_base_todate));
+    $todate.text(joola.common.formatDate(_this.applied_base_todate));
+
+    var $compare_fromdate = $$(self.options.$container.find('.dates .datelabel.compare.fromdate')[0]);
+    var $compare_todate = $$(self.options.$container.find('.dates .datelabel.compare.todate')[0]);
+
+    $compare_fromdate.text(joola.common.formatDate(_this.applied_compare_fromdate));
+    $compare_todate.text(joola.common.formatDate(_this.applied_compare_todate));
+
 
     $$(this.callbacks).each(function (index, item) {
       _this.callbacks[index].callback(_this, options);
@@ -823,6 +830,16 @@ var DatePicker = module.exports = function (options, callback) {
     }
 
     return [true, 'daycell'];
+  };
+
+  this.getDate = function () {
+    return {
+      base_fromdate: this.base_fromdate,
+      base_todate: this.base_todate,
+      comparePeriod: this.comparePeriod,
+      compare_fromdate: this.compare_fromdate,
+      compare_todate: this.compare_todate
+    };
   };
 
   this.handleChange = function (options) {

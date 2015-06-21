@@ -34,7 +34,16 @@ var Canvas = module.exports = function (options, callback) {
     filters: [],
     state: {},
     overlay: null,
-    $overlay: null
+    $overlay: null,
+    onscreen: {
+      timeline: [],
+      metric: [],
+      table: [],
+      bartable: [],
+      pie: [],
+      minitable: [],
+      geo: []
+    }
   };
 
   this.verify = function (options) {
@@ -162,7 +171,7 @@ var Canvas = module.exports = function (options, callback) {
     }
 
     if (self.options.overlay)
-      self.options.overlay = $(self.options.overlay.container);
+      self.options.overlay.$container = $(self.options.overlay.container);
 
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
@@ -192,7 +201,11 @@ var Canvas = module.exports = function (options, callback) {
             viz.canvas = self;
             switch (viz.type.toLowerCase()) {
               case 'timeline':
-                new joola.viz.Timeline(viz);
+                new joola.viz.Timeline(viz, function (err, ref) {
+                  if (err)
+                    throw err;
+                  self.options.onscreen.timeline.push(ref)
+                });
                 break;
               case 'metric':
                 new joola.viz.Metric(viz);
@@ -347,29 +360,28 @@ var Canvas = module.exports = function (options, callback) {
     this.options.visualizations[viz.uuid] = viz;
   };
 
-  //here we go
-  joola.viz.initialize(self, options || {});
-
   //handle loading overlay
   joola.events.on('rpc:event', function () {
-    if (joola.options.overlay && joola.options.isBrowser) {
+    if (self.options.overlay) {
       if (joola.usage.currentCalls > 0) {
-        joola.logger.trace('show overlay');
         if (self.options.overlay.timer)
-          window.clearTimeout(self.options.overlay.timer);
+          return;
         self.options.overlay.timer = setTimeout(function () {
-          $$(self.options.overlay.container).fadeIn('fast');
-        }, self.options.overlay.delay || 0);
+          self.options.overlay.$container.fadeIn('fast');
+        }, parseInt(self.options.overlay.delay, 10) || 0);
       }
       else {
-        joola.logger.trace('hide overlay');
-        if (self.options.overlay.timer)
+        if (self.options.overlay.timer) {
+          self.options.overlay.timer = 0;
           window.clearTimeout(self.options.overlay.timer);
-
-        $$(self.options.overlay.container).fadeOut('fast');
+        }
+        self.options.overlay.$container.fadeOut('fast');
       }
     }
   });
+
+  //here we go
+  joola.viz.initialize(self, options || {});
 
   self.draw(null, function (err, ref) {
     if (err)

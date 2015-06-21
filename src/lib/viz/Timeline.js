@@ -32,6 +32,7 @@ var Timeline = module.exports = function (options, callback) {
   this.options = {
     legend: true,
     colors: joola.colors,
+    offcolors: joola.offcolors,
     canvas: null,
     template: '<div class="caption"></div>' +
     '<div class="chartwrapper">' +
@@ -182,7 +183,7 @@ var Timeline = module.exports = function (options, callback) {
     var series = [];
     var seriesIndex = -1;
     var interval = Array.isArray(self.options.query) ? self.options.query[0].interval : self.options.query.interval;
-
+    var colorMapping = {};
     var checkExists = function (timestampDimension, documents, date) {
       return _.find(documents, function (document) {
         if (!document[timestampDimension.key])
@@ -234,12 +235,15 @@ var Timeline = module.exports = function (options, callback) {
           //result.documents[0].fvalues[m.name] = null;
         });
       }
+      //console.log(result);
 
       var dimensions = result.dimensions;
       var metrics = result.metrics;
       var documents = ce.clone(result.documents);
       //should we fill the date range
       var query = ce.clone(result.query);
+      var type = query.type;
+      var compare = type === 'compare';
 
       var timestampDimension = _.find(result.dimensions, function (item) {
         return item.datatype === 'date';
@@ -291,6 +295,8 @@ var Timeline = module.exports = function (options, callback) {
 
       if (!metrics)
         return series;
+
+
       metrics.forEach(function (metric, index) {
         var _yaxis = 0;
         yAxis[index % 2] = yAxis [index % 2] || metric.dependsOn || metric.key;
@@ -310,8 +316,11 @@ var Timeline = module.exports = function (options, callback) {
           name: metric_name,
           data: [],
           yAxis: _yaxis,
-          color: self.options.colors[seriesIndex]
+          color: compare ? self.options.offcolors[colorMapping[metric.key]] : self.options.colors[seriesIndex],
+          compare: compare
         };
+        if (!compare)
+          colorMapping[metric.key] = seriesIndex;
         documents.forEach(function (document, docIndex) {
           var x = document[dimensions[0].key];
           var nameBased = true;
@@ -609,7 +618,7 @@ var Timeline = module.exports = function (options, callback) {
       window[self.options.onDraw](self.options.container, self);
 
     if (typeof callback === 'function')
-      return callback(null);
+      return callback(null,self);
   };
 
   //here we go

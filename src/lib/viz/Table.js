@@ -268,7 +268,8 @@ var Table = module.exports = function (options, callback) {
             if (di === self.sortIndex)
               $td.addClass('sorted');
             $td.find('.filter').on('click', function () {
-              self.emit('select', point, dimensionkey);
+              self.emit('s' +
+              'elect', point, dimensionkey);
             });
             $tr.append($td);
           });

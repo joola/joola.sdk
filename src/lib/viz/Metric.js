@@ -239,6 +239,10 @@ var Metric = module.exports = function (options, callback) {
       }
     }
 
+    if (self.options.onSelect)
+      $html.on('click', function () {
+        window[self.options.onSelect](self.options.container, self);
+      });
     if (self.options.onDraw)
       window[self.options.onDraw](self.options.container, self);
   };

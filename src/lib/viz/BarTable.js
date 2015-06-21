@@ -291,16 +291,28 @@ var BarTable = module.exports = function (options, callback) {
           else
             title = d.name || d.key;
           var $td = $$('<td class="jio bartable value dimension">' +
-            '<div class="caption" title="' + title + '"></div>' +
+            '<div class="caption" title="' + title + '"><span class="percentage"></span><span class="caption_value"></span></div>' +
             '<div class="subcaption"></div>' +
             '</td>');
 
-          var text;
-          if (joola.common.isNumeric(percentage))
-            text = joola.common.ensureLength(percentage.toFixed(2) + '% ' + (!base.missing ? base.dimensions[dimensionkey] : (compare.dimensions[dimensionkey] || '(not set)')), 23);
-          else
+          var cssClass, text;
+          if (joola.common.isNumeric(percentage)){
+            text = joola.common.ensureLength( (!base.missing ? base.dimensions[dimensionkey] : (compare.dimensions[dimensionkey] || '(not set)')), 23);
+            if (percentage < 0)
+              cssClass = 'negative';
+            else if (percentage > 0)
+              cssClass = 'positive';
+            else
+              cssClass = 'neutral';
+            $td.find('.caption .percentage').text(percentage.toFixed(2) + '% ');
+            $td.find('.caption .percentage').addClass(cssClass);
+            $td.find('.caption .caption_value').text(text);
+          }
+          else{
             text = joola.common.ensureLength('N/A ' + (!base.missing ? base.dimensions[dimensionkey] : (compare.dimensions[dimensionkey] || '(not set)')), 23);
-          $td.find('.caption').text(text);
+            $td.find('.caption .percentage').remove();
+            $td.find('.caption .caption_value').text(text);
+          }
           if (!base.missing && !compare.missing)
             $td.find('.subcaption').text(joola.common.formatMetric(base.metrics[metrickey], base.meta[metrickey]) + ' vs. ' + joola.common.formatMetric(compare.metrics[metrickey], compare.meta[metrickey]));
           else if (base.missing)
