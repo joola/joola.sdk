@@ -894,9 +894,14 @@ var Table = module.exports = function (options, callback) {
 
       var $pageSize = $$($html.find('.page-size select'));
       self.options.paging.sizes.forEach(function (size) {
-        var $option = $$('<option value="' + size + '">' + size + '</option>');
+        var $option;
+        if (size === self.options.paging.currentSize)
+          $option = $$('<option value="' + size + '" selected>' + size + '</option>');
+        else
+          $option = $$('<option value="' + size + '">' + size + '</option>');
         $pageSize.append($option);
       });
+
       $pageSize.on('change', function () {
         self.options.paging.currentPage = 1;
         self.options.paging.currentSize = parseInt($pageSize.val(), 10);
