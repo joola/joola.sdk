@@ -204,7 +204,7 @@ var Canvas = module.exports = function (options, callback) {
                 new joola.viz.Timeline(viz, function (err, ref) {
                   if (err)
                     throw err;
-                  self.options.onscreen.timeline.push(ref)
+                  self.options.onscreen.timeline.push(ref);
                 });
                 break;
               case 'metric':

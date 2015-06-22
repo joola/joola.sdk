@@ -39057,7 +39057,7 @@ var Canvas = module.exports = function (options, callback) {
                 new joola.viz.Timeline(viz, function (err, ref) {
                   if (err)
                     throw err;
-                  self.options.onscreen.timeline.push(ref)
+                  self.options.onscreen.timeline.push(ref);
                 });
                 break;
               case 'metric':
@@ -44348,7 +44348,7 @@ var Timeline = module.exports = function (options, callback) {
             else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
-                _x:new Date(document[dimensions[0].key]),
+                _x: new Date(document[dimensions[0].key]),
                 y: document[metrics[index].key] ? document[metrics[index].key] : 0
               });
             }
@@ -44613,7 +44613,7 @@ var Timeline = module.exports = function (options, callback) {
         shared: true,
         useHTML: true,
         formatter: function () {
-         var html = '';
+          var html = '';
           var comparehtml = '';
           html += '<div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.x) + '</strong></div>';
 
@@ -44636,7 +44636,7 @@ var Timeline = module.exports = function (options, callback) {
           });
 
           if (comparehtml.length > 0)
-            comparehtml = '<div style="padding-top:15px;"></div><div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.points[this.points.length-1].point._x) + '</strong></div>' + comparehtml;
+            comparehtml = '<div style="padding-top:15px;"></div><div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.points[this.points.length - 1].point._x) + '</strong></div>' + comparehtml;
 
           html += comparehtml;
           return html;
@@ -44904,10 +44904,9 @@ viz.fetch = function (context, query, callback) {
       args.push(_query.authContext);
     args.push(_query);
     args.push(function (err, messages) {
-      if (err){
-        throw err;
+      if (err)
         return callback(err);
-      }
+      
       if (!Array.isArray(messages))
         messages = [messages];
 
