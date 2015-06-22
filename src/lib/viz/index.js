@@ -31,6 +31,7 @@ viz.Sparkline = require('./Sparkline');
 viz.Metric = require('./Metric');
 viz.Geo = require('./Geo');
 viz.Pie = require('./Pie');
+viz.Gauge = require('./Gauge');
 viz.MiniTable = require('./MiniTable');
 viz.BarTable = require('./BarTable');
 viz.PunchCard = require('./PunchCard');
@@ -163,6 +164,7 @@ viz.fetch = function (context, query, callback) {
     args.push(function (err, messages) {
       if (err)
         return callback(err);
+      
       if (!Array.isArray(messages))
         messages = [messages];
 

@@ -159,6 +159,12 @@ var Table = module.exports = function (options, callback) {
           summary.destroy();
         });
       }
+      if (self.primary_dimension_picker)
+        self.primary_dimension_picker.destroy();
+      if (self.add_metric_picker)
+        self.add_metric_picker.destroy();
+      if (self.add_dimension_picker)
+        self.add_dimension_picker.destroy();
       $$(self.options.container).find('table').empty();
     };
 
@@ -193,7 +199,7 @@ var Table = module.exports = function (options, callback) {
       var start = ((self.options.paging.currentPage - 1) * self.options.paging.currentSize) + 1;
       var length = self.options.paging.currentSize;
       var search, text;
-      
+
       if (self.data.length === 1) {
         var _data;
         var _total = [];
@@ -211,9 +217,9 @@ var Table = module.exports = function (options, callback) {
           var lastIndex = 0;
           _query.dimensions.forEach(function (d, di) {
             lastIndex++;
-            var dimensionkey = (d.key || d).replace(/\./ig,'_');
-           
-             var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            var dimensionkey = (d.key || d).replace(/\./ig, '_');
+
+            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
               self.emit('select', point, dimensionkey);
             });
@@ -262,7 +268,8 @@ var Table = module.exports = function (options, callback) {
             if (di === self.sortIndex)
               $td.addClass('sorted');
             $td.find('.filter').on('click', function () {
-              self.emit('select', point, dimensionkey);
+              self.emit('s' +
+              'elect', point, dimensionkey);
             });
             $tr.append($td);
           });
@@ -659,7 +666,7 @@ var Table = module.exports = function (options, callback) {
           q.metrics = [m];
           if (!q.filter)
             q.filter = [];
-          if (q.filter.length > 0) {
+          if (q.filter.length > 0 && (_query.length < 2 || (_query.length === 2 && _query[1].type !== 'compare'))) {
             var _q = ce.clone(q);
             _q.filter = [];
             _q.type = 'overall';
@@ -779,7 +786,6 @@ var Table = module.exports = function (options, callback) {
       var $export = $html.find('.export .icon-download');
       $export.off('click');
       $export.on('click', function (e) {
-        console.log('click');
         self.export();
       });
 
@@ -798,17 +804,21 @@ var Table = module.exports = function (options, callback) {
         self.options.pickers.primary.selected = dimension;
         self.options.pickers.primary.disabled = self.options.query[0].dimensions;
         self.options.pickers.primary.prefix = 'Primary dimension: ';
-        self.primary_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.primary).on('change', function (dimension) {
-          self.options.query.forEach(function (q) {
-            if (dimension)
-              q.dimensions[0] = dimension;
-            else
-              q.dimensions.splice(0, 1);
+        new joola.viz.DimensionPicker(self.options.pickers.primary, function (err, ref) {
+          if (err)
+            throw err;
+          self.primary_dimension_picker = ref;
+        }).on('change', function (dimension) {
+            self.options.query.forEach(function (q) {
+              if (dimension)
+                q.dimensions[0] = dimension;
+              else
+                q.dimensions.splice(0, 1);
+            });
+            self.options.paging.currentPage = 1;
+            self.data = [];
+            joola.viz.initialize(self, self.options);
           });
-          self.options.paging.currentPage = 1;
-          self.data = [];
-          joola.viz.initialize(self, self.options);
-        });
       }
       if (self.options.pickers && self.options.pickers.add_dimension && self.options.pickers.add_dimension.enabled) {
         var $add_dimension_picker = $$($html.find('.add-dimension-picker'));
@@ -816,19 +826,23 @@ var Table = module.exports = function (options, callback) {
         self.options.pickers.add_dimension.container = $add_dimension_picker.get(0);
         self.options.pickers.add_dimension.caption = self.options.pickers.add_dimension.caption || 'Add dimension...';
         self.options.pickers.add_dimension.disabled = self.options.query[0].dimensions;
-        self.add_dimension_picker = new joola.viz.DimensionPicker(self.options.pickers.add_dimension).on('change', function (dimension) {
-          self.options.query.forEach(function (q) {
-            if (dimension) {
-              dimension.allowremove = true;
-              q.dimensions.push(dimension);
-            }
+        new joola.viz.DimensionPicker(self.options.pickers.add_dimension, function (err, ref) {
+          if (err)
+            throw err;
+          self.add_dimension_picker = ref;
+        }).on('change', function (dimension) {
+            self.options.query.forEach(function (q) {
+              if (dimension) {
+                dimension.allowremove = true;
+                q.dimensions.push(dimension);
+              }
+            });
+            self.data = [];
+            self.options.paging.currentPage = 1;
+            self.sortIndex++;
+            self.handleMetricBoxes();
+            joola.viz.initialize(self, self.options);
           });
-          self.data = [];
-          self.options.paging.currentPage = 1;
-          self.sortIndex++;
-          self.handleMetricBoxes();
-          joola.viz.initialize(self, self.options);
-        });
       }
       if (self.options.pickers && self.options.pickers.add_metric && self.options.pickers.add_metric.enabled) {
         var $add_metric_picker = $$($html.find('.add-metric-picker'));
@@ -880,9 +894,14 @@ var Table = module.exports = function (options, callback) {
 
       var $pageSize = $$($html.find('.page-size select'));
       self.options.paging.sizes.forEach(function (size) {
-        var $option = $$('<option value="' + size + '">' + size + '</option>');
+        var $option;
+        if (size === self.options.paging.currentSize)
+          $option = $$('<option value="' + size + '" selected>' + size + '</option>');
+        else
+          $option = $$('<option value="' + size + '">' + size + '</option>');
         $pageSize.append($option);
       });
+
       $pageSize.on('change', function () {
         self.options.paging.currentPage = 1;
         self.options.paging.currentSize = parseInt($pageSize.val(), 10);

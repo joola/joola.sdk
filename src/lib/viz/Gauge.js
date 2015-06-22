@@ -17,14 +17,14 @@ var
   _ = require('underscore');
 
 
-var Pie = module.exports = function (options, callback) {
+var Gauge = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joola.events.emit('pie.init.start');
+  joola.events.emit('gauge.init.start');
   var self = this;
 
-  this._id = '_pie';
+  this._id = '_gauge';
   this.uuid = joola.common.uuid();
   this.options = {
     legend: true,
@@ -33,9 +33,9 @@ var Pie = module.exports = function (options, callback) {
     container: null,
     $container: null,
     query: null,
-    template: '<div jio-domain="joola" jio-type="pie">\n' +
-      '  <div class="jio-pie-caption"></div>\n' +
-      '  <div class="jio-pie-chart thechart"></div>\n' +
+    template: '<div jio-domain="joola" jio-type="gauge">\n' +
+      '  <div class="jio-gauge-caption"></div>\n' +
+      '  <div class="jio-gauge-chart thechart"></div>\n' +
       '</div>'
   };
   this.chartDrawn = false;
@@ -47,8 +47,6 @@ var Pie = module.exports = function (options, callback) {
     if (self.options.query) {
       if (!Array.isArray(self.options.query))
         self.options.query = [self.options.query];
-      if (self.options.query[0].dimensions.length === 0 || self.options.query[0].dimensions.length > 1)
-        return 'Please specify a single dimension.';
       if (self.options.query[0].metrics.length === 0 || self.options.query[0].metrics.length > 1)
         return 'Please specify a single metric.';
     }
@@ -88,21 +86,9 @@ var Pie = module.exports = function (options, callback) {
       return;
     Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
       var point = data[0];
-      //var series = self.chart.series[pointIndex];
-      self.chart.series.forEach(function (series) {
-        var dm_value = point.raw[self.options.query[0].dimensions[0].key || self.options.query[0].dimensions[0]];
-        var _data = [];
-        series.data.forEach(function (d, i) {
-          if (d.name === dm_value) {
-            _data.push(point.metrics[key]);
-          }
-          else
-            _data.push(series.data[i].y);
-        });
-        series.setData(_data, false);
-      });
+      var series = self.chart.series[pointIndex];
+      series.data[series.data.length - 1].update(point.metrics[key]);
     });
-
     self.chart.redraw(true);
   };
 
@@ -114,11 +100,11 @@ var Pie = module.exports = function (options, callback) {
     if (self.initialChartDrawn)
       return;
     self.initialChartDrawn = true;
-    self.chartData = self.makeChartPieSeries(raw);
+    self.chartData = self.makeChartGaugeSeries(raw);
     self.paint();
   };
 
-  this.makeChartPieSeries = function (message) {
+  this.makeChartGaugeSeries = function (message) {
     if (message[0].metrics.length === 0) {
       return [
         {
@@ -135,32 +121,28 @@ var Pie = module.exports = function (options, callback) {
     message.forEach(function (result, resultIndex) {
       if (result.documents.length === 0) {
         result.documents.push({values: {}, fvalues: {}});
-        result.dimensions.forEach(function (d) {
-          result.documents[0][d.name] = null;
-          //result.documents[0].fvalues[d.name] = null;
-        });
         result.metrics.forEach(function (m) {
           result.documents[0][m.name] = null;
           //result.documents[0].fvalues[m.name] = null;
         });
       }
 
-      var dimensions = result.dimensions;
       var metrics = result.metrics;
       var documents = ce.clone(result.documents);
       //should we fill the date range
       var query = ce.clone(result.query);
       var data = [];
-      documents.forEach(function (doc, i) {
-        data.push({
-          name: doc[dimensions[0].key],
-          y: doc[metrics[0].key],
-          color: self.options.colors[i]
-        });
+      documents.forEach(function (doc) {
+        data.push(doc[metrics[0].key]);
       });
       series[++seriesIndex] = {
         name: metrics[0].name,
-        data: data
+        data: data,
+        color: self.options.colors[seriesIndex],
+        dataLabels: {
+          format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+            ('white') + '">' + joola.common.formatMetric(data[0], self.options.query[0].metrics[0]) + '</span><br/>'
+        }
       };
     });
     return series;
@@ -185,19 +167,10 @@ var Pie = module.exports = function (options, callback) {
       },
       chart: {
         backgroundColor: 'transparent',
-        /*marginTop: 0,
-         marginBottom: 0,
-         marginLeft: 0,
-         marginRight: 0,
-         spacingTop: 0,
-         spacingBottom: 0,
-         spacingLeft: 0,
-         spacingRight: 0,*/
         borderWidth: 0,
         plotBorderWidth: 0,
-        type: 'pie',
-        height: self.options.height || self.options.$container.height() || 250,
-        //width: self.options.width || self.options.$container.width() || null
+        type: 'solidgauge',
+        height: self.options.height || self.options.$container.height() || 250
       },
       lang: {
         noData: 'No data to display'
@@ -209,11 +182,60 @@ var Pie = module.exports = function (options, callback) {
           color: '#303030'
         }
       },
-      series: [],
-
+      pane: {
+        center: ['50%', '85%'],
+        size: '150%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+          backgroundColor: '#EEE',
+          innerRadius: '60%',
+          outerRadius: '100%',
+          shape: 'arc'
+        }
+      },
+      yAxis: {
+        stops: [
+          [0.1, '#28D8B2'], // green
+          [0.5, '#FBD046'], // yellow
+          [0.9, '#FA6B5B'] // red
+        ],
+        min: 0,
+        max: 150000,
+        lineWidth: 0,
+        minorTickInterval: null,
+        tickPixelInterval: 400,
+        tickWidth: 0,
+        title: {
+          y: -70
+        },
+        labels: {
+          enabled: false,
+          y: 16
+        }
+      },
+      plotOptions: {
+        solidgauge: {
+          dataLabels: {
+            y: 5,
+            borderWidth: 0,
+            useHTML: true
+          }
+        }
+      },
+      series: [
+        {
+          name: 'series',
+          data: [0],
+          dataLabels: {
+            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+              ('white') + '">{y}</span><br/>'
+          }
+        }
+      ],
       legend: {enabled: false},
       credits: {enabled: false},
-      exporting: {enabled: true},
+      exporting: {enabled: true}
     }, self.options.chart);
 
     if (!self.options.$container)
@@ -262,7 +284,7 @@ var Pie = module.exports = function (options, callback) {
 joola.events.on('core.init.finish', function () {
   var found;
   if (typeof (jQuery) != 'undefined') {
-    $.fn.Pie = function (options, callback) {
+    $.fn.Gauge = function (options, callback) {
       if (!options)
         options = {force: false};
       else if (!options.hasOwnProperty('force'))
@@ -288,10 +310,10 @@ joola.events.on('core.init.finish', function () {
         if (!options)
           options = {};
         options.container = this.get(0);
-        result = new joola.viz.Pie(options, function (err, pie) {
+        result = new joola.viz.Gauge(options, function (err, gauge) {
           if (err)
             throw err;
-          pie.draw(options, callback);
+          gauge.draw(options, callback);
         }).options.$container;
       }
       else {
@@ -309,4 +331,4 @@ joola.events.on('core.init.finish', function () {
   }
 });
 
-util.inherits(Pie, events.EventEmitter);
+util.inherits(Gauge, events.EventEmitter);

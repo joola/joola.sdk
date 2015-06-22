@@ -59,18 +59,20 @@ joola.emit = function (event, message) {
 };
 joola.api = require('./common/api');
 joola.state = {};
-joola.viz = require('./viz/index');
+
+if (isBrowser())
+  joola.viz = require('./viz/index');
 
 joola.VERSION = require('./../../package.json').version;
 joola._token = null;
 joola._apitoken = null;
 
 require('./common/modifiers');
-
+  
 Object.defineProperty(joola, 'TOKEN', {
   get: function () {
     return joola._token;
-  },
+  }, 
   set: function (value) {
     joola._token = value;
     joola.events.emit('core.init.finish');
@@ -170,31 +172,32 @@ joola.init = function (options, callback) {
     throw new Error('joola host not specified');
 
   var io = require('socket.io-client');
-  joola.io = io;
-  joola.io.socket = joola.io.connect(joola.options.host);
-  joola.io.socket.on('event', function (data) {
-  });
-  joola.io.socket.on('disconnect', function (reason) {
+  joola.io = io.connect(joola.options.host, {'force new connection': true });
+  joola.io.on('error', function (reason) {
     joola.connected = false;
     joola.emit('disconnected', reason);
   });
-  joola.io.socket.on('connect_error', function (err) {
+  joola.io.on('disconnect', function (reason) {
+    joola.connected = false;
+    joola.emit('disconnected', reason);
+  });
+  joola.io.on('connect_error', function (err) {
     joola.connected = false;
     if (!joola.online)
       throw new Error('Failed to connect to Joola engine: ' + err);
     joola.emit('disconnected', err);
   });
-  joola.io.socket.on('connect_timeout', function (err) {
+  joola.io.on('connect_timeout', function (err) {
     joola.connected = false;
     if (!joola.online)
       throw new Error('Failed to connect to Joola engine: Timeout');
     joola.emit('disconnected', 'timeout');
   });
-  joola.io.socket.on('connect', function () {
+  joola.io.on('connect', function () {
     joola.connected = true;
     if (!joola.online) {
       joola.online = true;
-      joola.bringOnline(callback);
+      joola.bringOnline(callback); 
     }
     joola.emit('connected');
   });

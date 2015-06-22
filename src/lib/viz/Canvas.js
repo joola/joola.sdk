@@ -32,7 +32,18 @@ var Canvas = module.exports = function (options, callback) {
     metrics: [],
     dimensions: [],
     filters: [],
-    state: {}
+    state: {},
+    overlay: null,
+    $overlay: null,
+    onscreen: {
+      timeline: [],
+      metric: [],
+      table: [],
+      bartable: [],
+      pie: [],
+      minitable: [],
+      geo: []
+    }
   };
 
   this.verify = function (options) {
@@ -158,6 +169,10 @@ var Canvas = module.exports = function (options, callback) {
         self.options.filterbox.ref = ref;
       });
     }
+
+    if (self.options.overlay)
+      self.options.overlay.$container = $(self.options.overlay.container);
+
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
@@ -186,7 +201,11 @@ var Canvas = module.exports = function (options, callback) {
             viz.canvas = self;
             switch (viz.type.toLowerCase()) {
               case 'timeline':
-                new joola.viz.Timeline(viz);
+                new joola.viz.Timeline(viz, function (err, ref) {
+                  if (err)
+                    throw err;
+                  self.options.onscreen.timeline.push(ref);
+                });
                 break;
               case 'metric':
                 new joola.viz.Metric(viz);
@@ -311,6 +330,7 @@ var Canvas = module.exports = function (options, callback) {
             self.emit('removefilter', key);
           });
           $filter.append($inner);
+
           $filter.append($close);
           if (self.options.filterbox && self.options.filterbox.ref)
             self.options.filterbox.ref.options.$container.find('.filterbox').append($filter);
@@ -339,6 +359,26 @@ var Canvas = module.exports = function (options, callback) {
       this.options.visualizations = {};
     this.options.visualizations[viz.uuid] = viz;
   };
+
+  //handle loading overlay
+  joola.events.on('rpc:event', function () {
+    if (self.options.overlay) {
+      if (joola.usage.currentCalls > 0) {
+        if (self.options.overlay.timer)
+          return;
+        self.options.overlay.timer = setTimeout(function () {
+          self.options.overlay.$container.fadeIn('fast');
+        }, parseInt(self.options.overlay.delay, 10) || 0);
+      }
+      else {
+        if (self.options.overlay.timer) {
+          self.options.overlay.timer = 0;
+          window.clearTimeout(self.options.overlay.timer);
+        }
+        self.options.overlay.$container.fadeOut('fast');
+      }
+    }
+  });
 
   //here we go
   joola.viz.initialize(self, options || {});

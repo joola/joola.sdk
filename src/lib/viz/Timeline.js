@@ -31,6 +31,8 @@ var Timeline = module.exports = function (options, callback) {
   this.data = [];
   this.options = {
     legend: true,
+    colors: joola.colors,
+    offcolors: joola.offcolors,
     canvas: null,
     template: '<div class="caption"></div>' +
     '<div class="chartwrapper">' +
@@ -161,6 +163,9 @@ var Timeline = module.exports = function (options, callback) {
     self.initialChartDrawn = true;
     self.chartData = self.makeChartTimelineSeries(raw);
     self.paint();
+
+    if (self.options.onUpdate)
+      window[self.options.onUpdate](self.options.container, self, self.chart.series);
   };
 
   this.makeChartTimelineSeries = function (message) {
@@ -178,7 +183,7 @@ var Timeline = module.exports = function (options, callback) {
     var series = [];
     var seriesIndex = -1;
     var interval = Array.isArray(self.options.query) ? self.options.query[0].interval : self.options.query.interval;
-
+    var colorMapping = {};
     var checkExists = function (timestampDimension, documents, date) {
       return _.find(documents, function (document) {
         if (!document[timestampDimension.key])
@@ -230,12 +235,15 @@ var Timeline = module.exports = function (options, callback) {
           //result.documents[0].fvalues[m.name] = null;
         });
       }
+      //console.log(result);
 
       var dimensions = result.dimensions;
       var metrics = result.metrics;
       var documents = ce.clone(result.documents);
       //should we fill the date range
       var query = ce.clone(result.query);
+      var type = query.type;
+      var compare = type === 'compare';
 
       var timestampDimension = _.find(result.dimensions, function (item) {
         return item.datatype === 'date';
@@ -287,6 +295,8 @@ var Timeline = module.exports = function (options, callback) {
 
       if (!metrics)
         return series;
+
+
       metrics.forEach(function (metric, index) {
         var _yaxis = 0;
         yAxis[index % 2] = yAxis [index % 2] || metric.dependsOn || metric.key;
@@ -301,11 +311,17 @@ var Timeline = module.exports = function (options, callback) {
           });
         }
         series[++seriesIndex] = {
+          key: metric.key,
+          _name: metric.name,
+          metric: metric,
           name: metric_name,
           data: [],
           yAxis: _yaxis,
-          color: joola.colors[seriesIndex]
+          color: compare ? self.options.offcolors[colorMapping[metric.key]] : self.options.colors[seriesIndex],
+          compare: compare
         };
+        if (!compare)
+          colorMapping[metric.key] = seriesIndex;
         documents.forEach(function (document, docIndex) {
           var x = document[dimensions[0].key];
           var nameBased = true;
@@ -330,6 +346,7 @@ var Timeline = module.exports = function (options, callback) {
             else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
+                _x: new Date(document[dimensions[0].key]),
                 y: document[metrics[index].key] ? document[metrics[index].key] : 0
               });
             }
@@ -338,7 +355,6 @@ var Timeline = module.exports = function (options, callback) {
       });
     });
     return series;
-
   };
 
   this.paint = function (rescale) {
@@ -394,8 +410,6 @@ var Timeline = module.exports = function (options, callback) {
         $primary_metric_container = $$(self.options.$container.find('.primary-metric-picker')[0]);
 
       if ($primary_metric_container) {
-        console.log('draw primary');
-        console.trace();
         self.primary_metric_container = new joola.viz.MetricPicker({
           container: $primary_metric_container,
           canvas: self.options.canvas,
@@ -592,6 +606,39 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }
+      },
+      tooltip: {
+        shared: true,
+        useHTML: true,
+        formatter: function () {
+          var html = '';
+          var comparehtml = '';
+          html += '<div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.x) + '</strong></div>';
+
+          //let's do the first date range
+          this.points.forEach(function (point) {
+            if (!point.series.options.compare) {
+              var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
+              html += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
+              html += '</div><div style="padding-left:3px;display:inline">' + point.series.options.name + ': ' + formattedy + '</div></div>';
+            }
+          });
+
+          //let's do the compare date range
+          this.points.forEach(function (point) {
+            if (point.series.options.compare) {
+              var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
+              comparehtml += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
+              comparehtml += '</div><div style="padding-left:3px;display:inline">' + point.series.options.name + ': ' + formattedy + '</div></div>';
+            }
+          });
+
+          if (comparehtml.length > 0)
+            comparehtml = '<div style="padding-top:15px;"></div><div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.points[this.points.length - 1].point._x) + '</strong></div>' + comparehtml;
+
+          html += comparehtml;
+          return html;
+        }
       }
     }, self.options.chart);
 
@@ -606,7 +653,7 @@ var Timeline = module.exports = function (options, callback) {
       window[self.options.onDraw](self.options.container, self);
 
     if (typeof callback === 'function')
-      return callback(null);
+      return callback(null, self);
   };
 
   //here we go

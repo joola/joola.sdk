@@ -111,7 +111,6 @@ var MetricPicker = module.exports = function (options, callback) {
             var visible = true;
             if (metric.hasOwnProperty('visible') && metric.visible !== null)
               visible = metric.visible;
-            console.log(visible);
             if (visible)
               $ul.append($li);
 
