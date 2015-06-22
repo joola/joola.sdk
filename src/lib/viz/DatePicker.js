@@ -97,11 +97,11 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_todate = null;
 
   if (options.mindate)
-    this.min_date = options.min_date;
+    this.min_date = new Date(options.mindate);
   //this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
   //this.min_date.setMonth(this.min_date.getMonth() - 6);
   if (options.maxdate)
-    this.max_date = options.maxdate;
+    this.max_date = new Date(options.maxdate);
   else
     this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
   this.max_date.setHours(23);

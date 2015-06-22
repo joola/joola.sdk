@@ -35798,11 +35798,11 @@ var DatePicker = module.exports = function (options, callback) {
   this.original_compare_todate = null;
 
   if (options.mindate)
-    this.min_date = options.min_date;
+    this.min_date = new Date(options.mindate);
   //this.min_date = new Date();//new joola.objects.Query().SystemStartDate();
   //this.min_date.setMonth(this.min_date.getMonth() - 6);
   if (options.maxdate)
-    this.max_date = options.maxdate;
+    this.max_date = new Date(options.maxdate);
   else
     this.max_date = new Date();//new joola.objects.Query().SystemEndDate();
   this.max_date.setHours(23);
@@ -40717,6 +40717,7 @@ var Timeline = module.exports = function (options, callback) {
         series[++seriesIndex] = {
           key: metric.key,
           _name: metric.name,
+          metric: metric,
           name: metric_name,
           data: [],
           yAxis: _yaxis,
@@ -40749,6 +40750,7 @@ var Timeline = module.exports = function (options, callback) {
             else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
+                _x:new Date(document[dimensions[0].key]),
                 y: document[metrics[index].key] ? document[metrics[index].key] : 0
               });
             }
@@ -41008,6 +41010,39 @@ var Timeline = module.exports = function (options, callback) {
             }
           }
         }
+      },
+      tooltip: {
+        shared: true,
+        useHTML: true,
+        formatter: function () {
+         var html = '';
+          var comparehtml = '';
+          html += '<div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.x) + '</strong></div>';
+
+          //let's do the first date range
+          this.points.forEach(function (point) {
+            if (!point.series.options.compare) {
+              var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
+              html += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
+              html += '</div><div style="padding-left:3px;display:inline">' + point.series.options.name + ': ' + formattedy + '</div></div>';
+            }
+          });
+
+          //let's do the compare date range
+          this.points.forEach(function (point) {
+            if (point.series.options.compare) {
+              var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
+              comparehtml += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
+              comparehtml += '</div><div style="padding-left:3px;display:inline">' + point.series.options.name + ': ' + formattedy + '</div></div>';
+            }
+          });
+
+          if (comparehtml.length > 0)
+            comparehtml = '<div style="padding-top:15px;"></div><div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.points[this.points.length-1].point._x) + '</strong></div>' + comparehtml;
+
+          html += comparehtml;
+          return html;
+        }
       }
     }, self.options.chart);
 
@@ -41022,7 +41057,7 @@ var Timeline = module.exports = function (options, callback) {
       window[self.options.onDraw](self.options.container, self);
 
     if (typeof callback === 'function')
-      return callback(null,self);
+      return callback(null, self);
   };
 
   //here we go
