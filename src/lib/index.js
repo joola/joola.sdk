@@ -298,6 +298,8 @@ joola.bringOnline = function (callback) {
 };
 
 joola.set = function (key, value, callback) {
+  callback = callback || emptyfunc;
+  
   joola.options[key] = value;
   if (key === 'APIToken') {
     joola._apitoken = joola.options.APIToken;
