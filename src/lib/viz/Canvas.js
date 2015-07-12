@@ -318,6 +318,7 @@ var Canvas = module.exports = function (options, callback) {
     }
 
     self.on('addfilter', function (key, meta, filter) {
+      self.emit('table-checkbox-clear', true);
       var found = false;
       for (var i = 0; i < self.options.filters.length; i++) {
         if (self.options.filters[i].key === key) {
@@ -344,6 +345,7 @@ var Canvas = module.exports = function (options, callback) {
       }
     });
     self.on('removefilter', function (key) {
+      self.emit('table-checkbox-clear', true);
       for (var i = 0; i < self.options.filters.length; i++) {
         if (self.options.filters[i].key === key) {
           self.options.filters.splice(i, 1);

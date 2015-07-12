@@ -154,7 +154,7 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.exit = function (data, alldata) {
-    //console.log('exit', data);
+    
   };
 
   this.done = function (data, raw) {
@@ -235,7 +235,6 @@ var Timeline = module.exports = function (options, callback) {
           //result.documents[0].fvalues[m.name] = null;
         });
       }
-      //console.log(result);
 
       var dimensions = result.dimensions;
       var metrics = result.metrics;
@@ -362,11 +361,7 @@ var Timeline = module.exports = function (options, callback) {
       self.chart.addSeries(s);
     });
 
-    //var colWidth = ($$(self.options.container).width() / self.chartData[0].data.length) + 1;
-    //console.log(colWidth, self.chart);
-    //self.chart.options.plotOptions.column.pointWidth = colWidth;
     self.chart.redraw();
-    //if (!self.options.query[0].realtime || rescale) {
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
     extremes_0.max = extremes_0.dataMax * 1.1;
@@ -397,17 +392,23 @@ var Timeline = module.exports = function (options, callback) {
 
   this.clearAllFiltered = function (skipdraw, callback) {
     var cleared = false;
+    var queries = [];
     self.options.query.forEach(function (q, i) {
       if (q.filter) {
+        cleared = false;
         q.filter.forEach(function (f) {
           if (f.length > 3 && f[3] === '--table-checkbox') {
-            self.options.query.splice(i, 1);
+            // self.options.query.splice(i, 1);
             cleared = true;
           }
         });
+        if (!cleared)
+          queries.push(q);
       }
+      else
+        queries.push(q);
     });
-
+    self.options.query = queries;
     if (cleared && !skipdraw) {
       self.data = [];
       self.chartData = [];
@@ -417,6 +418,7 @@ var Timeline = module.exports = function (options, callback) {
       }
       joola.viz.initialize(self, self.options);
     }
+
     return callback(null);
   };
 
@@ -674,35 +676,36 @@ var Timeline = module.exports = function (options, callback) {
     //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
 
-
-    if (self.options.canvas) {
+    if (self.options.canvas && !self.registered) {
+      self.registered = true;
       self.options.canvas.on('table-checkbox-clear', function (skipdraw) {
-        console.log('clearall');
         self.clearAllFiltered(skipdraw, function () {
         });
       });
 
       self.options.canvas.on('table-checkbox', function (point, filter, action) {
-        console.log('event', point, filter, action);
         if (action === 'remove') {
+          var _queries = [];
           self.options.query.forEach(function (q, i) {
             if (q.filter) {
               q.filter.forEach(function (f) {
-                if (f[4] === filter[0][4]) {
-                  self.options.query.splice(i, 1);
+                if (f[4] !== filter[0][4]) {
+                  _queries.push(q);
                 }
               });
             }
+            else
+              _queries.push(q);
           });
+          self.options.query = _queries;
         }
         else {
           self.options.query.forEach(function (q) {
-            if (q.type !== 'base')
+            if (q.special)
               return;
-
             var _q = ce.cloneextend(q);
             _q.filter = filter;
-            _q.type = 'table-checkbox';
+            _q.special = true;
             self.options.query.push(_q);
           });
         }
@@ -716,6 +719,7 @@ var Timeline = module.exports = function (options, callback) {
         joola.viz.initialize(self, self.options);
       });
     }
+
 
     if (self.options.onDraw)
       window[self.options.onDraw](self.options.container, self);
