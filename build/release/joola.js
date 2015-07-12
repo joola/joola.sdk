@@ -39021,6 +39021,11 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.overlay)
       self.options.overlay.$container = $(self.options.overlay.container);
 
+    if (self.options.key)
+      self.options.$container.attr('data-key', self.options.key);
+    if (self.options.type)
+      self.options.$container.attr('data-type', self.options.type);
+
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
@@ -39161,6 +39166,7 @@ var Canvas = module.exports = function (options, callback) {
     }
 
     self.on('addfilter', function (key, meta, filter) {
+      self.emit('table-checkbox-clear', true);
       var found = false;
       for (var i = 0; i < self.options.filters.length; i++) {
         if (self.options.filters[i].key === key) {
@@ -39187,6 +39193,7 @@ var Canvas = module.exports = function (options, callback) {
       }
     });
     self.on('removefilter', function (key) {
+      self.emit('table-checkbox-clear', true);
       for (var i = 0; i < self.options.filters.length; i++) {
         if (self.options.filters[i].key === key) {
           self.options.filters.splice(i, 1);
@@ -43079,6 +43086,10 @@ var Table = module.exports = function (options, callback) {
       summary: {
         enabled: true,
         placement: 'top'
+      },
+      checkboxes: true,
+      onCheck: function () {
+
       }
     };
     this.verify = function (options) {
@@ -43214,12 +43225,54 @@ var Table = module.exports = function (options, callback) {
           //we have a simple row
           var $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
           var lastIndex = 0;
+          var $td, uuid;
+          //checkbox
+          if (self.options.checkboxes) {
+            $td = $$('<td class="checkbox"><input type="checkbox"></td>');
+            $tr.append($td);
+            uuid = joola.common.uuid()
+            $td.data('uuid', uuid);
+            $td.attr('data-uuid', uuid);
+            $td.find('input[type="checkbox"]').on('click', function () {
+              var filters = [];
+              var action = 'add';
+              if (!this.checked)
+                action = 'remove';
+
+              self.options.canvas.options.filters.forEach(function (f) {
+                f.filters.forEach(function (filter) {
+                  filters.push(filter);
+                });
+              });
+
+              self.options.query[0].dimensions.forEach(function (d) {
+                var filter = [];
+                var dimensionkey = (d.key || d).replace(/\./ig, '_');
+                filter.push(dimensionkey);
+                filter.push('eq');
+                filter.push(point.dimensions[dimensionkey]);
+                filter.push('--table-checkbox');
+                filter.push(uuid);
+                filters.push(filter);
+              });
+
+              if (self.options.onCheck)
+                self.options.onCheck.apply(this, [point, filters, action]);
+
+              self.emit('check', [point, filters, action]);
+              if (self.options.canvas) {
+                self.options.canvas.emit('table-checkbox', point, filters, action);
+              }
+            });
+          }
+
           _query.dimensions.forEach(function (d, di) {
             lastIndex++;
             var dimensionkey = (d.key || d).replace(/\./ig, '_');
 
-            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
+              self.options.canvas.emit('table-checkbox-clear', true);
               self.emit('select', point, dimensionkey);
             });
             if (di === self.sortIndex)
@@ -43230,8 +43283,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-            '<span class="summary"></span>' +
-            '</td>');
+              '<span class="summary"></span>' +
+              '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -43260,15 +43313,55 @@ var Table = module.exports = function (options, callback) {
           handled.push(point.key);
           var $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
           var lastIndex = 0;
+
+          var $td, uuid;
+          //checkbox
+          if (self.options.checkboxes) {
+            $td = $$('<td class="checkbox"><input type="checkbox"></td>');
+            uuid = joola.common.uuid()
+            $td.find('input[type="checkbox"]').on('click', function () {
+              var filters = [];
+              var action = 'add';
+              if (!this.checked)
+                action = 'remove';
+
+              self.options.canvas.options.filters.forEach(function (f) {
+                f.filters.forEach(function (filter) {
+                  filters.push(filter);
+                });
+              });
+              
+              self.options.query[0].dimensions.forEach(function (d) {
+                var filter = [];
+                var dimensionkey = (d.key || d).replace(/\./ig, '_');
+                filter.push(dimensionkey);
+                filter.push('eq');
+                filter.push(point.dimensions[dimensionkey]);
+                filter.push('--table-checkbox');
+                filter.push(uuid);
+                filters.push(filter);
+              });
+
+              if (self.options.onCheck)
+                self.options.onCheck.apply(this, [point, filters, action]);
+
+              self.emit('check', [point, filters, action]);
+              if (self.options.canvas) {
+                self.options.canvas.emit('table-checkbox', point, filters, action);
+              }
+            });
+            $tr.append($td);
+          }
+
           _query.dimensions.forEach(function (d, di) {
             var dimensionkey = d.key || d;
-            var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
             lastIndex++;
             if (di === self.sortIndex)
               $td.addClass('sorted');
             $td.find('.filter').on('click', function () {
-              self.emit('s' +
-              'elect', point, dimensionkey);
+              self.options.canvas.emit('table-checkbox-clear', true);
+              self.emit('select', point, dimensionkey);
             });
             $tr.append($td);
           });
@@ -43283,6 +43376,12 @@ var Table = module.exports = function (options, callback) {
           text = joola.common.formatDate(_query.timeframe.start) + ' - ';
           text += joola.common.formatDate(_query.timeframe.end);
           $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+
+          if (self.options.checkboxes) {
+            $td = $$('<td class="checkbox"></td>');
+            $tr.append($td);
+          }
+
           var $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
 
@@ -43291,8 +43390,8 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
-            '<span class="summary"></span>' +
-            '</td>');
+              '<span class="summary"></span>' +
+              '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
@@ -43302,6 +43401,12 @@ var Table = module.exports = function (options, callback) {
           text = joola.common.formatDate(_comparequery.timeframe.start) + ' - ';
           text += joola.common.formatDate(_comparequery.timeframe.end);
           $tr = $$('<tr class="data-row" data-id="' + (comparePoint ? comparePoint.key : 'missing') + '"></tr>');
+
+          if (self.options.checkboxes) {
+            $td = $$('<td class="checkbox"></td>');
+            $tr.append($td);
+          }
+
           $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
 
@@ -43309,13 +43414,19 @@ var Table = module.exports = function (options, callback) {
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-            '<span class="summary"></span></td>');
+              '<span class="summary"></span></td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
           });
 
           $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
+
+          if (self.options.checkboxes) {
+            $td = $$('<td class="checkbox"></td>');
+            $tr.append($td);
+          }
+
           $td = $$('<td class="caption change" colspan="' + _query.dimensions.length + '">% Change</td>');
           $tr.append($td);
 
@@ -43344,18 +43455,64 @@ var Table = module.exports = function (options, callback) {
         });
 
         compare.forEach(function (comparePoint, index) {
+          var lastIndex = 0;
           if (handled.indexOf(comparePoint.key) === -1) {
             var $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
-            _query.dimensions.forEach(function (d) {
-              var dimensionkey = d.key || d;
-              var $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + comparePoint.dimensions[dimensionkey] + '</a></td>');
-              $td.find('.filter').on('click', function () {
-                self.emit('select', comparePoint, dimensionkey);
+            var $td, uuid;
+
+            //checkbox
+            if (self.options.checkboxes) {
+              $td = $$('<td class="checkbox"><input type="checkbox"></td>');
+              uuid = joola.common.uuid()
+              $td.find('input[type="checkbox"]').on('click', function () {
+                var filters = [];
+                var action = 'add';
+                if (!this.checked)
+                  action = 'remove';
+
+                self.options.canvas.options.filters.forEach(function (f) {
+                  f.filters.forEach(function (filter) {
+                    filters.push(filter);
+                  });
+                });
+                
+                self.options.query[0].dimensions.forEach(function (d) {
+                  var filter = [];
+                  var dimensionkey = (d.key || d).replace(/\./ig, '_');
+                  filter.push(dimensionkey);
+                  filter.push('eq');
+                  filter.push(comparePoint.dimensions[dimensionkey]);
+                  filter.push('--table-checkbox');
+                  filter.push(uuid);
+                  filters.push(filter);
+                });
+
+                if (self.options.onCheck)
+                  self.options.onCheck.apply(this, [comparePoint, filters, action]);
+
+                self.emit('check', [comparePoint, filters, action]);
+                if (self.options.canvas) {
+                  self.options.canvas.emit('table-checkbox', comparePoint, filters, action);
+                }
               });
               $tr.append($td);
+            }
+            _query.dimensions.forEach(function (d, di) {
+              var dimensionkey = d.key || d;
+              $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + comparePoint.dimensions[dimensionkey] + '</a></td>');
+              $td.find('.filter').on('click', function () {
+                self.options.canvas.emit('table-checkbox-clear', true);
+                self.emit('select', comparePoint, dimensionkey);
+              });
+              lastIndex++;
+              if (di === self.sortIndex)
+                $td.addClass('sorted');
+              $tr.append($td);
             });
-            _query.metrics.forEach(function (m) {
-              var $td = $$('<td class="value metric empty"></td>');
+            _query.metrics.forEach(function (m, mi) {
+              $td = $$('<td class="value metric empty"></td>');
+              if (lastIndex + mi === self.sortIndex)
+                $td.addClass('sorted');
               $tr.append($td);
             });
             $tbody.append($tr);
@@ -43363,39 +43520,89 @@ var Table = module.exports = function (options, callback) {
             text = joola.common.formatDate(_query.timeframe.start) + ' - ';
             text += joola.common.formatDate(_query.timeframe.end);
             $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
-            var $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+            if (self.options.checkboxes) {
+              $td = $$('<td class="checkbox"></td>');
+              uuid = joola.common.uuid()
+              $td.find('input[type="checkbox"]').on('click', function () {
+                var filters = [];
+                var action = 'add';
+                if (!this.checked)
+                  action = 'remove';
+
+                self.options.canvas.options.filters.forEach(function (f) {
+                  f.filters.forEach(function (filter) {
+                    filters.push(filter);
+                  });
+                });
+                
+                self.options.query[0].dimensions.forEach(function (d) {
+                  var filter = [];
+                  var dimensionkey = (d.key || d).replace(/\./ig, '_');
+                  filter.push(dimensionkey);
+                  filter.push('eq');
+                  filter.push(point.dimensions[dimensionkey]);
+                  filter.push('--table-checkbox');
+                  filter.push(uuid);
+                  filters.push(filter);
+                });
+
+                if (self.options.onCheck)
+                  self.options.onCheck.apply(this, [point, filters, action]);
+
+                self.emit('check', [point, filters, action]);
+                if (self.options.canvas) {
+                  self.options.canvas.emit('table-checkbox', point, filters, action);
+                }
+              });
+              $tr.append($td);
+            }
+            $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
             $tr.append($td);
 
             $tbody.append($tr);
-            _query.metrics.forEach(function (m) {
+            _query.metrics.forEach(function (m, mi) {
               var metrickey = m.key || m;
-              var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + 'N/A' + '">' + 'N/A' + '' +
-              '<span class="summary"></span>' +
-              '</td>');
+              $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + 'N/A' + '">' + 'N/A' + '' +
+                '<span class="summary"></span>' +
+                '</td>');
+              if (lastIndex + mi === self.sortIndex)
+                $td.addClass('sorted');
               $tr.append($td);
             });
 
             text = joola.common.formatDate(_comparequery.timeframe.start) + ' - ';
             text += joola.common.formatDate(_comparequery.timeframe.end);
             $tr = $$('<tr class="data-row" data-id="' + (comparePoint ? comparePoint.key : 'missing') + '"></tr>');
+            if (self.options.checkboxes) {
+              $td = $$('<td class="checkbox"></td>');
+              $tr.append($td);
+            }
             $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
             $tr.append($td);
 
             $tbody.append($tr);
-            _query.metrics.forEach(function (m) {
+            _query.metrics.forEach(function (m, mi) {
               var metrickey = m.key || m;
-              var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
-              '<span class="summary"></span></td>');
+              $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
+                '<span class="summary"></span></td>');
+              if (lastIndex + mi === self.sortIndex)
+                $td.addClass('sorted');
               $tr.append($td);
             });
 
             $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
+            if (self.options.checkboxes) {
+              $td = $$('<td class="checkbox"></td>');
+              $tr.append($td);
+            }
             $td = $$('<td class="caption change" colspan="' + _query.dimensions.length + '">% Change</td>');
             $tr.append($td);
 
-            _query.metrics.forEach(function (m) {
+            _query.metrics.forEach(function (m, mi) {
               var metrickey = m.key || m;
-              var $td = $$('<td class="value change">N/A</td>');
+              $td = $$('<td class="value change">N/A</td>');
+              if (lastIndex + mi === self.sortIndex)
+                $td.addClass('sorted');
               $tr.append($td);
             });
             $tbody.append($tr);
@@ -43460,9 +43667,18 @@ var Table = module.exports = function (options, callback) {
       var $thead = $$($html.find('thead'));
       var $head_tr = $$('<tr class="captions"></tr>');
       lastIndex = 0;
+
+      var $th;
+
+      if (self.options.checkboxes) {
+        $th = $$('<th class="caption checkbox"><span class="name"></span></th>');
+        $head_tr.append($th);
+      }
+
       self.options.query[0].dimensions.forEach(function (d, di) {
         lastIndex++;
-        var $th = $$('<th class="caption dimension"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
+
+        $th = $$('<th class="caption dimension"><span class="name"></span><span class="icon-help"><span></span></span><span class="icon-close"></span><span class="caret-sort"></span></th>');
         $th.find('.name').text(d.name || d.key || d);
         if (d.allowremove) {
           $th.find('.icon-close').off('click');
@@ -43481,6 +43697,7 @@ var Table = module.exports = function (options, callback) {
             self.options.paging.currentPage = 1;
             self.sortIndex--;
             self.handleMetricBoxes();
+            self.options.canvas.emit('table-checkbox-clear');
             joola.viz.initialize(self, self.options);
           });
         }
@@ -43570,6 +43787,7 @@ var Table = module.exports = function (options, callback) {
               self.sortIndex--;
               self.handleMetricBoxes();
             }
+            self.options.canvas.emit('table-checkbox-clear');
             joola.viz.initialize(self, self.options);
           });
         }
@@ -43816,6 +44034,7 @@ var Table = module.exports = function (options, callback) {
             });
             self.options.paging.currentPage = 1;
             self.data = [];
+            self.options.canvas.emit('table-checkbox-clear');
             joola.viz.initialize(self, self.options);
           });
       }
@@ -43840,6 +44059,7 @@ var Table = module.exports = function (options, callback) {
             self.options.paging.currentPage = 1;
             self.sortIndex++;
             self.handleMetricBoxes();
+            self.options.canvas.emit('table-checkbox-clear');
             joola.viz.initialize(self, self.options);
           });
       }
@@ -43870,6 +44090,7 @@ var Table = module.exports = function (options, callback) {
             self.options.paging.currentPage = 1;
             self.sortIndex++;
             self.handleMetricBoxes();
+            self.options.canvas.emit('table-checkbox-clear');
             joola.viz.initialize(self, self.options);
           });
       }
@@ -43886,7 +44107,7 @@ var Table = module.exports = function (options, callback) {
       self.handleHeaders();
       self.handleMetricBoxes();
       var $tr = $$('<tr class="data-row loading"></tr>');
-      var $td = $$('<td class="loading" colspan="' + (self.options.query[0].dimensions.length + self.options.query[0].metrics.length) + '">' + self.options.strings.loading + '</td>');
+      var $td = $$('<td class="loading" colspan="' + (self.options.query[0].dimensions.length + self.options.query[0].metrics.length + (self.options.checkboxes ? 1 : 0)) + '">' + self.options.strings.loading + '</td>');
       $tr.append($td);
       $tbody.append($tr);
       $html.find('table').append($tbody);
@@ -44159,7 +44380,7 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.exit = function (data, alldata) {
-    //console.log('exit', data);
+    
   };
 
   this.done = function (data, raw) {
@@ -44240,7 +44461,6 @@ var Timeline = module.exports = function (options, callback) {
           //result.documents[0].fvalues[m.name] = null;
         });
       }
-      //console.log(result);
 
       var dimensions = result.dimensions;
       var metrics = result.metrics;
@@ -44367,11 +44587,7 @@ var Timeline = module.exports = function (options, callback) {
       self.chart.addSeries(s);
     });
 
-    //var colWidth = ($$(self.options.container).width() / self.chartData[0].data.length) + 1;
-    //console.log(colWidth, self.chart);
-    //self.chart.options.plotOptions.column.pointWidth = colWidth;
     self.chart.redraw();
-    //if (!self.options.query[0].realtime || rescale) {
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
     extremes_0.max = extremes_0.dataMax * 1.1;
@@ -44398,6 +44614,38 @@ var Timeline = module.exports = function (options, callback) {
         self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
     }
     //}
+  };
+
+  this.clearAllFiltered = function (skipdraw, callback) {
+    var cleared = false;
+    var queries = [];
+    self.options.query.forEach(function (q, i) {
+      if (q.filter) {
+        cleared = false;
+        q.filter.forEach(function (f) {
+          if (f.length > 3 && f[3] === '--table-checkbox') {
+            // self.options.query.splice(i, 1);
+            cleared = true;
+          }
+        });
+        if (!cleared)
+          queries.push(q);
+      }
+      else
+        queries.push(q);
+    });
+    self.options.query = queries;
+    if (cleared && !skipdraw) {
+      self.data = [];
+      self.chartData = [];
+      self.initialChartDrawn = false;
+      while (self.chart.series.length > 0) {
+        self.chart.series[0].remove();
+      }
+      joola.viz.initialize(self, self.options);
+    }
+
+    return callback(null);
   };
 
   this.draw = function (options, callback) {
@@ -44653,6 +44901,51 @@ var Timeline = module.exports = function (options, callback) {
     self.chart = new Highcharts.Chart(self.chartOptions);
     //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
+
+    if (self.options.canvas && !self.registered) {
+      self.registered = true;
+      self.options.canvas.on('table-checkbox-clear', function (skipdraw) {
+        self.clearAllFiltered(skipdraw, function () {
+        });
+      });
+
+      self.options.canvas.on('table-checkbox', function (point, filter, action) {
+        if (action === 'remove') {
+          var _queries = [];
+          self.options.query.forEach(function (q, i) {
+            if (q.filter) {
+              q.filter.forEach(function (f) {
+                if (f[4] !== filter[0][4]) {
+                  _queries.push(q);
+                }
+              });
+            }
+            else
+              _queries.push(q);
+          });
+          self.options.query = _queries;
+        }
+        else {
+          self.options.query.forEach(function (q) {
+            if (q.special)
+              return;
+            var _q = ce.cloneextend(q);
+            _q.filter = filter;
+            _q.special = true;
+            self.options.query.push(_q);
+          });
+        }
+
+        self.data = [];
+        self.chartData = [];
+        self.initialChartDrawn = false;
+        while (self.chart.series.length > 0) {
+          self.chart.series[0].remove();
+        }
+        joola.viz.initialize(self, self.options);
+      });
+    }
+
 
     if (self.options.onDraw)
       window[self.options.onDraw](self.options.container, self);
