@@ -1327,6 +1327,11 @@
   border-bottom: 1px solid #ddd;
 }
 
+[jio-type="table"] .table th.checkbox, [jio-type="table"] .table td.checkbox {
+  width: 1%;
+  min-width: 0;
+}
+
 [jio-type="table"] .table th {
   text-overflow: ellipsis;
   padding-top: 10px;

@@ -173,6 +173,11 @@ var Canvas = module.exports = function (options, callback) {
     if (self.options.overlay)
       self.options.overlay.$container = $(self.options.overlay.container);
 
+    if (self.options.key)
+      self.options.$container.attr('data-key', self.options.key);
+    if (self.options.type)
+      self.options.$container.attr('data-type', self.options.type);
+
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {

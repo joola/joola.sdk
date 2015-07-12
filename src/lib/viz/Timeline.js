@@ -395,6 +395,31 @@ var Timeline = module.exports = function (options, callback) {
     //}
   };
 
+  this.clearAllFiltered = function (skipdraw, callback) {
+    var cleared = false;
+    self.options.query.forEach(function (q, i) {
+      if (q.filter) {
+        q.filter.forEach(function (f) {
+          if (f.length > 3 && f[3] === '--table-checkbox') {
+            self.options.query.splice(i, 1);
+            cleared = true;
+          }
+        });
+      }
+    });
+
+    if (cleared && !skipdraw) {
+      self.data = [];
+      self.chartData = [];
+      self.initialChartDrawn = false;
+      while (self.chart.series.length > 0) {
+        self.chart.series[0].remove();
+      }
+      joola.viz.initialize(self, self.options);
+    }
+    return callback(null);
+  };
+
   this.draw = function (options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
     self.options.$container.empty();
@@ -648,6 +673,49 @@ var Timeline = module.exports = function (options, callback) {
     self.chart = new Highcharts.Chart(self.chartOptions);
     //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
+
+
+    if (self.options.canvas) {
+      self.options.canvas.on('table-checkbox-clear', function (skipdraw) {
+        console.log('clearall');
+        self.clearAllFiltered(skipdraw, function () {
+        });
+      });
+
+      self.options.canvas.on('table-checkbox', function (point, filter, action) {
+        console.log('event', point, filter, action);
+        if (action === 'remove') {
+          self.options.query.forEach(function (q, i) {
+            if (q.filter) {
+              q.filter.forEach(function (f) {
+                if (f[4] === filter[0][4]) {
+                  self.options.query.splice(i, 1);
+                }
+              });
+            }
+          });
+        }
+        else {
+          self.options.query.forEach(function (q) {
+            if (q.type !== 'base')
+              return;
+
+            var _q = ce.cloneextend(q);
+            _q.filter = filter;
+            _q.type = 'table-checkbox';
+            self.options.query.push(_q);
+          });
+        }
+
+        self.data = [];
+        self.chartData = [];
+        self.initialChartDrawn = false;
+        while (self.chart.series.length > 0) {
+          self.chart.series[0].remove();
+        }
+        joola.viz.initialize(self, self.options);
+      });
+    }
 
     if (self.options.onDraw)
       window[self.options.onDraw](self.options.container, self);
