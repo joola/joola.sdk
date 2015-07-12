@@ -239,8 +239,6 @@ var Table = module.exports = function (options, callback) {
                 });
               });
 
-              //console.log('canvas',self.options.canvas)
-
               self.options.query[0].dimensions.forEach(function (d) {
                 var filter = [];
                 var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -251,7 +249,7 @@ var Table = module.exports = function (options, callback) {
                 filter.push(uuid);
                 filters.push(filter);
               });
-              console.log('filters', filters);
+
               if (self.options.onCheck)
                 self.options.onCheck.apply(this, [point, filters, action]);
 
