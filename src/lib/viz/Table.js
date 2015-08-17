@@ -224,7 +224,7 @@ var Table = module.exports = function (options, callback) {
           if (self.options.checkboxes) {
             $td = $$('<td class="checkbox"><input type="checkbox"></td>');
             $tr.append($td);
-            uuid = joola.common.uuid()
+            uuid = joola.common.uuid();
             $td.data('uuid', uuid);
             $td.attr('data-uuid', uuid);
             $td.find('input[type="checkbox"]').on('click', function () {
@@ -312,7 +312,7 @@ var Table = module.exports = function (options, callback) {
           //checkbox
           if (self.options.checkboxes) {
             $td = $$('<td class="checkbox"><input type="checkbox"></td>');
-            uuid = joola.common.uuid()
+            uuid = joola.common.uuid();
             $td.find('input[type="checkbox"]').on('click', function () {
               var filters = [];
               var action = 'add';
@@ -376,7 +376,7 @@ var Table = module.exports = function (options, callback) {
             $tr.append($td);
           }
 
-          var $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+          $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
 
           $tbody.append($tr);
@@ -457,7 +457,7 @@ var Table = module.exports = function (options, callback) {
             //checkbox
             if (self.options.checkboxes) {
               $td = $$('<td class="checkbox"><input type="checkbox"></td>');
-              uuid = joola.common.uuid()
+              uuid = joola.common.uuid();
               $td.find('input[type="checkbox"]').on('click', function () {
                 var filters = [];
                 var action = 'add';
@@ -516,7 +516,7 @@ var Table = module.exports = function (options, callback) {
             $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
             if (self.options.checkboxes) {
               $td = $$('<td class="checkbox"></td>');
-              uuid = joola.common.uuid()
+              uuid = joola.common.uuid();
               $td.find('input[type="checkbox"]').on('click', function () {
                 var filters = [];
                 var action = 'add';
