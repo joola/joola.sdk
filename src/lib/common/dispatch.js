@@ -56,7 +56,6 @@ dispatch.buildstub = function (callback) {
             if (!joola.connected)
               return callback(new Error('Joola not connected.'));
             if (!joola.USER) {
-              console.log(fn);
               return callback(new Error('Joola not connected, invalid user.'));
             }
           }

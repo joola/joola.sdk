@@ -80,6 +80,10 @@ var MetricPicker = module.exports = function (options, callback) {
           var mSkipOne = false;
           var mlasttarget = null;
 
+          list = _.sortBy(list, function (item) {
+            return item.name || item.key;
+          });
+          
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
             if (typeof collection !== 'object')
