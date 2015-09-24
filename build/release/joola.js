@@ -1,3 +1,606 @@
+/**
+ * @license Highcharts JS v4.0.4 (2014-09-02)
+ *
+ * Standalone Highcharts Framework
+ *
+ * License: MIT License
+ */
+
+
+/*global Highcharts */
+var HighchartsAdapter = (function () {
+
+  var UNDEFINED,
+    doc = document,
+    emptyArray = [],
+    timers = [],
+    timerId,
+    animSetters = {},
+    Fx;
+
+  Math.easeInOutSine = function (t, b, c, d) {
+    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+  };
+
+
+
+  /**
+   * Extend given object with custom events
+   */
+  function augment(obj) {
+    function removeOneEvent(el, type, fn) {
+      el.removeEventListener(type, fn, false);
+    }
+
+    function IERemoveOneEvent(el, type, fn) {
+      fn = el.HCProxiedMethods[fn.toString()];
+      el.detachEvent('on' + type, fn);
+    }
+
+    function removeAllEvents(el, type) {
+      var events = el.HCEvents,
+        remove,
+        types,
+        len,
+        n;
+
+      if (el.removeEventListener) {
+        remove = removeOneEvent;
+      } else if (el.attachEvent) {
+        remove = IERemoveOneEvent;
+      } else {
+        return; // break on non-DOM events
+      }
+
+
+      if (type) {
+        types = {};
+        types[type] = true;
+      } else {
+        types = events;
+      }
+
+      for (n in types) {
+        if (events[n]) {
+          len = events[n].length;
+          while (len--) {
+            remove(el, n, events[n][len]);
+          }
+        }
+      }
+    }
+
+    if (!obj.HCExtended) {
+      Highcharts.extend(obj, {
+        HCExtended: true,
+
+        HCEvents: {},
+
+        bind: function (name, fn) {
+          var el = this,
+            events = this.HCEvents,
+            wrappedFn;
+
+          // handle DOM events in modern browsers
+          if (el.addEventListener) {
+            el.addEventListener(name, fn, false);
+
+            // handle old IE implementation
+          } else if (el.attachEvent) {
+
+            wrappedFn = function (e) {
+              e.target = e.srcElement || window; // #2820
+              fn.call(el, e);
+            };
+
+            if (!el.HCProxiedMethods) {
+              el.HCProxiedMethods = {};
+            }
+
+            // link wrapped fn with original fn, so we can get this in removeEvent
+            el.HCProxiedMethods[fn.toString()] = wrappedFn;
+
+            el.attachEvent('on' + name, wrappedFn);
+          }
+
+
+          if (events[name] === UNDEFINED) {
+            events[name] = [];
+          }
+
+          events[name].push(fn);
+        },
+
+        unbind: function (name, fn) {
+          var events,
+            index;
+
+          if (name) {
+            events = this.HCEvents[name] || [];
+            if (fn) {
+              index = HighchartsAdapter.inArray(fn, events);
+              if (index > -1) {
+                events.splice(index, 1);
+                this.HCEvents[name] = events;
+              }
+              if (this.removeEventListener) {
+                removeOneEvent(this, name, fn);
+              } else if (this.attachEvent) {
+                IERemoveOneEvent(this, name, fn);
+              }
+            } else {
+              removeAllEvents(this, name);
+              this.HCEvents[name] = [];
+            }
+          } else {
+            removeAllEvents(this);
+            this.HCEvents = {};
+          }
+        },
+
+        trigger: function (name, args) {
+          var events = this.HCEvents[name] || [],
+            target = this,
+            len = events.length,
+            i,
+            preventDefault,
+            fn;
+
+          // Attach a simple preventDefault function to skip default handler if called
+          preventDefault = function () {
+            args.defaultPrevented = true;
+          };
+
+          for (i = 0; i < len; i++) {
+            fn = events[i];
+
+            // args is never null here
+            if (args.stopped) {
+              return;
+            }
+
+            args.preventDefault = preventDefault;
+            args.target = target;
+
+            // If the type is not set, we're running a custom event (#2297). If it is set,
+            // we're running a browser event, and setting it will cause en error in
+            // IE8 (#2465).
+            if (!args.type) {
+              args.type = name;
+            }
+
+
+
+            // If the event handler return false, prevent the default handler from executing
+            if (fn.call(this, args) === false) {
+              args.preventDefault();
+            }
+          }
+        }
+      });
+    }
+
+    return obj;
+  }
+
+
+  return {
+
+    /**
+     * Initialize the adapter. This is run once as Highcharts is first run.
+     */
+    init: function (pathAnim) {
+
+      /**
+       * Compatibility section to add support for legacy IE. This can be removed if old IE
+       * support is not needed.
+       */
+      if (!doc.defaultView) {
+        this._getStyle = function (el, prop) {
+          var val;
+          if (el.style[prop]) {
+            return el.style[prop];
+          } else {
+            if (prop === 'opacity') {
+              prop = 'filter';
+            }
+            /*jslint unparam: true*/
+            val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
+            if (prop === 'filter') {
+              val = val.replace(
+                /alpha\(opacity=([0-9]+)\)/,
+                function (a, b) {
+                  return b / 100;
+                }
+              );
+            }
+            /*jslint unparam: false*/
+            return val === '' ? 1 : val;
+          }
+        };
+        this.adapterRun = function (elem, method) {
+          var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
+
+          if (alias) {
+            elem.style.zoom = 1;
+            return elem[alias] - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+          }
+        };
+      }
+
+      if (!Array.prototype.forEach) {
+        this.each = function (arr, fn) { // legacy
+          var i = 0,
+            len = arr.length;
+          for (; i < len; i++) {
+            if (fn.call(arr[i], arr[i], i, arr) === false) {
+              return i;
+            }
+          }
+        };
+      }
+
+      if (!Array.prototype.indexOf) {
+        this.inArray = function (item, arr) {
+          var len,
+            i = 0;
+
+          if (arr) {
+            len = arr.length;
+
+            for (; i < len; i++) {
+              if (arr[i] === item) {
+                return i;
+              }
+            }
+          }
+
+          return -1;
+        };
+      }
+
+      if (!Array.prototype.filter) {
+        this.grep = function (elements, callback) {
+          var ret = [],
+            i = 0,
+            length = elements.length;
+
+          for (; i < length; i++) {
+            if (!!callback(elements[i], i)) {
+              ret.push(elements[i]);
+            }
+          }
+
+          return ret;
+        };
+      }
+
+      //--- End compatibility section ---
+
+
+      /**
+       * Start of animation specific code
+       */
+      Fx = function (elem, options, prop) {
+        this.options = options;
+        this.elem = elem;
+        this.prop = prop;
+      };
+      Fx.prototype = {
+
+        update: function () {
+          var styles,
+            paths = this.paths,
+            elem = this.elem,
+            elemelem = elem.element; // if destroyed, it is null
+
+          // Animation setter defined from outside
+          if (animSetters[this.prop]) {
+            animSetters[this.prop](this);
+
+            // Animating a path definition on SVGElement
+          } else if (paths && elemelem) {
+            elem.attr('d', pathAnim.step(paths[0], paths[1], this.now, this.toD));
+
+            // Other animations on SVGElement
+          } else if (elem.attr) {
+            if (elemelem) {
+              elem.attr(this.prop, this.now);
+            }
+
+            // HTML styles
+          } else {
+            styles = {};
+            styles[this.prop] = this.now + this.unit;
+            Highcharts.css(elem, styles);
+          }
+
+          if (this.options.step) {
+            this.options.step.call(this.elem, this.now, this);
+          }
+
+        },
+        custom: function (from, to, unit) {
+          var self = this,
+            t = function (gotoEnd) {
+              return self.step(gotoEnd);
+            },
+            i;
+
+          this.startTime = +new Date();
+          this.start = from;
+          this.end = to;
+          this.unit = unit;
+          this.now = this.start;
+          this.pos = this.state = 0;
+
+          t.elem = this.elem;
+
+          if (t() && timers.push(t) === 1) {
+            timerId = setInterval(function () {
+
+              for (i = 0; i < timers.length; i++) {
+                if (!timers[i]()) {
+                  timers.splice(i--, 1);
+                }
+              }
+
+              if (!timers.length) {
+                clearInterval(timerId);
+              }
+            }, 13);
+          }
+        },
+
+        step: function (gotoEnd) {
+          var t = +new Date(),
+            ret,
+            done,
+            options = this.options,
+            elem = this.elem,
+            i;
+
+          if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
+            ret = false;
+
+          } else if (gotoEnd || t >= options.duration + this.startTime) {
+            this.now = this.end;
+            this.pos = this.state = 1;
+            this.update();
+
+            this.options.curAnim[this.prop] = true;
+
+            done = true;
+            for (i in options.curAnim) {
+              if (options.curAnim[i] !== true) {
+                done = false;
+              }
+            }
+
+            if (done) {
+              if (options.complete) {
+                options.complete.call(elem);
+              }
+            }
+            ret = false;
+
+          } else {
+            var n = t - this.startTime;
+            this.state = n / options.duration;
+            this.pos = options.easing(n, 0, 1, options.duration);
+            this.now = this.start + ((this.end - this.start) * this.pos);
+            this.update();
+            ret = true;
+          }
+          return ret;
+        }
+      };
+
+      /**
+       * The adapter animate method
+       */
+      this.animate = function (el, prop, opt) {
+        var start,
+          unit = '',
+          end,
+          fx,
+          args,
+          name;
+
+        el.stopAnimation = false; // ready for new
+
+        if (typeof opt !== 'object' || opt === null) {
+          args = arguments;
+          opt = {
+            duration: args[2],
+            easing: args[3],
+            complete: args[4]
+          };
+        }
+        if (typeof opt.duration !== 'number') {
+          opt.duration = 400;
+        }
+        opt.easing = Math[opt.easing] || Math.easeInOutSine;
+        opt.curAnim = Highcharts.extend({}, prop);
+
+        for (name in prop) {
+          fx = new Fx(el, opt, name);
+          end = null;
+
+          if (name === 'd') {
+            fx.paths = pathAnim.init(
+              el,
+              el.d,
+              prop.d
+            );
+            fx.toD = prop.d;
+            start = 0;
+            end = 1;
+          } else if (el.attr) {
+            start = el.attr(name);
+          } else {
+            start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
+            if (name !== 'opacity') {
+              unit = 'px';
+            }
+          }
+
+          if (!end) {
+            end = prop[name];
+          }
+          fx.custom(start, end, unit);
+        }
+      };
+    },
+
+    /**
+     * Internal method to return CSS value for given element and property
+     */
+    _getStyle: function (el, prop) {
+      return window.getComputedStyle(el, undefined).getPropertyValue(prop);
+    },
+
+    /**
+     * Add an animation setter for a specific property
+     */
+    addAnimSetter: function (prop, fn) {
+      animSetters[prop] = fn;
+    },
+
+    /**
+     * Downloads a script and executes a callback when done.
+     * @param {String} scriptLocation
+     * @param {Function} callback
+     */
+    getScript: function (scriptLocation, callback) {
+      // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+      var head = doc.getElementsByTagName('head')[0],
+        script = doc.createElement('script');
+
+      script.type = 'text/javascript';
+      script.src = scriptLocation;
+      script.onload = callback;
+
+      head.appendChild(script);
+    },
+
+    /**
+     * Return the index of an item in an array, or -1 if not found
+     */
+    inArray: function (item, arr) {
+      return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
+    },
+
+
+    /**
+     * A direct link to adapter methods
+     */
+    adapterRun: function (elem, method) {
+      return parseInt(HighchartsAdapter._getStyle(elem, method), 10);
+    },
+
+    /**
+     * Filter an array
+     */
+    grep: function (elements, callback) {
+      return emptyArray.filter.call(elements, callback);
+    },
+
+    /**
+     * Map an array
+     */
+    map: function (arr, fn) {
+      var results = [], i = 0, len = arr.length;
+
+      for (; i < len; i++) {
+        results[i] = fn.call(arr[i], arr[i], i, arr);
+      }
+
+      return results;
+    },
+
+    /**
+     * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+     */
+    offset: function (el) {
+      var docElem = document.documentElement,
+        box = el.getBoundingClientRect();
+
+      return {
+        top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+        left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+      };
+    },
+
+    /**
+     * Add an event listener
+     */
+    addEvent: function (el, type, fn) {
+      augment(el).bind(type, fn);
+    },
+
+    /**
+     * Remove event added with addEvent
+     */
+    removeEvent: function (el, type, fn) {
+      augment(el).unbind(type, fn);
+    },
+
+    /**
+     * Fire an event on a custom object
+     */
+    fireEvent: function (el, type, eventArguments, defaultFunction) {
+      var e;
+
+      if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+        e = doc.createEvent('Events');
+        e.initEvent(type, true, true);
+        e.target = el;
+
+        Highcharts.extend(e, eventArguments);
+
+        if (el.dispatchEvent) {
+          el.dispatchEvent(e);
+        } else {
+          el.fireEvent(type, e);
+        }
+
+      } else if (el.HCExtended === true) {
+        eventArguments = eventArguments || {};
+        el.trigger(type, eventArguments);
+      }
+
+      if (eventArguments && eventArguments.defaultPrevented) {
+        defaultFunction = null;
+      }
+
+      if (defaultFunction) {
+        defaultFunction(eventArguments);
+      }
+    },
+
+    washMouseEvent: function (e) {
+      return e;
+    },
+
+
+    /**
+     * Stop running animation
+     */
+    stop: function (el) {
+      el.stopAnimation = true;
+    },
+
+    /**
+     * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+     * @param {Array} arr
+     * @param {Function} fn
+     */
+    each: function (arr, fn) { // modern browsers
+      return Array.prototype.forEach.call(arr, fn);
+    }
+  };
+}());
 /*
  Highcharts JS v4.1.5 (2015-04-13)
 
@@ -2993,611 +3596,8 @@ else delete a.series;a=g.merge(d,a);b.call(f,a,e)}}),a):b.call(f,a,e)});j=functi
   dataLabels:{formatter:function(){return this.point.value},inside:!0,verticalAlign:"middle",crop:!1,overflow:!1,padding:0},marker:null,pointRange:null,tooltip:{pointFormat:"{point.x}, {point.y}: {point.value}<br/>"},states:{normal:{animation:!0},hover:{halo:!1,brightness:0.2}}});p.heatmap=y(p.scatter,n(r,{type:"heatmap",pointArrayMap:["y","value"],hasPointSpecificOptions:!0,supportsDrilldown:!0,getExtremesFromAll:!0,init:function(){var a;p.scatter.prototype.init.apply(this,arguments);a=this.options;
   this.pointRange=a.pointRange=l(a.pointRange,a.colsize||1);this.yAxis.axisPointRange=a.rowsize||1},translate:function(){var a=this.options,b=this.xAxis,e=this.yAxis;this.generatePoints();i(this.points,function(c){var d=(a.colsize||1)/2,f=(a.rowsize||1)/2,g=Math.round(b.len-b.translate(c.x-d,0,1,0,1)),d=Math.round(b.len-b.translate(c.x+d,0,1,0,1)),h=Math.round(e.translate(c.y-f,0,1,0,1)),f=Math.round(e.translate(c.y+f,0,1,0,1));c.plotX=c.clientX=(g+d)/2;c.plotY=(h+f)/2;c.shapeType="rect";c.shapeArgs=
 {x:Math.min(g,d),y:Math.min(h,f),width:Math.abs(d-g),height:Math.abs(f-h)}});this.translateColors();this.chart.hasRendered&&i(this.points,function(a){a.shapeArgs.fill=a.options.color||a.color})},drawPoints:p.column.prototype.drawPoints,animate:o,getBox:o,drawLegendSymbol:t.drawRectangle,getExtremes:function(){u.prototype.getExtremes.call(this,this.valueData);this.valueMin=this.dataMin;this.valueMax=this.dataMax;u.prototype.getExtremes.call(this)}}))})(Highcharts);
-/**
- * @license Highcharts JS v4.0.4 (2014-09-02)
- *
- * Standalone Highcharts Framework
- *
- * License: MIT License
- */
-
-
-/*global Highcharts */
-var HighchartsAdapter = (function () {
-
-  var UNDEFINED,
-    doc = document,
-    emptyArray = [],
-    timers = [],
-    timerId,
-    animSetters = {},
-    Fx;
-
-  Math.easeInOutSine = function (t, b, c, d) {
-    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
-  };
-
-
-
-  /**
-   * Extend given object with custom events
-   */
-  function augment(obj) {
-    function removeOneEvent(el, type, fn) {
-      el.removeEventListener(type, fn, false);
-    }
-
-    function IERemoveOneEvent(el, type, fn) {
-      fn = el.HCProxiedMethods[fn.toString()];
-      el.detachEvent('on' + type, fn);
-    }
-
-    function removeAllEvents(el, type) {
-      var events = el.HCEvents,
-        remove,
-        types,
-        len,
-        n;
-
-      if (el.removeEventListener) {
-        remove = removeOneEvent;
-      } else if (el.attachEvent) {
-        remove = IERemoveOneEvent;
-      } else {
-        return; // break on non-DOM events
-      }
-
-
-      if (type) {
-        types = {};
-        types[type] = true;
-      } else {
-        types = events;
-      }
-
-      for (n in types) {
-        if (events[n]) {
-          len = events[n].length;
-          while (len--) {
-            remove(el, n, events[n][len]);
-          }
-        }
-      }
-    }
-
-    if (!obj.HCExtended) {
-      Highcharts.extend(obj, {
-        HCExtended: true,
-
-        HCEvents: {},
-
-        bind: function (name, fn) {
-          var el = this,
-            events = this.HCEvents,
-            wrappedFn;
-
-          // handle DOM events in modern browsers
-          if (el.addEventListener) {
-            el.addEventListener(name, fn, false);
-
-            // handle old IE implementation
-          } else if (el.attachEvent) {
-
-            wrappedFn = function (e) {
-              e.target = e.srcElement || window; // #2820
-              fn.call(el, e);
-            };
-
-            if (!el.HCProxiedMethods) {
-              el.HCProxiedMethods = {};
-            }
-
-            // link wrapped fn with original fn, so we can get this in removeEvent
-            el.HCProxiedMethods[fn.toString()] = wrappedFn;
-
-            el.attachEvent('on' + name, wrappedFn);
-          }
-
-
-          if (events[name] === UNDEFINED) {
-            events[name] = [];
-          }
-
-          events[name].push(fn);
-        },
-
-        unbind: function (name, fn) {
-          var events,
-            index;
-
-          if (name) {
-            events = this.HCEvents[name] || [];
-            if (fn) {
-              index = HighchartsAdapter.inArray(fn, events);
-              if (index > -1) {
-                events.splice(index, 1);
-                this.HCEvents[name] = events;
-              }
-              if (this.removeEventListener) {
-                removeOneEvent(this, name, fn);
-              } else if (this.attachEvent) {
-                IERemoveOneEvent(this, name, fn);
-              }
-            } else {
-              removeAllEvents(this, name);
-              this.HCEvents[name] = [];
-            }
-          } else {
-            removeAllEvents(this);
-            this.HCEvents = {};
-          }
-        },
-
-        trigger: function (name, args) {
-          var events = this.HCEvents[name] || [],
-            target = this,
-            len = events.length,
-            i,
-            preventDefault,
-            fn;
-
-          // Attach a simple preventDefault function to skip default handler if called
-          preventDefault = function () {
-            args.defaultPrevented = true;
-          };
-
-          for (i = 0; i < len; i++) {
-            fn = events[i];
-
-            // args is never null here
-            if (args.stopped) {
-              return;
-            }
-
-            args.preventDefault = preventDefault;
-            args.target = target;
-
-            // If the type is not set, we're running a custom event (#2297). If it is set,
-            // we're running a browser event, and setting it will cause en error in
-            // IE8 (#2465).
-            if (!args.type) {
-              args.type = name;
-            }
-
-
-
-            // If the event handler return false, prevent the default handler from executing
-            if (fn.call(this, args) === false) {
-              args.preventDefault();
-            }
-          }
-        }
-      });
-    }
-
-    return obj;
-  }
-
-
-  return {
-
-    /**
-     * Initialize the adapter. This is run once as Highcharts is first run.
-     */
-    init: function (pathAnim) {
-
-      /**
-       * Compatibility section to add support for legacy IE. This can be removed if old IE
-       * support is not needed.
-       */
-      if (!doc.defaultView) {
-        this._getStyle = function (el, prop) {
-          var val;
-          if (el.style[prop]) {
-            return el.style[prop];
-          } else {
-            if (prop === 'opacity') {
-              prop = 'filter';
-            }
-            /*jslint unparam: true*/
-            val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
-            if (prop === 'filter') {
-              val = val.replace(
-                /alpha\(opacity=([0-9]+)\)/,
-                function (a, b) {
-                  return b / 100;
-                }
-              );
-            }
-            /*jslint unparam: false*/
-            return val === '' ? 1 : val;
-          }
-        };
-        this.adapterRun = function (elem, method) {
-          var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
-
-          if (alias) {
-            elem.style.zoom = 1;
-            return elem[alias] - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
-          }
-        };
-      }
-
-      if (!Array.prototype.forEach) {
-        this.each = function (arr, fn) { // legacy
-          var i = 0,
-            len = arr.length;
-          for (; i < len; i++) {
-            if (fn.call(arr[i], arr[i], i, arr) === false) {
-              return i;
-            }
-          }
-        };
-      }
-
-      if (!Array.prototype.indexOf) {
-        this.inArray = function (item, arr) {
-          var len,
-            i = 0;
-
-          if (arr) {
-            len = arr.length;
-
-            for (; i < len; i++) {
-              if (arr[i] === item) {
-                return i;
-              }
-            }
-          }
-
-          return -1;
-        };
-      }
-
-      if (!Array.prototype.filter) {
-        this.grep = function (elements, callback) {
-          var ret = [],
-            i = 0,
-            length = elements.length;
-
-          for (; i < length; i++) {
-            if (!!callback(elements[i], i)) {
-              ret.push(elements[i]);
-            }
-          }
-
-          return ret;
-        };
-      }
-
-      //--- End compatibility section ---
-
-
-      /**
-       * Start of animation specific code
-       */
-      Fx = function (elem, options, prop) {
-        this.options = options;
-        this.elem = elem;
-        this.prop = prop;
-      };
-      Fx.prototype = {
-
-        update: function () {
-          var styles,
-            paths = this.paths,
-            elem = this.elem,
-            elemelem = elem.element; // if destroyed, it is null
-
-          // Animation setter defined from outside
-          if (animSetters[this.prop]) {
-            animSetters[this.prop](this);
-
-            // Animating a path definition on SVGElement
-          } else if (paths && elemelem) {
-            elem.attr('d', pathAnim.step(paths[0], paths[1], this.now, this.toD));
-
-            // Other animations on SVGElement
-          } else if (elem.attr) {
-            if (elemelem) {
-              elem.attr(this.prop, this.now);
-            }
-
-            // HTML styles
-          } else {
-            styles = {};
-            styles[this.prop] = this.now + this.unit;
-            Highcharts.css(elem, styles);
-          }
-
-          if (this.options.step) {
-            this.options.step.call(this.elem, this.now, this);
-          }
-
-        },
-        custom: function (from, to, unit) {
-          var self = this,
-            t = function (gotoEnd) {
-              return self.step(gotoEnd);
-            },
-            i;
-
-          this.startTime = +new Date();
-          this.start = from;
-          this.end = to;
-          this.unit = unit;
-          this.now = this.start;
-          this.pos = this.state = 0;
-
-          t.elem = this.elem;
-
-          if (t() && timers.push(t) === 1) {
-            timerId = setInterval(function () {
-
-              for (i = 0; i < timers.length; i++) {
-                if (!timers[i]()) {
-                  timers.splice(i--, 1);
-                }
-              }
-
-              if (!timers.length) {
-                clearInterval(timerId);
-              }
-            }, 13);
-          }
-        },
-
-        step: function (gotoEnd) {
-          var t = +new Date(),
-            ret,
-            done,
-            options = this.options,
-            elem = this.elem,
-            i;
-
-          if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
-            ret = false;
-
-          } else if (gotoEnd || t >= options.duration + this.startTime) {
-            this.now = this.end;
-            this.pos = this.state = 1;
-            this.update();
-
-            this.options.curAnim[this.prop] = true;
-
-            done = true;
-            for (i in options.curAnim) {
-              if (options.curAnim[i] !== true) {
-                done = false;
-              }
-            }
-
-            if (done) {
-              if (options.complete) {
-                options.complete.call(elem);
-              }
-            }
-            ret = false;
-
-          } else {
-            var n = t - this.startTime;
-            this.state = n / options.duration;
-            this.pos = options.easing(n, 0, 1, options.duration);
-            this.now = this.start + ((this.end - this.start) * this.pos);
-            this.update();
-            ret = true;
-          }
-          return ret;
-        }
-      };
-
-      /**
-       * The adapter animate method
-       */
-      this.animate = function (el, prop, opt) {
-        var start,
-          unit = '',
-          end,
-          fx,
-          args,
-          name;
-
-        el.stopAnimation = false; // ready for new
-
-        if (typeof opt !== 'object' || opt === null) {
-          args = arguments;
-          opt = {
-            duration: args[2],
-            easing: args[3],
-            complete: args[4]
-          };
-        }
-        if (typeof opt.duration !== 'number') {
-          opt.duration = 400;
-        }
-        opt.easing = Math[opt.easing] || Math.easeInOutSine;
-        opt.curAnim = Highcharts.extend({}, prop);
-
-        for (name in prop) {
-          fx = new Fx(el, opt, name);
-          end = null;
-
-          if (name === 'd') {
-            fx.paths = pathAnim.init(
-              el,
-              el.d,
-              prop.d
-            );
-            fx.toD = prop.d;
-            start = 0;
-            end = 1;
-          } else if (el.attr) {
-            start = el.attr(name);
-          } else {
-            start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
-            if (name !== 'opacity') {
-              unit = 'px';
-            }
-          }
-
-          if (!end) {
-            end = prop[name];
-          }
-          fx.custom(start, end, unit);
-        }
-      };
-    },
-
-    /**
-     * Internal method to return CSS value for given element and property
-     */
-    _getStyle: function (el, prop) {
-      return window.getComputedStyle(el, undefined).getPropertyValue(prop);
-    },
-
-    /**
-     * Add an animation setter for a specific property
-     */
-    addAnimSetter: function (prop, fn) {
-      animSetters[prop] = fn;
-    },
-
-    /**
-     * Downloads a script and executes a callback when done.
-     * @param {String} scriptLocation
-     * @param {Function} callback
-     */
-    getScript: function (scriptLocation, callback) {
-      // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
-      var head = doc.getElementsByTagName('head')[0],
-        script = doc.createElement('script');
-
-      script.type = 'text/javascript';
-      script.src = scriptLocation;
-      script.onload = callback;
-
-      head.appendChild(script);
-    },
-
-    /**
-     * Return the index of an item in an array, or -1 if not found
-     */
-    inArray: function (item, arr) {
-      return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
-    },
-
-
-    /**
-     * A direct link to adapter methods
-     */
-    adapterRun: function (elem, method) {
-      return parseInt(HighchartsAdapter._getStyle(elem, method), 10);
-    },
-
-    /**
-     * Filter an array
-     */
-    grep: function (elements, callback) {
-      return emptyArray.filter.call(elements, callback);
-    },
-
-    /**
-     * Map an array
-     */
-    map: function (arr, fn) {
-      var results = [], i = 0, len = arr.length;
-
-      for (; i < len; i++) {
-        results[i] = fn.call(arr[i], arr[i], i, arr);
-      }
-
-      return results;
-    },
-
-    /**
-     * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
-     */
-    offset: function (el) {
-      var docElem = document.documentElement,
-        box = el.getBoundingClientRect();
-
-      return {
-        top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
-        left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
-      };
-    },
-
-    /**
-     * Add an event listener
-     */
-    addEvent: function (el, type, fn) {
-      augment(el).bind(type, fn);
-    },
-
-    /**
-     * Remove event added with addEvent
-     */
-    removeEvent: function (el, type, fn) {
-      augment(el).unbind(type, fn);
-    },
-
-    /**
-     * Fire an event on a custom object
-     */
-    fireEvent: function (el, type, eventArguments, defaultFunction) {
-      var e;
-
-      if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
-        e = doc.createEvent('Events');
-        e.initEvent(type, true, true);
-        e.target = el;
-
-        Highcharts.extend(e, eventArguments);
-
-        if (el.dispatchEvent) {
-          el.dispatchEvent(e);
-        } else {
-          el.fireEvent(type, e);
-        }
-
-      } else if (el.HCExtended === true) {
-        eventArguments = eventArguments || {};
-        el.trigger(type, eventArguments);
-      }
-
-      if (eventArguments && eventArguments.defaultPrevented) {
-        defaultFunction = null;
-      }
-
-      if (defaultFunction) {
-        defaultFunction(eventArguments);
-      }
-    },
-
-    washMouseEvent: function (e) {
-      return e;
-    },
-
-
-    /**
-     * Stop running animation
-     */
-    stop: function (el) {
-      el.stopAnimation = true;
-    },
-
-    /**
-     * Utility for iterating over an array. Parameters are reversed compared to jQuery.
-     * @param {Array} arr
-     * @param {Function} fn
-     */
-    each: function (arr, fn) { // modern browsers
-      return Array.prototype.forEach.call(arr, fn);
-    }
-  };
-}());
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}},"subscribe":{"name":"/beacon/subscribe","description":"I subscribe to socket.io","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["beacon:subscribe"],"_dispatch":{"message":"subscribe","limit":-1,"criteria":"notme"}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}},"subscribe":{"name":"/beacon/subscribe","description":"I subscribe to socket.io","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["beacon:subscribe"],"_dispatch":{"message":"subscribe","limit":-1,"criteria":"notme"}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
 },{}],2:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
@@ -14629,7 +14629,7 @@ $.datepicker.version = "1.10.4";
 
 },{"./core":38,"jquery":40}],40:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.3
+ * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -14639,7 +14639,7 @@ $.datepicker.version = "1.10.4";
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-12-18T15:11Z
+ * Date: 2015-04-28T16:01Z
  */
 
 (function( global, factory ) {
@@ -14697,7 +14697,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.3",
+	version = "2.1.4",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -15161,7 +15161,12 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-	var length = obj.length,
+
+	// Support: iOS 8.2 (not reproducible in simulator)
+	// `in` check used to prevent JIT error (gh-2145)
+	// hasOwn isn't used here due to false negatives
+	// regarding Nodelist length in IE
+	var length = "length" in obj && obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -23836,7 +23841,7 @@ return jQuery;
 
 },{}],41:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.2
+//! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -23859,28 +23864,12 @@ return jQuery;
         hookCallback = callback;
     }
 
-    function defaultParsingFlags() {
-        // We need to deep clone this object.
-        return {
-            empty           : false,
-            unusedTokens    : [],
-            unusedInput     : [],
-            overflow        : -2,
-            charsLeftOver   : 0,
-            nullInput       : false,
-            invalidMonth    : null,
-            invalidFormat   : false,
-            userInvalidated : false,
-            iso             : false
-        };
-    }
-
     function isArray(input) {
         return Object.prototype.toString.call(input) === '[object Array]';
     }
 
     function isDate(input) {
-        return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
+        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
     }
 
     function map(arr, fn) {
@@ -23917,21 +23906,46 @@ return jQuery;
         return createLocalOrUTC(input, format, locale, strict, true).utc();
     }
 
+    function defaultParsingFlags() {
+        // We need to deep clone this object.
+        return {
+            empty           : false,
+            unusedTokens    : [],
+            unusedInput     : [],
+            overflow        : -2,
+            charsLeftOver   : 0,
+            nullInput       : false,
+            invalidMonth    : null,
+            invalidFormat   : false,
+            userInvalidated : false,
+            iso             : false
+        };
+    }
+
+    function getParsingFlags(m) {
+        if (m._pf == null) {
+            m._pf = defaultParsingFlags();
+        }
+        return m._pf;
+    }
+
     function valid__isValid(m) {
         if (m._isValid == null) {
+            var flags = getParsingFlags(m);
             m._isValid = !isNaN(m._d.getTime()) &&
-                m._pf.overflow < 0 &&
-                !m._pf.empty &&
-                !m._pf.invalidMonth &&
-                !m._pf.nullInput &&
-                !m._pf.invalidFormat &&
-                !m._pf.userInvalidated;
+                flags.overflow < 0 &&
+                !flags.empty &&
+                !flags.invalidMonth &&
+                !flags.invalidWeekday &&
+                !flags.nullInput &&
+                !flags.invalidFormat &&
+                !flags.userInvalidated;
 
             if (m._strict) {
                 m._isValid = m._isValid &&
-                    m._pf.charsLeftOver === 0 &&
-                    m._pf.unusedTokens.length === 0 &&
-                    m._pf.bigHour === undefined;
+                    flags.charsLeftOver === 0 &&
+                    flags.unusedTokens.length === 0 &&
+                    flags.bigHour === undefined;
             }
         }
         return m._isValid;
@@ -23940,10 +23954,10 @@ return jQuery;
     function valid__createInvalid (flags) {
         var m = create_utc__createUTC(NaN);
         if (flags != null) {
-            extend(m._pf, flags);
+            extend(getParsingFlags(m), flags);
         }
         else {
-            m._pf.userInvalidated = true;
+            getParsingFlags(m).userInvalidated = true;
         }
 
         return m;
@@ -23979,7 +23993,7 @@ return jQuery;
             to._offset = from._offset;
         }
         if (typeof from._pf !== 'undefined') {
-            to._pf = from._pf;
+            to._pf = getParsingFlags(from);
         }
         if (typeof from._locale !== 'undefined') {
             to._locale = from._locale;
@@ -24003,7 +24017,7 @@ return jQuery;
     // Moment prototype object
     function Moment(config) {
         copyConfig(this, config);
-        this._d = new Date(+config._d);
+        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
         // Prevent infinite loop in case updateOffset creates new moment
         // objects.
         if (updateInProgress === false) {
@@ -24014,7 +24028,15 @@ return jQuery;
     }
 
     function isMoment (obj) {
-        return obj instanceof Moment || (obj != null && hasOwnProp(obj, '_isAMomentObject'));
+        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
+    }
+
+    function absFloor (number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
+        }
     }
 
     function toInt(argumentForCoercion) {
@@ -24022,11 +24044,7 @@ return jQuery;
             value = 0;
 
         if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-            if (coercedNumber >= 0) {
-                value = Math.floor(coercedNumber);
-            } else {
-                value = Math.ceil(coercedNumber);
-            }
+            value = absFloor(coercedNumber);
         }
 
         return value;
@@ -24124,9 +24142,7 @@ return jQuery;
     function defineLocale (name, values) {
         if (values !== null) {
             values.abbr = name;
-            if (!locales[name]) {
-                locales[name] = new Locale();
-            }
+            locales[name] = locales[name] || new Locale();
             locales[name].set(values);
 
             // backwards compat for now: also set the locale
@@ -24230,16 +24246,14 @@ return jQuery;
     }
 
     function zeroFill(number, targetLength, forceSign) {
-        var output = '' + Math.abs(number),
+        var absNumber = '' + Math.abs(number),
+            zerosToFill = targetLength - absNumber.length,
             sign = number >= 0;
-
-        while (output.length < targetLength) {
-            output = '0' + output;
-        }
-        return (sign ? (forceSign ? '+' : '') : '-') + output;
+        return (sign ? (forceSign ? '+' : '') : '-') +
+            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -24307,10 +24321,7 @@ return jQuery;
         }
 
         format = expandFormat(format, m.localeData());
-
-        if (!formatFunctions[format]) {
-            formatFunctions[format] = makeFormatFunction(format);
-        }
+        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
 
         return formatFunctions[format](m);
     }
@@ -24354,8 +24365,15 @@ return jQuery;
 
     var regexes = {};
 
+    function isFunction (sth) {
+        // https://github.com/moment/moment/issues/2325
+        return typeof sth === 'function' &&
+            Object.prototype.toString.call(sth) === '[object Function]';
+    }
+
+
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = typeof regex === 'function' ? regex : function (isStrict) {
+        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -24452,7 +24470,7 @@ return jQuery;
         if (month != null) {
             array[MONTH] = month;
         } else {
-            config._pf.invalidMonth = input;
+            getParsingFlags(config).invalidMonth = input;
         }
     });
 
@@ -24536,7 +24554,7 @@ return jQuery;
         var overflow;
         var a = m._a;
 
-        if (a && m._pf.overflow === -2) {
+        if (a && getParsingFlags(m).overflow === -2) {
             overflow =
                 a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
                 a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
@@ -24546,11 +24564,11 @@ return jQuery;
                 a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
                 -1;
 
-            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
 
-            m._pf.overflow = overflow;
+            getParsingFlags(m).overflow = overflow;
         }
 
         return m;
@@ -24564,9 +24582,10 @@ return jQuery;
 
     function deprecate(msg, fn) {
         var firstTime = true;
+
         return extend(function () {
             if (firstTime) {
-                warn(msg);
+                warn(msg + '\n' + (new Error()).stack);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -24611,17 +24630,17 @@ return jQuery;
             match = from_string__isoRegex.exec(string);
 
         if (match) {
-            config._pf.iso = true;
+            getParsingFlags(config).iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
-                    // match[5] should be 'T' or undefined
-                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    config._f = isoDates[i][0];
                     break;
                 }
             }
             for (i = 0, l = isoTimes.length; i < l; i++) {
                 if (isoTimes[i][1].exec(string)) {
-                    config._f += isoTimes[i][0];
+                    // match[6] should be 'T' or space
+                    config._f += (match[6] || ' ') + isoTimes[i][0];
                     break;
                 }
             }
@@ -24700,7 +24719,10 @@ return jQuery;
     addRegexToken('YYYYY',  match1to6, match6);
     addRegexToken('YYYYYY', match1to6, match6);
 
-    addParseToken(['YYYY', 'YYYYY', 'YYYYYY'], YEAR);
+    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
+    addParseToken('YYYY', function (input, array) {
+        array[YEAR] = input.length === 2 ? utils_hooks__hooks.parseTwoDigitYear(input) : toInt(input);
+    });
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
@@ -24827,18 +24849,18 @@ return jQuery;
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var d = createUTCDate(year, 0, 1).getUTCDay();
-        var daysToAdd;
-        var dayOfYear;
+        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
+        if (d < firstDayOfWeek) {
+            d += 7;
+        }
 
-        d = d === 0 ? 7 : d;
-        weekday = weekday != null ? weekday : firstDayOfWeek;
-        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
-        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
+        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
+
+        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
 
         return {
-            year      : dayOfYear > 0 ? year      : year - 1,
-            dayOfYear : dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
+            year: dayOfYear > 0 ? year : year - 1,
+            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
         };
     }
 
@@ -24891,7 +24913,7 @@ return jQuery;
             yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
-                config._pf._overflowDayOfYear = true;
+                getParsingFlags(config)._overflowDayOfYear = true;
             }
 
             date = createUTCDate(yearToUse, 0, config._dayOfYear);
@@ -24987,7 +25009,7 @@ return jQuery;
         }
 
         config._a = [];
-        config._pf.empty = true;
+        getParsingFlags(config).empty = true;
 
         // This array is used to make a Date, either with `new Date` or `Date.UTC`
         var string = '' + config._i,
@@ -25003,7 +25025,7 @@ return jQuery;
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
-                    config._pf.unusedInput.push(skipped);
+                    getParsingFlags(config).unusedInput.push(skipped);
                 }
                 string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
                 totalParsedInputLength += parsedInput.length;
@@ -25011,27 +25033,29 @@ return jQuery;
             // don't parse if it's not a known token
             if (formatTokenFunctions[token]) {
                 if (parsedInput) {
-                    config._pf.empty = false;
+                    getParsingFlags(config).empty = false;
                 }
                 else {
-                    config._pf.unusedTokens.push(token);
+                    getParsingFlags(config).unusedTokens.push(token);
                 }
                 addTimeToArrayFromToken(token, parsedInput, config);
             }
             else if (config._strict && !parsedInput) {
-                config._pf.unusedTokens.push(token);
+                getParsingFlags(config).unusedTokens.push(token);
             }
         }
 
         // add remaining unparsed input length to the string
-        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
+        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
         if (string.length > 0) {
-            config._pf.unusedInput.push(string);
+            getParsingFlags(config).unusedInput.push(string);
         }
 
         // clear _12h flag if hour is <= 12
-        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
-            config._pf.bigHour = undefined;
+        if (getParsingFlags(config).bigHour === true &&
+                config._a[HOUR] <= 12 &&
+                config._a[HOUR] > 0) {
+            getParsingFlags(config).bigHour = undefined;
         }
         // handle meridiem
         config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
@@ -25075,7 +25099,7 @@ return jQuery;
             currentScore;
 
         if (config._f.length === 0) {
-            config._pf.invalidFormat = true;
+            getParsingFlags(config).invalidFormat = true;
             config._d = new Date(NaN);
             return;
         }
@@ -25086,7 +25110,6 @@ return jQuery;
             if (config._useUTC != null) {
                 tempConfig._useUTC = config._useUTC;
             }
-            tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             configFromStringAndFormat(tempConfig);
 
@@ -25095,12 +25118,12 @@ return jQuery;
             }
 
             // if there is any input that was not parsed add a penalty for that format
-            currentScore += tempConfig._pf.charsLeftOver;
+            currentScore += getParsingFlags(tempConfig).charsLeftOver;
 
             //or tokens
-            currentScore += tempConfig._pf.unusedTokens.length * 10;
+            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
 
-            tempConfig._pf.score = currentScore;
+            getParsingFlags(tempConfig).score = currentScore;
 
             if (scoreToBeat == null || currentScore < scoreToBeat) {
                 scoreToBeat = currentScore;
@@ -25123,9 +25146,19 @@ return jQuery;
     }
 
     function createFromConfig (config) {
+        var res = new Moment(checkOverflow(prepareConfig(config)));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
+    }
+
+    function prepareConfig (config) {
         var input = config._i,
-            format = config._f,
-            res;
+            format = config._f;
 
         config._locale = config._locale || locale_locales__getLocale(config._l);
 
@@ -25143,18 +25176,13 @@ return jQuery;
             configFromStringAndArray(config);
         } else if (format) {
             configFromStringAndFormat(config);
+        } else if (isDate(input)) {
+            config._d = input;
         } else {
             configFromInput(config);
         }
 
-        res = new Moment(checkOverflow(config));
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
+        return config;
     }
 
     function configFromInput(config) {
@@ -25195,7 +25223,6 @@ return jQuery;
         c._i = input;
         c._f = format;
         c._strict = strict;
-        c._pf = defaultParsingFlags();
 
         return createFromConfig(c);
     }
@@ -25235,7 +25262,7 @@ return jQuery;
         }
         res = moments[0];
         for (i = 1; i < moments.length; ++i) {
-            if (moments[i][fn](res)) {
+            if (!moments[i].isValid() || moments[i][fn](res)) {
                 res = moments[i];
             }
         }
@@ -25347,7 +25374,6 @@ return jQuery;
         } else {
             return local__createLocal(input).local();
         }
-        return model._isUTC ? local__createLocal(input).zone(model._offset || 0) : local__createLocal(input).local();
     }
 
     function getDateOffset (m) {
@@ -25447,12 +25473,7 @@ return jQuery;
     }
 
     function hasAlignedHourOffset (input) {
-        if (!input) {
-            input = 0;
-        }
-        else {
-            input = local__createLocal(input).utcOffset();
-        }
+        input = input ? local__createLocal(input).utcOffset() : 0;
 
         return (this.utcOffset() - input) % 60 === 0;
     }
@@ -25465,12 +25486,24 @@ return jQuery;
     }
 
     function isDaylightSavingTimeShifted () {
-        if (this._a) {
-            var other = this._isUTC ? create_utc__createUTC(this._a) : local__createLocal(this._a);
-            return this.isValid() && compareArrays(this._a, other.toArray()) > 0;
+        if (typeof this._isDSTShifted !== 'undefined') {
+            return this._isDSTShifted;
         }
 
-        return false;
+        var c = {};
+
+        copyConfig(c, this);
+        c = prepareConfig(c);
+
+        if (c._a) {
+            var other = c._isUTC ? create_utc__createUTC(c._a) : local__createLocal(c._a);
+            this._isDSTShifted = this.isValid() &&
+                compareArrays(c._a, other.toArray()) > 0;
+        } else {
+            this._isDSTShifted = false;
+        }
+
+        return this._isDSTShifted;
     }
 
     function isLocal () {
@@ -25630,7 +25663,7 @@ return jQuery;
     var add_subtract__add      = createAdder(1, 'add');
     var add_subtract__subtract = createAdder(-1, 'subtract');
 
-    function moment_calendar__calendar (time) {
+    function moment_calendar__calendar (time, formats) {
         // We want to compare the start of today, vs this.
         // Getting start-of-today depends on whether we're local/utc/offset or not.
         var now = time || local__createLocal(),
@@ -25642,7 +25675,7 @@ return jQuery;
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(this.localeData().calendar(format, this, local__createLocal(now)));
+        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -25686,14 +25719,6 @@ return jQuery;
         } else {
             inputMs = +local__createLocal(input);
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
-        }
-    }
-
-    function absFloor (number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
         }
     }
 
@@ -25769,11 +25794,25 @@ return jQuery;
     }
 
     function from (time, withoutSuffix) {
+        if (!this.isValid()) {
+            return this.localeData().invalidDate();
+        }
         return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
         return this.from(local__createLocal(), withoutSuffix);
+    }
+
+    function to (time, withoutSuffix) {
+        if (!this.isValid()) {
+            return this.localeData().invalidDate();
+        }
+        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
+    }
+
+    function toNow (withoutSuffix) {
+        return this.to(local__createLocal(), withoutSuffix);
     }
 
     function locale (key) {
@@ -25873,16 +25912,29 @@ return jQuery;
         return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
     }
 
+    function toObject () {
+        var m = this;
+        return {
+            years: m.year(),
+            months: m.month(),
+            date: m.date(),
+            hours: m.hours(),
+            minutes: m.minutes(),
+            seconds: m.seconds(),
+            milliseconds: m.milliseconds()
+        };
+    }
+
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
 
     function parsingFlags () {
-        return extend({}, this._pf);
+        return extend({}, getParsingFlags(this));
     }
 
     function invalidAt () {
-        return this._pf.overflow;
+        return getParsingFlags(this).overflow;
     }
 
     addFormatToken(0, ['gg', 2], 0, function () {
@@ -26033,7 +26085,7 @@ return jQuery;
         if (weekday != null) {
             week.d = weekday;
         } else {
-            config._pf.invalidWeekday = input;
+            getParsingFlags(config).invalidWeekday = input;
         }
     });
 
@@ -26044,18 +26096,20 @@ return jQuery;
     // HELPERS
 
     function parseWeekday(input, locale) {
-        if (typeof input === 'string') {
-            if (!isNaN(input)) {
-                input = parseInt(input, 10);
-            }
-            else {
-                input = locale.weekdaysParse(input);
-                if (typeof input !== 'number') {
-                    return null;
-                }
-            }
+        if (typeof input !== 'string') {
+            return input;
         }
-        return input;
+
+        if (!isNaN(input)) {
+            return parseInt(input, 10);
+        }
+
+        input = locale.weekdaysParse(input);
+        if (typeof input === 'number') {
+            return input;
+        }
+
+        return null;
     }
 
     // LOCALES
@@ -26078,9 +26132,7 @@ return jQuery;
     function localeWeekdaysParse (weekdayName) {
         var i, mom, regex;
 
-        if (!this._weekdaysParse) {
-            this._weekdaysParse = [];
-        }
+        this._weekdaysParse = this._weekdaysParse || [];
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
@@ -26158,7 +26210,7 @@ return jQuery;
     });
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
-        config._pf.bigHour = true;
+        getParsingFlags(config).bigHour = true;
     });
 
     // LOCALES
@@ -26227,12 +26279,26 @@ return jQuery;
         return ~~(this.millisecond() / 10);
     });
 
-    function millisecond__milliseconds (token) {
-        addFormatToken(0, [token, 3], 0, 'millisecond');
-    }
+    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
+    addFormatToken(0, ['SSSS', 4], 0, function () {
+        return this.millisecond() * 10;
+    });
+    addFormatToken(0, ['SSSSS', 5], 0, function () {
+        return this.millisecond() * 100;
+    });
+    addFormatToken(0, ['SSSSSS', 6], 0, function () {
+        return this.millisecond() * 1000;
+    });
+    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
+        return this.millisecond() * 10000;
+    });
+    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
+        return this.millisecond() * 100000;
+    });
+    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
+        return this.millisecond() * 1000000;
+    });
 
-    millisecond__milliseconds('SSS');
-    millisecond__milliseconds('SSSS');
 
     // ALIASES
 
@@ -26243,11 +26309,19 @@ return jQuery;
     addRegexToken('S',    match1to3, match1);
     addRegexToken('SS',   match1to3, match2);
     addRegexToken('SSS',  match1to3, match3);
-    addRegexToken('SSSS', matchUnsigned);
-    addParseToken(['S', 'SS', 'SSS', 'SSSS'], function (input, array) {
-        array[MILLISECOND] = toInt(('0.' + input) * 1000);
-    });
 
+    var token;
+    for (token = 'SSSS'; token.length <= 9; token += 'S') {
+        addRegexToken(token, matchUnsigned);
+    }
+
+    function parseMs(input, array) {
+        array[MILLISECOND] = toInt(('0.' + input) * 1000);
+    }
+
+    for (token = 'S'; token.length <= 9; token += 'S') {
+        addParseToken(token, parseMs);
+    }
     // MOMENTS
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
@@ -26275,6 +26349,8 @@ return jQuery;
     momentPrototype__proto.format       = format;
     momentPrototype__proto.from         = from;
     momentPrototype__proto.fromNow      = fromNow;
+    momentPrototype__proto.to           = to;
+    momentPrototype__proto.toNow        = toNow;
     momentPrototype__proto.get          = getSet;
     momentPrototype__proto.invalidAt    = invalidAt;
     momentPrototype__proto.isAfter      = isAfter;
@@ -26292,6 +26368,7 @@ return jQuery;
     momentPrototype__proto.startOf      = startOf;
     momentPrototype__proto.subtract     = add_subtract__subtract;
     momentPrototype__proto.toArray      = toArray;
+    momentPrototype__proto.toObject     = toObject;
     momentPrototype__proto.toDate       = toDate;
     momentPrototype__proto.toISOString  = moment_format__toISOString;
     momentPrototype__proto.toJSON       = moment_format__toISOString;
@@ -26391,19 +26468,23 @@ return jQuery;
         LT   : 'h:mm A',
         L    : 'MM/DD/YYYY',
         LL   : 'MMMM D, YYYY',
-        LLL  : 'MMMM D, YYYY LT',
-        LLLL : 'dddd, MMMM D, YYYY LT'
+        LLL  : 'MMMM D, YYYY h:mm A',
+        LLLL : 'dddd, MMMM D, YYYY h:mm A'
     };
 
     function longDateFormat (key) {
-        var output = this._longDateFormat[key];
-        if (!output && this._longDateFormat[key.toUpperCase()]) {
-            output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
-                return val.slice(1);
-            });
-            this._longDateFormat[key] = output;
+        var format = this._longDateFormat[key],
+            formatUpper = this._longDateFormat[key.toUpperCase()];
+
+        if (format || !formatUpper) {
+            return format;
         }
-        return output;
+
+        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
+            return val.slice(1);
+        });
+
+        return this._longDateFormat[key];
     }
 
     var defaultInvalidDate = 'Invalid date';
@@ -26463,7 +26544,7 @@ return jQuery;
         }
         // Lenient ordinal parsing accepts just a number in addition to
         // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
     }
 
     var prototype__proto = Locale.prototype;
@@ -26612,12 +26693,29 @@ return jQuery;
         return duration_add_subtract__addSubtract(this, input, value, -1);
     }
 
+    function absCeil (number) {
+        if (number < 0) {
+            return Math.floor(number);
+        } else {
+            return Math.ceil(number);
+        }
+    }
+
     function bubble () {
         var milliseconds = this._milliseconds;
         var days         = this._days;
         var months       = this._months;
         var data         = this._data;
-        var seconds, minutes, hours, years = 0;
+        var seconds, minutes, hours, years, monthsFromDays;
+
+        // if we have a mix of positive and negative values, bubble down first
+        // check: https://github.com/moment/moment/issues/2166
+        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
+                (milliseconds <= 0 && days <= 0 && months <= 0))) {
+            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
+            days = 0;
+            months = 0;
+        }
 
         // The following code bubbles up values, see the tests for
         // examples of what that means.
@@ -26634,17 +26732,13 @@ return jQuery;
 
         days += absFloor(hours / 24);
 
-        // Accurately convert days to years, assume start from year 0.
-        years = absFloor(daysToYears(days));
-        days -= absFloor(yearsToDays(years));
-
-        // 30 days to a month
-        // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
-        months += absFloor(days / 30);
-        days   %= 30;
+        // convert days to months
+        monthsFromDays = absFloor(daysToMonths(days));
+        months += monthsFromDays;
+        days -= absCeil(monthsToDays(monthsFromDays));
 
         // 12 months -> 1 year
-        years  += absFloor(months / 12);
+        years = absFloor(months / 12);
         months %= 12;
 
         data.days   = days;
@@ -26654,15 +26748,15 @@ return jQuery;
         return this;
     }
 
-    function daysToYears (days) {
+    function daysToMonths (days) {
         // 400 years have 146097 days (taking into account leap year rules)
-        return days * 400 / 146097;
+        // 400 years have 12 months === 4800
+        return days * 4800 / 146097;
     }
 
-    function yearsToDays (years) {
-        // years * 365 + absFloor(years / 4) -
-        //     absFloor(years / 100) + absFloor(years / 400);
-        return years * 146097 / 400;
+    function monthsToDays (months) {
+        // the reverse of daysToMonths
+        return months * 146097 / 4800;
     }
 
     function as (units) {
@@ -26674,19 +26768,19 @@ return jQuery;
 
         if (units === 'month' || units === 'year') {
             days   = this._days   + milliseconds / 864e5;
-            months = this._months + daysToYears(days) * 12;
+            months = this._months + daysToMonths(days);
             return units === 'month' ? months : months / 12;
         } else {
             // handle milliseconds separately because of floating point math errors (issue #1867)
-            days = this._days + Math.round(yearsToDays(this._months / 12));
+            days = this._days + Math.round(monthsToDays(this._months));
             switch (units) {
-                case 'week'   : return days / 7            + milliseconds / 6048e5;
-                case 'day'    : return days                + milliseconds / 864e5;
-                case 'hour'   : return days * 24           + milliseconds / 36e5;
-                case 'minute' : return days * 24 * 60      + milliseconds / 6e4;
-                case 'second' : return days * 24 * 60 * 60 + milliseconds / 1000;
+                case 'week'   : return days / 7     + milliseconds / 6048e5;
+                case 'day'    : return days         + milliseconds / 864e5;
+                case 'hour'   : return days * 24    + milliseconds / 36e5;
+                case 'minute' : return days * 1440  + milliseconds / 6e4;
+                case 'second' : return days * 86400 + milliseconds / 1000;
                 // Math.floor prevents floating point math errors here
-                case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + milliseconds;
+                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
                 default: throw new Error('Unknown unit ' + units);
             }
         }
@@ -26728,7 +26822,7 @@ return jQuery;
         };
     }
 
-    var duration_get__milliseconds = makeGetter('milliseconds');
+    var milliseconds = makeGetter('milliseconds');
     var seconds      = makeGetter('seconds');
     var minutes      = makeGetter('minutes');
     var hours        = makeGetter('hours');
@@ -26806,13 +26900,36 @@ return jQuery;
     var iso_string__abs = Math.abs;
 
     function iso_string__toISOString() {
+        // for ISO strings we do not use the normal bubbling rules:
+        //  * milliseconds bubble up until they become hours
+        //  * days do not bubble at all
+        //  * months bubble up until they become years
+        // This is because there is no context-free conversion between hours and days
+        // (think of clock changes)
+        // and also not between days and months (28-31 days per month)
+        var seconds = iso_string__abs(this._milliseconds) / 1000;
+        var days         = iso_string__abs(this._days);
+        var months       = iso_string__abs(this._months);
+        var minutes, hours, years;
+
+        // 3600 seconds -> 60 minutes -> 1 hour
+        minutes           = absFloor(seconds / 60);
+        hours             = absFloor(minutes / 60);
+        seconds %= 60;
+        minutes %= 60;
+
+        // 12 months -> 1 year
+        years  = absFloor(months / 12);
+        months %= 12;
+
+
         // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = iso_string__abs(this.years());
-        var M = iso_string__abs(this.months());
-        var D = iso_string__abs(this.days());
-        var h = iso_string__abs(this.hours());
-        var m = iso_string__abs(this.minutes());
-        var s = iso_string__abs(this.seconds() + this.milliseconds() / 1000);
+        var Y = years;
+        var M = months;
+        var D = days;
+        var h = hours;
+        var m = minutes;
+        var s = seconds;
         var total = this.asSeconds();
 
         if (!total) {
@@ -26849,7 +26966,7 @@ return jQuery;
     duration_prototype__proto.valueOf        = duration_as__valueOf;
     duration_prototype__proto._bubble        = bubble;
     duration_prototype__proto.get            = duration_get__get;
-    duration_prototype__proto.milliseconds   = duration_get__milliseconds;
+    duration_prototype__proto.milliseconds   = milliseconds;
     duration_prototype__proto.seconds        = seconds;
     duration_prototype__proto.minutes        = minutes;
     duration_prototype__proto.hours          = hours;
@@ -26887,7 +27004,7 @@ return jQuery;
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.2';
+    utils_hooks__hooks.version = '2.10.6';
 
     setHookCallback(local__createLocal);
 
@@ -27011,7 +27128,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":87}],44:[function(require,module,exports){
+},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":85}],44:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -27516,7 +27633,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":83,"object-component":84,"socket.io-parser":87}],45:[function(require,module,exports){
+},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":81,"object-component":82,"socket.io-parser":85}],45:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -27929,7 +28046,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":81,"socket.io-parser":87,"to-array":91}],47:[function(require,module,exports){
+},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":79,"socket.io-parser":85,"to-array":91}],47:[function(require,module,exports){
 (function (global){
 
 /**
@@ -28006,7 +28123,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":51,"parseuri":85}],48:[function(require,module,exports){
+},{"debug":51,"parseuri":83}],48:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -29148,7 +29265,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":55,"./transports":56,"component-emitter":50,"debug":63,"engine.io-parser":66,"indexof":83,"parsejson":77,"parseqs":78,"parseuri":79}],55:[function(require,module,exports){
+},{"./transport":55,"./transports":56,"component-emitter":50,"debug":63,"engine.io-parser":66,"indexof":81,"parsejson":75,"parseqs":76,"parseuri":77}],55:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30238,7 +30355,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":78,"xmlhttprequest":61}],60:[function(require,module,exports){
+},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"xmlhttprequest":61}],60:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30478,7 +30595,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":78,"ws":80}],61:[function(require,module,exports){
+},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"ws":78}],61:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -30516,7 +30633,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":75}],62:[function(require,module,exports){
+},{"has-cors":73}],62:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -31583,7 +31700,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":67,"after":68,"arraybuffer.slice":69,"base64-arraybuffer":70,"blob":71,"has-binary":72,"utf8":74}],67:[function(require,module,exports){
+},{"./keys":67,"after":68,"arraybuffer.slice":69,"base64-arraybuffer":70,"blob":71,"has-binary":79,"utf8":72}],67:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -31743,8 +31860,22 @@ var BlobBuilder = global.BlobBuilder
 
 var blobSupported = (function() {
   try {
-    var b = new Blob(['hi']);
-    return b.size == 2;
+    var a = new Blob(['hi']);
+    return a.size === 2;
+  } catch(e) {
+    return false;
+  }
+})();
+
+/**
+ * Check if Blob constructor supports ArrayBufferViews
+ * Fails in Safari 6, so we need to map to ArrayBuffers there.
+ */
+
+var blobSupportsArrayBufferView = blobSupported && (function() {
+  try {
+    var b = new Blob([new Uint8Array([1,2])]);
+    return b.size === 2;
   } catch(e) {
     return false;
   }
@@ -31758,19 +31889,52 @@ var blobBuilderSupported = BlobBuilder
   && BlobBuilder.prototype.append
   && BlobBuilder.prototype.getBlob;
 
+/**
+ * Helper function that maps ArrayBufferViews to ArrayBuffers
+ * Used by BlobBuilder constructor and old browsers that didn't
+ * support it in the Blob constructor.
+ */
+
+function mapArrayBufferViews(ary) {
+  for (var i = 0; i < ary.length; i++) {
+    var chunk = ary[i];
+    if (chunk.buffer instanceof ArrayBuffer) {
+      var buf = chunk.buffer;
+
+      // if this is a subarray, make a copy so we only
+      // include the subarray region from the underlying buffer
+      if (chunk.byteLength !== buf.byteLength) {
+        var copy = new Uint8Array(chunk.byteLength);
+        copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
+        buf = copy.buffer;
+      }
+
+      ary[i] = buf;
+    }
+  }
+}
+
 function BlobBuilderConstructor(ary, options) {
   options = options || {};
 
   var bb = new BlobBuilder();
+  mapArrayBufferViews(ary);
+
   for (var i = 0; i < ary.length; i++) {
     bb.append(ary[i]);
   }
+
   return (options.type) ? bb.getBlob(options.type) : bb.getBlob();
+};
+
+function BlobConstructor(ary, options) {
+  mapArrayBufferViews(ary);
+  return new Blob(ary, options || {});
 };
 
 module.exports = (function() {
   if (blobSupported) {
-    return global.Blob;
+    return blobSupportsArrayBufferView ? global.Blob : BlobConstructor;
   } else if (blobBuilderSupported) {
     return BlobBuilderConstructor;
   } else {
@@ -31781,74 +31945,7 @@ module.exports = (function() {
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],72:[function(require,module,exports){
 (function (global){
-
-/*
- * Module requirements.
- */
-
-var isArray = require('isarray');
-
-/**
- * Module exports.
- */
-
-module.exports = hasBinary;
-
-/**
- * Checks for binary data.
- *
- * Right now only Buffer and ArrayBuffer are supported..
- *
- * @param {Object} anything
- * @api public
- */
-
-function hasBinary(data) {
-
-  function _hasBinary(obj) {
-    if (!obj) return false;
-
-    if ( (global.Buffer && global.Buffer.isBuffer(obj)) ||
-         (global.ArrayBuffer && obj instanceof ArrayBuffer) ||
-         (global.Blob && obj instanceof Blob) ||
-         (global.File && obj instanceof File)
-        ) {
-      return true;
-    }
-
-    if (isArray(obj)) {
-      for (var i = 0; i < obj.length; i++) {
-          if (_hasBinary(obj[i])) {
-              return true;
-          }
-      }
-    } else if (obj && 'object' == typeof obj) {
-      if (obj.toJSON) {
-        obj = obj.toJSON();
-      }
-
-      for (var key in obj) {
-        if (obj.hasOwnProperty(key) && _hasBinary(obj[key])) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  return _hasBinary(data);
-}
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":73}],73:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],74:[function(require,module,exports){
-(function (global){
-/*! http://mths.be/utf8js v2.0.0 by @mathias */
+/*! https://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
 
 	// Detect free variables `exports`
@@ -31869,7 +31966,7 @@ module.exports = Array.isArray || function (arr) {
 
 	var stringFromCharCode = String.fromCharCode;
 
-	// Taken from http://mths.be/punycode
+	// Taken from https://mths.be/punycode
 	function ucs2decode(string) {
 		var output = [];
 		var counter = 0;
@@ -31896,7 +31993,7 @@ module.exports = Array.isArray || function (arr) {
 		return output;
 	}
 
-	// Taken from http://mths.be/punycode
+	// Taken from https://mths.be/punycode
 	function ucs2encode(array) {
 		var length = array.length;
 		var index = -1;
@@ -31914,6 +32011,14 @@ module.exports = Array.isArray || function (arr) {
 		return output;
 	}
 
+	function checkScalarValue(codePoint) {
+		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+			throw Error(
+				'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+				' is not a scalar value'
+			);
+		}
+	}
 	/*--------------------------------------------------------------------------*/
 
 	function createByte(codePoint, shift) {
@@ -31929,6 +32034,7 @@ module.exports = Array.isArray || function (arr) {
 			symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
 		}
 		else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+			checkScalarValue(codePoint);
 			symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
 			symbol += createByte(codePoint, 6);
 		}
@@ -31943,11 +32049,6 @@ module.exports = Array.isArray || function (arr) {
 
 	function utf8encode(string) {
 		var codePoints = ucs2decode(string);
-
-		// console.log(JSON.stringify(codePoints.map(function(x) {
-		// 	return 'U+' + x.toString(16).toUpperCase();
-		// })));
-
 		var length = codePoints.length;
 		var index = -1;
 		var codePoint;
@@ -32018,6 +32119,7 @@ module.exports = Array.isArray || function (arr) {
 			byte3 = readContinuationByte();
 			codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
 			if (codePoint >= 0x0800) {
+				checkScalarValue(codePoint);
 				return codePoint;
 			} else {
 				throw Error('Invalid continuation byte');
@@ -32089,7 +32191,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],75:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32114,7 +32216,7 @@ try {
   module.exports = false;
 }
 
-},{"global":76}],76:[function(require,module,exports){
+},{"global":74}],74:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -32124,7 +32226,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],77:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -32159,7 +32261,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],78:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -32198,7 +32300,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],79:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32239,7 +32341,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],80:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32284,7 +32386,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],81:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 (function (global){
 
 /*
@@ -32346,9 +32448,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":82}],82:[function(require,module,exports){
-module.exports=require(73)
-},{}],83:[function(require,module,exports){
+},{"isarray":80}],80:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],81:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -32359,7 +32464,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],84:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -32444,7 +32549,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],85:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32471,7 +32576,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],86:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -32616,7 +32721,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":88,"isarray":89}],87:[function(require,module,exports){
+},{"./is-buffer":86,"isarray":89}],85:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -33018,7 +33123,7 @@ function error(data){
   };
 }
 
-},{"./binary":86,"./is-buffer":88,"component-emitter":50,"debug":51,"isarray":89,"json3":90}],88:[function(require,module,exports){
+},{"./binary":84,"./is-buffer":86,"component-emitter":87,"debug":88,"isarray":89,"json3":90}],86:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -33035,8 +33140,12 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],87:[function(require,module,exports){
+module.exports=require(50)
+},{}],88:[function(require,module,exports){
+module.exports=require(51)
 },{}],89:[function(require,module,exports){
-module.exports=require(73)
+module.exports=require(80)
 },{}],90:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
@@ -34232,7 +34341,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 };
 
 },{}],93:[function(require,module,exports){
-// Generated by CoffeeScript 1.8.0
+// Generated by CoffeeScript 1.9.1
 (function() {
   var locale;
 
@@ -34244,7 +34353,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format("" + options.dayFormat + " " + options.monthFormat);
+            return date.format(options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34261,7 +34370,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format("" + options.dayFormat + " " + options.monthFormat);
+            return date.format(options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34297,10 +34406,10 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 }).call(this);
 
 },{}],94:[function(require,module,exports){
-// Generated by CoffeeScript 1.8.0
+// Generated by CoffeeScript 1.9.1
 (function() {
   var deprecate, hasModule, isArray, makeTwix,
-    __slice = [].slice;
+    slice = [].slice;
 
   hasModule = (typeof module !== "undefined" && module !== null) && (module.exports != null);
 
@@ -34309,7 +34418,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     alreadyDone = false;
     return function() {
       var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
       if (!alreadyDone) {
         if (typeof console !== "undefined" && console !== null) {
           if (typeof console.warn === "function") {
@@ -34334,7 +34443,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     localesLoaded = false;
     Twix = (function() {
       function Twix(start, end, parseFormat, options) {
-        var _ref;
+        var ref;
         if (options == null) {
           options = {};
         }
@@ -34349,16 +34458,18 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         this.start = moment(start, parseFormat, options.parseStrict);
         this.end = moment(end, parseFormat, options.parseStrict);
-        this.allDay = (_ref = options.allDay) != null ? _ref : false;
+        this.allDay = (ref = options.allDay) != null ? ref : false;
         this._trueStart = this.allDay ? this.start.clone().startOf("day") : this.start;
-        this._trueEnd = this.allDay ? this.end.startOf('d').clone().add(1, "day") : this.end;
+        this._lastMilli = this.allDay ? this.end.clone().endOf("day") : this.end;
+        this._transferrableEnd = this.allDay ? this.end.clone().startOf("day") : this.end;
+        this._displayEnd = this.allDay ? this._transferrableEnd.clone().add(1, "day") : this.end;
       }
 
       Twix._extend = function() {
-        var attr, first, other, others, _i, _len;
-        first = arguments[0], others = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        for (_i = 0, _len = others.length; _i < _len; _i++) {
-          other = others[_i];
+        var attr, first, j, len, other, others;
+        first = arguments[0], others = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+        for (j = 0, len = others.length; j < len; j++) {
+          other = others[j];
           for (attr in other) {
             if (typeof other[attr] !== "undefined") {
               first[attr] = other[attr];
@@ -34391,7 +34502,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         allDayMonth: {
           fn: function(options) {
             return function(date) {
-              return date.format("" + options.monthFormat + " " + options.dayFormat);
+              return date.format(options.monthFormat + " " + options.dayFormat);
             };
           },
           slot: 2,
@@ -34428,7 +34539,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           fn: function(options) {
             return function(date) {
               var str;
-              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format("" + options.hourFormat + ":" + options.minuteFormat);
+              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format(options.hourFormat + ":" + options.minuteFormat);
               if (!options.groupMeridiems && !options.twentyFourHour) {
                 if (options.spaceBeforeMeridiem) {
                   str += " ";
@@ -34471,7 +34582,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.length = function(period) {
-        return this._trueEnd.diff(this._trueStart, period);
+        return this._displayEnd.diff(this._trueStart, period);
       };
 
       Twix.prototype.count = function(period) {
@@ -34482,8 +34593,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.countInner = function(period) {
-        var end, start, _ref;
-        _ref = this._inner(period), start = _ref[0], end = _ref[1];
+        var end, ref, start;
+        ref = this._inner(period), start = ref[0], end = ref[1];
         if (start >= end) {
           return 0;
         }
@@ -34491,11 +34602,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterate = function(intervalAmount, period, minHours) {
-        var end, hasNext, start, _ref;
+        var end, hasNext, ref, start;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        _ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = _ref[0], period = _ref[1], minHours = _ref[2];
+        ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = ref[0], period = ref[1], minHours = ref[2];
         start = this._trueStart.clone().startOf(period);
         end = this.end.clone().startOf(period);
         if (this.allDay) {
@@ -34510,12 +34621,12 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterateInner = function(intervalAmount, period) {
-        var end, hasNext, start, _ref, _ref1;
+        var end, hasNext, ref, ref1, start;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        _ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = _ref[0], period = _ref[1];
-        _ref1 = this._inner(period, intervalAmount), start = _ref1[0], end = _ref1[1];
+        ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = ref[0], period = ref[1];
+        ref1 = this._inner(period, intervalAmount), start = ref1[0], end = ref1[1];
         hasNext = function() {
           return start < end;
         };
@@ -34541,19 +34652,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.isPast = function() {
-        if (this.allDay) {
-          return this.end.clone().endOf("day") < moment();
-        } else {
-          return this.end < moment();
-        }
+        return this._lastMilli < moment();
       };
 
       Twix.prototype.isFuture = function() {
-        if (this.allDay) {
-          return this.start.clone().startOf("day") > moment();
-        } else {
-          return this.start > moment();
-        }
+        return this._trueStart > moment();
       };
 
       Twix.prototype.isCurrent = function() {
@@ -34564,75 +34667,65 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         if (!moment.isMoment(mom)) {
           mom = moment(mom);
         }
-        return this._trueStart <= mom && this._trueEnd >= mom;
+        return this._trueStart <= mom && this._lastMilli >= mom;
       };
 
       Twix.prototype.isEmpty = function() {
-        return this._trueStart.isSame(this._trueEnd);
+        return this._trueStart.isSame(this._displayEnd);
       };
 
       Twix.prototype.overlaps = function(other) {
-        return this._trueEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._trueEnd);
+        return this._displayEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._displayEnd);
       };
 
       Twix.prototype.engulfs = function(other) {
-        return this._trueStart <= other._trueStart && this._trueEnd >= other._trueEnd;
+        return this._trueStart <= other._trueStart && this._displayEnd >= other._displayEnd;
       };
 
       Twix.prototype.union = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        if (allDay) {
-          newStart = this.start < other.start ? this.start : other.start;
-          newEnd = this.end > other.end ? this.end : other.end;
-        } else {
-          newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
-          newEnd = this._trueEnd > other._trueEnd ? this._trueEnd : other._trueEnd;
-        }
+        newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
+        newEnd = this._lastMilli > other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.intersection = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        if (allDay) {
-          newStart = this.start > other.start ? this.start : other.start;
-          newEnd = this.end < other.end ? this.end : other.end;
-        } else {
-          newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
-          newEnd = this._trueEnd < other._trueEnd ? this._trueEnd : other._trueEnd;
-        }
+        newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
+        newEnd = this._lastMilli < other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.xor = function() {
-        var allDay, arr, endTime, i, item, last, o, open, other, others, results, start, t, _i, _j, _len, _len1, _ref;
-        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        var allDay, arr, endTime, i, item, j, k, last, len, len1, o, open, other, others, ref, results, start, t;
+        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
         open = 0;
         start = null;
         results = [];
         allDay = ((function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = others.length; _i < _len; _i++) {
-            o = others[_i];
+          var j, len, results1;
+          results1 = [];
+          for (j = 0, len = others.length; j < len; j++) {
+            o = others[j];
             if (o.allDay) {
-              _results.push(o);
+              results1.push(o);
             }
           }
-          return _results;
+          return results1;
         })()).length === others.length;
         arr = [];
-        _ref = [this].concat(others);
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          item = _ref[i];
+        ref = [this].concat(others);
+        for (i = j = 0, len = ref.length; j < len; i = ++j) {
+          item = ref[i];
           arr.push({
             time: item._trueStart,
             i: i,
             type: 0
           });
           arr.push({
-            time: item._trueEnd,
+            time: item._displayEnd,
             i: i,
             type: 1
           });
@@ -34640,8 +34733,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         arr = arr.sort(function(a, b) {
           return a.time - b.time;
         });
-        for (_j = 0, _len1 = arr.length; _j < _len1; _j++) {
-          other = arr[_j];
+        for (k = 0, len1 = arr.length; k < len1; k++) {
+          other = arr[k];
           if (other.type === 1) {
             open -= 1;
           }
@@ -34671,26 +34764,26 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.difference = function() {
-        var others, t, _i, _len, _ref, _results;
-        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        _ref = this.xor.apply(this, others).map((function(_this) {
+        var j, len, others, ref, results1, t;
+        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        ref = this.xor.apply(this, others).map((function(_this) {
           return function(i) {
             return _this.intersection(i);
           };
         })(this));
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          t = _ref[_i];
+        results1 = [];
+        for (j = 0, len = ref.length; j < len; j++) {
+          t = ref[j];
           if (!t.isEmpty() && t.isValid()) {
-            _results.push(t);
+            results1.push(t);
           }
         }
-        return _results;
+        return results1;
       };
 
       Twix.prototype.split = function() {
         var args, dur, end, final, i, mom, start, time, times, vals;
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
         end = start = this._trueStart.clone();
         if (moment.isDuration(args[0])) {
           dur = args[0];
@@ -34703,24 +34796,24 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         if (times) {
           times = (function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = times.length; _i < _len; _i++) {
-              time = times[_i];
-              _results.push(moment(time));
+            var j, len, results1;
+            results1 = [];
+            for (j = 0, len = times.length; j < len; j++) {
+              time = times[j];
+              results1.push(moment(time));
             }
-            return _results;
+            return results1;
           })();
           times = ((function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = times.length; _i < _len; _i++) {
-              mom = times[_i];
+            var j, len, results1;
+            results1 = [];
+            for (j = 0, len = times.length; j < len; j++) {
+              mom = times[j];
               if (mom.isValid() && mom >= start) {
-                _results.push(mom);
+                results1.push(mom);
               }
             }
-            return _results;
+            return results1;
           })()).sort();
         }
         if ((dur && dur.asMilliseconds() === 0) || (times && times.length === 0)) {
@@ -34728,7 +34821,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         vals = [];
         i = 0;
-        final = this._trueEnd;
+        final = this._displayEnd;
         while (start < final && ((times == null) || times[i])) {
           end = dur ? start.clone().add(dur) : times[i].clone();
           end = moment.min(final, end);
@@ -34738,14 +34831,14 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           start = end;
           i += 1;
         }
-        if (!end.isSame(this._trueEnd) && times) {
-          vals.push(moment.twix(end, this._trueEnd));
+        if (!end.isSame(this._displayEnd) && times) {
+          vals.push(moment.twix(end, this._displayEnd));
         }
         return vals;
       };
 
       Twix.prototype.isValid = function() {
-        return this._trueStart <= this._trueEnd;
+        return this._trueStart <= this._displayEnd;
       };
 
       Twix.prototype.equals = function(other) {
@@ -34753,8 +34846,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.toString = function() {
-        var _ref;
-        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((_ref = this.allDay) != null ? _ref : {
+        var ref;
+        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((ref = this.allDay) != null ? ref : {
           "true": "false"
         }) + "}";
       };
@@ -34774,7 +34867,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.format = function(inopts) {
-        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, needDate, options, process, start_bucket, together, _i, _len;
+        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, j, len, needDate, options, process, start_bucket, together;
         this._lazyLocale();
         if (this.isEmpty()) {
           return "";
@@ -34913,21 +35006,21 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
             }
           };
         })(this);
-        for (_i = 0, _len = fs.length; _i < _len; _i++) {
-          format = fs[_i];
+        for (j = 0, len = fs.length; j < len; j++) {
+          format = fs[j];
           process(format);
         }
         global_first = true;
         fold = (function(_this) {
           return function(array, skip_pre) {
-            var local_first, section, str, _j, _len1, _ref;
+            var k, len1, local_first, ref, section, str;
             local_first = true;
             str = "";
-            _ref = array.sort(function(a, b) {
+            ref = array.sort(function(a, b) {
               return a.format.slot - b.format.slot;
             });
-            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-              section = _ref[_j];
+            for (k = 0, len1 = ref.length; k < len1; k++) {
+              section = ref[k];
               if (!global_first) {
                 if (local_first && skip_pre) {
                   str += " ";
@@ -34967,16 +35060,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._prepIterateInputs = function() {
-        var inputs, intervalAmount, minHours, period, _ref, _ref1;
-        inputs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        var inputs, intervalAmount, minHours, period, ref, ref1;
+        inputs = 1 <= arguments.length ? slice.call(arguments, 0) : [];
         if (typeof inputs[0] === "number") {
           return inputs;
         }
         if (typeof inputs[0] === "string") {
           period = inputs.shift();
-          intervalAmount = (_ref = inputs.pop()) != null ? _ref : 1;
+          intervalAmount = (ref = inputs.pop()) != null ? ref : 1;
           if (inputs.length) {
-            minHours = (_ref1 = inputs[0]) != null ? _ref1 : false;
+            minHours = (ref1 = inputs[0]) != null ? ref1 : false;
           }
         }
         if (moment.isDuration(inputs[0])) {
@@ -34995,7 +35088,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           intervalAmount = 1;
         }
         start = this._trueStart.clone();
-        end = this._trueEnd.clone();
+        end = this._displayEnd.clone();
         if (start > start.clone().startOf(period)) {
           start.startOf(period).add(intervalAmount, period);
         }
@@ -35010,7 +35103,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._lazyLocale = function() {
-        var e, localeData, locales, _ref;
+        var e, localeData, locales, ref;
         localeData = this.start.localeData();
         if ((localeData != null) && this.end.locale()._abbr !== localeData._abbr) {
           this.end.locale(localeData._abbr);
@@ -35027,7 +35120,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           }
           localesLoaded = true;
         }
-        return this.localeData = (_ref = localeData != null ? localeData._twix : void 0) != null ? _ref : Twix.defaults;
+        return this.localeData = (ref = localeData != null ? localeData._twix : void 0) != null ? ref : Twix.defaults;
       };
 
       Twix.prototype._formatFn = function(name, options) {
@@ -35081,7 +35174,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       _twix: Twix.defaults
     });
     Twix.formatTemplate = function(leftSide, rightSide) {
-      return "" + leftSide + " - " + rightSide;
+      return leftSide + " - " + rightSide;
     };
     moment.twix = function() {
       return (function(func, args, ctor) {
@@ -35095,7 +35188,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         ctor.prototype = func.prototype;
         var child = new ctor, result = func.apply(child, args);
         return Object(result) === result ? result : child;
-      })(Twix, [this].concat(__slice.call(arguments)), function(){});
+      })(Twix, [this].concat(slice.call(arguments)), function(){});
     };
     moment.fn.forDuration = function(duration, allDay) {
       return new Twix(this, this.clone().add(duration), allDay);

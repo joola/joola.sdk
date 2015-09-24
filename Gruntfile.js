@@ -108,7 +108,6 @@ module.exports = function (grunt) {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
         mangle: true,
-        compress: true,
         sourceMap: true,
         sourceMapName: 'build/release/joola.min.js.map'
       },
