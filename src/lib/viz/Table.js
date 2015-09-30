@@ -607,7 +607,12 @@ var Table = module.exports = function(options, callback) {
   this.done = function(ctx, messages) {
     messages.forEach(function(message, messageIndex) {
       message.metrics.forEach(function(metric, metricIndex) {
+        var _collection;
+        if (self.options.query[messageIndex].metrics[metricIndex] && self.options.query[messageIndex].metrics[metricIndex].collection)
+          _collection = self.options.query[messageIndex].metrics[metricIndex].collection;
         self.options.query[messageIndex].metrics[metricIndex] = metric;
+        if (_collection)
+          self.options.query[messageIndex].metrics[metricIndex].collection = _collection;
       });
     });
     if (self.add_metric_picker) {
