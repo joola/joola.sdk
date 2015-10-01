@@ -33179,7 +33179,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.8.7",
+  "version": "0.8.8",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -39825,7 +39825,7 @@ var Table = module.exports = function (options, callback) {
                   filters.push(filter);
                 });
               });
-              
+
               self.options.query[0].dimensions.forEach(function (d) {
                 var filter = [];
                 var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -39970,7 +39970,7 @@ var Table = module.exports = function (options, callback) {
                     filters.push(filter);
                   });
                 });
-                
+
                 self.options.query[0].dimensions.forEach(function (d) {
                   var filter = [];
                   var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -40029,7 +40029,7 @@ var Table = module.exports = function (options, callback) {
                     filters.push(filter);
                   });
                 });
-                
+
                 self.options.query[0].dimensions.forEach(function (d) {
                   var filter = [];
                   var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -40111,19 +40111,8 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.done = function (ctx, messages) {
-      messages.forEach(function (message, messageIndex) {
-        message.metrics.forEach(function (metric, metricIndex) {
-          self.options.query[messageIndex].metrics[metricIndex] = metric;
-        });
-      });
       if (self.add_metric_picker) {
-        self.options.query[0].metrics.forEach(function (m, i) {
-          if (typeof m !== 'object')
-            m = {key: m};
-          m.collection = m.collection || self.options.query[0].collection;
-          self.options.query[0].metrics[i] = m;
-        });
-        self.add_metric_picker.options.disabled = self.options.query[0].metrics;
+        self.add_metric_picker.options.disabled =   message.metrics;
         self.add_metric_picker.markSelected();
       }
       self.paint();
@@ -40875,7 +40864,7 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.exit = function (data, alldata) {
-    
+
   };
 
   this.done = function (data, raw) {
@@ -40980,7 +40969,7 @@ var Timeline = module.exports = function (options, callback) {
         var counter = 0;
         var fixed = [];
         var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
-        while (itr.hasNext() && counter++ < 1000) {
+        while (itr.hasNext() ) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
           switch (interval) {
@@ -41339,7 +41328,7 @@ var Timeline = module.exports = function (options, callback) {
           borderWidth: 0
         },
         line: {
-          //turboThreshold: message.documents ? message.documents.length + 1000 : 0,
+          //turboThreshold: 10000,
           color: '#333333',
           fillOpacity: 0.1,
           lineWidth: 3,
@@ -41530,6 +41519,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Timeline, events.EventEmitter);
+
 },{"../index":105,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":94,"underscore":95,"util":34}],121:[function(require,module,exports){
 /**
  *  @title joola
@@ -41697,7 +41687,7 @@ viz.fetch = function (context, query, callback) {
     args.push(function (err, messages) {
       if (err)
         return callback(err);
-      
+
       if (!Array.isArray(messages))
         messages = [messages];
 
@@ -41732,11 +41722,11 @@ viz.fetch = function (context, query, callback) {
           message.dimensions.forEach(function (d) {
             key += doc.raw[d.key];
             doc.dimensions[d.key] = doc.raw[d.key];
-            doc.meta[d.key] = d;
+            doc.meta[d.dependsOn] = d;
           });
           message.metrics.forEach(function (m) {
             doc.metrics[m.key] = doc.raw[m.key];
-            doc.meta[m.key] = m;
+            doc.meta[m.dependsOn] = m;
           });
           doc.key = joola.common.hash(key);
           //lookup key
@@ -41915,4 +41905,5 @@ viz.destroy = function (self, vizOptions) {
  }
  });
  });*/
+
 },{"../index":105,"./BarTable":106,"./Canvas":107,"./DatePicker":108,"./DimensionPicker":109,"./FilterBox":110,"./Gauge":111,"./Geo":112,"./Metric":113,"./MetricPicker":114,"./MiniTable":115,"./Pie":116,"./PunchCard":117,"./Sparkline":118,"./Table":119,"./Timeline":120,"async":2,"cloneextend":35,"jquery":40,"underscore":95}]},{},[105])
