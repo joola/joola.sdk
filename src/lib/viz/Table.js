@@ -324,7 +324,7 @@ var Table = module.exports = function (options, callback) {
                   filters.push(filter);
                 });
               });
-              
+
               self.options.query[0].dimensions.forEach(function (d) {
                 var filter = [];
                 var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -469,7 +469,7 @@ var Table = module.exports = function (options, callback) {
                     filters.push(filter);
                   });
                 });
-                
+
                 self.options.query[0].dimensions.forEach(function (d) {
                   var filter = [];
                   var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -528,7 +528,7 @@ var Table = module.exports = function (options, callback) {
                     filters.push(filter);
                   });
                 });
-                
+
                 self.options.query[0].dimensions.forEach(function (d) {
                   var filter = [];
                   var dimensionkey = (d.key || d).replace(/\./ig, '_');
@@ -610,19 +610,8 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.done = function (ctx, messages) {
-      messages.forEach(function (message, messageIndex) {
-        message.metrics.forEach(function (metric, metricIndex) {
-          self.options.query[messageIndex].metrics[metricIndex] = metric;
-        });
-      });
       if (self.add_metric_picker) {
-        self.options.query[0].metrics.forEach(function (m, i) {
-          if (typeof m !== 'object')
-            m = {key: m};
-          m.collection = m.collection || self.options.query[0].collection;
-          self.options.query[0].metrics[i] = m;
-        });
-        self.add_metric_picker.options.disabled = self.options.query[0].metrics;
+        self.add_metric_picker.options.disabled =   message.metrics;
         self.add_metric_picker.markSelected();
       }
       self.paint();
