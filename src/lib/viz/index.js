@@ -199,11 +199,11 @@ viz.fetch = function (context, query, callback) {
           message.dimensions.forEach(function (d) {
             key += doc.raw[d.key];
             doc.dimensions[d.key] = doc.raw[d.key];
-            doc.meta[d.dependsOn] = d;
+            doc.meta[d.key] = d;
           });
           message.metrics.forEach(function (m) {
             doc.metrics[m.key] = doc.raw[m.key];
-            doc.meta[m.dependsOn] = m;
+            doc.meta[m.key] = m;
           });
           doc.key = joola.common.hash(key);
           //lookup key
