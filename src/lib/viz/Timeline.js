@@ -64,7 +64,7 @@ var Timeline = module.exports = function (options, callback) {
     else
       return 'Failed to verify query [options.query].';
 
-    self.options.query[0].dimensions = ['timestamp'];
+    self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
     return null;
   };
 
@@ -252,8 +252,8 @@ var Timeline = module.exports = function (options, callback) {
         interval = interval === 'ddate' ? 'day' : (interval || 'day');
         if (!query.timeframe) {
           query.timeframe = {};
-          query.timeframe.start = result.documents[result.documents.length - 1].timestamp;
-          query.timeframe.end = result.documents[0].timestamp;
+          query.timeframe.start = result.documents[result.documents.length - 1][timestampDimension];
+          query.timeframe.end = result.documents[0][timestampDimension];
         }
 
         var counter = 0;

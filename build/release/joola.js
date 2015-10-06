@@ -58353,7 +58353,7 @@ var Timeline = module.exports = function (options, callback) {
     else
       return 'Failed to verify query [options.query].';
 
-    self.options.query[0].dimensions = ['timestamp'];
+    self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
     return null;
   };
 
@@ -58541,8 +58541,8 @@ var Timeline = module.exports = function (options, callback) {
         interval = interval === 'ddate' ? 'day' : (interval || 'day');
         if (!query.timeframe) {
           query.timeframe = {};
-          query.timeframe.start = result.documents[result.documents.length - 1].timestamp;
-          query.timeframe.end = result.documents[0].timestamp;
+          query.timeframe.start = result.documents[result.documents.length - 1][timestampDimension];
+          query.timeframe.end = result.documents[0][timestampDimension];
         }
 
         var counter = 0;
@@ -59301,11 +59301,11 @@ viz.fetch = function (context, query, callback) {
           message.dimensions.forEach(function (d) {
             key += doc.raw[d.key];
             doc.dimensions[d.key] = doc.raw[d.key];
-            doc.meta[d.dependsOn] = d;
+            doc.meta[d.key] = d;
           });
           message.metrics.forEach(function (m) {
             doc.metrics[m.key] = doc.raw[m.key];
-            doc.meta[m.dependsOn] = m;
+            doc.meta[m.key] = m;
           });
           doc.key = joola.common.hash(key);
           //lookup key
