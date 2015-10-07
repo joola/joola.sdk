@@ -164,7 +164,7 @@ viz.fetch = function (context, query, callback) {
     args.push(function (err, messages) {
       if (err)
         return callback(err);
-      
+
       if (!Array.isArray(messages))
         messages = [messages];
 

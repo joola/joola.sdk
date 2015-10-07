@@ -64,7 +64,7 @@ var Timeline = module.exports = function (options, callback) {
     else
       return 'Failed to verify query [options.query].';
 
-    self.options.query[0].dimensions = ['timestamp'];
+    self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
     return null;
   };
 
@@ -154,7 +154,7 @@ var Timeline = module.exports = function (options, callback) {
   };
 
   this.exit = function (data, alldata) {
-    
+
   };
 
   this.done = function (data, raw) {
@@ -252,14 +252,14 @@ var Timeline = module.exports = function (options, callback) {
         interval = interval === 'ddate' ? 'day' : (interval || 'day');
         if (!query.timeframe) {
           query.timeframe = {};
-          query.timeframe.start = result.documents[result.documents.length - 1].timestamp;
-          query.timeframe.end = result.documents[0].timestamp;
+          query.timeframe.start = result.documents[result.documents.length - 1][timestampDimension];
+          query.timeframe.end = result.documents[0][timestampDimension];
         }
 
         var counter = 0;
         var fixed = [];
         var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
-        while (itr.hasNext() && counter++ < 1000) {
+        while (itr.hasNext() ) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
           switch (interval) {
@@ -618,7 +618,7 @@ var Timeline = module.exports = function (options, callback) {
           borderWidth: 0
         },
         line: {
-          //turboThreshold: message.documents ? message.documents.length + 1000 : 0,
+          //turboThreshold: 10000,
           color: '#333333',
           fillOpacity: 0.1,
           lineWidth: 3,
