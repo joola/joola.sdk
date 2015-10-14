@@ -57690,8 +57690,9 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.done = function (ctx, messages) {
-      if (self.add_metric_picker && message) {
-        self.add_metric_picker.options.disabled = message.metrics;
+      console.log(messages);
+      if (self.add_metric_picker && messages) {
+        self.add_metric_picker.options.disabled = messages.metrics;
         self.add_metric_picker.markSelected();
       }
       self.paint();
