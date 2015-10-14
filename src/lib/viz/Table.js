@@ -610,8 +610,8 @@ var Table = module.exports = function (options, callback) {
     };
 
     this.done = function (ctx, messages) {
-      if (self.add_metric_picker) {
-        self.add_metric_picker.options.disabled =   message.metrics;
+      if (self.add_metric_picker && message) {
+        self.add_metric_picker.options.disabled = message.metrics;
         self.add_metric_picker.markSelected();
       }
       self.paint();
