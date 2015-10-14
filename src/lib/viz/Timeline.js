@@ -68,8 +68,7 @@ var Timeline = module.exports = function(options, callback) {
 
     if (self.options.query && self.options.query.length > 0 && self.options.query[0].dimensions) {
       // leave as is
-    };
-    else
+    } else
       self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
 
     return null;
