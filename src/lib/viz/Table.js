@@ -264,7 +264,7 @@ var Table = module.exports = function (options, callback) {
             lastIndex++;
             var dimensionkey = (d.key || d).replace(/\./ig, '_');
 
-            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter" data-value="' + point.dimensions[dimensionkey] + '>' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
               self.options.canvas.emit('table-checkbox-clear', true);
               self.emit('select', point, dimensionkey);
@@ -273,16 +273,16 @@ var Table = module.exports = function (options, callback) {
               $td.addClass('sorted');
             $tr.append($td);
           });
-          $tbody.append($tr);
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
           });
+          $tbody.append($tr);
         });
       }
       else if (self.data.length === 2) {
@@ -376,14 +376,14 @@ var Table = module.exports = function (options, callback) {
             $tr.append($td);
           }
 
-          $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+          $td = $$('<td class="value dimension" data-value="' + text + '" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
 
           $tbody.append($tr);
           lastIndex = _query.dimensions.length;
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
@@ -403,8 +403,6 @@ var Table = module.exports = function (options, callback) {
 
           $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
-
-          $tbody.append($tr);
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
@@ -413,7 +411,7 @@ var Table = module.exports = function (options, callback) {
               $td.addClass('sorted');
             $tr.append($td);
           });
-
+          $tbody.append($tr);
           $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
 
           if (self.options.checkboxes) {
@@ -573,8 +571,6 @@ var Table = module.exports = function (options, callback) {
             }
             $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
             $tr.append($td);
-
-            $tbody.append($tr);
             _query.metrics.forEach(function (m, mi) {
               var metrickey = m.key || m;
               $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
@@ -583,7 +579,7 @@ var Table = module.exports = function (options, callback) {
                 $td.addClass('sorted');
               $tr.append($td);
             });
-
+            $tbody.append($tr);
             $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
             if (self.options.checkboxes) {
               $td = $$('<td class="checkbox"></td>');
