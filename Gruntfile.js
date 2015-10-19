@@ -74,7 +74,7 @@ module.exports = function (grunt) {
     http: {
       joola_meta: {
         options: {
-          url: 'http://localhost:8080/meta',
+          url: 'http://localhost:8888/meta',
           headers: {
             'content-type': 'application/json'
           },
