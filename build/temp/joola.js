@@ -39790,7 +39790,9 @@ var Table = module.exports = function (options, callback) {
           });
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var data_value = point.metrics[metrickey];
+
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].toString().replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
@@ -39898,7 +39900,7 @@ var Table = module.exports = function (options, callback) {
           lastIndex = _query.dimensions.length;
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].toString().replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
