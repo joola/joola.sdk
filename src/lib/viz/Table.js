@@ -264,7 +264,7 @@ var Table = module.exports = function (options, callback) {
             lastIndex++;
             var dimensionkey = (d.key || d).replace(/\./ig, '_');
 
-            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter" data-value="' + point.dimensions[dimensionkey] + '>' + point.dimensions[dimensionkey] + '</a></td>');
+            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter" data-value="' + point.dimensions[dimensionkey] + '">' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
               self.options.canvas.emit('table-checkbox-clear', true);
               self.emit('select', point, dimensionkey);
