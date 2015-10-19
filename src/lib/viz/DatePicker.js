@@ -27,8 +27,13 @@ var DatePicker = module.exports = function (options, callback) {
   var self = this;
 
   this.addDays = function (o, days) {
-    // keep in mind, months in javascript are 0-11
-    return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
+    try {
+      var _date = new Date(o);
+      _date.setDate(_date.getDate() + parseInt(days, 10));
+      return _date;
+    } catch (ex) {
+      return o;
+    }
   };
 
   this.fixDate = function (timestamp, zero) {
@@ -112,11 +117,19 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.todate)
     this.base_todate = new Date(options.todate);
   else
-    this.base_todate = new Date(this.max_date);
+	this.base_todate = self.addDays(this.max_date, options.daysoffset || 0); //new Date(this.max_date);
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
     this.base_fromdate = self.addDays(this.base_todate, options.daysback || -90);
+
+  this.base_fromdate.setHours(0);
+  this.base_fromdate.setMinutes(0);
+  this.base_fromdate.setSeconds(0);
+  this.base_fromdate.setMilliseconds(0);
+
+console.log(this.base_todate, options.daysback);
+console.log(this.base_fromdate);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
