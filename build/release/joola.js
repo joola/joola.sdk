@@ -43263,7 +43263,7 @@ var Table = module.exports = function (options, callback) {
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Odobo_Analytics.csv");
+        link.setAttribute("download", "analytics.csv");
         link.click(); // This will download the data file named "my_data.csv".
       });
     };
