@@ -37011,7 +37011,7 @@ var DimensionPicker = module.exports = function (options, callback) {
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + (dimension.name || dimension.key) + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key) + '">' + (dimension.name || dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -37219,6 +37219,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(DimensionPicker, events.EventEmitter);
+
 },{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],110:[function(require,module,exports){
 /**
  *  @title joola
@@ -38215,13 +38216,13 @@ var MetricPicker = module.exports = function (options, callback) {
           list = _.sortBy(list, function (item) {
             return item.name || item.key;
           });
-          
+
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
             if (typeof collection !== 'object')
               collection = {key: collection};
 
-            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + (metric.name || metric.key) + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + (metric.name || metric.key) + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -38431,6 +38432,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(MetricPicker, events.EventEmitter);
+
 },{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],115:[function(require,module,exports){
 /**
  *  @title joola
@@ -39625,8 +39627,8 @@ var Table = module.exports = function (options, callback) {
 
     this.export = function (canvas) {
       var data = [];
-      var dimensions = [self.options.query[0].dimensions[0]];
       var collection = [self.options.query[0].collection];
+      var dimensions =[];
       var metrics = [];
       var headers = [];
       self.options.query[0].dimensions.forEach(function (d) {
