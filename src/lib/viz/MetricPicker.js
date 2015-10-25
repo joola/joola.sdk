@@ -89,7 +89,7 @@ var MetricPicker = module.exports = function (options, callback) {
             if (typeof collection !== 'object')
               collection = {key: collection};
 
-            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + (metric.name || metric.key) + '">' + (metric.name || metric.key) + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + (collection.key + '.' + (metric.name || metric.key)).toLowerCase() + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -132,7 +132,7 @@ var MetricPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();

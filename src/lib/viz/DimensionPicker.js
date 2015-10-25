@@ -96,7 +96,7 @@ var DimensionPicker = module.exports = function (options, callback) {
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key) + '">' + (dimension.name || dimension.key) + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key).toLowerCase() + '">' + (dimension.name || dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -137,7 +137,7 @@ var DimensionPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();
