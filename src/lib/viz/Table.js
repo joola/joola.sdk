@@ -110,8 +110,8 @@ var Table = module.exports = function (options, callback) {
 
     this.export = function (canvas) {
       var data = [];
-      var dimensions = [self.options.query[0].dimensions[0]];
       var collection = [self.options.query[0].collection];
+      var dimensions =[];
       var metrics = [];
       var headers = [];
       self.options.query[0].dimensions.forEach(function (d) {

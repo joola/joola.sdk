@@ -83,13 +83,13 @@ var MetricPicker = module.exports = function (options, callback) {
           list = _.sortBy(list, function (item) {
             return item.name || item.key;
           });
-          
+
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
             if (typeof collection !== 'object')
               collection = {key: collection};
 
-            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + (metric.name || metric.key) + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + (metric.name || metric.key) + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);

@@ -96,7 +96,7 @@ var DimensionPicker = module.exports = function (options, callback) {
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + (dimension.name || dimension.key) + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key) + '">' + (dimension.name || dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
