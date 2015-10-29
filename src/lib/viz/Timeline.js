@@ -363,7 +363,7 @@ var Timeline = module.exports = function (options, callback) {
 
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
-    if (extremes_0.dataMin < 0) 
+    if (extremes_0.dataMin < 0)
       extremes_0.min = extremes_0.dataMin;
 
     extremes_0.max = extremes_0.dataMax * 1.1;
@@ -371,8 +371,12 @@ var Timeline = module.exports = function (options, callback) {
       extremes_0.min = 0;
       extremes_0.max = 1;
     }
-    if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
+    if (self.last_extremes_0)
+      if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
+        self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    else
       self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    
     self.last_extremes_0 = extremes_0;
     if (self.chart.yAxis.length > 1) {
       extremes_1 = self.chart.yAxis[1].getExtremes();
