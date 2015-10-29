@@ -91,7 +91,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           list = _.sortBy(list, function (item) {
-            return item.name || item.key;
+            return item.ordinal || item.name || item.key;
           });
 
           list.forEach(function (dimension) {

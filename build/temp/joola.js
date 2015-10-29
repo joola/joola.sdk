@@ -37006,7 +37006,7 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           list = _.sortBy(list, function (item) {
-            return item.name || item.key;
+            return item.ordinal || item.name || item.key;
           });
 
           list.forEach(function (dimension) {
@@ -38183,7 +38183,6 @@ var MetricPicker = module.exports = function (options, callback) {
   this.drawn = false;
 
   this.verify = function (options) {
-
     return null;
   };
 
@@ -38214,7 +38213,7 @@ var MetricPicker = module.exports = function (options, callback) {
           var mlasttarget = null;
 
           list = _.sortBy(list, function (item) {
-            return item.name || item.key;
+            return item.ordinal || item.name || item.key;
           });
 
           list.forEach(function (metric) {
@@ -40498,7 +40497,7 @@ var Table = module.exports = function (options, callback) {
       var $html = $$(self.options.template);
       $$(self.options.container).html($html);
 
-      var $export = $html.find('.export .icon-download');
+      var $export = $html.find('.btn.export');
       $export.off('click');
       $export.on('click', function (e) {
         self.export();
