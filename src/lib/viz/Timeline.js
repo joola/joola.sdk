@@ -361,19 +361,19 @@ var Timeline = module.exports = function (options, callback) {
       self.chart.addSeries(s);
     });
 
-    self.chart.redraw();
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
+    if (extremes_0.dataMin < 0) 
+      extremes_0.min = extremes_0.dataMin;
+
     extremes_0.max = extremes_0.dataMax * 1.1;
     if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
       extremes_0.min = 0;
       extremes_0.max = 1;
     }
-
-    if (!self.last_extremes_0)
-      self.last_extremes_0 = extremes_0;
     if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
-      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    self.last_extremes_0 = extremes_0;
     if (self.chart.yAxis.length > 1) {
       extremes_1 = self.chart.yAxis[1].getExtremes();
       extremes_1.min = 0;
@@ -385,9 +385,9 @@ var Timeline = module.exports = function (options, callback) {
       if (!self.last_extremes_1)
         self.last_extremes_1 = extremes_1;
       if (self.last_extremes_1.min !== extremes_1.min || self.last_extremes_1.max !== extremes_1.max)
-        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max, false, false);
     }
-    //}
+    self.chart.redraw();
   };
 
   this.clearAllFiltered = function (skipdraw, callback) {
