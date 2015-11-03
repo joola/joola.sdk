@@ -40665,10 +40665,9 @@ var
 
 require('twix');
 
-var Timeline = module.exports = function (options, callback) {
+var Timeline = module.exports = function(options, callback) {
   if (!callback)
-    callback = function () {
-    };
+    callback = function() {};
   joola.events.emit('timeline.init.start');
   var self = this;
 
@@ -40681,40 +40680,43 @@ var Timeline = module.exports = function (options, callback) {
     offcolors: joola.offcolors,
     canvas: null,
     template: '<div class="caption"></div>' +
-    '<div class="chartwrapper">' +
-    ' <div class="controls">' +
-    '   <div class="primary-metric-picker"></div>' +
-    '   <div class="sep">vs.</div>' +
-    '   <div class="secondary-metric-picker"></div>' +
-    ' </div>' +
-    ' ' +
-    ' <div class="thechart"></div>' +
-    '</div>',
+      '<div class="chartwrapper">' +
+      ' <div class="controls">' +
+      '   <div class="primary-metric-picker"></div>' +
+      '   <div class="sep">vs.</div>' +
+      '   <div class="secondary-metric-picker"></div>' +
+      ' </div>' +
+      ' ' +
+      ' <div class="thechart"></div>' +
+      '</div>',
     container: null,
     $container: null,
     query: null,
     pickers: {
-      main: {enabled: false},
-      secondary: {enabled: false}
+      main: {
+        enabled: false
+      },
+      secondary: {
+        enabled: false
+      }
     }
   };
   this.chartDrawn = false;
 
-  this.verify = function () {
+  this.verify = function() {
     if (!self.options)
       return 'Failed to verify [options].';
     if (self.options.query) {
       if (!Array.isArray(self.options.query))
         self.options.query = [self.options.query];
-    }
-    else
+    } else
       return 'Failed to verify query [options.query].';
 
     self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
     return null;
   };
 
-  this.destroy = function () {
+  this.destroy = function() {
     joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
@@ -40726,21 +40728,24 @@ var Timeline = module.exports = function (options, callback) {
 
   };
 
-  this.reply = function (data) {
+  this.reply = function(data) {
     if (self.initialChartDrawn && self.options.query[0].realtime === true && self.options.query[0].interval.indexOf('second') > -1) {
-      self.chart.series.forEach(function (series, serIndex) {
-        series.addPoint({x: new Date(), y: 0}, false, true, false);
+      self.chart.series.forEach(function(series, serIndex) {
+        series.addPoint({
+          x: new Date(),
+          y: 0
+        }, false, true, false);
       });
       self.chart.redraw(true);
     }
   };
 
-  this.enter = function (data, alldata) {
+  this.enter = function(data, alldata) {
     if (self.chart.series.length === 0)
       return;
     if (self.data.length > 1)
       return;
-    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+    Object.keys(data[0].metrics).forEach(function(key, pointIndex) {
       var point = data[0];
       var series = self.chart.series[pointIndex];
       series.data[series.data.length - 1].update(point.metrics[key]);
@@ -40767,12 +40772,12 @@ var Timeline = module.exports = function (options, callback) {
      }*/
   };
 
-  this.update = function (data, alldata) {
+  this.update = function(data, alldata) {
     if (self.chart.series.length === 0)
       return;
     if (self.data.length > 1)
       return;
-    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+    Object.keys(data[0].metrics).forEach(function(key, pointIndex) {
       var point = data[0];
       var series = self.chart.series[pointIndex];
       series.data[series.data.length - 1].update(point.metrics[key]);
@@ -40799,11 +40804,11 @@ var Timeline = module.exports = function (options, callback) {
     }
   };
 
-  this.exit = function (data, alldata) {
+  this.exit = function(data, alldata) {
 
   };
 
-  this.done = function (data, raw) {
+  this.done = function(data, raw) {
     if (self.initialChartDrawn)
       return;
     self.initialChartDrawn = true;
@@ -40814,15 +40819,13 @@ var Timeline = module.exports = function (options, callback) {
       window[self.options.onUpdate](self.options.container, self, self.chart.series);
   };
 
-  this.makeChartTimelineSeries = function (message) {
+  this.makeChartTimelineSeries = function(message) {
     if (message[0].metrics.length === 0) {
-      return [
-        {
-          type: 'line',
-          name: 'no data',
-          data: []
-        }
-      ];
+      return [{
+        type: 'line',
+        name: 'no data',
+        data: []
+      }];
     }
     var self = this;
     var yAxis = [null, null];
@@ -40830,8 +40833,8 @@ var Timeline = module.exports = function (options, callback) {
     var seriesIndex = -1;
     var interval = Array.isArray(self.options.query) ? self.options.query[0].interval : self.options.query.interval;
     var colorMapping = {};
-    var checkExists = function (timestampDimension, documents, date) {
-      return _.find(documents, function (document) {
+    var checkExists = function(timestampDimension, documents, date) {
+      return _.find(documents, function(document) {
         if (!document[timestampDimension.key])
           return;
 
@@ -40854,14 +40857,13 @@ var Timeline = module.exports = function (options, callback) {
             default:
               return _basedate.getTime() === _date.getTime();
           }
-        }
-        catch (ex) {
+        } catch (ex) {
           console.log('exception while checkExists', ex);
         }
       });
     };
-    var fill = function (resultRow, row, timestampDimension) {
-      Object.keys(resultRow).forEach(function (key) {
+    var fill = function(resultRow, row, timestampDimension) {
+      Object.keys(resultRow).forEach(function(key) {
         if (key !== timestampDimension.key) {
           row[key] = 0;
           //row.fvalues[key] = 0;
@@ -40869,14 +40871,17 @@ var Timeline = module.exports = function (options, callback) {
       });
     };
 
-    message.forEach(function (result, resultIndex) {
+    message.forEach(function(result, resultIndex) {
       if (result.documents.length === 0) {
-        result.documents.push({values: {}, fvalues: {}});
-        result.dimensions.forEach(function (d) {
+        result.documents.push({
+          values: {},
+          fvalues: {}
+        });
+        result.dimensions.forEach(function(d) {
           result.documents[0][d.name] = null;
           //result.documents[0].fvalues[d.name] = null;
         });
-        result.metrics.forEach(function (m) {
+        result.metrics.forEach(function(m) {
           result.documents[0][m.name] = null;
           //result.documents[0].fvalues[m.name] = null;
         });
@@ -40890,7 +40895,7 @@ var Timeline = module.exports = function (options, callback) {
       var type = query.type;
       var compare = type === 'compare';
 
-      var timestampDimension = _.find(result.dimensions, function (item) {
+      var timestampDimension = _.find(result.dimensions, function(item) {
         return item.datatype === 'date';
       });
       if (timestampDimension) {
@@ -40905,7 +40910,7 @@ var Timeline = module.exports = function (options, callback) {
         var counter = 0;
         var fixed = [];
         var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
-        while (itr.hasNext() ) {
+        while (itr.hasNext()) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
           switch (interval) {
@@ -40928,7 +40933,10 @@ var Timeline = module.exports = function (options, callback) {
           exists = checkExists(timestampDimension, result.documents, _d);
           if (!exists) {
             //_d.setHours(_d.getHours() + (offset * -1));
-            exists = {values: {}, fvalues: {}};
+            exists = {
+              values: {},
+              fvalues: {}
+            };
             exists[timestampDimension.key] = _d.toISOString();
             //exists.fvalues[timestampDimension.key] = _d.toISOString();
             fill(result.documents[0], exists, timestampDimension);
@@ -40942,16 +40950,16 @@ var Timeline = module.exports = function (options, callback) {
         return series;
 
 
-      metrics.forEach(function (metric, index) {
+      metrics.forEach(function(metric, index) {
         var _yaxis = 0;
-        yAxis[index % 2] = yAxis [index % 2] || metric.dependsOn || metric.key;
-        if (yAxis[0] === (yAxis [index % 2] || metric.dependsOn || metric.key))
+        yAxis[index % 2] = yAxis[index % 2] || metric.dependsOn || metric.key;
+        if (yAxis[0] === (yAxis[index % 2] || metric.dependsOn || metric.key))
           _yaxis = 0;
         else
           _yaxis = 1;
         var metric_name = metric.name;
         if (result.query.filter) {
-          result.query.filter.forEach(function (f) {
+          result.query.filter.forEach(function(f) {
             metric_name = f[2] + ': ' + metric_name;
           });
         }
@@ -40963,11 +40971,13 @@ var Timeline = module.exports = function (options, callback) {
           data: [],
           yAxis: _yaxis,
           color: compare ? self.options.offcolors[colorMapping[metric.key]] : self.options.colors[seriesIndex],
-          compare: compare
+          compare: compare,
+          axisPrefix: metric.prefix,
+          axisSuffix: metric.suffix
         };
         if (!compare)
           colorMapping[metric.key] = seriesIndex;
-        documents.forEach(function (document, docIndex) {
+        documents.forEach(function(document, docIndex) {
           var x = document[dimensions[0].key];
           var nameBased = true;
           if (dimensions[0].datatype === 'date') {
@@ -40978,21 +40988,19 @@ var Timeline = module.exports = function (options, callback) {
           if (nameBased) {
             series[seriesIndex].data.push({
               name: x,
-              y: document[metrics[index].key] ? document[metrics[index].key] : 0
+              y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
             });
-          }
-          else {
+          } else {
             if (seriesIndex === 0) {
               series[seriesIndex].data.push({
                 x: x,
-                y: document[metrics[index].key] ? document[metrics[index].key] : 0
+                y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
-            }
-            else {
+            } else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
                 _x: new Date(document[dimensions[0].key]),
-                y: document[metrics[index].key] ? document[metrics[index].key] : 0
+                y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
             }
           }
@@ -41002,10 +41010,32 @@ var Timeline = module.exports = function (options, callback) {
     return series;
   };
 
-  this.paint = function (rescale) {
-    self.chartData.forEach(function (s) {
+  this.paint = function(rescale) {
+    var axisLabelSet = false;
+
+    self.chartData.forEach(function(s) {
       self.chart.addSeries(s);
+      if (!axisLabelSet && (s.axisPrefix || s.axisSuffix)) {
+        axisLabelSet = true;
+        self.chart.yAxis[s.yAxis].update({
+          labels: {
+            format: (s.axisPrefix || '') + '{value:,.0f}' + (s.axisSuffix || '')
+          }
+        });
+      }
     });
+    if (!axisLabelSet) {
+      self.chart.yAxis[0].update({
+        labels: {
+          format: null
+        }
+      });
+      self.chart.yAxis[1].update({
+        labels: {
+          format: null
+        }
+      });
+    }
 
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
@@ -41017,11 +41047,11 @@ var Timeline = module.exports = function (options, callback) {
       extremes_0.min = 0;
       extremes_0.max = 1;
     }
-    if (self.last_extremes_0)
-      if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
-        self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
-    else
-      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    //if (self.last_extremes_0)
+    //  if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
+    //    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    //  else
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
 
     self.last_extremes_0 = extremes_0;
     if (self.chart.yAxis.length > 1) {
@@ -41037,16 +41067,17 @@ var Timeline = module.exports = function (options, callback) {
       if (self.last_extremes_1.min !== extremes_1.min || self.last_extremes_1.max !== extremes_1.max)
         self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max, false, false);
     }
+
     self.chart.redraw();
   };
 
-  this.clearAllFiltered = function (skipdraw, callback) {
+  this.clearAllFiltered = function(skipdraw, callback) {
     var cleared = false;
     var queries = [];
-    self.options.query.forEach(function (q, i) {
+    self.options.query.forEach(function(q, i) {
       if (q.filter) {
         cleared = false;
-        q.filter.forEach(function (f) {
+        q.filter.forEach(function(f) {
           if (f.length > 3 && f[3] === '--table-checkbox') {
             // self.options.query.splice(i, 1);
             cleared = true;
@@ -41054,8 +41085,7 @@ var Timeline = module.exports = function (options, callback) {
         });
         if (!cleared)
           queries.push(q);
-      }
-      else
+      } else
         queries.push(q);
     });
     self.options.query = queries;
@@ -41072,7 +41102,7 @@ var Timeline = module.exports = function (options, callback) {
     return callback(null);
   };
 
-  this.draw = function (options, callback) {
+  this.draw = function(options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
     self.options.$container.empty();
     self.options.$container.append(self.options.template || self.template());
@@ -41092,16 +41122,15 @@ var Timeline = module.exports = function (options, callback) {
           canvas: self.options.canvas,
           selected: self.options.query[0].metrics[0],
           allowRemove: false
-        }, function (err, _picker) {
+        }, function(err, _picker) {
           if (err)
             throw err;
-          _picker.on('change', function (metric) {
+          _picker.on('change', function(metric) {
             if (Array.isArray(self.options.query)) {
-              self.options.query.forEach(function (query) {
+              self.options.query.forEach(function(query) {
                 query.metrics[0] = metric;
               });
-            }
-            else
+            } else
               self.options.query.metrics[0] = metric;
 
             if (self.secondary_metric_container) {
@@ -41135,29 +41164,26 @@ var Timeline = module.exports = function (options, callback) {
           selected: self.options.query[0].metrics[1],
           disabled: self.options.query[0].metrics[0],
           allowRemove: true
-        }, function (err, _picker) {
+        }, function(err, _picker) {
           if (err)
             throw err;
-          _picker.on('change', function (metric) {
+          _picker.on('change', function(metric) {
             if (!metric) {
               if (Array.isArray(self.options.query)) {
-                self.options.query.forEach(function (query) {
+                self.options.query.forEach(function(query) {
                   query.metrics.splice(1, 1);
                 });
-              }
-              else
+              } else
                 self.options.query.metrics.splice(1, 1);
 
               self.primary_metric_container.options.disabled = [];
               self.primary_metric_container.markSelected();
-            }
-            else {
+            } else {
               if (Array.isArray(self.options.query)) {
-                self.options.query.forEach(function (query) {
+                self.options.query.forEach(function(query) {
                   query.metrics[1] = metric;
                 });
-              }
-              else
+              } else
                 self.options.query.metrics[1] = metric;
 
               self.primary_metric_container.options.disabled = [metric];
@@ -41174,8 +41200,7 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
-    }
-    else {
+    } else {
       $$(self.options.$container.find('.sep')).hide();
       $$(self.options.$container.find('.secondary-metric-picker')).hide();
     }
@@ -41227,39 +41252,42 @@ var Timeline = module.exports = function (options, callback) {
           }
         }
       },
-      yAxis: [
-        {
-          endOnTick: false,
-          title: {
-            text: null
-          },
-          labels: {
-            enabled: true,
-            style: {
-              color: '#b3b3b1'
-            }
-          },
-          gridLineDashStyle: 'Dot'
+      yAxis: [{
+        endOnTick: false,
+        title: {
+          text: null
         },
-        {
-          endOnTick: false,
-          title: {
-            text: null
-          },
-          labels: {
-            enabled: true,
-            style: {
-              color: '#b3b3b1'
-            }
-          },
-          gridLineDashStyle: 'Dot',
-          gridLineWidth: 0,
-          opposite: true
-        }
-      ],
-      legend: {enabled: false},
-      credits: {enabled: false},
-      exporting: {enabled: true},
+        labels: {
+          enabled: true,
+          style: {
+            color: '#b3b3b1'
+          }
+        },
+        gridLineDashStyle: 'Dot'
+      }, {
+        endOnTick: false,
+        title: {
+          text: null
+        },
+        labels: {
+          enabled: true,
+          style: {
+            color: '#b3b3b1'
+          }
+        },
+        gridLineDashStyle: 'Dot',
+        gridLineWidth: 0,
+        opposite: true
+      }],
+      legend: {
+        enabled: false
+      },
+      credits: {
+        enabled: false
+      },
+      exporting: {
+        enabled: true
+      },
       plotOptions: {
         column: {
           allowPointSelect: true,
@@ -41287,13 +41315,13 @@ var Timeline = module.exports = function (options, callback) {
       tooltip: {
         shared: true,
         useHTML: true,
-        formatter: function () {
+        formatter: function() {
           var html = '';
           var comparehtml = '';
           html += '<div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.x) + '</strong></div>';
 
           //let's do the first date range
-          this.points.forEach(function (point) {
+          this.points.forEach(function(point) {
             if (!point.series.options.compare) {
               var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
               html += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
@@ -41302,7 +41330,7 @@ var Timeline = module.exports = function (options, callback) {
           });
 
           //let's do the compare date range
-          this.points.forEach(function (point) {
+          this.points.forEach(function(point) {
             if (point.series.options.compare) {
               var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
               comparehtml += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
@@ -41322,35 +41350,37 @@ var Timeline = module.exports = function (options, callback) {
     if (!self.options.$container)
       self.options.$container = $$(self.options.container);
     self.chartOptions.chart.renderTo = self.options.$container.find('.thechart').get(0);
+    Highcharts.setOptions({
+      lang: {
+        thousandsSep: ','
+      }
+    });
     self.chart = new Highcharts.Chart(self.chartOptions);
     //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
 
     if (self.options.canvas && !self.registered) {
       self.registered = true;
-      self.options.canvas.on('table-checkbox-clear', function (skipdraw) {
-        self.clearAllFiltered(skipdraw, function () {
-        });
+      self.options.canvas.on('table-checkbox-clear', function(skipdraw) {
+        self.clearAllFiltered(skipdraw, function() {});
       });
 
-      self.options.canvas.on('table-checkbox', function (point, filter, action) {
+      self.options.canvas.on('table-checkbox', function(point, filter, action) {
         if (action === 'remove') {
           var _queries = [];
-          self.options.query.forEach(function (q, i) {
+          self.options.query.forEach(function(q, i) {
             if (q.filter) {
-              q.filter.forEach(function (f) {
+              q.filter.forEach(function(f) {
                 if (f[4] !== filter[0][4]) {
                   _queries.push(q);
                 }
               });
-            }
-            else
+            } else
               _queries.push(q);
           });
           self.options.query = _queries;
-        }
-        else {
-          self.options.query.forEach(function (q) {
+        } else {
+          self.options.query.forEach(function(q) {
             if (q.special)
               return;
             var _q = ce.cloneextend(q);
@@ -41385,7 +41415,7 @@ var Timeline = module.exports = function (options, callback) {
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
-  self.draw(null, function (err, ref) {
+  self.draw(null, function(err, ref) {
     if (err)
       return callback(err);
     joola.viz.onscreen.push(self);
@@ -41407,12 +41437,14 @@ var Timeline = module.exports = function (options, callback) {
   return self;
 };
 
-joola.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function() {
   var found;
-  if (typeof (jQuery) != 'undefined') {
-    $.fn.Timeline = function (options, callback) {
+  if (typeof(jQuery) != 'undefined') {
+    $.fn.Timeline = function(options, callback) {
       if (!options)
-        options = {force: false};
+        options = {
+          force: false
+        };
       else if (!options.hasOwnProperty('force'))
         options.force = true;
       var result = null;
@@ -41421,7 +41453,7 @@ joola.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joola.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function(viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -41434,7 +41466,7 @@ joola.events.on('core.init.finish', function () {
         }
         //create new
         options.container = this.get(0);
-        result = new joola.viz.Timeline(options, function (err, timeline) {
+        result = new joola.viz.Timeline(options, function(err, timeline) {
           if (err)
             throw err;
           //timeline.draw(options, callback);
@@ -41442,11 +41474,10 @@ joola.events.on('core.init.finish', function () {
             return callback(null, timeline);
 
         }).options.$container;
-      }
-      else {
+      } else {
         //return existing
         found = false;
-        joola.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function(viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
