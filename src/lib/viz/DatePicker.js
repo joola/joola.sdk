@@ -128,9 +128,6 @@ var DatePicker = module.exports = function (options, callback) {
   this.base_fromdate.setSeconds(0);
   this.base_fromdate.setMilliseconds(0);
 
-console.log(this.base_todate, options.daysback);
-console.log(this.base_fromdate);
-
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
     this.base_fromdate.setDate(this.base_fromdate.getDate() - 1);
