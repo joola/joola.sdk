@@ -14629,7 +14629,7 @@ $.datepicker.version = "1.10.4";
 
 },{"./core":38,"jquery":40}],40:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.4
+ * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -14639,7 +14639,7 @@ $.datepicker.version = "1.10.4";
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2015-04-28T16:01Z
+ * Date: 2014-12-18T15:11Z
  */
 
 (function( global, factory ) {
@@ -14697,7 +14697,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.4",
+	version = "2.1.3",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -15161,12 +15161,7 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-
-	// Support: iOS 8.2 (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
-	// hasOwn isn't used here due to false negatives
-	// regarding Nodelist length in IE
-	var length = "length" in obj && obj.length,
+	var length = obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -23841,7 +23836,7 @@ return jQuery;
 
 },{}],41:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.6
+//! version : 2.10.2
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -23864,12 +23859,28 @@ return jQuery;
         hookCallback = callback;
     }
 
+    function defaultParsingFlags() {
+        // We need to deep clone this object.
+        return {
+            empty           : false,
+            unusedTokens    : [],
+            unusedInput     : [],
+            overflow        : -2,
+            charsLeftOver   : 0,
+            nullInput       : false,
+            invalidMonth    : null,
+            invalidFormat   : false,
+            userInvalidated : false,
+            iso             : false
+        };
+    }
+
     function isArray(input) {
         return Object.prototype.toString.call(input) === '[object Array]';
     }
 
     function isDate(input) {
-        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+        return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
     }
 
     function map(arr, fn) {
@@ -23906,46 +23917,21 @@ return jQuery;
         return createLocalOrUTC(input, format, locale, strict, true).utc();
     }
 
-    function defaultParsingFlags() {
-        // We need to deep clone this object.
-        return {
-            empty           : false,
-            unusedTokens    : [],
-            unusedInput     : [],
-            overflow        : -2,
-            charsLeftOver   : 0,
-            nullInput       : false,
-            invalidMonth    : null,
-            invalidFormat   : false,
-            userInvalidated : false,
-            iso             : false
-        };
-    }
-
-    function getParsingFlags(m) {
-        if (m._pf == null) {
-            m._pf = defaultParsingFlags();
-        }
-        return m._pf;
-    }
-
     function valid__isValid(m) {
         if (m._isValid == null) {
-            var flags = getParsingFlags(m);
             m._isValid = !isNaN(m._d.getTime()) &&
-                flags.overflow < 0 &&
-                !flags.empty &&
-                !flags.invalidMonth &&
-                !flags.invalidWeekday &&
-                !flags.nullInput &&
-                !flags.invalidFormat &&
-                !flags.userInvalidated;
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
 
             if (m._strict) {
                 m._isValid = m._isValid &&
-                    flags.charsLeftOver === 0 &&
-                    flags.unusedTokens.length === 0 &&
-                    flags.bigHour === undefined;
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
             }
         }
         return m._isValid;
@@ -23954,10 +23940,10 @@ return jQuery;
     function valid__createInvalid (flags) {
         var m = create_utc__createUTC(NaN);
         if (flags != null) {
-            extend(getParsingFlags(m), flags);
+            extend(m._pf, flags);
         }
         else {
-            getParsingFlags(m).userInvalidated = true;
+            m._pf.userInvalidated = true;
         }
 
         return m;
@@ -23993,7 +23979,7 @@ return jQuery;
             to._offset = from._offset;
         }
         if (typeof from._pf !== 'undefined') {
-            to._pf = getParsingFlags(from);
+            to._pf = from._pf;
         }
         if (typeof from._locale !== 'undefined') {
             to._locale = from._locale;
@@ -24017,7 +24003,7 @@ return jQuery;
     // Moment prototype object
     function Moment(config) {
         copyConfig(this, config);
-        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
+        this._d = new Date(+config._d);
         // Prevent infinite loop in case updateOffset creates new moment
         // objects.
         if (updateInProgress === false) {
@@ -24028,15 +24014,7 @@ return jQuery;
     }
 
     function isMoment (obj) {
-        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
-    }
-
-    function absFloor (number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
-        }
+        return obj instanceof Moment || (obj != null && hasOwnProp(obj, '_isAMomentObject'));
     }
 
     function toInt(argumentForCoercion) {
@@ -24044,7 +24022,11 @@ return jQuery;
             value = 0;
 
         if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-            value = absFloor(coercedNumber);
+            if (coercedNumber >= 0) {
+                value = Math.floor(coercedNumber);
+            } else {
+                value = Math.ceil(coercedNumber);
+            }
         }
 
         return value;
@@ -24142,7 +24124,9 @@ return jQuery;
     function defineLocale (name, values) {
         if (values !== null) {
             values.abbr = name;
-            locales[name] = locales[name] || new Locale();
+            if (!locales[name]) {
+                locales[name] = new Locale();
+            }
             locales[name].set(values);
 
             // backwards compat for now: also set the locale
@@ -24246,14 +24230,16 @@ return jQuery;
     }
 
     function zeroFill(number, targetLength, forceSign) {
-        var absNumber = '' + Math.abs(number),
-            zerosToFill = targetLength - absNumber.length,
+        var output = '' + Math.abs(number),
             sign = number >= 0;
-        return (sign ? (forceSign ? '+' : '') : '-') +
-            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
+
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -24321,7 +24307,10 @@ return jQuery;
         }
 
         format = expandFormat(format, m.localeData());
-        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
+
+        if (!formatFunctions[format]) {
+            formatFunctions[format] = makeFormatFunction(format);
+        }
 
         return formatFunctions[format](m);
     }
@@ -24365,15 +24354,8 @@ return jQuery;
 
     var regexes = {};
 
-    function isFunction (sth) {
-        // https://github.com/moment/moment/issues/2325
-        return typeof sth === 'function' &&
-            Object.prototype.toString.call(sth) === '[object Function]';
-    }
-
-
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
+        regexes[token] = typeof regex === 'function' ? regex : function (isStrict) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -24470,7 +24452,7 @@ return jQuery;
         if (month != null) {
             array[MONTH] = month;
         } else {
-            getParsingFlags(config).invalidMonth = input;
+            config._pf.invalidMonth = input;
         }
     });
 
@@ -24554,7 +24536,7 @@ return jQuery;
         var overflow;
         var a = m._a;
 
-        if (a && getParsingFlags(m).overflow === -2) {
+        if (a && m._pf.overflow === -2) {
             overflow =
                 a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
                 a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
@@ -24564,11 +24546,11 @@ return jQuery;
                 a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
                 -1;
 
-            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
 
-            getParsingFlags(m).overflow = overflow;
+            m._pf.overflow = overflow;
         }
 
         return m;
@@ -24582,10 +24564,9 @@ return jQuery;
 
     function deprecate(msg, fn) {
         var firstTime = true;
-
         return extend(function () {
             if (firstTime) {
-                warn(msg + '\n' + (new Error()).stack);
+                warn(msg);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -24630,17 +24611,17 @@ return jQuery;
             match = from_string__isoRegex.exec(string);
 
         if (match) {
-            getParsingFlags(config).iso = true;
+            config._pf.iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
-                    config._f = isoDates[i][0];
+                    // match[5] should be 'T' or undefined
+                    config._f = isoDates[i][0] + (match[6] || ' ');
                     break;
                 }
             }
             for (i = 0, l = isoTimes.length; i < l; i++) {
                 if (isoTimes[i][1].exec(string)) {
-                    // match[6] should be 'T' or space
-                    config._f += (match[6] || ' ') + isoTimes[i][0];
+                    config._f += isoTimes[i][0];
                     break;
                 }
             }
@@ -24719,10 +24700,7 @@ return jQuery;
     addRegexToken('YYYYY',  match1to6, match6);
     addRegexToken('YYYYYY', match1to6, match6);
 
-    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
-    addParseToken('YYYY', function (input, array) {
-        array[YEAR] = input.length === 2 ? utils_hooks__hooks.parseTwoDigitYear(input) : toInt(input);
-    });
+    addParseToken(['YYYY', 'YYYYY', 'YYYYYY'], YEAR);
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
@@ -24849,18 +24827,18 @@ return jQuery;
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
-        if (d < firstDayOfWeek) {
-            d += 7;
-        }
+        var d = createUTCDate(year, 0, 1).getUTCDay();
+        var daysToAdd;
+        var dayOfYear;
 
-        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
-
-        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
+        d = d === 0 ? 7 : d;
+        weekday = weekday != null ? weekday : firstDayOfWeek;
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
+        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
 
         return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+            year      : dayOfYear > 0 ? year      : year - 1,
+            dayOfYear : dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
         };
     }
 
@@ -24913,7 +24891,7 @@ return jQuery;
             yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
-                getParsingFlags(config)._overflowDayOfYear = true;
+                config._pf._overflowDayOfYear = true;
             }
 
             date = createUTCDate(yearToUse, 0, config._dayOfYear);
@@ -25009,7 +24987,7 @@ return jQuery;
         }
 
         config._a = [];
-        getParsingFlags(config).empty = true;
+        config._pf.empty = true;
 
         // This array is used to make a Date, either with `new Date` or `Date.UTC`
         var string = '' + config._i,
@@ -25025,7 +25003,7 @@ return jQuery;
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
-                    getParsingFlags(config).unusedInput.push(skipped);
+                    config._pf.unusedInput.push(skipped);
                 }
                 string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
                 totalParsedInputLength += parsedInput.length;
@@ -25033,29 +25011,27 @@ return jQuery;
             // don't parse if it's not a known token
             if (formatTokenFunctions[token]) {
                 if (parsedInput) {
-                    getParsingFlags(config).empty = false;
+                    config._pf.empty = false;
                 }
                 else {
-                    getParsingFlags(config).unusedTokens.push(token);
+                    config._pf.unusedTokens.push(token);
                 }
                 addTimeToArrayFromToken(token, parsedInput, config);
             }
             else if (config._strict && !parsedInput) {
-                getParsingFlags(config).unusedTokens.push(token);
+                config._pf.unusedTokens.push(token);
             }
         }
 
         // add remaining unparsed input length to the string
-        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
+        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
         if (string.length > 0) {
-            getParsingFlags(config).unusedInput.push(string);
+            config._pf.unusedInput.push(string);
         }
 
         // clear _12h flag if hour is <= 12
-        if (getParsingFlags(config).bigHour === true &&
-                config._a[HOUR] <= 12 &&
-                config._a[HOUR] > 0) {
-            getParsingFlags(config).bigHour = undefined;
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
         }
         // handle meridiem
         config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
@@ -25099,7 +25075,7 @@ return jQuery;
             currentScore;
 
         if (config._f.length === 0) {
-            getParsingFlags(config).invalidFormat = true;
+            config._pf.invalidFormat = true;
             config._d = new Date(NaN);
             return;
         }
@@ -25110,6 +25086,7 @@ return jQuery;
             if (config._useUTC != null) {
                 tempConfig._useUTC = config._useUTC;
             }
+            tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             configFromStringAndFormat(tempConfig);
 
@@ -25118,12 +25095,12 @@ return jQuery;
             }
 
             // if there is any input that was not parsed add a penalty for that format
-            currentScore += getParsingFlags(tempConfig).charsLeftOver;
+            currentScore += tempConfig._pf.charsLeftOver;
 
             //or tokens
-            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
+            currentScore += tempConfig._pf.unusedTokens.length * 10;
 
-            getParsingFlags(tempConfig).score = currentScore;
+            tempConfig._pf.score = currentScore;
 
             if (scoreToBeat == null || currentScore < scoreToBeat) {
                 scoreToBeat = currentScore;
@@ -25146,19 +25123,9 @@ return jQuery;
     }
 
     function createFromConfig (config) {
-        var res = new Moment(checkOverflow(prepareConfig(config)));
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
-    }
-
-    function prepareConfig (config) {
         var input = config._i,
-            format = config._f;
+            format = config._f,
+            res;
 
         config._locale = config._locale || locale_locales__getLocale(config._l);
 
@@ -25176,13 +25143,18 @@ return jQuery;
             configFromStringAndArray(config);
         } else if (format) {
             configFromStringAndFormat(config);
-        } else if (isDate(input)) {
-            config._d = input;
         } else {
             configFromInput(config);
         }
 
-        return config;
+        res = new Moment(checkOverflow(config));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
     }
 
     function configFromInput(config) {
@@ -25223,6 +25195,7 @@ return jQuery;
         c._i = input;
         c._f = format;
         c._strict = strict;
+        c._pf = defaultParsingFlags();
 
         return createFromConfig(c);
     }
@@ -25262,7 +25235,7 @@ return jQuery;
         }
         res = moments[0];
         for (i = 1; i < moments.length; ++i) {
-            if (!moments[i].isValid() || moments[i][fn](res)) {
+            if (moments[i][fn](res)) {
                 res = moments[i];
             }
         }
@@ -25374,6 +25347,7 @@ return jQuery;
         } else {
             return local__createLocal(input).local();
         }
+        return model._isUTC ? local__createLocal(input).zone(model._offset || 0) : local__createLocal(input).local();
     }
 
     function getDateOffset (m) {
@@ -25473,7 +25447,12 @@ return jQuery;
     }
 
     function hasAlignedHourOffset (input) {
-        input = input ? local__createLocal(input).utcOffset() : 0;
+        if (!input) {
+            input = 0;
+        }
+        else {
+            input = local__createLocal(input).utcOffset();
+        }
 
         return (this.utcOffset() - input) % 60 === 0;
     }
@@ -25486,24 +25465,12 @@ return jQuery;
     }
 
     function isDaylightSavingTimeShifted () {
-        if (typeof this._isDSTShifted !== 'undefined') {
-            return this._isDSTShifted;
+        if (this._a) {
+            var other = this._isUTC ? create_utc__createUTC(this._a) : local__createLocal(this._a);
+            return this.isValid() && compareArrays(this._a, other.toArray()) > 0;
         }
 
-        var c = {};
-
-        copyConfig(c, this);
-        c = prepareConfig(c);
-
-        if (c._a) {
-            var other = c._isUTC ? create_utc__createUTC(c._a) : local__createLocal(c._a);
-            this._isDSTShifted = this.isValid() &&
-                compareArrays(c._a, other.toArray()) > 0;
-        } else {
-            this._isDSTShifted = false;
-        }
-
-        return this._isDSTShifted;
+        return false;
     }
 
     function isLocal () {
@@ -25663,7 +25630,7 @@ return jQuery;
     var add_subtract__add      = createAdder(1, 'add');
     var add_subtract__subtract = createAdder(-1, 'subtract');
 
-    function moment_calendar__calendar (time, formats) {
+    function moment_calendar__calendar (time) {
         // We want to compare the start of today, vs this.
         // Getting start-of-today depends on whether we're local/utc/offset or not.
         var now = time || local__createLocal(),
@@ -25675,7 +25642,7 @@ return jQuery;
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
+        return this.format(this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -25719,6 +25686,14 @@ return jQuery;
         } else {
             inputMs = +local__createLocal(input);
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
+        }
+    }
+
+    function absFloor (number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
         }
     }
 
@@ -25794,25 +25769,11 @@ return jQuery;
     }
 
     function from (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
         return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
         return this.from(local__createLocal(), withoutSuffix);
-    }
-
-    function to (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
-    }
-
-    function toNow (withoutSuffix) {
-        return this.to(local__createLocal(), withoutSuffix);
     }
 
     function locale (key) {
@@ -25912,29 +25873,16 @@ return jQuery;
         return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
     }
 
-    function toObject () {
-        var m = this;
-        return {
-            years: m.year(),
-            months: m.month(),
-            date: m.date(),
-            hours: m.hours(),
-            minutes: m.minutes(),
-            seconds: m.seconds(),
-            milliseconds: m.milliseconds()
-        };
-    }
-
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
 
     function parsingFlags () {
-        return extend({}, getParsingFlags(this));
+        return extend({}, this._pf);
     }
 
     function invalidAt () {
-        return getParsingFlags(this).overflow;
+        return this._pf.overflow;
     }
 
     addFormatToken(0, ['gg', 2], 0, function () {
@@ -26085,7 +26033,7 @@ return jQuery;
         if (weekday != null) {
             week.d = weekday;
         } else {
-            getParsingFlags(config).invalidWeekday = input;
+            config._pf.invalidWeekday = input;
         }
     });
 
@@ -26096,20 +26044,18 @@ return jQuery;
     // HELPERS
 
     function parseWeekday(input, locale) {
-        if (typeof input !== 'string') {
-            return input;
+        if (typeof input === 'string') {
+            if (!isNaN(input)) {
+                input = parseInt(input, 10);
+            }
+            else {
+                input = locale.weekdaysParse(input);
+                if (typeof input !== 'number') {
+                    return null;
+                }
+            }
         }
-
-        if (!isNaN(input)) {
-            return parseInt(input, 10);
-        }
-
-        input = locale.weekdaysParse(input);
-        if (typeof input === 'number') {
-            return input;
-        }
-
-        return null;
+        return input;
     }
 
     // LOCALES
@@ -26132,7 +26078,9 @@ return jQuery;
     function localeWeekdaysParse (weekdayName) {
         var i, mom, regex;
 
-        this._weekdaysParse = this._weekdaysParse || [];
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+        }
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
@@ -26210,7 +26158,7 @@ return jQuery;
     });
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
-        getParsingFlags(config).bigHour = true;
+        config._pf.bigHour = true;
     });
 
     // LOCALES
@@ -26279,26 +26227,12 @@ return jQuery;
         return ~~(this.millisecond() / 10);
     });
 
-    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
-    addFormatToken(0, ['SSSS', 4], 0, function () {
-        return this.millisecond() * 10;
-    });
-    addFormatToken(0, ['SSSSS', 5], 0, function () {
-        return this.millisecond() * 100;
-    });
-    addFormatToken(0, ['SSSSSS', 6], 0, function () {
-        return this.millisecond() * 1000;
-    });
-    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
-        return this.millisecond() * 10000;
-    });
-    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
-        return this.millisecond() * 100000;
-    });
-    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
-        return this.millisecond() * 1000000;
-    });
+    function millisecond__milliseconds (token) {
+        addFormatToken(0, [token, 3], 0, 'millisecond');
+    }
 
+    millisecond__milliseconds('SSS');
+    millisecond__milliseconds('SSSS');
 
     // ALIASES
 
@@ -26309,19 +26243,11 @@ return jQuery;
     addRegexToken('S',    match1to3, match1);
     addRegexToken('SS',   match1to3, match2);
     addRegexToken('SSS',  match1to3, match3);
-
-    var token;
-    for (token = 'SSSS'; token.length <= 9; token += 'S') {
-        addRegexToken(token, matchUnsigned);
-    }
-
-    function parseMs(input, array) {
+    addRegexToken('SSSS', matchUnsigned);
+    addParseToken(['S', 'SS', 'SSS', 'SSSS'], function (input, array) {
         array[MILLISECOND] = toInt(('0.' + input) * 1000);
-    }
+    });
 
-    for (token = 'S'; token.length <= 9; token += 'S') {
-        addParseToken(token, parseMs);
-    }
     // MOMENTS
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
@@ -26349,8 +26275,6 @@ return jQuery;
     momentPrototype__proto.format       = format;
     momentPrototype__proto.from         = from;
     momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
     momentPrototype__proto.get          = getSet;
     momentPrototype__proto.invalidAt    = invalidAt;
     momentPrototype__proto.isAfter      = isAfter;
@@ -26368,7 +26292,6 @@ return jQuery;
     momentPrototype__proto.startOf      = startOf;
     momentPrototype__proto.subtract     = add_subtract__subtract;
     momentPrototype__proto.toArray      = toArray;
-    momentPrototype__proto.toObject     = toObject;
     momentPrototype__proto.toDate       = toDate;
     momentPrototype__proto.toISOString  = moment_format__toISOString;
     momentPrototype__proto.toJSON       = moment_format__toISOString;
@@ -26468,23 +26391,19 @@ return jQuery;
         LT   : 'h:mm A',
         L    : 'MM/DD/YYYY',
         LL   : 'MMMM D, YYYY',
-        LLL  : 'MMMM D, YYYY h:mm A',
-        LLLL : 'dddd, MMMM D, YYYY h:mm A'
+        LLL  : 'MMMM D, YYYY LT',
+        LLLL : 'dddd, MMMM D, YYYY LT'
     };
 
     function longDateFormat (key) {
-        var format = this._longDateFormat[key],
-            formatUpper = this._longDateFormat[key.toUpperCase()];
-
-        if (format || !formatUpper) {
-            return format;
+        var output = this._longDateFormat[key];
+        if (!output && this._longDateFormat[key.toUpperCase()]) {
+            output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
+                return val.slice(1);
+            });
+            this._longDateFormat[key] = output;
         }
-
-        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
-            return val.slice(1);
-        });
-
-        return this._longDateFormat[key];
+        return output;
     }
 
     var defaultInvalidDate = 'Invalid date';
@@ -26544,7 +26463,7 @@ return jQuery;
         }
         // Lenient ordinal parsing accepts just a number in addition to
         // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
     }
 
     var prototype__proto = Locale.prototype;
@@ -26693,29 +26612,12 @@ return jQuery;
         return duration_add_subtract__addSubtract(this, input, value, -1);
     }
 
-    function absCeil (number) {
-        if (number < 0) {
-            return Math.floor(number);
-        } else {
-            return Math.ceil(number);
-        }
-    }
-
     function bubble () {
         var milliseconds = this._milliseconds;
         var days         = this._days;
         var months       = this._months;
         var data         = this._data;
-        var seconds, minutes, hours, years, monthsFromDays;
-
-        // if we have a mix of positive and negative values, bubble down first
-        // check: https://github.com/moment/moment/issues/2166
-        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
-                (milliseconds <= 0 && days <= 0 && months <= 0))) {
-            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
-            days = 0;
-            months = 0;
-        }
+        var seconds, minutes, hours, years = 0;
 
         // The following code bubbles up values, see the tests for
         // examples of what that means.
@@ -26732,13 +26634,17 @@ return jQuery;
 
         days += absFloor(hours / 24);
 
-        // convert days to months
-        monthsFromDays = absFloor(daysToMonths(days));
-        months += monthsFromDays;
-        days -= absCeil(monthsToDays(monthsFromDays));
+        // Accurately convert days to years, assume start from year 0.
+        years = absFloor(daysToYears(days));
+        days -= absFloor(yearsToDays(years));
+
+        // 30 days to a month
+        // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
+        months += absFloor(days / 30);
+        days   %= 30;
 
         // 12 months -> 1 year
-        years = absFloor(months / 12);
+        years  += absFloor(months / 12);
         months %= 12;
 
         data.days   = days;
@@ -26748,15 +26654,15 @@ return jQuery;
         return this;
     }
 
-    function daysToMonths (days) {
+    function daysToYears (days) {
         // 400 years have 146097 days (taking into account leap year rules)
-        // 400 years have 12 months === 4800
-        return days * 4800 / 146097;
+        return days * 400 / 146097;
     }
 
-    function monthsToDays (months) {
-        // the reverse of daysToMonths
-        return months * 146097 / 4800;
+    function yearsToDays (years) {
+        // years * 365 + absFloor(years / 4) -
+        //     absFloor(years / 100) + absFloor(years / 400);
+        return years * 146097 / 400;
     }
 
     function as (units) {
@@ -26768,19 +26674,19 @@ return jQuery;
 
         if (units === 'month' || units === 'year') {
             days   = this._days   + milliseconds / 864e5;
-            months = this._months + daysToMonths(days);
+            months = this._months + daysToYears(days) * 12;
             return units === 'month' ? months : months / 12;
         } else {
             // handle milliseconds separately because of floating point math errors (issue #1867)
-            days = this._days + Math.round(monthsToDays(this._months));
+            days = this._days + Math.round(yearsToDays(this._months / 12));
             switch (units) {
-                case 'week'   : return days / 7     + milliseconds / 6048e5;
-                case 'day'    : return days         + milliseconds / 864e5;
-                case 'hour'   : return days * 24    + milliseconds / 36e5;
-                case 'minute' : return days * 1440  + milliseconds / 6e4;
-                case 'second' : return days * 86400 + milliseconds / 1000;
+                case 'week'   : return days / 7            + milliseconds / 6048e5;
+                case 'day'    : return days                + milliseconds / 864e5;
+                case 'hour'   : return days * 24           + milliseconds / 36e5;
+                case 'minute' : return days * 24 * 60      + milliseconds / 6e4;
+                case 'second' : return days * 24 * 60 * 60 + milliseconds / 1000;
                 // Math.floor prevents floating point math errors here
-                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
+                case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + milliseconds;
                 default: throw new Error('Unknown unit ' + units);
             }
         }
@@ -26822,7 +26728,7 @@ return jQuery;
         };
     }
 
-    var milliseconds = makeGetter('milliseconds');
+    var duration_get__milliseconds = makeGetter('milliseconds');
     var seconds      = makeGetter('seconds');
     var minutes      = makeGetter('minutes');
     var hours        = makeGetter('hours');
@@ -26900,36 +26806,13 @@ return jQuery;
     var iso_string__abs = Math.abs;
 
     function iso_string__toISOString() {
-        // for ISO strings we do not use the normal bubbling rules:
-        //  * milliseconds bubble up until they become hours
-        //  * days do not bubble at all
-        //  * months bubble up until they become years
-        // This is because there is no context-free conversion between hours and days
-        // (think of clock changes)
-        // and also not between days and months (28-31 days per month)
-        var seconds = iso_string__abs(this._milliseconds) / 1000;
-        var days         = iso_string__abs(this._days);
-        var months       = iso_string__abs(this._months);
-        var minutes, hours, years;
-
-        // 3600 seconds -> 60 minutes -> 1 hour
-        minutes           = absFloor(seconds / 60);
-        hours             = absFloor(minutes / 60);
-        seconds %= 60;
-        minutes %= 60;
-
-        // 12 months -> 1 year
-        years  = absFloor(months / 12);
-        months %= 12;
-
-
         // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = years;
-        var M = months;
-        var D = days;
-        var h = hours;
-        var m = minutes;
-        var s = seconds;
+        var Y = iso_string__abs(this.years());
+        var M = iso_string__abs(this.months());
+        var D = iso_string__abs(this.days());
+        var h = iso_string__abs(this.hours());
+        var m = iso_string__abs(this.minutes());
+        var s = iso_string__abs(this.seconds() + this.milliseconds() / 1000);
         var total = this.asSeconds();
 
         if (!total) {
@@ -26966,7 +26849,7 @@ return jQuery;
     duration_prototype__proto.valueOf        = duration_as__valueOf;
     duration_prototype__proto._bubble        = bubble;
     duration_prototype__proto.get            = duration_get__get;
-    duration_prototype__proto.milliseconds   = milliseconds;
+    duration_prototype__proto.milliseconds   = duration_get__milliseconds;
     duration_prototype__proto.seconds        = seconds;
     duration_prototype__proto.minutes        = minutes;
     duration_prototype__proto.hours          = hours;
@@ -27004,7 +26887,7 @@ return jQuery;
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.6';
+    utils_hooks__hooks.version = '2.10.2';
 
     setHookCallback(local__createLocal);
 
@@ -27128,7 +27011,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":85}],44:[function(require,module,exports){
+},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":88}],44:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -27633,7 +27516,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":81,"object-component":82,"socket.io-parser":85}],45:[function(require,module,exports){
+},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":84,"object-component":85,"socket.io-parser":88}],45:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -28046,7 +27929,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":79,"socket.io-parser":85,"to-array":91}],47:[function(require,module,exports){
+},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":82,"socket.io-parser":88,"to-array":94}],47:[function(require,module,exports){
 (function (global){
 
 /**
@@ -28123,7 +28006,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":51,"parseuri":83}],48:[function(require,module,exports){
+},{"debug":51,"parseuri":86}],48:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -28556,7 +28439,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":54,"engine.io-parser":66}],54:[function(require,module,exports){
+},{"./socket":54,"engine.io-parser":67}],54:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -29265,7 +29148,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":55,"./transports":56,"component-emitter":50,"debug":63,"engine.io-parser":66,"indexof":81,"parsejson":75,"parseqs":76,"parseuri":77}],55:[function(require,module,exports){
+},{"./transport":55,"./transports":56,"component-emitter":62,"debug":64,"engine.io-parser":67,"indexof":84,"parsejson":78,"parseqs":79,"parseuri":80}],55:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -29426,7 +29309,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":50,"engine.io-parser":66}],56:[function(require,module,exports){
+},{"component-emitter":62,"engine.io-parser":67}],56:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -29720,7 +29603,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":59,"component-inherit":62}],58:[function(require,module,exports){
+},{"./polling":59,"component-inherit":63}],58:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -30108,7 +29991,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":59,"component-emitter":50,"component-inherit":62,"debug":63,"xmlhttprequest":61}],59:[function(require,module,exports){
+},{"./polling":59,"component-emitter":62,"component-inherit":63,"debug":64,"xmlhttprequest":61}],59:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30355,7 +30238,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"xmlhttprequest":61}],60:[function(require,module,exports){
+},{"../transport":55,"component-inherit":63,"debug":64,"engine.io-parser":67,"parseqs":79,"xmlhttprequest":61}],60:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30595,7 +30478,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"ws":78}],61:[function(require,module,exports){
+},{"../transport":55,"component-inherit":63,"debug":64,"engine.io-parser":67,"parseqs":79,"ws":81}],61:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -30633,7 +30516,9 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":73}],62:[function(require,module,exports){
+},{"has-cors":76}],62:[function(require,module,exports){
+module.exports=require(50)
+},{}],63:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -30641,7 +30526,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -30790,7 +30675,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":64}],64:[function(require,module,exports){
+},{"./debug":65}],65:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -30989,7 +30874,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":65}],65:[function(require,module,exports){
+},{"ms":66}],66:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -31102,7 +30987,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -31700,7 +31585,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":67,"after":68,"arraybuffer.slice":69,"base64-arraybuffer":70,"blob":71,"has-binary":79,"utf8":72}],67:[function(require,module,exports){
+},{"./keys":68,"after":69,"arraybuffer.slice":70,"base64-arraybuffer":71,"blob":72,"has-binary":73,"utf8":75}],68:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -31721,7 +31606,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -31751,7 +31636,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -31782,7 +31667,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -31843,7 +31728,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -31860,22 +31745,8 @@ var BlobBuilder = global.BlobBuilder
 
 var blobSupported = (function() {
   try {
-    var a = new Blob(['hi']);
-    return a.size === 2;
-  } catch(e) {
-    return false;
-  }
-})();
-
-/**
- * Check if Blob constructor supports ArrayBufferViews
- * Fails in Safari 6, so we need to map to ArrayBuffers there.
- */
-
-var blobSupportsArrayBufferView = blobSupported && (function() {
-  try {
-    var b = new Blob([new Uint8Array([1,2])]);
-    return b.size === 2;
+    var b = new Blob(['hi']);
+    return b.size == 2;
   } catch(e) {
     return false;
   }
@@ -31889,52 +31760,19 @@ var blobBuilderSupported = BlobBuilder
   && BlobBuilder.prototype.append
   && BlobBuilder.prototype.getBlob;
 
-/**
- * Helper function that maps ArrayBufferViews to ArrayBuffers
- * Used by BlobBuilder constructor and old browsers that didn't
- * support it in the Blob constructor.
- */
-
-function mapArrayBufferViews(ary) {
-  for (var i = 0; i < ary.length; i++) {
-    var chunk = ary[i];
-    if (chunk.buffer instanceof ArrayBuffer) {
-      var buf = chunk.buffer;
-
-      // if this is a subarray, make a copy so we only
-      // include the subarray region from the underlying buffer
-      if (chunk.byteLength !== buf.byteLength) {
-        var copy = new Uint8Array(chunk.byteLength);
-        copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
-        buf = copy.buffer;
-      }
-
-      ary[i] = buf;
-    }
-  }
-}
-
 function BlobBuilderConstructor(ary, options) {
   options = options || {};
 
   var bb = new BlobBuilder();
-  mapArrayBufferViews(ary);
-
   for (var i = 0; i < ary.length; i++) {
     bb.append(ary[i]);
   }
-
   return (options.type) ? bb.getBlob(options.type) : bb.getBlob();
-};
-
-function BlobConstructor(ary, options) {
-  mapArrayBufferViews(ary);
-  return new Blob(ary, options || {});
 };
 
 module.exports = (function() {
   if (blobSupported) {
-    return blobSupportsArrayBufferView ? global.Blob : BlobConstructor;
+    return global.Blob;
   } else if (blobBuilderSupported) {
     return BlobBuilderConstructor;
   } else {
@@ -31943,9 +31781,76 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 (function (global){
-/*! https://mths.be/utf8js v2.0.0 by @mathias */
+
+/*
+ * Module requirements.
+ */
+
+var isArray = require('isarray');
+
+/**
+ * Module exports.
+ */
+
+module.exports = hasBinary;
+
+/**
+ * Checks for binary data.
+ *
+ * Right now only Buffer and ArrayBuffer are supported..
+ *
+ * @param {Object} anything
+ * @api public
+ */
+
+function hasBinary(data) {
+
+  function _hasBinary(obj) {
+    if (!obj) return false;
+
+    if ( (global.Buffer && global.Buffer.isBuffer(obj)) ||
+         (global.ArrayBuffer && obj instanceof ArrayBuffer) ||
+         (global.Blob && obj instanceof Blob) ||
+         (global.File && obj instanceof File)
+        ) {
+      return true;
+    }
+
+    if (isArray(obj)) {
+      for (var i = 0; i < obj.length; i++) {
+          if (_hasBinary(obj[i])) {
+              return true;
+          }
+      }
+    } else if (obj && 'object' == typeof obj) {
+      if (obj.toJSON) {
+        obj = obj.toJSON();
+      }
+
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key) && _hasBinary(obj[key])) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  return _hasBinary(data);
+}
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"isarray":74}],74:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],75:[function(require,module,exports){
+(function (global){
+/*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
 
 	// Detect free variables `exports`
@@ -31966,7 +31871,7 @@ module.exports = (function() {
 
 	var stringFromCharCode = String.fromCharCode;
 
-	// Taken from https://mths.be/punycode
+	// Taken from http://mths.be/punycode
 	function ucs2decode(string) {
 		var output = [];
 		var counter = 0;
@@ -31993,7 +31898,7 @@ module.exports = (function() {
 		return output;
 	}
 
-	// Taken from https://mths.be/punycode
+	// Taken from http://mths.be/punycode
 	function ucs2encode(array) {
 		var length = array.length;
 		var index = -1;
@@ -32011,14 +31916,6 @@ module.exports = (function() {
 		return output;
 	}
 
-	function checkScalarValue(codePoint) {
-		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-			throw Error(
-				'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
-				' is not a scalar value'
-			);
-		}
-	}
 	/*--------------------------------------------------------------------------*/
 
 	function createByte(codePoint, shift) {
@@ -32034,7 +31931,6 @@ module.exports = (function() {
 			symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
 		}
 		else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-			checkScalarValue(codePoint);
 			symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
 			symbol += createByte(codePoint, 6);
 		}
@@ -32049,6 +31945,11 @@ module.exports = (function() {
 
 	function utf8encode(string) {
 		var codePoints = ucs2decode(string);
+
+		// console.log(JSON.stringify(codePoints.map(function(x) {
+		// 	return 'U+' + x.toString(16).toUpperCase();
+		// })));
+
 		var length = codePoints.length;
 		var index = -1;
 		var codePoint;
@@ -32119,7 +32020,6 @@ module.exports = (function() {
 			byte3 = readContinuationByte();
 			codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
 			if (codePoint >= 0x0800) {
-				checkScalarValue(codePoint);
 				return codePoint;
 			} else {
 				throw Error('Invalid continuation byte');
@@ -32191,7 +32091,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32216,7 +32116,7 @@ try {
   module.exports = false;
 }
 
-},{"global":74}],74:[function(require,module,exports){
+},{"global":77}],77:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -32226,7 +32126,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],75:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -32261,7 +32161,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],76:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -32300,7 +32200,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],77:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32341,7 +32241,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],78:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32386,7 +32286,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],79:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function (global){
 
 /*
@@ -32448,12 +32348,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":80}],80:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],81:[function(require,module,exports){
+},{"isarray":83}],83:[function(require,module,exports){
+module.exports=require(74)
+},{}],84:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -32464,7 +32361,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -32549,7 +32446,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],83:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32576,7 +32473,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],84:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -32721,7 +32618,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":86,"isarray":89}],85:[function(require,module,exports){
+},{"./is-buffer":89,"isarray":92}],88:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -33123,7 +33020,7 @@ function error(data){
   };
 }
 
-},{"./binary":84,"./is-buffer":86,"component-emitter":87,"debug":88,"isarray":89,"json3":90}],86:[function(require,module,exports){
+},{"./binary":87,"./is-buffer":89,"component-emitter":90,"debug":91,"isarray":92,"json3":93}],89:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -33140,13 +33037,13 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],87:[function(require,module,exports){
-module.exports=require(50)
-},{}],88:[function(require,module,exports){
-module.exports=require(51)
-},{}],89:[function(require,module,exports){
-module.exports=require(80)
 },{}],90:[function(require,module,exports){
+module.exports=require(50)
+},{}],91:[function(require,module,exports){
+module.exports=require(51)
+},{}],92:[function(require,module,exports){
+module.exports=require(74)
+},{}],93:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -34009,7 +33906,7 @@ module.exports=require(80)
   }
 }(this));
 
-},{}],91:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -34024,7 +33921,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],92:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -34340,8 +34237,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],93:[function(require,module,exports){
-// Generated by CoffeeScript 1.9.1
+},{}],96:[function(require,module,exports){
+// Generated by CoffeeScript 1.8.0
 (function() {
   var locale;
 
@@ -34353,7 +34250,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format(options.dayFormat + " " + options.monthFormat);
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34370,7 +34267,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format(options.dayFormat + " " + options.monthFormat);
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34405,11 +34302,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 }).call(this);
 
-},{}],94:[function(require,module,exports){
-// Generated by CoffeeScript 1.9.1
+},{}],97:[function(require,module,exports){
+// Generated by CoffeeScript 1.8.0
 (function() {
   var deprecate, hasModule, isArray, makeTwix,
-    slice = [].slice;
+    __slice = [].slice;
 
   hasModule = (typeof module !== "undefined" && module !== null) && (module.exports != null);
 
@@ -34418,7 +34315,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     alreadyDone = false;
     return function() {
       var args;
-      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (!alreadyDone) {
         if (typeof console !== "undefined" && console !== null) {
           if (typeof console.warn === "function") {
@@ -34443,7 +34340,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     localesLoaded = false;
     Twix = (function() {
       function Twix(start, end, parseFormat, options) {
-        var ref;
+        var _ref;
         if (options == null) {
           options = {};
         }
@@ -34458,18 +34355,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         this.start = moment(start, parseFormat, options.parseStrict);
         this.end = moment(end, parseFormat, options.parseStrict);
-        this.allDay = (ref = options.allDay) != null ? ref : false;
+        this.allDay = (_ref = options.allDay) != null ? _ref : false;
         this._trueStart = this.allDay ? this.start.clone().startOf("day") : this.start;
-        this._lastMilli = this.allDay ? this.end.clone().endOf("day") : this.end;
-        this._transferrableEnd = this.allDay ? this.end.clone().startOf("day") : this.end;
-        this._displayEnd = this.allDay ? this._transferrableEnd.clone().add(1, "day") : this.end;
+        this._trueEnd = this.allDay ? this.end.startOf('d').clone().add(1, "day") : this.end;
       }
 
       Twix._extend = function() {
-        var attr, first, j, len, other, others;
-        first = arguments[0], others = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-        for (j = 0, len = others.length; j < len; j++) {
-          other = others[j];
+        var attr, first, other, others, _i, _len;
+        first = arguments[0], others = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        for (_i = 0, _len = others.length; _i < _len; _i++) {
+          other = others[_i];
           for (attr in other) {
             if (typeof other[attr] !== "undefined") {
               first[attr] = other[attr];
@@ -34502,7 +34397,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         allDayMonth: {
           fn: function(options) {
             return function(date) {
-              return date.format(options.monthFormat + " " + options.dayFormat);
+              return date.format("" + options.monthFormat + " " + options.dayFormat);
             };
           },
           slot: 2,
@@ -34539,7 +34434,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           fn: function(options) {
             return function(date) {
               var str;
-              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format(options.hourFormat + ":" + options.minuteFormat);
+              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format("" + options.hourFormat + ":" + options.minuteFormat);
               if (!options.groupMeridiems && !options.twentyFourHour) {
                 if (options.spaceBeforeMeridiem) {
                   str += " ";
@@ -34582,7 +34477,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.length = function(period) {
-        return this._displayEnd.diff(this._trueStart, period);
+        return this._trueEnd.diff(this._trueStart, period);
       };
 
       Twix.prototype.count = function(period) {
@@ -34593,8 +34488,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.countInner = function(period) {
-        var end, ref, start;
-        ref = this._inner(period), start = ref[0], end = ref[1];
+        var end, start, _ref;
+        _ref = this._inner(period), start = _ref[0], end = _ref[1];
         if (start >= end) {
           return 0;
         }
@@ -34602,11 +34497,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterate = function(intervalAmount, period, minHours) {
-        var end, hasNext, ref, start;
+        var end, hasNext, start, _ref;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = ref[0], period = ref[1], minHours = ref[2];
+        _ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = _ref[0], period = _ref[1], minHours = _ref[2];
         start = this._trueStart.clone().startOf(period);
         end = this.end.clone().startOf(period);
         if (this.allDay) {
@@ -34621,12 +34516,12 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterateInner = function(intervalAmount, period) {
-        var end, hasNext, ref, ref1, start;
+        var end, hasNext, start, _ref, _ref1;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = ref[0], period = ref[1];
-        ref1 = this._inner(period, intervalAmount), start = ref1[0], end = ref1[1];
+        _ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = _ref[0], period = _ref[1];
+        _ref1 = this._inner(period, intervalAmount), start = _ref1[0], end = _ref1[1];
         hasNext = function() {
           return start < end;
         };
@@ -34652,11 +34547,19 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.isPast = function() {
-        return this._lastMilli < moment();
+        if (this.allDay) {
+          return this.end.clone().endOf("day") < moment();
+        } else {
+          return this.end < moment();
+        }
       };
 
       Twix.prototype.isFuture = function() {
-        return this._trueStart > moment();
+        if (this.allDay) {
+          return this.start.clone().startOf("day") > moment();
+        } else {
+          return this.start > moment();
+        }
       };
 
       Twix.prototype.isCurrent = function() {
@@ -34667,65 +34570,75 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         if (!moment.isMoment(mom)) {
           mom = moment(mom);
         }
-        return this._trueStart <= mom && this._lastMilli >= mom;
+        return this._trueStart <= mom && this._trueEnd >= mom;
       };
 
       Twix.prototype.isEmpty = function() {
-        return this._trueStart.isSame(this._displayEnd);
+        return this._trueStart.isSame(this._trueEnd);
       };
 
       Twix.prototype.overlaps = function(other) {
-        return this._displayEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._displayEnd);
+        return this._trueEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._trueEnd);
       };
 
       Twix.prototype.engulfs = function(other) {
-        return this._trueStart <= other._trueStart && this._displayEnd >= other._displayEnd;
+        return this._trueStart <= other._trueStart && this._trueEnd >= other._trueEnd;
       };
 
       Twix.prototype.union = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
-        newEnd = this._lastMilli > other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
+        if (allDay) {
+          newStart = this.start < other.start ? this.start : other.start;
+          newEnd = this.end > other.end ? this.end : other.end;
+        } else {
+          newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
+          newEnd = this._trueEnd > other._trueEnd ? this._trueEnd : other._trueEnd;
+        }
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.intersection = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
-        newEnd = this._lastMilli < other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
+        if (allDay) {
+          newStart = this.start > other.start ? this.start : other.start;
+          newEnd = this.end < other.end ? this.end : other.end;
+        } else {
+          newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
+          newEnd = this._trueEnd < other._trueEnd ? this._trueEnd : other._trueEnd;
+        }
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.xor = function() {
-        var allDay, arr, endTime, i, item, j, k, last, len, len1, o, open, other, others, ref, results, start, t;
-        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        var allDay, arr, endTime, i, item, last, o, open, other, others, results, start, t, _i, _j, _len, _len1, _ref;
+        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         open = 0;
         start = null;
         results = [];
         allDay = ((function() {
-          var j, len, results1;
-          results1 = [];
-          for (j = 0, len = others.length; j < len; j++) {
-            o = others[j];
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = others.length; _i < _len; _i++) {
+            o = others[_i];
             if (o.allDay) {
-              results1.push(o);
+              _results.push(o);
             }
           }
-          return results1;
+          return _results;
         })()).length === others.length;
         arr = [];
-        ref = [this].concat(others);
-        for (i = j = 0, len = ref.length; j < len; i = ++j) {
-          item = ref[i];
+        _ref = [this].concat(others);
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          item = _ref[i];
           arr.push({
             time: item._trueStart,
             i: i,
             type: 0
           });
           arr.push({
-            time: item._displayEnd,
+            time: item._trueEnd,
             i: i,
             type: 1
           });
@@ -34733,8 +34646,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         arr = arr.sort(function(a, b) {
           return a.time - b.time;
         });
-        for (k = 0, len1 = arr.length; k < len1; k++) {
-          other = arr[k];
+        for (_j = 0, _len1 = arr.length; _j < _len1; _j++) {
+          other = arr[_j];
           if (other.type === 1) {
             open -= 1;
           }
@@ -34764,26 +34677,26 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.difference = function() {
-        var j, len, others, ref, results1, t;
-        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-        ref = this.xor.apply(this, others).map((function(_this) {
+        var others, t, _i, _len, _ref, _results;
+        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        _ref = this.xor.apply(this, others).map((function(_this) {
           return function(i) {
             return _this.intersection(i);
           };
         })(this));
-        results1 = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          t = ref[j];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          t = _ref[_i];
           if (!t.isEmpty() && t.isValid()) {
-            results1.push(t);
+            _results.push(t);
           }
         }
-        return results1;
+        return _results;
       };
 
       Twix.prototype.split = function() {
         var args, dur, end, final, i, mom, start, time, times, vals;
-        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         end = start = this._trueStart.clone();
         if (moment.isDuration(args[0])) {
           dur = args[0];
@@ -34796,24 +34709,24 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         if (times) {
           times = (function() {
-            var j, len, results1;
-            results1 = [];
-            for (j = 0, len = times.length; j < len; j++) {
-              time = times[j];
-              results1.push(moment(time));
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = times.length; _i < _len; _i++) {
+              time = times[_i];
+              _results.push(moment(time));
             }
-            return results1;
+            return _results;
           })();
           times = ((function() {
-            var j, len, results1;
-            results1 = [];
-            for (j = 0, len = times.length; j < len; j++) {
-              mom = times[j];
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = times.length; _i < _len; _i++) {
+              mom = times[_i];
               if (mom.isValid() && mom >= start) {
-                results1.push(mom);
+                _results.push(mom);
               }
             }
-            return results1;
+            return _results;
           })()).sort();
         }
         if ((dur && dur.asMilliseconds() === 0) || (times && times.length === 0)) {
@@ -34821,7 +34734,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         vals = [];
         i = 0;
-        final = this._displayEnd;
+        final = this._trueEnd;
         while (start < final && ((times == null) || times[i])) {
           end = dur ? start.clone().add(dur) : times[i].clone();
           end = moment.min(final, end);
@@ -34831,14 +34744,14 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           start = end;
           i += 1;
         }
-        if (!end.isSame(this._displayEnd) && times) {
-          vals.push(moment.twix(end, this._displayEnd));
+        if (!end.isSame(this._trueEnd) && times) {
+          vals.push(moment.twix(end, this._trueEnd));
         }
         return vals;
       };
 
       Twix.prototype.isValid = function() {
-        return this._trueStart <= this._displayEnd;
+        return this._trueStart <= this._trueEnd;
       };
 
       Twix.prototype.equals = function(other) {
@@ -34846,8 +34759,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.toString = function() {
-        var ref;
-        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((ref = this.allDay) != null ? ref : {
+        var _ref;
+        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((_ref = this.allDay) != null ? _ref : {
           "true": "false"
         }) + "}";
       };
@@ -34867,7 +34780,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.format = function(inopts) {
-        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, j, len, needDate, options, process, start_bucket, together;
+        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, needDate, options, process, start_bucket, together, _i, _len;
         this._lazyLocale();
         if (this.isEmpty()) {
           return "";
@@ -35006,21 +34919,21 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
             }
           };
         })(this);
-        for (j = 0, len = fs.length; j < len; j++) {
-          format = fs[j];
+        for (_i = 0, _len = fs.length; _i < _len; _i++) {
+          format = fs[_i];
           process(format);
         }
         global_first = true;
         fold = (function(_this) {
           return function(array, skip_pre) {
-            var k, len1, local_first, ref, section, str;
+            var local_first, section, str, _j, _len1, _ref;
             local_first = true;
             str = "";
-            ref = array.sort(function(a, b) {
+            _ref = array.sort(function(a, b) {
               return a.format.slot - b.format.slot;
             });
-            for (k = 0, len1 = ref.length; k < len1; k++) {
-              section = ref[k];
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              section = _ref[_j];
               if (!global_first) {
                 if (local_first && skip_pre) {
                   str += " ";
@@ -35060,16 +34973,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._prepIterateInputs = function() {
-        var inputs, intervalAmount, minHours, period, ref, ref1;
-        inputs = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        var inputs, intervalAmount, minHours, period, _ref, _ref1;
+        inputs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         if (typeof inputs[0] === "number") {
           return inputs;
         }
         if (typeof inputs[0] === "string") {
           period = inputs.shift();
-          intervalAmount = (ref = inputs.pop()) != null ? ref : 1;
+          intervalAmount = (_ref = inputs.pop()) != null ? _ref : 1;
           if (inputs.length) {
-            minHours = (ref1 = inputs[0]) != null ? ref1 : false;
+            minHours = (_ref1 = inputs[0]) != null ? _ref1 : false;
           }
         }
         if (moment.isDuration(inputs[0])) {
@@ -35088,7 +35001,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           intervalAmount = 1;
         }
         start = this._trueStart.clone();
-        end = this._displayEnd.clone();
+        end = this._trueEnd.clone();
         if (start > start.clone().startOf(period)) {
           start.startOf(period).add(intervalAmount, period);
         }
@@ -35103,7 +35016,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._lazyLocale = function() {
-        var e, localeData, locales, ref;
+        var e, localeData, locales, _ref;
         localeData = this.start.localeData();
         if ((localeData != null) && this.end.locale()._abbr !== localeData._abbr) {
           this.end.locale(localeData._abbr);
@@ -35120,7 +35033,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           }
           localesLoaded = true;
         }
-        return this.localeData = (ref = localeData != null ? localeData._twix : void 0) != null ? ref : Twix.defaults;
+        return this.localeData = (_ref = localeData != null ? localeData._twix : void 0) != null ? _ref : Twix.defaults;
       };
 
       Twix.prototype._formatFn = function(name, options) {
@@ -35174,7 +35087,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       _twix: Twix.defaults
     });
     Twix.formatTemplate = function(leftSide, rightSide) {
-      return leftSide + " - " + rightSide;
+      return "" + leftSide + " - " + rightSide;
     };
     moment.twix = function() {
       return (function(func, args, ctor) {
@@ -35188,7 +35101,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         ctor.prototype = func.prototype;
         var child = new ctor, result = func.apply(child, args);
         return Object(result) === result ? result : child;
-      })(Twix, [this].concat(slice.call(arguments)), function(){});
+      })(Twix, [this].concat(__slice.call(arguments)), function(){});
     };
     moment.fn.forDuration = function(duration, allDay) {
       return new Twix(this, this.clone().add(duration), allDay);
@@ -35223,7 +35136,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 
 }).call(this);
 
-},{"./locale":93,"moment":41}],95:[function(require,module,exports){
+},{"./locale":96,"moment":41}],98:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -36773,7 +36686,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
   }
 }.call(this));
 
-},{}],96:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
@@ -36843,7 +36756,7 @@ module.exports={
   "license": "GPL-3.0"
 }
 
-},{}],97:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 /**
  *  @title joola/lib/sdk/common/api
  *  @copyright (c) Joola Smart Solutions, Ltd. <info@joo.la>
@@ -37163,7 +37076,7 @@ joola.events.on('rpc:done', function () {
 
   joola.events.emit('rpc:event', 'done');
 });
-},{"../index":105,"http":13,"https":17,"querystring":23,"url":32}],98:[function(require,module,exports){
+},{"../index":108,"http":13,"https":17,"querystring":23,"url":32}],101:[function(require,module,exports){
 /**
  *  joola
  *
@@ -37282,7 +37195,7 @@ dispatch.buildstub = function (callback) {
 };
 
 
-},{"../../../build/temp/meta.json":1,"../index":105,"cloneextend":35}],99:[function(require,module,exports){
+},{"../../../build/temp/meta.json":1,"../index":108,"cloneextend":35}],102:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37303,7 +37216,7 @@ _events._id = 'events';
 
 module.exports = exports = _events;
 
-},{"../index":105,"eventemitter2":37}],100:[function(require,module,exports){
+},{"../index":108,"eventemitter2":37}],103:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -37332,7 +37245,7 @@ joola.timezone = function (tz) {
   return offset;
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../index":105}],101:[function(require,module,exports){
+},{"../index":108}],104:[function(require,module,exports){
 (function (Buffer){
 /*jshint -W083 */
 
@@ -37632,7 +37545,7 @@ common.formatDate = function (date) {
   return format(date, joola.options.dateFormat || 'mmm dd, yyyy');
 };
 }).call(this,require("buffer").Buffer)
-},{"../index":105,"./modifiers":104,"buffer":3,"cloneextend":35,"crypto":7,"deep-extend":36,"traverse":92,"underscore":95,"util":34}],102:[function(require,module,exports){
+},{"../index":108,"./modifiers":107,"buffer":3,"cloneextend":35,"crypto":7,"deep-extend":36,"traverse":95,"underscore":98,"util":34}],105:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -37749,7 +37662,7 @@ logger.error = function (message, callback) {
 };
 
 
-},{"../index":105}],103:[function(require,module,exports){
+},{"../index":108}],106:[function(require,module,exports){
 var memory = function () {
   this.content = {};
 
@@ -37784,7 +37697,7 @@ var memory = function () {
 };
 
 module.exports = new memory();
-},{}],104:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 /**
  *  @title joola/lib/common/modifiers
  *  @overview Includes different prototype modifiers used by joola
@@ -37952,7 +37865,7 @@ String.prototype.commas = function () {
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return parts.join(".");
 };
-},{}],105:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 (function (global){
 /**
  *  @title joola
@@ -38301,7 +38214,7 @@ joola.on('ready', function () {
 });
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../../package.json":96,"./common/api":97,"./common/dispatch":98,"./common/events":99,"./common/globals":100,"./common/index":101,"./common/logger":102,"./common/memory":103,"./common/modifiers":104,"./viz/index":121,"querystring":23,"socket.io-client":42,"url":32}],106:[function(require,module,exports){
+},{"./../../package.json":99,"./common/api":100,"./common/dispatch":101,"./common/events":102,"./common/globals":103,"./common/index":104,"./common/logger":105,"./common/memory":106,"./common/modifiers":107,"./viz/index":124,"querystring":23,"socket.io-client":42,"url":32}],109:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38938,7 +38851,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(BarTable, events.EventEmitter);
-},{"../index":105,"events":12,"jquery":40,"underscore":95,"util":34}],107:[function(require,module,exports){
+},{"../index":108,"events":12,"jquery":40,"underscore":98,"util":34}],110:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -38961,7 +38874,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joola.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start', self);
   var self = this;
 
   this._id = '_canvas';
@@ -39121,9 +39034,11 @@ var Canvas = module.exports = function (options, callback) {
 
     if (self.options.datepicker && self.options.datepicker.container) {
       self.options.datepicker.canvas = self;
+      console.log('dt');
       new joola.viz.DatePicker(self.options.datepicker, function (err, ref) {
         if (err)
           throw err;
+          console.log('dt2');
         self._datepicker = ref;
         self.options.$datepicker = ref;
         if (self.options.datepicker.interval) {
@@ -39133,7 +39048,7 @@ var Canvas = module.exports = function (options, callback) {
             var $this = $$(this);
             self.options.datepicker.$interval.find('.btn').removeClass('active');
             $this.addClass('active');
-
+console.log('dt3');
             self.options.datepicker._interval = $this.attr('data-id');
             self.emit('intervalchange', self.options.datepicker._interval);
           });
@@ -39300,6 +39215,8 @@ var Canvas = module.exports = function (options, callback) {
     if (typeof callback === 'function') {
       return callback(null, self);
     }
+
+    joola.events.emit('canvas.init.finish', self);
   };
 
   this.addVisualization = function (viz) {
@@ -39391,7 +39308,8 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Canvas, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],108:[function(require,module,exports){
+
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],111:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -40510,7 +40428,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(DatePicker, events.EventEmitter);
 
-},{"../index":105,"events":12,"jquery":40,"jquery-ui/datepicker":39,"underscore":95,"util":34}],109:[function(require,module,exports){
+},{"../index":108,"events":12,"jquery":40,"jquery-ui/datepicker":39,"underscore":98,"util":34}],112:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -40525,6 +40443,9 @@ util.inherits(DatePicker, events.EventEmitter);
 var
   events = require('events'),
   util = require('util'),
+
+  _ = require('underscore'),
+
   ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery');
@@ -40820,7 +40741,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(DimensionPicker, events.EventEmitter);
 
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],110:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],113:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -40937,7 +40858,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":105,"jquery":40,"underscore":95}],111:[function(require,module,exports){
+},{"../index":108,"jquery":40,"underscore":98}],114:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41272,7 +41193,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Gauge, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],112:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],115:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41404,7 +41325,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":105}],113:[function(require,module,exports){
+},{"../index":108}],116:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41730,7 +41651,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Metric, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],114:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],117:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41746,6 +41667,9 @@ var
   events = require('events'),
   util = require('util'),
   ce = require('cloneextend'),
+
+  _ = require('underscore'),
+
   joola = require('../index'),
   $$ = require('jquery');
 
@@ -42034,7 +41958,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(MetricPicker, events.EventEmitter);
 
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],115:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],118:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42329,7 +42253,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":105,"underscore":95}],116:[function(require,module,exports){
+},{"../index":108,"underscore":98}],119:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -42642,7 +42566,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Pie, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],117:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],120:[function(require,module,exports){
 /*jshint -W083 */
 
 /**
@@ -42862,7 +42786,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 
-},{"../index":105,"underscore":95}],118:[function(require,module,exports){
+},{"../index":108,"underscore":98}],121:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -43115,7 +43039,7 @@ joola.events.on('core.init.finish', function () {
     };
   }
 });
-},{"../index":105}],119:[function(require,module,exports){
+},{"../index":108}],122:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -44322,7 +44246,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(Table, events.EventEmitter);
 
-},{"../index":105,"async":2,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],120:[function(require,module,exports){
+},{"../index":108,"async":2,"cloneextend":35,"events":12,"jquery":40,"underscore":98,"util":34}],123:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45139,7 +45063,7 @@ joola.events.on('core.init.finish', function () {
 
 util.inherits(Timeline, events.EventEmitter);
 
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":94,"underscore":95,"util":34}],121:[function(require,module,exports){
+},{"../index":108,"cloneextend":35,"events":12,"jquery":40,"moment":41,"twix":97,"underscore":98,"util":34}],124:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -45525,4 +45449,4 @@ viz.destroy = function (self, vizOptions) {
  });
  });*/
 
-},{"../index":105,"./BarTable":106,"./Canvas":107,"./DatePicker":108,"./DimensionPicker":109,"./FilterBox":110,"./Gauge":111,"./Geo":112,"./Metric":113,"./MetricPicker":114,"./MiniTable":115,"./Pie":116,"./PunchCard":117,"./Sparkline":118,"./Table":119,"./Timeline":120,"async":2,"cloneextend":35,"jquery":40,"underscore":95}]},{},[105])
+},{"../index":108,"./BarTable":109,"./Canvas":110,"./DatePicker":111,"./DimensionPicker":112,"./FilterBox":113,"./Gauge":114,"./Geo":115,"./Metric":116,"./MetricPicker":117,"./MiniTable":118,"./Pie":119,"./PunchCard":120,"./Sparkline":121,"./Table":122,"./Timeline":123,"async":2,"cloneextend":35,"jquery":40,"underscore":98}]},{},[108])

@@ -12,6 +12,9 @@
 var
   events = require('events'),
   util = require('util'),
+
+  _ = require('underscore'),
+
   ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery');
