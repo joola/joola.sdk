@@ -155,12 +155,12 @@ viz.fetch = function(context, query, callback) {
       }
     }
     //adjust offset
-    context.options.query.forEach(function(_query) {
-      if (_query.timeframe && typeof _query.timeframe === 'object') {
-        if (_query.timeframe.start)
-          _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
-        if (_query.timeframe.end)
-          _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
+    _query.forEach(function(_q) {
+      if (_q.timeframe && typeof _q.timeframe === 'object') {
+        if (_q.timeframe.start)
+          _q.timeframe.start.setHours(_q.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset, _q.timeframe.start));
+        if (_q.timeframe.end)
+          _q.timeframe.end.setHours(_q.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset, _q.timeframe.end));
       }
     });
     var args = [];

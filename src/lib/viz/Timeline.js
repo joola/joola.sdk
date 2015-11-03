@@ -199,7 +199,7 @@ var Timeline = module.exports = function(options, callback) {
           switch (interval) {
             case 'month':
             case 'day':
-              _date.setHours(_date.getHours() - (_basedate.getTimezoneOffset() / 60));
+              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
@@ -345,14 +345,19 @@ var Timeline = module.exports = function(options, callback) {
               y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
             });
           } else {
+            var _date;
             if (seriesIndex === 0) {
+              _date = new Date(x);
+              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
               series[seriesIndex].data.push({
-                x: x,
+                x: _date,
                 y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
             } else {
+              _date = new Date(series[0].data[docIndex].x);
+              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
               series[seriesIndex].data.push({
-                x: series[0].data[docIndex].x,
+                x: _date,
                 _x: new Date(document[dimensions[0].key]),
                 y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
