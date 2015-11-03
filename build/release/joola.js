@@ -44440,7 +44440,7 @@ var Timeline = module.exports = function (options, callback) {
           switch (interval) {
             case 'month':
             case 'day':
-              _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+              _date.setHours(_date.getHours() - (_basedate.getTimezoneOffset() / 60));
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
@@ -44620,7 +44620,7 @@ var Timeline = module.exports = function (options, callback) {
         self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
     else
       self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
-    
+
     self.last_extremes_0 = extremes_0;
     if (self.chart.yAxis.length > 1) {
       extremes_1 = self.chart.yAxis[1].getExtremes();
