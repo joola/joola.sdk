@@ -44446,7 +44446,7 @@ var Timeline = module.exports = function(options, callback) {
           switch (interval) {
             case 'month':
             case 'day':
-              _date.setHours(_date.getHours() + joola.timezone(joola.options.timezoneOffset, _date));
+              _date.setHours(_date.getHours() + joola.timezone(joola.options.timezoneOffset, _basedate));
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
