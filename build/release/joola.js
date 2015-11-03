@@ -44446,7 +44446,7 @@ var Timeline = module.exports = function(options, callback) {
           switch (interval) {
             case 'month':
             case 'day':
-              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
+              _date.setHours(_date.getHours() + joola.timezone(joola.options.timezoneOffset, _date));
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
@@ -44510,7 +44510,11 @@ var Timeline = module.exports = function(options, callback) {
 
         var counter = 0;
         var fixed = [];
-        var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
+        var _start = new Date(query.timeframe.start);
+        var _end = new Date(query.timeframe.end);
+        _start.setHours(_start.getHours() - joola.timezone(joola.options.timezoneOffset, _start));
+        _end.setHours(_end.getHours() - joola.timezone(joola.options.timezoneOffset, _end));
+        var itr = moment.twix(_start, _end).iterate(interval);
         while (itr.hasNext()) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
@@ -44594,17 +44598,13 @@ var Timeline = module.exports = function(options, callback) {
           } else {
             var _date;
             if (seriesIndex === 0) {
-              _date = new Date(x);
-              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
               series[seriesIndex].data.push({
-                x: _date,
+                x: x,
                 y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
             } else {
-              _date = new Date(series[0].data[docIndex].x);
-              _date.setHours(_date.getHours() - joola.timezone(joola.options.timezoneOffset, _date));
               series[seriesIndex].data.push({
-                x: _date,
+                x: series[0].data[docIndex].x,
                 _x: new Date(document[dimensions[0].key]),
                 y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
