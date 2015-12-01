@@ -12,6 +12,9 @@
 var
   events = require('events'),
   util = require('util'),
+
+  _ = require('underscore'),
+
   ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery');
@@ -91,12 +94,14 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           list = _.sortBy(list, function (item) {
+            if (item.ordinal)
+              return parseInt(item.ordinal, 10);
             return item.name || item.key;
           });
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + (dimension.name || dimension.key) + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key).toLowerCase() + '">' + (dimension.name || dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -137,7 +142,7 @@ var DimensionPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();

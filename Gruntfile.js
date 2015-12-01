@@ -136,6 +136,10 @@ module.exports = function (grunt) {
       main: {
         src: 'build/temp/joola.css',
         dest: 'build/release/joola.css'
+      },
+      shim: {
+        src: 'build/temp/joola.js',
+        dest: 'build/release/joola.shim.js'
       }
     },
 
@@ -196,6 +200,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['clean', 'http', 'jshint', 'browserify', 'concat', 'uglify', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('build', ['browserify', 'concat', 'copy']);
   grunt.registerTask('dev', ['build', 'cssmin','watch']);
+  grunt.registerTask('shim', ['browserify','copy:shim']);
   grunt.registerTask('css', ['concat', 'cssmin', 'copy']); //'csslint',
   grunt.registerTask('test', ['default', 'connect', 'mocha']);
   grunt.registerTask('test:bare', ['connect', 'mocha']);

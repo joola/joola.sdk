@@ -13,6 +13,9 @@ var
   events = require('events'),
   util = require('util'),
   ce = require('cloneextend'),
+
+  _ = require('underscore'),
+
   joola = require('../index'),
   $$ = require('jquery');
 
@@ -50,7 +53,6 @@ var MetricPicker = module.exports = function (options, callback) {
   this.drawn = false;
 
   this.verify = function (options) {
-
     return null;
   };
 
@@ -81,15 +83,17 @@ var MetricPicker = module.exports = function (options, callback) {
           var mlasttarget = null;
 
           list = _.sortBy(list, function (item) {
+            if (item.ordinal)
+              return parseInt(item.ordinal, 10);
             return item.name || item.key;
           });
-          
+
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
             if (typeof collection !== 'object')
               collection = {key: collection};
 
-            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + (metric.name || metric.key) + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + (collection.key + '.' + (metric.name || metric.key)).toLowerCase() + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -132,7 +136,7 @@ var MetricPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();

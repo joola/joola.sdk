@@ -3597,7 +3597,7 @@ else delete a.series;a=g.merge(d,a);b.call(f,a,e)}}),a):b.call(f,a,e)});j=functi
   this.pointRange=a.pointRange=l(a.pointRange,a.colsize||1);this.yAxis.axisPointRange=a.rowsize||1},translate:function(){var a=this.options,b=this.xAxis,e=this.yAxis;this.generatePoints();i(this.points,function(c){var d=(a.colsize||1)/2,f=(a.rowsize||1)/2,g=Math.round(b.len-b.translate(c.x-d,0,1,0,1)),d=Math.round(b.len-b.translate(c.x+d,0,1,0,1)),h=Math.round(e.translate(c.y-f,0,1,0,1)),f=Math.round(e.translate(c.y+f,0,1,0,1));c.plotX=c.clientX=(g+d)/2;c.plotY=(h+f)/2;c.shapeType="rect";c.shapeArgs=
 {x:Math.min(g,d),y:Math.min(h,f),width:Math.abs(d-g),height:Math.abs(f-h)}});this.translateColors();this.chart.hasRendered&&i(this.points,function(a){a.shapeArgs.fill=a.options.color||a.color})},drawPoints:p.column.prototype.drawPoints,animate:o,getBox:o,drawLegendSymbol:t.drawRectangle,getExtremes:function(){u.prototype.getExtremes.call(this,this.valueData);this.valueMin=this.dataMin;this.valueMax=this.dataMax;u.prototype.getExtremes.call(this)}}))})(Highcharts);
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}},"subscribe":{"name":"/beacon/subscribe","description":"I subscribe to socket.io","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["beacon:subscribe"],"_dispatch":{"message":"subscribe","limit":-1,"criteria":"notme"}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
+module.exports={"users":{"list":{"name":"/users/list","description":"I list all available users","inputs":["workspace"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:list"],"_dispatch":{"message":"users:list","criteria":"notme","limit":1}},"get":{"name":"/users/get","description":"I get a specific users by username","inputs":["workspace","username"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:get"],"_dispatch":{"message":"users:get","criteria":"notme","limit":1}},"getByToken":{"name":"/users/getByToken","description":"I get a specific user by token","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:getByToken","criteria":"notme","limit":1}},"add":{"name":"/users/add","description":"I add a new user","inputs":["workspace","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:add"],"_dispatch":{"message":"users:add","criteria":"notme","limit":1}},"patch":{"name":"/users/patch","description":"I patch an existing user","inputs":["workspace","username","user"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:patch"],"_dispatch":{"message":"users:patch","criteria":"notme","limit":1}},"delete":{"name":"/users/delete","description":"I delete an existing user","inputs":["workspace","user"],"_proto":null,"_outputExample":{},"_permission":["users:delete"],"_dispatch":{"message":"users:delete","criteria":"notme","limit":1}},"authenticate":{"name":"/users/authenticate","description":"I authenticate users","inputs":["workspace","username","password"],"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:authenticate","criteria":"notme","limit":1}},"verifyAPIToken":{"name":"/users/verifyAPIToken","description":"I verify API tokens","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["guest"],"_dispatch":{"message":"users:verifyAPIToken","criteria":"notme","limit":1}},"generateToken":{"name":"/users/generateToken","description":"I generate tokens for users","inputs":["user"],"_proto":{"user":{"name":"user","description":"The user assosicated with the token","type":"object","required":true,"private":true},"token":{"name":"token","description":"The token itself","required":true},"_":{"name":"_","description":"The token itself","required":true},"timestamp":{"name":"timestamp","description":"The token generation timestamp","required":true},"last":{"name":"last","description":"The token last usage timestamp","required":true},"expires":{"name":"expires","description":"The token expiry timestamp","type":"int","required":true}},"_outputExample":{},"_permission":["users:generateToken"],"_dispatch":{"message":"users:generateToken","criteria":"notme","limit":1}},"validateToken":{"name":"/users/validateToken","description":"I validate tokens for users","inputs":["token"],"_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"_outputExample":{},"_permission":["users:validateToken"],"_dispatch":{"message":"users:validateToken","criteria":"notme","limit":1}},"expireToken":{"name":"/users/expireToken","description":"I expire tokens for users","inputs":["token"],"_outputExample":{},"_permission":["users:expireToken"],"_dispatch":{"message":"users:expireToken","criteria":"notme","limit":1}}},"workspaces":{"list":{"name":"/workspaces/list","description":"I list all available workspaces","inputs":[],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:list"],"_dispatch":{"message":"workspaces:list","criteria":"notme","limit":1}},"get":{"name":"/workspaces/get","description":"I get a specific workspace by key`","inputs":["key"],"_proto":{"key":{"name":"key","description":"The key of the workspace","type":"string","required":true},"name":{"name":"name","description":"The name of the workspace","type":"string","required":false},"description":{"name":"description","description":"The description of the workspace","type":"string","required":false}},"_outputExample":{},"_permission":["workspaces:get"],"_dispatch":{"message":"workspaces:get","criteria":"notme","limit":1}},"add":{"name":"/workspaces/add","description":"I add a new user","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:add"],"_dispatch":{"message":"workspaces:add","criteria":"notme","limit":1}},"patch":{"name":"/workspaces/patch","description":"I patch an existing workspace","inputs":["workspace","payload"],"_outputExample":{},"_permission":["workspaces:patch"],"_dispatch":{"message":"workspaces:patch","criteria":"notme","limit":1}},"delete":{"name":"/workspaces/delete","description":"I delete an existing workspace","inputs":["workspace"],"_outputExample":{},"_permission":["workspaces:delete"],"_dispatch":{"message":"workspaces:delete","criteria":"notme","limit":1}}},"roles":{"list":{"name":"/roles/list","description":"I list all available roles","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:list"],"_dispatch":{"message":"roles:list","criteria":"notme","limit":1}},"get":{"name":"/roles/get","description":"I get a specific role by name`","inputs":["workspace","name"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:get"],"_dispatch":{"message":"roles:get","criteria":"notme","limit":1}},"add":{"name":"/roles/add","description":"I add a new user","inputs":["workspace","role"],"_proto":{"key":{"name":"key","description":"The key of the role","type":"string","required":true},"permissions":{"name":"permissions","description":"List of permissions assosciated with this role","required":true,"default":[],"private":true},"filter":{"name":"filter","description":"List of filters for the specified role","required":false,"default":[],"private":true}},"_outputExample":{},"_permission":["roles:add"],"_dispatch":{"message":"roles:add","criteria":"notme","limit":1}},"patch":{"name":"/roles/patch","description":"I patch an existing role","inputs":["workspace","role","payload"],"_outputExample":{},"_permission":["roles:patch"],"_dispatch":{"message":"roles:patch","criteria":"notme","limit":1}},"delete":{"name":"/roles/delete","description":"I delete an existing role","inputs":["workspace","role"],"_outputExample":{},"_permission":["roles:delete"],"_dispatch":{"message":"roles:delete","criteria":"notme","limit":1}}},"permissions":{"list":{"name":"/permissions/list","description":"I list all available permissions","inputs":[],"_outputExample":{},"_permission":["permissions:list"],"_dispatch":{"message":"permissions:list","criteria":"notme","limit":1}},"get":{"name":"/permissions/get","description":"I get a specific permission by name`","inputs":["name"],"_outputExample":{},"_permission":["permissions:get"],"_dispatch":{"message":"permissions:get","criteria":"notme","limit":1}}},"system":{"version":{"name":"/system/version","description":"I print out the version","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:version"],"_dispatch":{"message":"system:version","criteria":"notme","limit":1}},"nodeUID":{"name":"/system/nodeUID","description":"I print out the node uuid","verb":"GET","inputs":[],"_outputExample":{},"_permission":["system:nodeuid"],"_dispatch":{"message":"system:nodeuid","criteria":"notme","limit":1}},"whoami":{"name":"/api/system/whoami","description":"I print out the user details","_proto":{"username":{"name":"username","description":"The user's username","type":"string","required":true},"displayName":{"name":"displayName","description":"The displayname of the user","required":false},"password":{"name":"password","description":"The user's password","required":false,"private":true,"hidden":true},"roles":{"name":"roles","description":"The user's roles","required":true,"private":true},"filter":{"name":"filter","description":"The user's filter","type":"array","default":[],"required":false,"private":true},"APIToken":{"name":"APIToken","description":"The user's API Token","required":false,"private":true},"workspace":{"name":"workspace","description":"The user's Workspace","required":false},"token":{"name":"token","description":"The user's current security token","required":false}},"inputs":[],"_outputExample":{},"_permission":["system:whoami"],"_dispatch":{"message":"system:whoami","criteria":"notme","limit":1}},"blacklist":{"name":"/system/blacklist","description":"I blacklist an IP","inputs":{"required":["ip","blacklist"],"optional":["ttl"]},"_outputExample":{},"_permission":["system:blacklist"],"_dispatch":{"message":"system:blacklist","criteria":"notme","limit":1}},"nodeDetails":{"name":"/system/nodeDetails","description":"I print details on this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:nodedetails"],"_dispatch":{"message":"system:nodedetails","criteria":"notme","limit":1}},"connectedClients":{"name":"/system/connectedClients","description":"I print details on all connected clients to this node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:connectedclients"],"_dispatch":{"message":"system:connectedclients","criteria":"notme","limit":1}},"nodeList":{"name":"/system/nodeList","description":"I list all registered nodes","inputs":[],"_outputExample":{},"_permission":["system:nodelist"],"_dispatch":{"message":"system:nodelist","criteria":"notme","limit":1}},"roundTrip":{"name":"/system/roundTrip","description":"I execute a roundtrip of a payload and return the time in ms","inputs":["start"],"_outputExample":{},"_permission":["system:roundtrip"],"_dispatch":{"message":"roundtrip","criteria":"notme","limit":1},"_route":null},"terminate":{"name":"/system/terminate","description":"I terminate a node","inputs":{"required":[],"optional":["uid"]},"_outputExample":{},"_permission":["system:terminate"],"_dispatch":{"message":"terminate","limit":-1,"criteria":"notme"},"_route":null},"startWebServer":{"name":"/system/startWebServer","description":"I start a WebServer on a node","inputs":["node"],"_outputExample":{},"_permission":["system:startWebServer"],"_dispatch":{"message":"startWebServer","criteria":"notme","limit":1},"_route":null},"purgeCache":{"name":"/system/purgeCache","description":"I purge the cache","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["system:purgeCache"],"_dispatch":{"message":"purgeCache","limit":-1,"criteria":"notme"},"_route":null}},"beacon":{"insert":{"name":"/beacon/insert","description":"","inputs":{"required":["workspace","collection","document"],"optional":["options"]},"_outputExample":{},"_permission":["beacon:insert"],"_dispatch":{"message":"beacon:insert","criteria":"notme","limit":1}},"subscribe":{"name":"/beacon/subscribe","description":"I subscribe to socket.io","inputs":{"required":[],"optional":[]},"_outputExample":{},"_permission":["beacon:subscribe"],"_dispatch":{"message":"subscribe","limit":-1,"criteria":"notme"}}},"query":{"stop":{"name":"/query/stop","description":"","inputs":["querytoken"],"_outputExample":{},"_permission":["query:stop"],"_dispatch":{"message":"query:stop","criteria":"notme","limit":1}},"fetch":{"name":"/query/fetch","description":"","inputs":["options"],"_outputExample":{},"_permission":["query:fetch"],"_dispatch":{"message":"query:fetch","criteria":"notme","limit":1}}},"collections":{"list":{"name":"/collections/list","description":"I list all available collections","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:list"],"_dispatch":{"message":"collections:list","criteria":"notme","limit":1}},"get":{"name":"/collections/get","description":"I get a specific collection by id`","inputs":["workspace","id"],"_proto":{"key":{"name":"key","description":"The id of the collection","type":"string","required":true},"name":{"name":"name","description":"The name of the collection","type":"string","required":true},"description":{"name":"description","description":"The description of the collection","type":"string","required":false,"default":""},"strongTyped":{"name":"strongTyped","description":"Is the collection strong typed","type":"boolean","required":false,"default":false},"dimensions":{"name":"dimensions","description":"The collection's dimensions","type":"array","required":false,"default":[]},"metrics":{"name":"metrics","description":"The collection's metrics","type":"array","required":false,"default":[]}},"_outputExample":{},"_permission":["collections:get"],"_dispatch":{"message":"collections:get","criteria":"notme","limit":1}},"add":{"name":"/collections/add","description":"I add a new collection","inputs":["workspace","collection"],"_outputExample":{},"_permission":["collections:add"],"_dispatch":{"message":"collections:add","criteria":"notme","limit":1}},"patch":{"name":"/collections/patch","description":"I patch an existing collection","inputs":["workspace","collection","payload"],"_outputExample":{},"_permission":["collections:patch"],"_dispatch":{"message":"collections:patch","criteria":"notme","limit":1}},"delete":{"name":"/collections/delete","description":"I delete an existing collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:delete"],"_dispatch":{"message":"collections:delete","criteria":"notme","limit":1}},"stats":{"name":"/collections/stats","description":"I provide stats about a collection","inputs":["workspace","id"],"_outputExample":{},"_permission":["collections:stats"],"_dispatch":{"message":"collections:stats","criteria":"notme","limit":1}},"metadata":{"name":"/collections/metadata","description":"I provide metadata information for a document","inputs":{"required":["workspace","document"],"optional":["collection"]},"_outputExample":{},"_permission":["collections:metadata"],"_dispatch":{"message":"collections:metadata","criteria":"notme","limit":1}}},"dimensions":{"list":{"name":"/dimensions/list","description":"I list all available dimensions","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The dimension's roles","required":false,"private":false},"ordinal":{"name":"ordinal","description":"The dimension's ordinal for display purposes","required":false,"private":false,"type":"int"}},"_outputExample":{},"_permission":["dimensions:list"],"_dispatch":{"message":"dimensions:list","criteria":"notme","limit":1}},"get":{"name":"/dimensions/get","description":"I get a specific dimension by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the dimension","type":"string","required":true},"name":{"name":"name","description":"The name of the dimension","type":"string","required":true},"description":{"name":"description","description":"The description of the dimension","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the dimension","type":"string","required":true,"private":true,"hidden":true},"datatype":{"name":"datatype","description":"The datatype of the dimension","type":"string","required":false,"default":"string"},"collection":{"name":"collection","description":"The collection of the dimension","type":"string","required":false,"default":""},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The dimension's roles","required":false,"private":false},"ordinal":{"name":"ordinal","description":"The dimension's ordinal for display purposes","required":false,"private":false,"type":"int"}},"_outputExample":{},"_permission":["dimensions:get"],"_dispatch":{"message":"dimensions:get","criteria":"notme","limit":1}},"add":{"name":"/dimensions/add","description":"I add a new dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:add"],"_dispatch":{"message":"dimensions:add","criteria":"notme","limit":1}},"patch":{"name":"/dimensions/patch","description":"I patch an existing dimension","inputs":["workspace","collection","dimension","payload"],"_outputExample":{},"_permission":["dimensions:patch"],"_dispatch":{"message":"dimensions:patch","criteria":"notme","limit":1}},"delete":{"name":"/dimensions/delete","description":"I delete an existing dimension","inputs":["workspace","collection","dimension"],"_outputExample":{},"_permission":["dimensions:delete"],"_dispatch":{"message":"dimensions:delete","criteria":"notme","limit":1}}},"metrics":{"list":{"name":"/metrics/list","description":"I list all available metrics","inputs":{"required":["workspace"],"optional":["collection"]},"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The metric's roles","required":false,"private":false},"ordinal":{"name":"ordinal","description":"The metric's ordinal for display purposes","required":false,"private":false,"type":"int"}},"_outputExample":{},"_permission":["metrics:list"],"_dispatch":{"message":"metrics:list","criteria":"notme","limit":1}},"get":{"name":"/metrics/get","description":"I get a specific metric by key`","inputs":["workspace","collection","key"],"_proto":{"key":{"name":"key","description":"The id of the metric","type":"string","required":true},"name":{"name":"name","description":"The name of the metric","type":"string","required":true},"description":{"name":"description","description":"The description of the metric","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the metric","type":"string","required":true,"private":true,"hidden":true},"filter":{"name":"filter","description":"The filter of the metric","type":"array","required":false,"default":""},"datatype":{"name":"datatype","description":"The datatype of the metric","type":"string","required":false,"default":""},"aggregation":{"name":"aggregation","description":"The aggregation of the metric","type":"string","required":false,"default":""},"prefix":{"name":"prefix","description":"The prefix of the metric","type":"string","required":false,"default":""},"suffix":{"name":"suffix","description":"The suffix of the metric","type":"string","required":false,"default":""},"decimals":{"name":"decimals","description":"The number of decimal places to show","type":"int","required":false,"default":0},"formula":{"name":"formula","description":"The formula of the metric","type":"object","required":false},"collection":{"name":"collection","description":"The collection of the metric","type":"string","required":false},"category":{"name":"category","description":"The category of the metric","type":"string","required":false},"visible":{"name":"visible","description":"The visibility of the dimension","type":"bool","required":false,"default":true},"roles":{"name":"roles","description":"The metric's roles","required":false,"private":false},"ordinal":{"name":"ordinal","description":"The metric's ordinal for display purposes","required":false,"private":false,"type":"int"}},"_outputExample":{},"_permission":["metrics:get"],"_dispatch":{"message":"metrics:get","criteria":"notme","limit":1}},"add":{"name":"/metrics/add","description":"I add a new metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:add"],"_dispatch":{"message":"metrics:add","criteria":"notme","limit":1}},"patch":{"name":"/metrics/patch","description":"I patch an existing metric","inputs":["workspace","collection","metric","payload"],"_outputExample":{},"_permission":["metrics:patch"],"_dispatch":{"message":"metrics:patch","criteria":"notme","limit":1}},"delete":{"name":"/metrics/delete","description":"I delete an existing metric","inputs":["workspace","collection","metric"],"_outputExample":{},"_permission":["metrics:delete"],"_dispatch":{"message":"metrics:delete","criteria":"notme","limit":1}}},"config":{"get":{"name":"/config/get","description":"I get a specific config by name`","inputs":["key"],"_outputExample":{},"_permission":["config:get"],"_dispatch":{"message":"config:get","criteria":"notme","limit":1}},"set":{"name":"/config/set","description":"I set a new config key","inputs":["key","val"],"_outputExample":{},"_permission":["config:set"],"_dispatch":{"message":"config:set","criteria":"notme","limit":1}}},"canvases":{"list":{"name":"/canvases/list","description":"I list all available canvases","inputs":["workspace"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:list"],"_dispatch":{"message":"canvases:list","criteria":"notme","limit":1}},"get":{"name":"/canvases/get","description":"I get a specific canvas by key","inputs":["workspace","key"],"_proto":{"key":{"name":"key","description":"The id of the canvas","type":"string","required":true},"version":{"name":"version","description":"The version of the canvas","type":"string","required":false},"name":{"name":"name","description":"The name of the canvas","type":"string","required":true},"description":{"name":"description","description":"The description of the canvas","type":"string","required":false,"default":""},"type":{"name":"type","description":"The type of the canvas","type":"string","required":true},"datepicker":{"name":"datepicker","description":"The datepicker of the canvas","type":"string"},"visualizations":{"name":"visualizations","description":"The visualizations of the canvas","type":"array"},"dimensions":{"name":"dimensions","description":"The dimensions of the canvas","type":"array"},"metrics":{"name":"metrics","description":"The metrics of the canvas","type":"array"},"ordinal":{"name":"ordinal","description":"The ordinal of the canvas","type":"number"},"filterbox":{"name":"filterbox","description":"The filterbox of the canvas","type":"object"},"onDraw":{"name":"onDraw","description":"The onDraw of the canvas","type":"object"},"overlay":{"name":"overlay","description":"The overlay of the canvas","type":"object"},"roles":{"name":"roles","description":"The canvas's roles","required":false,"private":false}},"_outputExample":{},"_permission":["canvases:get"],"_dispatch":{"message":"canvases:get","criteria":"notme","limit":1}},"add":{"name":"/canvases/add","description":"I add a new canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:add"],"_dispatch":{"message":"canvases:add","criteria":"notme","limit":1}},"patch":{"name":"/canvases/patch","description":"I patch an existing canvas","inputs":["workspace","canvas","payload"],"_outputExample":{},"_permission":["canvases:patch"],"_dispatch":{"message":"canvases:patch","criteria":"notme","limit":1}},"delete":{"name":"/canvases/delete","description":"I delete an existing canvas","inputs":["workspace","canvas"],"_outputExample":{},"_permission":["canvases:delete"],"_dispatch":{"message":"canvases:delete","criteria":"notme","limit":1}}},"test":{"withpermission":{"name":"/test/withpermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["guest"]},"nopermission":{"name":"/test/nopermission","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":["manage_system"]},"createtesterror":{"name":"/test/createtesterror","description":"I make sure that tests run fine","inputs":[],"_outputExample":{},"_permission":[]}}}
 },{}],2:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
@@ -5686,12 +5686,16 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	var NUMBER = '0'.charCodeAt(0)
 	var LOWER  = 'a'.charCodeAt(0)
 	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
 
 	function decode (elt) {
 		var code = elt.charCodeAt(0)
-		if (code === PLUS)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
 			return 62 // '+'
-		if (code === SLASH)
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
 			return 63 // '/'
 		if (code < NUMBER)
 			return -1 //no match
@@ -5794,90 +5798,90 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],5:[function(require,module,exports){
-exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isLE ? (nBytes - 1) : 0,
-      d = isLE ? -1 : 1,
-      s = buffer[offset + i];
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
 
-  i += d;
+  i += d
 
-  e = s & ((1 << (-nBits)) - 1);
-  s >>= (-nBits);
-  nBits += eLen;
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
-  m = e & ((1 << (-nBits)) - 1);
-  e >>= (-nBits);
-  nBits += mLen;
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
-    e = 1 - eBias;
+    e = 1 - eBias
   } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity);
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
   } else {
-    m = m + Math.pow(2, mLen);
-    e = e - eBias;
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
   }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-};
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
 
-exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isLE ? 0 : (nBytes - 1),
-      d = isLE ? 1 : -1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
 
-  value = Math.abs(value);
+  value = Math.abs(value)
 
   if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0;
-    e = eMax;
+    m = isNaN(value) ? 1 : 0
+    e = eMax
   } else {
-    e = Math.floor(Math.log(value) / Math.LN2);
+    e = Math.floor(Math.log(value) / Math.LN2)
     if (value * (c = Math.pow(2, -e)) < 1) {
-      e--;
-      c *= 2;
+      e--
+      c *= 2
     }
     if (e + eBias >= 1) {
-      value += rt / c;
+      value += rt / c
     } else {
-      value += rt * Math.pow(2, 1 - eBias);
+      value += rt * Math.pow(2, 1 - eBias)
     }
     if (value * c >= 2) {
-      e++;
-      c /= 2;
+      e++
+      c /= 2
     }
 
     if (e + eBias >= eMax) {
-      m = 0;
-      e = eMax;
+      m = 0
+      e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen);
-      e = e + eBias;
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
     } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-      e = 0;
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
     }
   }
 
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
 
-  e = (e << mLen) | m;
-  eLen += mLen;
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
 
-  buffer[offset + i - d] |= s * 128;
-};
+  buffer[offset + i - d] |= s * 128
+}
 
 },{}],6:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
@@ -7226,6 +7230,7 @@ for (var key in http) {
 https.request = function (params, cb) {
     if (!params) params = {};
     params.scheme = 'https';
+    params.protocol = 'https:';
     return http.request.call(this, params, cb);
 }
 
@@ -14629,7 +14634,7 @@ $.datepicker.version = "1.10.4";
 
 },{"./core":38,"jquery":40}],40:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.4
+ * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -14639,7 +14644,7 @@ $.datepicker.version = "1.10.4";
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2015-04-28T16:01Z
+ * Date: 2014-12-18T15:11Z
  */
 
 (function( global, factory ) {
@@ -14697,7 +14702,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.4",
+	version = "2.1.3",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -15161,12 +15166,7 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-
-	// Support: iOS 8.2 (not reproducible in simulator)
-	// `in` check used to prevent JIT error (gh-2145)
-	// hasOwn isn't used here due to false negatives
-	// regarding Nodelist length in IE
-	var length = "length" in obj && obj.length,
+	var length = obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -23841,7 +23841,7 @@ return jQuery;
 
 },{}],41:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.6
+//! version : 2.10.2
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -23864,12 +23864,28 @@ return jQuery;
         hookCallback = callback;
     }
 
+    function defaultParsingFlags() {
+        // We need to deep clone this object.
+        return {
+            empty           : false,
+            unusedTokens    : [],
+            unusedInput     : [],
+            overflow        : -2,
+            charsLeftOver   : 0,
+            nullInput       : false,
+            invalidMonth    : null,
+            invalidFormat   : false,
+            userInvalidated : false,
+            iso             : false
+        };
+    }
+
     function isArray(input) {
         return Object.prototype.toString.call(input) === '[object Array]';
     }
 
     function isDate(input) {
-        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+        return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
     }
 
     function map(arr, fn) {
@@ -23906,46 +23922,21 @@ return jQuery;
         return createLocalOrUTC(input, format, locale, strict, true).utc();
     }
 
-    function defaultParsingFlags() {
-        // We need to deep clone this object.
-        return {
-            empty           : false,
-            unusedTokens    : [],
-            unusedInput     : [],
-            overflow        : -2,
-            charsLeftOver   : 0,
-            nullInput       : false,
-            invalidMonth    : null,
-            invalidFormat   : false,
-            userInvalidated : false,
-            iso             : false
-        };
-    }
-
-    function getParsingFlags(m) {
-        if (m._pf == null) {
-            m._pf = defaultParsingFlags();
-        }
-        return m._pf;
-    }
-
     function valid__isValid(m) {
         if (m._isValid == null) {
-            var flags = getParsingFlags(m);
             m._isValid = !isNaN(m._d.getTime()) &&
-                flags.overflow < 0 &&
-                !flags.empty &&
-                !flags.invalidMonth &&
-                !flags.invalidWeekday &&
-                !flags.nullInput &&
-                !flags.invalidFormat &&
-                !flags.userInvalidated;
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
 
             if (m._strict) {
                 m._isValid = m._isValid &&
-                    flags.charsLeftOver === 0 &&
-                    flags.unusedTokens.length === 0 &&
-                    flags.bigHour === undefined;
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
             }
         }
         return m._isValid;
@@ -23954,10 +23945,10 @@ return jQuery;
     function valid__createInvalid (flags) {
         var m = create_utc__createUTC(NaN);
         if (flags != null) {
-            extend(getParsingFlags(m), flags);
+            extend(m._pf, flags);
         }
         else {
-            getParsingFlags(m).userInvalidated = true;
+            m._pf.userInvalidated = true;
         }
 
         return m;
@@ -23993,7 +23984,7 @@ return jQuery;
             to._offset = from._offset;
         }
         if (typeof from._pf !== 'undefined') {
-            to._pf = getParsingFlags(from);
+            to._pf = from._pf;
         }
         if (typeof from._locale !== 'undefined') {
             to._locale = from._locale;
@@ -24017,7 +24008,7 @@ return jQuery;
     // Moment prototype object
     function Moment(config) {
         copyConfig(this, config);
-        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
+        this._d = new Date(+config._d);
         // Prevent infinite loop in case updateOffset creates new moment
         // objects.
         if (updateInProgress === false) {
@@ -24028,15 +24019,7 @@ return jQuery;
     }
 
     function isMoment (obj) {
-        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
-    }
-
-    function absFloor (number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
-        }
+        return obj instanceof Moment || (obj != null && hasOwnProp(obj, '_isAMomentObject'));
     }
 
     function toInt(argumentForCoercion) {
@@ -24044,7 +24027,11 @@ return jQuery;
             value = 0;
 
         if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-            value = absFloor(coercedNumber);
+            if (coercedNumber >= 0) {
+                value = Math.floor(coercedNumber);
+            } else {
+                value = Math.ceil(coercedNumber);
+            }
         }
 
         return value;
@@ -24142,7 +24129,9 @@ return jQuery;
     function defineLocale (name, values) {
         if (values !== null) {
             values.abbr = name;
-            locales[name] = locales[name] || new Locale();
+            if (!locales[name]) {
+                locales[name] = new Locale();
+            }
             locales[name].set(values);
 
             // backwards compat for now: also set the locale
@@ -24246,14 +24235,16 @@ return jQuery;
     }
 
     function zeroFill(number, targetLength, forceSign) {
-        var absNumber = '' + Math.abs(number),
-            zerosToFill = targetLength - absNumber.length,
+        var output = '' + Math.abs(number),
             sign = number >= 0;
-        return (sign ? (forceSign ? '+' : '') : '-') +
-            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
+
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -24321,7 +24312,10 @@ return jQuery;
         }
 
         format = expandFormat(format, m.localeData());
-        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
+
+        if (!formatFunctions[format]) {
+            formatFunctions[format] = makeFormatFunction(format);
+        }
 
         return formatFunctions[format](m);
     }
@@ -24365,15 +24359,8 @@ return jQuery;
 
     var regexes = {};
 
-    function isFunction (sth) {
-        // https://github.com/moment/moment/issues/2325
-        return typeof sth === 'function' &&
-            Object.prototype.toString.call(sth) === '[object Function]';
-    }
-
-
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
+        regexes[token] = typeof regex === 'function' ? regex : function (isStrict) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -24470,7 +24457,7 @@ return jQuery;
         if (month != null) {
             array[MONTH] = month;
         } else {
-            getParsingFlags(config).invalidMonth = input;
+            config._pf.invalidMonth = input;
         }
     });
 
@@ -24554,7 +24541,7 @@ return jQuery;
         var overflow;
         var a = m._a;
 
-        if (a && getParsingFlags(m).overflow === -2) {
+        if (a && m._pf.overflow === -2) {
             overflow =
                 a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
                 a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
@@ -24564,11 +24551,11 @@ return jQuery;
                 a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
                 -1;
 
-            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
 
-            getParsingFlags(m).overflow = overflow;
+            m._pf.overflow = overflow;
         }
 
         return m;
@@ -24582,10 +24569,9 @@ return jQuery;
 
     function deprecate(msg, fn) {
         var firstTime = true;
-
         return extend(function () {
             if (firstTime) {
-                warn(msg + '\n' + (new Error()).stack);
+                warn(msg);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -24630,17 +24616,17 @@ return jQuery;
             match = from_string__isoRegex.exec(string);
 
         if (match) {
-            getParsingFlags(config).iso = true;
+            config._pf.iso = true;
             for (i = 0, l = isoDates.length; i < l; i++) {
                 if (isoDates[i][1].exec(string)) {
-                    config._f = isoDates[i][0];
+                    // match[5] should be 'T' or undefined
+                    config._f = isoDates[i][0] + (match[6] || ' ');
                     break;
                 }
             }
             for (i = 0, l = isoTimes.length; i < l; i++) {
                 if (isoTimes[i][1].exec(string)) {
-                    // match[6] should be 'T' or space
-                    config._f += (match[6] || ' ') + isoTimes[i][0];
+                    config._f += isoTimes[i][0];
                     break;
                 }
             }
@@ -24719,10 +24705,7 @@ return jQuery;
     addRegexToken('YYYYY',  match1to6, match6);
     addRegexToken('YYYYYY', match1to6, match6);
 
-    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
-    addParseToken('YYYY', function (input, array) {
-        array[YEAR] = input.length === 2 ? utils_hooks__hooks.parseTwoDigitYear(input) : toInt(input);
-    });
+    addParseToken(['YYYY', 'YYYYY', 'YYYYYY'], YEAR);
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
@@ -24849,18 +24832,18 @@ return jQuery;
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
-        if (d < firstDayOfWeek) {
-            d += 7;
-        }
+        var d = createUTCDate(year, 0, 1).getUTCDay();
+        var daysToAdd;
+        var dayOfYear;
 
-        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
-
-        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
+        d = d === 0 ? 7 : d;
+        weekday = weekday != null ? weekday : firstDayOfWeek;
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
+        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
 
         return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+            year      : dayOfYear > 0 ? year      : year - 1,
+            dayOfYear : dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
         };
     }
 
@@ -24913,7 +24896,7 @@ return jQuery;
             yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
-                getParsingFlags(config)._overflowDayOfYear = true;
+                config._pf._overflowDayOfYear = true;
             }
 
             date = createUTCDate(yearToUse, 0, config._dayOfYear);
@@ -25009,7 +24992,7 @@ return jQuery;
         }
 
         config._a = [];
-        getParsingFlags(config).empty = true;
+        config._pf.empty = true;
 
         // This array is used to make a Date, either with `new Date` or `Date.UTC`
         var string = '' + config._i,
@@ -25025,7 +25008,7 @@ return jQuery;
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
-                    getParsingFlags(config).unusedInput.push(skipped);
+                    config._pf.unusedInput.push(skipped);
                 }
                 string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
                 totalParsedInputLength += parsedInput.length;
@@ -25033,29 +25016,27 @@ return jQuery;
             // don't parse if it's not a known token
             if (formatTokenFunctions[token]) {
                 if (parsedInput) {
-                    getParsingFlags(config).empty = false;
+                    config._pf.empty = false;
                 }
                 else {
-                    getParsingFlags(config).unusedTokens.push(token);
+                    config._pf.unusedTokens.push(token);
                 }
                 addTimeToArrayFromToken(token, parsedInput, config);
             }
             else if (config._strict && !parsedInput) {
-                getParsingFlags(config).unusedTokens.push(token);
+                config._pf.unusedTokens.push(token);
             }
         }
 
         // add remaining unparsed input length to the string
-        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
+        config._pf.charsLeftOver = stringLength - totalParsedInputLength;
         if (string.length > 0) {
-            getParsingFlags(config).unusedInput.push(string);
+            config._pf.unusedInput.push(string);
         }
 
         // clear _12h flag if hour is <= 12
-        if (getParsingFlags(config).bigHour === true &&
-                config._a[HOUR] <= 12 &&
-                config._a[HOUR] > 0) {
-            getParsingFlags(config).bigHour = undefined;
+        if (config._pf.bigHour === true && config._a[HOUR] <= 12) {
+            config._pf.bigHour = undefined;
         }
         // handle meridiem
         config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
@@ -25099,7 +25080,7 @@ return jQuery;
             currentScore;
 
         if (config._f.length === 0) {
-            getParsingFlags(config).invalidFormat = true;
+            config._pf.invalidFormat = true;
             config._d = new Date(NaN);
             return;
         }
@@ -25110,6 +25091,7 @@ return jQuery;
             if (config._useUTC != null) {
                 tempConfig._useUTC = config._useUTC;
             }
+            tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             configFromStringAndFormat(tempConfig);
 
@@ -25118,12 +25100,12 @@ return jQuery;
             }
 
             // if there is any input that was not parsed add a penalty for that format
-            currentScore += getParsingFlags(tempConfig).charsLeftOver;
+            currentScore += tempConfig._pf.charsLeftOver;
 
             //or tokens
-            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
+            currentScore += tempConfig._pf.unusedTokens.length * 10;
 
-            getParsingFlags(tempConfig).score = currentScore;
+            tempConfig._pf.score = currentScore;
 
             if (scoreToBeat == null || currentScore < scoreToBeat) {
                 scoreToBeat = currentScore;
@@ -25146,19 +25128,9 @@ return jQuery;
     }
 
     function createFromConfig (config) {
-        var res = new Moment(checkOverflow(prepareConfig(config)));
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
-    }
-
-    function prepareConfig (config) {
         var input = config._i,
-            format = config._f;
+            format = config._f,
+            res;
 
         config._locale = config._locale || locale_locales__getLocale(config._l);
 
@@ -25176,13 +25148,18 @@ return jQuery;
             configFromStringAndArray(config);
         } else if (format) {
             configFromStringAndFormat(config);
-        } else if (isDate(input)) {
-            config._d = input;
         } else {
             configFromInput(config);
         }
 
-        return config;
+        res = new Moment(checkOverflow(config));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
+        }
+
+        return res;
     }
 
     function configFromInput(config) {
@@ -25223,6 +25200,7 @@ return jQuery;
         c._i = input;
         c._f = format;
         c._strict = strict;
+        c._pf = defaultParsingFlags();
 
         return createFromConfig(c);
     }
@@ -25262,7 +25240,7 @@ return jQuery;
         }
         res = moments[0];
         for (i = 1; i < moments.length; ++i) {
-            if (!moments[i].isValid() || moments[i][fn](res)) {
+            if (moments[i][fn](res)) {
                 res = moments[i];
             }
         }
@@ -25374,6 +25352,7 @@ return jQuery;
         } else {
             return local__createLocal(input).local();
         }
+        return model._isUTC ? local__createLocal(input).zone(model._offset || 0) : local__createLocal(input).local();
     }
 
     function getDateOffset (m) {
@@ -25473,7 +25452,12 @@ return jQuery;
     }
 
     function hasAlignedHourOffset (input) {
-        input = input ? local__createLocal(input).utcOffset() : 0;
+        if (!input) {
+            input = 0;
+        }
+        else {
+            input = local__createLocal(input).utcOffset();
+        }
 
         return (this.utcOffset() - input) % 60 === 0;
     }
@@ -25486,24 +25470,12 @@ return jQuery;
     }
 
     function isDaylightSavingTimeShifted () {
-        if (typeof this._isDSTShifted !== 'undefined') {
-            return this._isDSTShifted;
+        if (this._a) {
+            var other = this._isUTC ? create_utc__createUTC(this._a) : local__createLocal(this._a);
+            return this.isValid() && compareArrays(this._a, other.toArray()) > 0;
         }
 
-        var c = {};
-
-        copyConfig(c, this);
-        c = prepareConfig(c);
-
-        if (c._a) {
-            var other = c._isUTC ? create_utc__createUTC(c._a) : local__createLocal(c._a);
-            this._isDSTShifted = this.isValid() &&
-                compareArrays(c._a, other.toArray()) > 0;
-        } else {
-            this._isDSTShifted = false;
-        }
-
-        return this._isDSTShifted;
+        return false;
     }
 
     function isLocal () {
@@ -25663,7 +25635,7 @@ return jQuery;
     var add_subtract__add      = createAdder(1, 'add');
     var add_subtract__subtract = createAdder(-1, 'subtract');
 
-    function moment_calendar__calendar (time, formats) {
+    function moment_calendar__calendar (time) {
         // We want to compare the start of today, vs this.
         // Getting start-of-today depends on whether we're local/utc/offset or not.
         var now = time || local__createLocal(),
@@ -25675,7 +25647,7 @@ return jQuery;
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
+        return this.format(this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -25719,6 +25691,14 @@ return jQuery;
         } else {
             inputMs = +local__createLocal(input);
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
+        }
+    }
+
+    function absFloor (number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
         }
     }
 
@@ -25794,25 +25774,11 @@ return jQuery;
     }
 
     function from (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
         return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
         return this.from(local__createLocal(), withoutSuffix);
-    }
-
-    function to (time, withoutSuffix) {
-        if (!this.isValid()) {
-            return this.localeData().invalidDate();
-        }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
-    }
-
-    function toNow (withoutSuffix) {
-        return this.to(local__createLocal(), withoutSuffix);
     }
 
     function locale (key) {
@@ -25912,29 +25878,16 @@ return jQuery;
         return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
     }
 
-    function toObject () {
-        var m = this;
-        return {
-            years: m.year(),
-            months: m.month(),
-            date: m.date(),
-            hours: m.hours(),
-            minutes: m.minutes(),
-            seconds: m.seconds(),
-            milliseconds: m.milliseconds()
-        };
-    }
-
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
 
     function parsingFlags () {
-        return extend({}, getParsingFlags(this));
+        return extend({}, this._pf);
     }
 
     function invalidAt () {
-        return getParsingFlags(this).overflow;
+        return this._pf.overflow;
     }
 
     addFormatToken(0, ['gg', 2], 0, function () {
@@ -26085,7 +26038,7 @@ return jQuery;
         if (weekday != null) {
             week.d = weekday;
         } else {
-            getParsingFlags(config).invalidWeekday = input;
+            config._pf.invalidWeekday = input;
         }
     });
 
@@ -26096,20 +26049,18 @@ return jQuery;
     // HELPERS
 
     function parseWeekday(input, locale) {
-        if (typeof input !== 'string') {
-            return input;
+        if (typeof input === 'string') {
+            if (!isNaN(input)) {
+                input = parseInt(input, 10);
+            }
+            else {
+                input = locale.weekdaysParse(input);
+                if (typeof input !== 'number') {
+                    return null;
+                }
+            }
         }
-
-        if (!isNaN(input)) {
-            return parseInt(input, 10);
-        }
-
-        input = locale.weekdaysParse(input);
-        if (typeof input === 'number') {
-            return input;
-        }
-
-        return null;
+        return input;
     }
 
     // LOCALES
@@ -26132,7 +26083,9 @@ return jQuery;
     function localeWeekdaysParse (weekdayName) {
         var i, mom, regex;
 
-        this._weekdaysParse = this._weekdaysParse || [];
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+        }
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
@@ -26210,7 +26163,7 @@ return jQuery;
     });
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
-        getParsingFlags(config).bigHour = true;
+        config._pf.bigHour = true;
     });
 
     // LOCALES
@@ -26279,26 +26232,12 @@ return jQuery;
         return ~~(this.millisecond() / 10);
     });
 
-    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
-    addFormatToken(0, ['SSSS', 4], 0, function () {
-        return this.millisecond() * 10;
-    });
-    addFormatToken(0, ['SSSSS', 5], 0, function () {
-        return this.millisecond() * 100;
-    });
-    addFormatToken(0, ['SSSSSS', 6], 0, function () {
-        return this.millisecond() * 1000;
-    });
-    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
-        return this.millisecond() * 10000;
-    });
-    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
-        return this.millisecond() * 100000;
-    });
-    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
-        return this.millisecond() * 1000000;
-    });
+    function millisecond__milliseconds (token) {
+        addFormatToken(0, [token, 3], 0, 'millisecond');
+    }
 
+    millisecond__milliseconds('SSS');
+    millisecond__milliseconds('SSSS');
 
     // ALIASES
 
@@ -26309,19 +26248,11 @@ return jQuery;
     addRegexToken('S',    match1to3, match1);
     addRegexToken('SS',   match1to3, match2);
     addRegexToken('SSS',  match1to3, match3);
-
-    var token;
-    for (token = 'SSSS'; token.length <= 9; token += 'S') {
-        addRegexToken(token, matchUnsigned);
-    }
-
-    function parseMs(input, array) {
+    addRegexToken('SSSS', matchUnsigned);
+    addParseToken(['S', 'SS', 'SSS', 'SSSS'], function (input, array) {
         array[MILLISECOND] = toInt(('0.' + input) * 1000);
-    }
+    });
 
-    for (token = 'S'; token.length <= 9; token += 'S') {
-        addParseToken(token, parseMs);
-    }
     // MOMENTS
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
@@ -26349,8 +26280,6 @@ return jQuery;
     momentPrototype__proto.format       = format;
     momentPrototype__proto.from         = from;
     momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
     momentPrototype__proto.get          = getSet;
     momentPrototype__proto.invalidAt    = invalidAt;
     momentPrototype__proto.isAfter      = isAfter;
@@ -26368,7 +26297,6 @@ return jQuery;
     momentPrototype__proto.startOf      = startOf;
     momentPrototype__proto.subtract     = add_subtract__subtract;
     momentPrototype__proto.toArray      = toArray;
-    momentPrototype__proto.toObject     = toObject;
     momentPrototype__proto.toDate       = toDate;
     momentPrototype__proto.toISOString  = moment_format__toISOString;
     momentPrototype__proto.toJSON       = moment_format__toISOString;
@@ -26468,23 +26396,19 @@ return jQuery;
         LT   : 'h:mm A',
         L    : 'MM/DD/YYYY',
         LL   : 'MMMM D, YYYY',
-        LLL  : 'MMMM D, YYYY h:mm A',
-        LLLL : 'dddd, MMMM D, YYYY h:mm A'
+        LLL  : 'MMMM D, YYYY LT',
+        LLLL : 'dddd, MMMM D, YYYY LT'
     };
 
     function longDateFormat (key) {
-        var format = this._longDateFormat[key],
-            formatUpper = this._longDateFormat[key.toUpperCase()];
-
-        if (format || !formatUpper) {
-            return format;
+        var output = this._longDateFormat[key];
+        if (!output && this._longDateFormat[key.toUpperCase()]) {
+            output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
+                return val.slice(1);
+            });
+            this._longDateFormat[key] = output;
         }
-
-        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
-            return val.slice(1);
-        });
-
-        return this._longDateFormat[key];
+        return output;
     }
 
     var defaultInvalidDate = 'Invalid date';
@@ -26544,7 +26468,7 @@ return jQuery;
         }
         // Lenient ordinal parsing accepts just a number in addition to
         // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
     }
 
     var prototype__proto = Locale.prototype;
@@ -26693,29 +26617,12 @@ return jQuery;
         return duration_add_subtract__addSubtract(this, input, value, -1);
     }
 
-    function absCeil (number) {
-        if (number < 0) {
-            return Math.floor(number);
-        } else {
-            return Math.ceil(number);
-        }
-    }
-
     function bubble () {
         var milliseconds = this._milliseconds;
         var days         = this._days;
         var months       = this._months;
         var data         = this._data;
-        var seconds, minutes, hours, years, monthsFromDays;
-
-        // if we have a mix of positive and negative values, bubble down first
-        // check: https://github.com/moment/moment/issues/2166
-        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
-                (milliseconds <= 0 && days <= 0 && months <= 0))) {
-            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
-            days = 0;
-            months = 0;
-        }
+        var seconds, minutes, hours, years = 0;
 
         // The following code bubbles up values, see the tests for
         // examples of what that means.
@@ -26732,13 +26639,17 @@ return jQuery;
 
         days += absFloor(hours / 24);
 
-        // convert days to months
-        monthsFromDays = absFloor(daysToMonths(days));
-        months += monthsFromDays;
-        days -= absCeil(monthsToDays(monthsFromDays));
+        // Accurately convert days to years, assume start from year 0.
+        years = absFloor(daysToYears(days));
+        days -= absFloor(yearsToDays(years));
+
+        // 30 days to a month
+        // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
+        months += absFloor(days / 30);
+        days   %= 30;
 
         // 12 months -> 1 year
-        years = absFloor(months / 12);
+        years  += absFloor(months / 12);
         months %= 12;
 
         data.days   = days;
@@ -26748,15 +26659,15 @@ return jQuery;
         return this;
     }
 
-    function daysToMonths (days) {
+    function daysToYears (days) {
         // 400 years have 146097 days (taking into account leap year rules)
-        // 400 years have 12 months === 4800
-        return days * 4800 / 146097;
+        return days * 400 / 146097;
     }
 
-    function monthsToDays (months) {
-        // the reverse of daysToMonths
-        return months * 146097 / 4800;
+    function yearsToDays (years) {
+        // years * 365 + absFloor(years / 4) -
+        //     absFloor(years / 100) + absFloor(years / 400);
+        return years * 146097 / 400;
     }
 
     function as (units) {
@@ -26768,19 +26679,19 @@ return jQuery;
 
         if (units === 'month' || units === 'year') {
             days   = this._days   + milliseconds / 864e5;
-            months = this._months + daysToMonths(days);
+            months = this._months + daysToYears(days) * 12;
             return units === 'month' ? months : months / 12;
         } else {
             // handle milliseconds separately because of floating point math errors (issue #1867)
-            days = this._days + Math.round(monthsToDays(this._months));
+            days = this._days + Math.round(yearsToDays(this._months / 12));
             switch (units) {
-                case 'week'   : return days / 7     + milliseconds / 6048e5;
-                case 'day'    : return days         + milliseconds / 864e5;
-                case 'hour'   : return days * 24    + milliseconds / 36e5;
-                case 'minute' : return days * 1440  + milliseconds / 6e4;
-                case 'second' : return days * 86400 + milliseconds / 1000;
+                case 'week'   : return days / 7            + milliseconds / 6048e5;
+                case 'day'    : return days                + milliseconds / 864e5;
+                case 'hour'   : return days * 24           + milliseconds / 36e5;
+                case 'minute' : return days * 24 * 60      + milliseconds / 6e4;
+                case 'second' : return days * 24 * 60 * 60 + milliseconds / 1000;
                 // Math.floor prevents floating point math errors here
-                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
+                case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + milliseconds;
                 default: throw new Error('Unknown unit ' + units);
             }
         }
@@ -26822,7 +26733,7 @@ return jQuery;
         };
     }
 
-    var milliseconds = makeGetter('milliseconds');
+    var duration_get__milliseconds = makeGetter('milliseconds');
     var seconds      = makeGetter('seconds');
     var minutes      = makeGetter('minutes');
     var hours        = makeGetter('hours');
@@ -26900,36 +26811,13 @@ return jQuery;
     var iso_string__abs = Math.abs;
 
     function iso_string__toISOString() {
-        // for ISO strings we do not use the normal bubbling rules:
-        //  * milliseconds bubble up until they become hours
-        //  * days do not bubble at all
-        //  * months bubble up until they become years
-        // This is because there is no context-free conversion between hours and days
-        // (think of clock changes)
-        // and also not between days and months (28-31 days per month)
-        var seconds = iso_string__abs(this._milliseconds) / 1000;
-        var days         = iso_string__abs(this._days);
-        var months       = iso_string__abs(this._months);
-        var minutes, hours, years;
-
-        // 3600 seconds -> 60 minutes -> 1 hour
-        minutes           = absFloor(seconds / 60);
-        hours             = absFloor(minutes / 60);
-        seconds %= 60;
-        minutes %= 60;
-
-        // 12 months -> 1 year
-        years  = absFloor(months / 12);
-        months %= 12;
-
-
         // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-        var Y = years;
-        var M = months;
-        var D = days;
-        var h = hours;
-        var m = minutes;
-        var s = seconds;
+        var Y = iso_string__abs(this.years());
+        var M = iso_string__abs(this.months());
+        var D = iso_string__abs(this.days());
+        var h = iso_string__abs(this.hours());
+        var m = iso_string__abs(this.minutes());
+        var s = iso_string__abs(this.seconds() + this.milliseconds() / 1000);
         var total = this.asSeconds();
 
         if (!total) {
@@ -26966,7 +26854,7 @@ return jQuery;
     duration_prototype__proto.valueOf        = duration_as__valueOf;
     duration_prototype__proto._bubble        = bubble;
     duration_prototype__proto.get            = duration_get__get;
-    duration_prototype__proto.milliseconds   = milliseconds;
+    duration_prototype__proto.milliseconds   = duration_get__milliseconds;
     duration_prototype__proto.seconds        = seconds;
     duration_prototype__proto.minutes        = minutes;
     duration_prototype__proto.hours          = hours;
@@ -27004,7 +26892,7 @@ return jQuery;
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.6';
+    utils_hooks__hooks.version = '2.10.2';
 
     setHookCallback(local__createLocal);
 
@@ -27128,7 +27016,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":85}],44:[function(require,module,exports){
+},{"./manager":44,"./socket":46,"./url":47,"debug":51,"socket.io-parser":87}],44:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -27633,7 +27521,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":81,"object-component":82,"socket.io-parser":85}],45:[function(require,module,exports){
+},{"./on":45,"./socket":46,"./url":47,"backo2":48,"component-bind":49,"component-emitter":50,"debug":51,"engine.io-client":52,"indexof":83,"object-component":84,"socket.io-parser":87}],45:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -28046,7 +27934,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":79,"socket.io-parser":85,"to-array":91}],47:[function(require,module,exports){
+},{"./on":45,"component-bind":49,"component-emitter":50,"debug":51,"has-binary":81,"socket.io-parser":87,"to-array":91}],47:[function(require,module,exports){
 (function (global){
 
 /**
@@ -28123,7 +28011,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":51,"parseuri":83}],48:[function(require,module,exports){
+},{"debug":51,"parseuri":85}],48:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -29265,7 +29153,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":55,"./transports":56,"component-emitter":50,"debug":63,"engine.io-parser":66,"indexof":81,"parsejson":75,"parseqs":76,"parseuri":77}],55:[function(require,module,exports){
+},{"./transport":55,"./transports":56,"component-emitter":50,"debug":63,"engine.io-parser":66,"indexof":83,"parsejson":77,"parseqs":78,"parseuri":79}],55:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30355,7 +30243,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"xmlhttprequest":61}],60:[function(require,module,exports){
+},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":78,"xmlhttprequest":61}],60:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -30595,7 +30483,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":76,"ws":78}],61:[function(require,module,exports){
+},{"../transport":55,"component-inherit":62,"debug":63,"engine.io-parser":66,"parseqs":78,"ws":80}],61:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -30633,7 +30521,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":73}],62:[function(require,module,exports){
+},{"has-cors":75}],62:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -31700,7 +31588,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":67,"after":68,"arraybuffer.slice":69,"base64-arraybuffer":70,"blob":71,"has-binary":79,"utf8":72}],67:[function(require,module,exports){
+},{"./keys":67,"after":68,"arraybuffer.slice":69,"base64-arraybuffer":70,"blob":71,"has-binary":72,"utf8":74}],67:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -31860,22 +31748,8 @@ var BlobBuilder = global.BlobBuilder
 
 var blobSupported = (function() {
   try {
-    var a = new Blob(['hi']);
-    return a.size === 2;
-  } catch(e) {
-    return false;
-  }
-})();
-
-/**
- * Check if Blob constructor supports ArrayBufferViews
- * Fails in Safari 6, so we need to map to ArrayBuffers there.
- */
-
-var blobSupportsArrayBufferView = blobSupported && (function() {
-  try {
-    var b = new Blob([new Uint8Array([1,2])]);
-    return b.size === 2;
+    var b = new Blob(['hi']);
+    return b.size == 2;
   } catch(e) {
     return false;
   }
@@ -31889,52 +31763,19 @@ var blobBuilderSupported = BlobBuilder
   && BlobBuilder.prototype.append
   && BlobBuilder.prototype.getBlob;
 
-/**
- * Helper function that maps ArrayBufferViews to ArrayBuffers
- * Used by BlobBuilder constructor and old browsers that didn't
- * support it in the Blob constructor.
- */
-
-function mapArrayBufferViews(ary) {
-  for (var i = 0; i < ary.length; i++) {
-    var chunk = ary[i];
-    if (chunk.buffer instanceof ArrayBuffer) {
-      var buf = chunk.buffer;
-
-      // if this is a subarray, make a copy so we only
-      // include the subarray region from the underlying buffer
-      if (chunk.byteLength !== buf.byteLength) {
-        var copy = new Uint8Array(chunk.byteLength);
-        copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
-        buf = copy.buffer;
-      }
-
-      ary[i] = buf;
-    }
-  }
-}
-
 function BlobBuilderConstructor(ary, options) {
   options = options || {};
 
   var bb = new BlobBuilder();
-  mapArrayBufferViews(ary);
-
   for (var i = 0; i < ary.length; i++) {
     bb.append(ary[i]);
   }
-
   return (options.type) ? bb.getBlob(options.type) : bb.getBlob();
-};
-
-function BlobConstructor(ary, options) {
-  mapArrayBufferViews(ary);
-  return new Blob(ary, options || {});
 };
 
 module.exports = (function() {
   if (blobSupported) {
-    return blobSupportsArrayBufferView ? global.Blob : BlobConstructor;
+    return global.Blob;
   } else if (blobBuilderSupported) {
     return BlobBuilderConstructor;
   } else {
@@ -31945,7 +31786,74 @@ module.exports = (function() {
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],72:[function(require,module,exports){
 (function (global){
-/*! https://mths.be/utf8js v2.0.0 by @mathias */
+
+/*
+ * Module requirements.
+ */
+
+var isArray = require('isarray');
+
+/**
+ * Module exports.
+ */
+
+module.exports = hasBinary;
+
+/**
+ * Checks for binary data.
+ *
+ * Right now only Buffer and ArrayBuffer are supported..
+ *
+ * @param {Object} anything
+ * @api public
+ */
+
+function hasBinary(data) {
+
+  function _hasBinary(obj) {
+    if (!obj) return false;
+
+    if ( (global.Buffer && global.Buffer.isBuffer(obj)) ||
+         (global.ArrayBuffer && obj instanceof ArrayBuffer) ||
+         (global.Blob && obj instanceof Blob) ||
+         (global.File && obj instanceof File)
+        ) {
+      return true;
+    }
+
+    if (isArray(obj)) {
+      for (var i = 0; i < obj.length; i++) {
+          if (_hasBinary(obj[i])) {
+              return true;
+          }
+      }
+    } else if (obj && 'object' == typeof obj) {
+      if (obj.toJSON) {
+        obj = obj.toJSON();
+      }
+
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key) && _hasBinary(obj[key])) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  return _hasBinary(data);
+}
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"isarray":73}],73:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],74:[function(require,module,exports){
+(function (global){
+/*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
 
 	// Detect free variables `exports`
@@ -31966,7 +31874,7 @@ module.exports = (function() {
 
 	var stringFromCharCode = String.fromCharCode;
 
-	// Taken from https://mths.be/punycode
+	// Taken from http://mths.be/punycode
 	function ucs2decode(string) {
 		var output = [];
 		var counter = 0;
@@ -31993,7 +31901,7 @@ module.exports = (function() {
 		return output;
 	}
 
-	// Taken from https://mths.be/punycode
+	// Taken from http://mths.be/punycode
 	function ucs2encode(array) {
 		var length = array.length;
 		var index = -1;
@@ -32011,14 +31919,6 @@ module.exports = (function() {
 		return output;
 	}
 
-	function checkScalarValue(codePoint) {
-		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-			throw Error(
-				'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
-				' is not a scalar value'
-			);
-		}
-	}
 	/*--------------------------------------------------------------------------*/
 
 	function createByte(codePoint, shift) {
@@ -32034,7 +31934,6 @@ module.exports = (function() {
 			symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
 		}
 		else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-			checkScalarValue(codePoint);
 			symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
 			symbol += createByte(codePoint, 6);
 		}
@@ -32049,6 +31948,11 @@ module.exports = (function() {
 
 	function utf8encode(string) {
 		var codePoints = ucs2decode(string);
+
+		// console.log(JSON.stringify(codePoints.map(function(x) {
+		// 	return 'U+' + x.toString(16).toUpperCase();
+		// })));
+
 		var length = codePoints.length;
 		var index = -1;
 		var codePoint;
@@ -32119,7 +32023,6 @@ module.exports = (function() {
 			byte3 = readContinuationByte();
 			codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
 			if (codePoint >= 0x0800) {
-				checkScalarValue(codePoint);
 				return codePoint;
 			} else {
 				throw Error('Invalid continuation byte');
@@ -32191,7 +32094,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32216,7 +32119,7 @@ try {
   module.exports = false;
 }
 
-},{"global":74}],74:[function(require,module,exports){
+},{"global":76}],76:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -32226,7 +32129,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -32261,7 +32164,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],76:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -32300,7 +32203,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32341,7 +32244,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32386,7 +32289,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 (function (global){
 
 /*
@@ -32448,12 +32351,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":80}],80:[function(require,module,exports){
-module.exports = Array.isArray || function (arr) {
-  return Object.prototype.toString.call(arr) == '[object Array]';
-};
-
-},{}],81:[function(require,module,exports){
+},{"isarray":82}],82:[function(require,module,exports){
+module.exports=require(73)
+},{}],83:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -32464,7 +32364,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -32549,7 +32449,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -32576,7 +32476,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],84:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -32721,7 +32621,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":86,"isarray":89}],85:[function(require,module,exports){
+},{"./is-buffer":88,"isarray":89}],87:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -33123,7 +33023,7 @@ function error(data){
   };
 }
 
-},{"./binary":84,"./is-buffer":86,"component-emitter":87,"debug":88,"isarray":89,"json3":90}],86:[function(require,module,exports){
+},{"./binary":86,"./is-buffer":88,"component-emitter":50,"debug":51,"isarray":89,"json3":90}],88:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -33140,12 +33040,8 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],87:[function(require,module,exports){
-module.exports=require(50)
-},{}],88:[function(require,module,exports){
-module.exports=require(51)
 },{}],89:[function(require,module,exports){
-module.exports=require(80)
+module.exports=require(73)
 },{}],90:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
@@ -34341,7 +34237,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 };
 
 },{}],93:[function(require,module,exports){
-// Generated by CoffeeScript 1.9.1
+// Generated by CoffeeScript 1.8.0
 (function() {
   var locale;
 
@@ -34353,7 +34249,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format(options.dayFormat + " " + options.monthFormat);
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34370,7 +34266,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       allDayMonth: {
         fn: function(options) {
           return function(date) {
-            return date.format(options.dayFormat + " " + options.monthFormat);
+            return date.format("" + options.dayFormat + " " + options.monthFormat);
           };
         },
         slot: 3
@@ -34406,10 +34302,10 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 }).call(this);
 
 },{}],94:[function(require,module,exports){
-// Generated by CoffeeScript 1.9.1
+// Generated by CoffeeScript 1.8.0
 (function() {
   var deprecate, hasModule, isArray, makeTwix,
-    slice = [].slice;
+    __slice = [].slice;
 
   hasModule = (typeof module !== "undefined" && module !== null) && (module.exports != null);
 
@@ -34418,7 +34314,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     alreadyDone = false;
     return function() {
       var args;
-      args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (!alreadyDone) {
         if (typeof console !== "undefined" && console !== null) {
           if (typeof console.warn === "function") {
@@ -34443,7 +34339,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     localesLoaded = false;
     Twix = (function() {
       function Twix(start, end, parseFormat, options) {
-        var ref;
+        var _ref;
         if (options == null) {
           options = {};
         }
@@ -34458,18 +34354,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         this.start = moment(start, parseFormat, options.parseStrict);
         this.end = moment(end, parseFormat, options.parseStrict);
-        this.allDay = (ref = options.allDay) != null ? ref : false;
+        this.allDay = (_ref = options.allDay) != null ? _ref : false;
         this._trueStart = this.allDay ? this.start.clone().startOf("day") : this.start;
-        this._lastMilli = this.allDay ? this.end.clone().endOf("day") : this.end;
-        this._transferrableEnd = this.allDay ? this.end.clone().startOf("day") : this.end;
-        this._displayEnd = this.allDay ? this._transferrableEnd.clone().add(1, "day") : this.end;
+        this._trueEnd = this.allDay ? this.end.startOf('d').clone().add(1, "day") : this.end;
       }
 
       Twix._extend = function() {
-        var attr, first, j, len, other, others;
-        first = arguments[0], others = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-        for (j = 0, len = others.length; j < len; j++) {
-          other = others[j];
+        var attr, first, other, others, _i, _len;
+        first = arguments[0], others = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        for (_i = 0, _len = others.length; _i < _len; _i++) {
+          other = others[_i];
           for (attr in other) {
             if (typeof other[attr] !== "undefined") {
               first[attr] = other[attr];
@@ -34502,7 +34396,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         allDayMonth: {
           fn: function(options) {
             return function(date) {
-              return date.format(options.monthFormat + " " + options.dayFormat);
+              return date.format("" + options.monthFormat + " " + options.dayFormat);
             };
           },
           slot: 2,
@@ -34539,7 +34433,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           fn: function(options) {
             return function(date) {
               var str;
-              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format(options.hourFormat + ":" + options.minuteFormat);
+              str = date.minutes() === 0 && options.implicitMinutes && !options.twentyFourHour ? date.format(options.hourFormat) : date.format("" + options.hourFormat + ":" + options.minuteFormat);
               if (!options.groupMeridiems && !options.twentyFourHour) {
                 if (options.spaceBeforeMeridiem) {
                   str += " ";
@@ -34582,7 +34476,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.length = function(period) {
-        return this._displayEnd.diff(this._trueStart, period);
+        return this._trueEnd.diff(this._trueStart, period);
       };
 
       Twix.prototype.count = function(period) {
@@ -34593,8 +34487,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.countInner = function(period) {
-        var end, ref, start;
-        ref = this._inner(period), start = ref[0], end = ref[1];
+        var end, start, _ref;
+        _ref = this._inner(period), start = _ref[0], end = _ref[1];
         if (start >= end) {
           return 0;
         }
@@ -34602,11 +34496,11 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterate = function(intervalAmount, period, minHours) {
-        var end, hasNext, ref, start;
+        var end, hasNext, start, _ref;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = ref[0], period = ref[1], minHours = ref[2];
+        _ref = this._prepIterateInputs(intervalAmount, period, minHours), intervalAmount = _ref[0], period = _ref[1], minHours = _ref[2];
         start = this._trueStart.clone().startOf(period);
         end = this.end.clone().startOf(period);
         if (this.allDay) {
@@ -34621,12 +34515,12 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.iterateInner = function(intervalAmount, period) {
-        var end, hasNext, ref, ref1, start;
+        var end, hasNext, start, _ref, _ref1;
         if (intervalAmount == null) {
           intervalAmount = 1;
         }
-        ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = ref[0], period = ref[1];
-        ref1 = this._inner(period, intervalAmount), start = ref1[0], end = ref1[1];
+        _ref = this._prepIterateInputs(intervalAmount, period), intervalAmount = _ref[0], period = _ref[1];
+        _ref1 = this._inner(period, intervalAmount), start = _ref1[0], end = _ref1[1];
         hasNext = function() {
           return start < end;
         };
@@ -34652,11 +34546,19 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.isPast = function() {
-        return this._lastMilli < moment();
+        if (this.allDay) {
+          return this.end.clone().endOf("day") < moment();
+        } else {
+          return this.end < moment();
+        }
       };
 
       Twix.prototype.isFuture = function() {
-        return this._trueStart > moment();
+        if (this.allDay) {
+          return this.start.clone().startOf("day") > moment();
+        } else {
+          return this.start > moment();
+        }
       };
 
       Twix.prototype.isCurrent = function() {
@@ -34667,65 +34569,75 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         if (!moment.isMoment(mom)) {
           mom = moment(mom);
         }
-        return this._trueStart <= mom && this._lastMilli >= mom;
+        return this._trueStart <= mom && this._trueEnd >= mom;
       };
 
       Twix.prototype.isEmpty = function() {
-        return this._trueStart.isSame(this._displayEnd);
+        return this._trueStart.isSame(this._trueEnd);
       };
 
       Twix.prototype.overlaps = function(other) {
-        return this._displayEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._displayEnd);
+        return this._trueEnd.isAfter(other._trueStart) && this._trueStart.isBefore(other._trueEnd);
       };
 
       Twix.prototype.engulfs = function(other) {
-        return this._trueStart <= other._trueStart && this._displayEnd >= other._displayEnd;
+        return this._trueStart <= other._trueStart && this._trueEnd >= other._trueEnd;
       };
 
       Twix.prototype.union = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
-        newEnd = this._lastMilli > other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
+        if (allDay) {
+          newStart = this.start < other.start ? this.start : other.start;
+          newEnd = this.end > other.end ? this.end : other.end;
+        } else {
+          newStart = this._trueStart < other._trueStart ? this._trueStart : other._trueStart;
+          newEnd = this._trueEnd > other._trueEnd ? this._trueEnd : other._trueEnd;
+        }
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.intersection = function(other) {
         var allDay, newEnd, newStart;
         allDay = this.allDay && other.allDay;
-        newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
-        newEnd = this._lastMilli < other._lastMilli ? (allDay ? this._transferrableEnd : this._displayEnd) : (allDay ? other._transferrableEnd : other._displayEnd);
+        if (allDay) {
+          newStart = this.start > other.start ? this.start : other.start;
+          newEnd = this.end < other.end ? this.end : other.end;
+        } else {
+          newStart = this._trueStart > other._trueStart ? this._trueStart : other._trueStart;
+          newEnd = this._trueEnd < other._trueEnd ? this._trueEnd : other._trueEnd;
+        }
         return new Twix(newStart, newEnd, allDay);
       };
 
       Twix.prototype.xor = function() {
-        var allDay, arr, endTime, i, item, j, k, last, len, len1, o, open, other, others, ref, results, start, t;
-        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        var allDay, arr, endTime, i, item, last, o, open, other, others, results, start, t, _i, _j, _len, _len1, _ref;
+        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         open = 0;
         start = null;
         results = [];
         allDay = ((function() {
-          var j, len, results1;
-          results1 = [];
-          for (j = 0, len = others.length; j < len; j++) {
-            o = others[j];
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = others.length; _i < _len; _i++) {
+            o = others[_i];
             if (o.allDay) {
-              results1.push(o);
+              _results.push(o);
             }
           }
-          return results1;
+          return _results;
         })()).length === others.length;
         arr = [];
-        ref = [this].concat(others);
-        for (i = j = 0, len = ref.length; j < len; i = ++j) {
-          item = ref[i];
+        _ref = [this].concat(others);
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          item = _ref[i];
           arr.push({
             time: item._trueStart,
             i: i,
             type: 0
           });
           arr.push({
-            time: item._displayEnd,
+            time: item._trueEnd,
             i: i,
             type: 1
           });
@@ -34733,8 +34645,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         arr = arr.sort(function(a, b) {
           return a.time - b.time;
         });
-        for (k = 0, len1 = arr.length; k < len1; k++) {
-          other = arr[k];
+        for (_j = 0, _len1 = arr.length; _j < _len1; _j++) {
+          other = arr[_j];
           if (other.type === 1) {
             open -= 1;
           }
@@ -34764,26 +34676,26 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.difference = function() {
-        var j, len, others, ref, results1, t;
-        others = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-        ref = this.xor.apply(this, others).map((function(_this) {
+        var others, t, _i, _len, _ref, _results;
+        others = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        _ref = this.xor.apply(this, others).map((function(_this) {
           return function(i) {
             return _this.intersection(i);
           };
         })(this));
-        results1 = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          t = ref[j];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          t = _ref[_i];
           if (!t.isEmpty() && t.isValid()) {
-            results1.push(t);
+            _results.push(t);
           }
         }
-        return results1;
+        return _results;
       };
 
       Twix.prototype.split = function() {
         var args, dur, end, final, i, mom, start, time, times, vals;
-        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         end = start = this._trueStart.clone();
         if (moment.isDuration(args[0])) {
           dur = args[0];
@@ -34796,24 +34708,24 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         if (times) {
           times = (function() {
-            var j, len, results1;
-            results1 = [];
-            for (j = 0, len = times.length; j < len; j++) {
-              time = times[j];
-              results1.push(moment(time));
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = times.length; _i < _len; _i++) {
+              time = times[_i];
+              _results.push(moment(time));
             }
-            return results1;
+            return _results;
           })();
           times = ((function() {
-            var j, len, results1;
-            results1 = [];
-            for (j = 0, len = times.length; j < len; j++) {
-              mom = times[j];
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = times.length; _i < _len; _i++) {
+              mom = times[_i];
               if (mom.isValid() && mom >= start) {
-                results1.push(mom);
+                _results.push(mom);
               }
             }
-            return results1;
+            return _results;
           })()).sort();
         }
         if ((dur && dur.asMilliseconds() === 0) || (times && times.length === 0)) {
@@ -34821,7 +34733,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         }
         vals = [];
         i = 0;
-        final = this._displayEnd;
+        final = this._trueEnd;
         while (start < final && ((times == null) || times[i])) {
           end = dur ? start.clone().add(dur) : times[i].clone();
           end = moment.min(final, end);
@@ -34831,14 +34743,14 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           start = end;
           i += 1;
         }
-        if (!end.isSame(this._displayEnd) && times) {
-          vals.push(moment.twix(end, this._displayEnd));
+        if (!end.isSame(this._trueEnd) && times) {
+          vals.push(moment.twix(end, this._trueEnd));
         }
         return vals;
       };
 
       Twix.prototype.isValid = function() {
-        return this._trueStart <= this._displayEnd;
+        return this._trueStart <= this._trueEnd;
       };
 
       Twix.prototype.equals = function(other) {
@@ -34846,8 +34758,8 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.toString = function() {
-        var ref;
-        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((ref = this.allDay) != null ? ref : {
+        var _ref;
+        return "{start: " + (this.start.format()) + ", end: " + (this.end.format()) + ", allDay: " + ((_ref = this.allDay) != null ? _ref : {
           "true": "false"
         }) + "}";
       };
@@ -34867,7 +34779,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype.format = function(inopts) {
-        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, j, len, needDate, options, process, start_bucket, together;
+        var common_bucket, end_bucket, fold, format, fs, global_first, goesIntoTheMorning, needDate, options, process, start_bucket, together, _i, _len;
         this._lazyLocale();
         if (this.isEmpty()) {
           return "";
@@ -35006,21 +34918,21 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
             }
           };
         })(this);
-        for (j = 0, len = fs.length; j < len; j++) {
-          format = fs[j];
+        for (_i = 0, _len = fs.length; _i < _len; _i++) {
+          format = fs[_i];
           process(format);
         }
         global_first = true;
         fold = (function(_this) {
           return function(array, skip_pre) {
-            var k, len1, local_first, ref, section, str;
+            var local_first, section, str, _j, _len1, _ref;
             local_first = true;
             str = "";
-            ref = array.sort(function(a, b) {
+            _ref = array.sort(function(a, b) {
               return a.format.slot - b.format.slot;
             });
-            for (k = 0, len1 = ref.length; k < len1; k++) {
-              section = ref[k];
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              section = _ref[_j];
               if (!global_first) {
                 if (local_first && skip_pre) {
                   str += " ";
@@ -35060,16 +34972,16 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._prepIterateInputs = function() {
-        var inputs, intervalAmount, minHours, period, ref, ref1;
-        inputs = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+        var inputs, intervalAmount, minHours, period, _ref, _ref1;
+        inputs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         if (typeof inputs[0] === "number") {
           return inputs;
         }
         if (typeof inputs[0] === "string") {
           period = inputs.shift();
-          intervalAmount = (ref = inputs.pop()) != null ? ref : 1;
+          intervalAmount = (_ref = inputs.pop()) != null ? _ref : 1;
           if (inputs.length) {
-            minHours = (ref1 = inputs[0]) != null ? ref1 : false;
+            minHours = (_ref1 = inputs[0]) != null ? _ref1 : false;
           }
         }
         if (moment.isDuration(inputs[0])) {
@@ -35088,7 +35000,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           intervalAmount = 1;
         }
         start = this._trueStart.clone();
-        end = this._displayEnd.clone();
+        end = this._trueEnd.clone();
         if (start > start.clone().startOf(period)) {
           start.startOf(period).add(intervalAmount, period);
         }
@@ -35103,7 +35015,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       };
 
       Twix.prototype._lazyLocale = function() {
-        var e, localeData, locales, ref;
+        var e, localeData, locales, _ref;
         localeData = this.start.localeData();
         if ((localeData != null) && this.end.locale()._abbr !== localeData._abbr) {
           this.end.locale(localeData._abbr);
@@ -35120,7 +35032,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
           }
           localesLoaded = true;
         }
-        return this.localeData = (ref = localeData != null ? localeData._twix : void 0) != null ? ref : Twix.defaults;
+        return this.localeData = (_ref = localeData != null ? localeData._twix : void 0) != null ? _ref : Twix.defaults;
       };
 
       Twix.prototype._formatFn = function(name, options) {
@@ -35174,7 +35086,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
       _twix: Twix.defaults
     });
     Twix.formatTemplate = function(leftSide, rightSide) {
-      return leftSide + " - " + rightSide;
+      return "" + leftSide + " - " + rightSide;
     };
     moment.twix = function() {
       return (function(func, args, ctor) {
@@ -35188,7 +35100,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
         ctor.prototype = func.prototype;
         var child = new ctor, result = func.apply(child, args);
         return Object(result) === result ? result : child;
-      })(Twix, [this].concat(slice.call(arguments)), function(){});
+      })(Twix, [this].concat(__slice.call(arguments)), function(){});
     };
     moment.fn.forDuration = function(duration, allDay) {
       return new Twix(this, this.clone().add(duration), allDay);
@@ -36777,7 +36689,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
 module.exports={
   "name": "joola.sdk",
   "preferGlobal": false,
-  "version": "0.8.8",
+  "version": "0.8.10",
   "author": "Joola <info@joo.la>",
   "description": "joola's software development kit (SDK)",
   "engine": "node >= 0.10.x",
@@ -37317,20 +37229,24 @@ module.exports = exports = _events;
 
 var joola = require('../index');
 
-global.emptyfunc = function () {
+global.emptyfunc = function() {
 
 };
 
-joola.timezone = function (tz) {
+joola.timezone = function(tz, refdate) {
   if (tz)
     joola.options.timezoneOffset = tz;
 
   var offset = 0;
-  if (joola.options.timezoneOffset)
+  //if (joola.options.timezoneOffset)
+  if (refdate)
+    offset = joola.options.timezoneOffset || (new Date(refdate).getTimezoneOffset() / 60 * -1);
+  else
     offset = joola.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
 
   return offset;
 };
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../index":105}],101:[function(require,module,exports){
 (function (Buffer){
@@ -38961,7 +38877,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joola.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start', self);
   var self = this;
 
   this._id = '_canvas';
@@ -39133,7 +39049,6 @@ var Canvas = module.exports = function (options, callback) {
             var $this = $$(this);
             self.options.datepicker.$interval.find('.btn').removeClass('active');
             $this.addClass('active');
-
             self.options.datepicker._interval = $this.attr('data-id');
             self.emit('intervalchange', self.options.datepicker._interval);
           });
@@ -39300,6 +39215,8 @@ var Canvas = module.exports = function (options, callback) {
     if (typeof callback === 'function') {
       return callback(null, self);
     }
+
+    joola.events.emit('canvas.init.finish', self);
   };
 
   this.addVisualization = function (viz) {
@@ -39391,6 +39308,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(Canvas, events.EventEmitter);
+
 },{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],108:[function(require,module,exports){
 /**
  *  @title joola
@@ -39421,8 +39339,13 @@ var DatePicker = module.exports = function (options, callback) {
   var self = this;
 
   this.addDays = function (o, days) {
-    // keep in mind, months in javascript are 0-11
-    return new Date(o.getFullYear(), o.getMonth(), o.getDate() + days);
+    try {
+      var _date = new Date(o);
+      _date.setDate(_date.getDate() + parseInt(days, 10));
+      return _date;
+    } catch (ex) {
+      return o;
+    }
   };
 
   this.fixDate = function (timestamp, zero) {
@@ -39506,11 +39429,16 @@ var DatePicker = module.exports = function (options, callback) {
   if (options.todate)
     this.base_todate = new Date(options.todate);
   else
-    this.base_todate = new Date(this.max_date);
+	this.base_todate = self.addDays(this.max_date, options.daysoffset || 0); //new Date(this.max_date);
   if (options.fromdate)
     this.base_fromdate = new Date(options.fromdate);
   else
     this.base_fromdate = self.addDays(this.base_todate, options.daysback || -90);
+
+  this.base_fromdate.setHours(0);
+  this.base_fromdate.setMinutes(0);
+  this.base_fromdate.setSeconds(0);
+  this.base_fromdate.setMilliseconds(0);
 
   if (this.base_fromdate < this.min_date) {
     this.base_fromdate = new Date();//this.min_date.fixDate(true, false);
@@ -40496,6 +40424,7 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(DatePicker, events.EventEmitter);
+
 },{"../index":105,"events":12,"jquery":40,"jquery-ui/datepicker":39,"underscore":95,"util":34}],109:[function(require,module,exports){
 /**
  *  @title joola
@@ -40511,6 +40440,9 @@ util.inherits(DatePicker, events.EventEmitter);
 var
   events = require('events'),
   util = require('util'),
+
+  _ = require('underscore'),
+
   ce = require('cloneextend'),
   joola = require('../index'),
   $$ = require('jquery');
@@ -40590,12 +40522,14 @@ var DimensionPicker = module.exports = function (options, callback) {
           });
 
           list = _.sortBy(list, function (item) {
+            if (item.ordinal)
+              return parseInt(item.ordinal, 10);
             return item.name || item.key;
           });
 
           list.forEach(function (dimension) {
             var collection = {key: dimension.collection};
-            var $li = $$('<div class="dimensionOption" data-member="' + dimension.key + '">' + (dimension.name || dimension.key) + '</div>');
+            var $li = $$('<div class="dimensionOption" data-member="' + (dimension.name || dimension.key).toLowerCase() + '">' + (dimension.name || dimension.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -40636,7 +40570,7 @@ var DimensionPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();
@@ -40803,7 +40737,8 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(DimensionPicker, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],110:[function(require,module,exports){
+
+},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],110:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -41729,6 +41664,9 @@ var
   events = require('events'),
   util = require('util'),
   ce = require('cloneextend'),
+
+  _ = require('underscore'),
+
   joola = require('../index'),
   $$ = require('jquery');
 
@@ -41766,7 +41704,6 @@ var MetricPicker = module.exports = function (options, callback) {
   this.drawn = false;
 
   this.verify = function (options) {
-
     return null;
   };
 
@@ -41797,15 +41734,17 @@ var MetricPicker = module.exports = function (options, callback) {
           var mlasttarget = null;
 
           list = _.sortBy(list, function (item) {
+            if (item.ordinal)
+              return parseInt(item.ordinal, 10);
             return item.name || item.key;
           });
-          
+
           list.forEach(function (metric) {
             var collection = {key: metric.collection};
             if (typeof collection !== 'object')
               collection = {key: collection};
 
-            var $li = $$('<div class="metricOption" data-member="' + collection.key + '.' + metric.key + '">' + (metric.name || metric.key) + '</div>');
+            var $li = $$('<div class="metricOption" data-member="' + (collection.key + '.' + (metric.name || metric.key)).toLowerCase() + '">' + (metric.name || metric.key) + '</div>');
             $li.off('click');
             $li.on('click', function (e) {
               var $this = $$(this);
@@ -41848,7 +41787,7 @@ var MetricPicker = module.exports = function (options, callback) {
             var val = $this.val();
             if (val.length >= 2) {
               $ul.find('div[data-member]').hide();
-              $ul.find('div[data-member*="' + val + '"]').show();
+              $ul.find('div[data-member*="' + val.toLowerCase() + '"]').show();
             }
             else
               $ul.find('div[data-member]').show();
@@ -42015,7 +41954,8 @@ joola.events.on('core.init.finish', function () {
 });
 
 util.inherits(MetricPicker, events.EventEmitter);
-},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"util":34}],115:[function(require,module,exports){
+
+},{"../index":105,"cloneextend":35,"events":12,"jquery":40,"underscore":95,"util":34}],115:[function(require,module,exports){
 /**
  *  @title joola
  *  @overview the open-source data analytics framework
@@ -43209,8 +43149,8 @@ var Table = module.exports = function (options, callback) {
 
     this.export = function (canvas) {
       var data = [];
-      var dimensions = [self.options.query[0].dimensions[0]];
       var collection = [self.options.query[0].collection];
+      var dimensions =[];
       var metrics = [];
       var headers = [];
       self.options.query[0].dimensions.forEach(function (d) {
@@ -43249,7 +43189,7 @@ var Table = module.exports = function (options, callback) {
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Odobo_Analytics.csv");
+        link.setAttribute("download", "analytics.csv");
         link.click(); // This will download the data file named "my_data.csv".
       });
     };
@@ -43363,7 +43303,7 @@ var Table = module.exports = function (options, callback) {
             lastIndex++;
             var dimensionkey = (d.key || d).replace(/\./ig, '_');
 
-            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter">' + point.dimensions[dimensionkey] + '</a></td>');
+            $td = $$('<td class="value dimension"><a href="javascript:void(0);" class="filter" data-value="' + point.dimensions[dimensionkey] + '">' + point.dimensions[dimensionkey] + '</a></td>');
             $td.find('.filter').on('click', function () {
               self.options.canvas.emit('table-checkbox-clear', true);
               self.emit('select', point, dimensionkey);
@@ -43372,16 +43312,18 @@ var Table = module.exports = function (options, callback) {
               $td.addClass('sorted');
             $tr.append($td);
           });
-          $tbody.append($tr);
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var data_value = point.metrics[metrickey];
+
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].toString().replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
               $td.addClass('sorted');
             $tr.append($td);
           });
+          $tbody.append($tr);
         });
       }
       else if (self.data.length === 2) {
@@ -43475,14 +43417,14 @@ var Table = module.exports = function (options, callback) {
             $tr.append($td);
           }
 
-          $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
+          $td = $$('<td class="value dimension" data-value="' + text + '" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
 
           $tbody.append($tr);
           lastIndex = _query.dimensions.length;
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
-            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey] + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
+            var $td = $$('<td class="value metric" data-key="' + metrickey + '" data-value="' + point.metrics[metrickey].toString().replace(/\D/g,'') + '">' + joola.common.formatMetric(point.metrics[metrickey], point.meta[metrickey]) + '' +
               '<span class="summary"></span>' +
               '</td>');
             if (lastIndex + mi === self.sortIndex)
@@ -43502,8 +43444,6 @@ var Table = module.exports = function (options, callback) {
 
           $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
           $tr.append($td);
-
-          $tbody.append($tr);
           _query.metrics.forEach(function (m, mi) {
             var metrickey = m.key || m;
             var $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
@@ -43512,7 +43452,7 @@ var Table = module.exports = function (options, callback) {
               $td.addClass('sorted');
             $tr.append($td);
           });
-
+          $tbody.append($tr);
           $tr = $$('<tr class="data-row" data-id="' + point.key + '"></tr>');
 
           if (self.options.checkboxes) {
@@ -43672,8 +43612,6 @@ var Table = module.exports = function (options, callback) {
             }
             $td = $$('<td class="value dimension" colspan="' + _query.dimensions.length + '">' + text + '</td>');
             $tr.append($td);
-
-            $tbody.append($tr);
             _query.metrics.forEach(function (m, mi) {
               var metrickey = m.key || m;
               $td = $$('<td class="value metric compare" data-key="' + metrickey + '" data-value="' + (comparePoint ? comparePoint.metrics[metrickey] : 'N/A') + '">' + (comparePoint ? joola.common.formatMetric(comparePoint.metrics[metrickey], comparePoint.meta[metrickey]) : 'N/A') + '' +
@@ -43682,7 +43620,7 @@ var Table = module.exports = function (options, callback) {
                 $td.addClass('sorted');
               $tr.append($td);
             });
-
+            $tbody.append($tr);
             $tr = $$('<tr class="data-row" data-id="' + comparePoint.key + '"></tr>');
             if (self.options.checkboxes) {
               $td = $$('<td class="checkbox"></td>');
@@ -44082,7 +44020,7 @@ var Table = module.exports = function (options, callback) {
       var $html = $$(self.options.template);
       $$(self.options.container).html($html);
 
-      var $export = $html.find('.export .icon-download');
+      var $export = $html.find('.btn.export');
       $export.off('click');
       $export.on('click', function (e) {
         self.export();
@@ -44327,10 +44265,9 @@ var
 
 require('twix');
 
-var Timeline = module.exports = function (options, callback) {
+var Timeline = module.exports = function(options, callback) {
   if (!callback)
-    callback = function () {
-    };
+    callback = function() {};
   joola.events.emit('timeline.init.start');
   var self = this;
 
@@ -44343,40 +44280,43 @@ var Timeline = module.exports = function (options, callback) {
     offcolors: joola.offcolors,
     canvas: null,
     template: '<div class="caption"></div>' +
-    '<div class="chartwrapper">' +
-    ' <div class="controls">' +
-    '   <div class="primary-metric-picker"></div>' +
-    '   <div class="sep">vs.</div>' +
-    '   <div class="secondary-metric-picker"></div>' +
-    ' </div>' +
-    ' ' +
-    ' <div class="thechart"></div>' +
-    '</div>',
+      '<div class="chartwrapper">' +
+      ' <div class="controls">' +
+      '   <div class="primary-metric-picker"></div>' +
+      '   <div class="sep">vs.</div>' +
+      '   <div class="secondary-metric-picker"></div>' +
+      ' </div>' +
+      ' ' +
+      ' <div class="thechart"></div>' +
+      '</div>',
     container: null,
     $container: null,
     query: null,
     pickers: {
-      main: {enabled: false},
-      secondary: {enabled: false}
+      main: {
+        enabled: false
+      },
+      secondary: {
+        enabled: false
+      }
     }
   };
   this.chartDrawn = false;
 
-  this.verify = function () {
+  this.verify = function() {
     if (!self.options)
       return 'Failed to verify [options].';
     if (self.options.query) {
       if (!Array.isArray(self.options.query))
         self.options.query = [self.options.query];
-    }
-    else
+    } else
       return 'Failed to verify query [options.query].';
 
     self.options.query[0].dimensions = self.options.query[0].dimensions || ['timestamp'];
     return null;
   };
 
-  this.destroy = function () {
+  this.destroy = function() {
     joola.viz.stop(self);
     self.initialChartDrawn = false;
     $$(self.options.container).empty();
@@ -44388,21 +44328,24 @@ var Timeline = module.exports = function (options, callback) {
 
   };
 
-  this.reply = function (data) {
+  this.reply = function(data) {
     if (self.initialChartDrawn && self.options.query[0].realtime === true && self.options.query[0].interval.indexOf('second') > -1) {
-      self.chart.series.forEach(function (series, serIndex) {
-        series.addPoint({x: new Date(), y: 0}, false, true, false);
+      self.chart.series.forEach(function(series, serIndex) {
+        series.addPoint({
+          x: new Date(),
+          y: 0
+        }, false, true, false);
       });
       self.chart.redraw(true);
     }
   };
 
-  this.enter = function (data, alldata) {
+  this.enter = function(data, alldata) {
     if (self.chart.series.length === 0)
       return;
     if (self.data.length > 1)
       return;
-    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+    Object.keys(data[0].metrics).forEach(function(key, pointIndex) {
       var point = data[0];
       var series = self.chart.series[pointIndex];
       series.data[series.data.length - 1].update(point.metrics[key]);
@@ -44429,12 +44372,12 @@ var Timeline = module.exports = function (options, callback) {
      }*/
   };
 
-  this.update = function (data, alldata) {
+  this.update = function(data, alldata) {
     if (self.chart.series.length === 0)
       return;
     if (self.data.length > 1)
       return;
-    Object.keys(data[0].metrics).forEach(function (key, pointIndex) {
+    Object.keys(data[0].metrics).forEach(function(key, pointIndex) {
       var point = data[0];
       var series = self.chart.series[pointIndex];
       series.data[series.data.length - 1].update(point.metrics[key]);
@@ -44461,11 +44404,11 @@ var Timeline = module.exports = function (options, callback) {
     }
   };
 
-  this.exit = function (data, alldata) {
+  this.exit = function(data, alldata) {
 
   };
 
-  this.done = function (data, raw) {
+  this.done = function(data, raw) {
     if (self.initialChartDrawn)
       return;
     self.initialChartDrawn = true;
@@ -44476,15 +44419,13 @@ var Timeline = module.exports = function (options, callback) {
       window[self.options.onUpdate](self.options.container, self, self.chart.series);
   };
 
-  this.makeChartTimelineSeries = function (message) {
+  this.makeChartTimelineSeries = function(message) {
     if (message[0].metrics.length === 0) {
-      return [
-        {
-          type: 'line',
-          name: 'no data',
-          data: []
-        }
-      ];
+      return [{
+        type: 'line',
+        name: 'no data',
+        data: []
+      }];
     }
     var self = this;
     var yAxis = [null, null];
@@ -44492,8 +44433,8 @@ var Timeline = module.exports = function (options, callback) {
     var seriesIndex = -1;
     var interval = Array.isArray(self.options.query) ? self.options.query[0].interval : self.options.query.interval;
     var colorMapping = {};
-    var checkExists = function (timestampDimension, documents, date) {
-      return _.find(documents, function (document) {
+    var checkExists = function(timestampDimension, documents, date) {
+      return _.find(documents, function(document) {
         if (!document[timestampDimension.key])
           return;
 
@@ -44504,7 +44445,7 @@ var Timeline = module.exports = function (options, callback) {
           switch (interval) {
             case 'month':
             case 'day':
-              _date.setHours(_date.getHours() - (_date.getTimezoneOffset() / 60));
+              _date.setHours(_date.getHours() + joola.timezone(joola.options.timezoneOffset, _basedate));
               return _basedate.getTime() === _date.getTime();
             case 'minute':
               _basedate.setSeconds(0);
@@ -44516,14 +44457,13 @@ var Timeline = module.exports = function (options, callback) {
             default:
               return _basedate.getTime() === _date.getTime();
           }
-        }
-        catch (ex) {
+        } catch (ex) {
           console.log('exception while checkExists', ex);
         }
       });
     };
-    var fill = function (resultRow, row, timestampDimension) {
-      Object.keys(resultRow).forEach(function (key) {
+    var fill = function(resultRow, row, timestampDimension) {
+      Object.keys(resultRow).forEach(function(key) {
         if (key !== timestampDimension.key) {
           row[key] = 0;
           //row.fvalues[key] = 0;
@@ -44531,14 +44471,17 @@ var Timeline = module.exports = function (options, callback) {
       });
     };
 
-    message.forEach(function (result, resultIndex) {
+    message.forEach(function(result, resultIndex) {
       if (result.documents.length === 0) {
-        result.documents.push({values: {}, fvalues: {}});
-        result.dimensions.forEach(function (d) {
+        result.documents.push({
+          values: {},
+          fvalues: {}
+        });
+        result.dimensions.forEach(function(d) {
           result.documents[0][d.name] = null;
           //result.documents[0].fvalues[d.name] = null;
         });
-        result.metrics.forEach(function (m) {
+        result.metrics.forEach(function(m) {
           result.documents[0][m.name] = null;
           //result.documents[0].fvalues[m.name] = null;
         });
@@ -44552,7 +44495,7 @@ var Timeline = module.exports = function (options, callback) {
       var type = query.type;
       var compare = type === 'compare';
 
-      var timestampDimension = _.find(result.dimensions, function (item) {
+      var timestampDimension = _.find(result.dimensions, function(item) {
         return item.datatype === 'date';
       });
       if (timestampDimension) {
@@ -44566,8 +44509,12 @@ var Timeline = module.exports = function (options, callback) {
 
         var counter = 0;
         var fixed = [];
-        var itr = moment.twix(query.timeframe.start, query.timeframe.end).iterate(interval);
-        while (itr.hasNext() ) {
+        var _start = new Date(query.timeframe.start);
+        var _end = new Date(query.timeframe.end);
+        _start.setHours(_start.getHours() - joola.timezone(joola.options.timezoneOffset, _start));
+        _end.setHours(_end.getHours() - joola.timezone(joola.options.timezoneOffset, _end));
+        var itr = moment.twix(_start, _end).iterate(interval);
+        while (itr.hasNext()) {
           var _d = new Date(itr.next()._d.getTime());
           var exists;
           switch (interval) {
@@ -44590,7 +44537,10 @@ var Timeline = module.exports = function (options, callback) {
           exists = checkExists(timestampDimension, result.documents, _d);
           if (!exists) {
             //_d.setHours(_d.getHours() + (offset * -1));
-            exists = {values: {}, fvalues: {}};
+            exists = {
+              values: {},
+              fvalues: {}
+            };
             exists[timestampDimension.key] = _d.toISOString();
             //exists.fvalues[timestampDimension.key] = _d.toISOString();
             fill(result.documents[0], exists, timestampDimension);
@@ -44604,16 +44554,16 @@ var Timeline = module.exports = function (options, callback) {
         return series;
 
 
-      metrics.forEach(function (metric, index) {
+      metrics.forEach(function(metric, index) {
         var _yaxis = 0;
-        yAxis[index % 2] = yAxis [index % 2] || metric.dependsOn || metric.key;
-        if (yAxis[0] === (yAxis [index % 2] || metric.dependsOn || metric.key))
+        yAxis[index % 2] = yAxis[index % 2] || metric.dependsOn || metric.key;
+        if (yAxis[0] === (yAxis[index % 2] || metric.dependsOn || metric.key))
           _yaxis = 0;
         else
           _yaxis = 1;
         var metric_name = metric.name;
         if (result.query.filter) {
-          result.query.filter.forEach(function (f) {
+          result.query.filter.forEach(function(f) {
             metric_name = f[2] + ': ' + metric_name;
           });
         }
@@ -44625,11 +44575,13 @@ var Timeline = module.exports = function (options, callback) {
           data: [],
           yAxis: _yaxis,
           color: compare ? self.options.offcolors[colorMapping[metric.key]] : self.options.colors[seriesIndex],
-          compare: compare
+          compare: compare,
+          axisPrefix: metric.prefix,
+          axisSuffix: metric.suffix
         };
         if (!compare)
           colorMapping[metric.key] = seriesIndex;
-        documents.forEach(function (document, docIndex) {
+        documents.forEach(function(document, docIndex) {
           var x = document[dimensions[0].key];
           var nameBased = true;
           if (dimensions[0].datatype === 'date') {
@@ -44640,21 +44592,20 @@ var Timeline = module.exports = function (options, callback) {
           if (nameBased) {
             series[seriesIndex].data.push({
               name: x,
-              y: document[metrics[index].key] ? document[metrics[index].key] : 0
+              y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
             });
-          }
-          else {
+          } else {
+            var _date;
             if (seriesIndex === 0) {
               series[seriesIndex].data.push({
                 x: x,
-                y: document[metrics[index].key] ? document[metrics[index].key] : 0
+                y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
-            }
-            else {
+            } else {
               series[seriesIndex].data.push({
                 x: series[0].data[docIndex].x,
                 _x: new Date(document[dimensions[0].key]),
-                y: document[metrics[index].key] ? document[metrics[index].key] : 0
+                y: parseFloat(document[metrics[index].key] ? document[metrics[index].key] : 0)
               });
             }
           }
@@ -44664,24 +44615,50 @@ var Timeline = module.exports = function (options, callback) {
     return series;
   };
 
-  this.paint = function (rescale) {
-    self.chartData.forEach(function (s) {
-      self.chart.addSeries(s);
-    });
+  this.paint = function(rescale) {
+    var axisLabelSet = false;
 
-    self.chart.redraw();
+    self.chartData.forEach(function(s) {
+      self.chart.addSeries(s);
+      if (!axisLabelSet && (s.axisPrefix || s.axisSuffix)) {
+        axisLabelSet = true;
+        self.chart.yAxis[s.yAxis].update({
+          labels: {
+            format: (s.axisPrefix || '') + '{value:,.0f}' + (s.axisSuffix || '')
+          }
+        });
+      }
+    });
+    if (!axisLabelSet) {
+      self.chart.yAxis[0].update({
+        labels: {
+          format: null
+        }
+      });
+      self.chart.yAxis[1].update({
+        labels: {
+          format: null
+        }
+      });
+    }
+
     extremes_0 = self.chart.yAxis[0].getExtremes();
     extremes_0.min = 0;
+    if (extremes_0.dataMin < 0)
+      extremes_0.min = extremes_0.dataMin;
+
     extremes_0.max = extremes_0.dataMax * 1.1;
     if (extremes_0.dataMin === 0 && extremes_0.dataMax === 0) {
       extremes_0.min = 0;
       extremes_0.max = 1;
     }
+    //if (self.last_extremes_0)
+    //  if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
+    //    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
+    //  else
+    self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max, false, false);
 
-    if (!self.last_extremes_0)
-      self.last_extremes_0 = extremes_0;
-    if (self.last_extremes_0.min !== extremes_0.min || self.last_extremes_0.max !== extremes_0.max)
-      self.chart.yAxis[0].setExtremes(extremes_0.min, extremes_0.max);
+    self.last_extremes_0 = extremes_0;
     if (self.chart.yAxis.length > 1) {
       extremes_1 = self.chart.yAxis[1].getExtremes();
       extremes_1.min = 0;
@@ -44693,18 +44670,19 @@ var Timeline = module.exports = function (options, callback) {
       if (!self.last_extremes_1)
         self.last_extremes_1 = extremes_1;
       if (self.last_extremes_1.min !== extremes_1.min || self.last_extremes_1.max !== extremes_1.max)
-        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max);
+        self.chart.yAxis[1].setExtremes(extremes_1.min, extremes_1.max, false, false);
     }
-    //}
+
+    self.chart.redraw();
   };
 
-  this.clearAllFiltered = function (skipdraw, callback) {
+  this.clearAllFiltered = function(skipdraw, callback) {
     var cleared = false;
     var queries = [];
-    self.options.query.forEach(function (q, i) {
+    self.options.query.forEach(function(q, i) {
       if (q.filter) {
         cleared = false;
-        q.filter.forEach(function (f) {
+        q.filter.forEach(function(f) {
           if (f.length > 3 && f[3] === '--table-checkbox') {
             // self.options.query.splice(i, 1);
             cleared = true;
@@ -44712,8 +44690,7 @@ var Timeline = module.exports = function (options, callback) {
         });
         if (!cleared)
           queries.push(q);
-      }
-      else
+      } else
         queries.push(q);
     });
     self.options.query = queries;
@@ -44730,7 +44707,7 @@ var Timeline = module.exports = function (options, callback) {
     return callback(null);
   };
 
-  this.draw = function (options, callback) {
+  this.draw = function(options, callback) {
     self.chartOptions = joola.common._mixin({}, self.options.chart);
     self.options.$container.empty();
     self.options.$container.append(self.options.template || self.template());
@@ -44750,16 +44727,15 @@ var Timeline = module.exports = function (options, callback) {
           canvas: self.options.canvas,
           selected: self.options.query[0].metrics[0],
           allowRemove: false
-        }, function (err, _picker) {
+        }, function(err, _picker) {
           if (err)
             throw err;
-          _picker.on('change', function (metric) {
+          _picker.on('change', function(metric) {
             if (Array.isArray(self.options.query)) {
-              self.options.query.forEach(function (query) {
+              self.options.query.forEach(function(query) {
                 query.metrics[0] = metric;
               });
-            }
-            else
+            } else
               self.options.query.metrics[0] = metric;
 
             if (self.secondary_metric_container) {
@@ -44793,29 +44769,26 @@ var Timeline = module.exports = function (options, callback) {
           selected: self.options.query[0].metrics[1],
           disabled: self.options.query[0].metrics[0],
           allowRemove: true
-        }, function (err, _picker) {
+        }, function(err, _picker) {
           if (err)
             throw err;
-          _picker.on('change', function (metric) {
+          _picker.on('change', function(metric) {
             if (!metric) {
               if (Array.isArray(self.options.query)) {
-                self.options.query.forEach(function (query) {
+                self.options.query.forEach(function(query) {
                   query.metrics.splice(1, 1);
                 });
-              }
-              else
+              } else
                 self.options.query.metrics.splice(1, 1);
 
               self.primary_metric_container.options.disabled = [];
               self.primary_metric_container.markSelected();
-            }
-            else {
+            } else {
               if (Array.isArray(self.options.query)) {
-                self.options.query.forEach(function (query) {
+                self.options.query.forEach(function(query) {
                   query.metrics[1] = metric;
                 });
-              }
-              else
+              } else
                 self.options.query.metrics[1] = metric;
 
               self.primary_metric_container.options.disabled = [metric];
@@ -44832,8 +44805,7 @@ var Timeline = module.exports = function (options, callback) {
           });
         });
       }
-    }
-    else {
+    } else {
       $$(self.options.$container.find('.sep')).hide();
       $$(self.options.$container.find('.secondary-metric-picker')).hide();
     }
@@ -44885,39 +44857,42 @@ var Timeline = module.exports = function (options, callback) {
           }
         }
       },
-      yAxis: [
-        {
-          endOnTick: false,
-          title: {
-            text: null
-          },
-          labels: {
-            enabled: true,
-            style: {
-              color: '#b3b3b1'
-            }
-          },
-          gridLineDashStyle: 'Dot'
+      yAxis: [{
+        endOnTick: false,
+        title: {
+          text: null
         },
-        {
-          endOnTick: false,
-          title: {
-            text: null
-          },
-          labels: {
-            enabled: true,
-            style: {
-              color: '#b3b3b1'
-            }
-          },
-          gridLineDashStyle: 'Dot',
-          gridLineWidth: 0,
-          opposite: true
-        }
-      ],
-      legend: {enabled: false},
-      credits: {enabled: false},
-      exporting: {enabled: true},
+        labels: {
+          enabled: true,
+          style: {
+            color: '#b3b3b1'
+          }
+        },
+        gridLineDashStyle: 'Dot'
+      }, {
+        endOnTick: false,
+        title: {
+          text: null
+        },
+        labels: {
+          enabled: true,
+          style: {
+            color: '#b3b3b1'
+          }
+        },
+        gridLineDashStyle: 'Dot',
+        gridLineWidth: 0,
+        opposite: true
+      }],
+      legend: {
+        enabled: false
+      },
+      credits: {
+        enabled: false
+      },
+      exporting: {
+        enabled: true
+      },
       plotOptions: {
         column: {
           allowPointSelect: true,
@@ -44945,13 +44920,13 @@ var Timeline = module.exports = function (options, callback) {
       tooltip: {
         shared: true,
         useHTML: true,
-        formatter: function () {
+        formatter: function() {
           var html = '';
           var comparehtml = '';
           html += '<div style="padding-bottom:5px;"><strong>' + joola.common.formatDate(this.x) + '</strong></div>';
 
           //let's do the first date range
-          this.points.forEach(function (point) {
+          this.points.forEach(function(point) {
             if (!point.series.options.compare) {
               var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
               html += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
@@ -44960,7 +44935,7 @@ var Timeline = module.exports = function (options, callback) {
           });
 
           //let's do the compare date range
-          this.points.forEach(function (point) {
+          this.points.forEach(function(point) {
             if (point.series.options.compare) {
               var formattedy = joola.common.formatMetric(point.point.y, point.series.options.metric);
               comparehtml += '<div><div style="border: 3px solid white; border-color: ' + point.series.color + '; border-radius: 3px;height: 0px; display: inline-block; width: 0px;position:relative;top:-1px;">';
@@ -44980,35 +44955,37 @@ var Timeline = module.exports = function (options, callback) {
     if (!self.options.$container)
       self.options.$container = $$(self.options.container);
     self.chartOptions.chart.renderTo = self.options.$container.find('.thechart').get(0);
+    Highcharts.setOptions({
+      lang: {
+        thousandsSep: ','
+      }
+    });
     self.chart = new Highcharts.Chart(self.chartOptions);
     //self.chart.setSize( $$(self.chart.container).parent().width(), $$(self.chart.container).parent().height() );
     self.chartDrawn = true;
 
     if (self.options.canvas && !self.registered) {
       self.registered = true;
-      self.options.canvas.on('table-checkbox-clear', function (skipdraw) {
-        self.clearAllFiltered(skipdraw, function () {
-        });
+      self.options.canvas.on('table-checkbox-clear', function(skipdraw) {
+        self.clearAllFiltered(skipdraw, function() {});
       });
 
-      self.options.canvas.on('table-checkbox', function (point, filter, action) {
+      self.options.canvas.on('table-checkbox', function(point, filter, action) {
         if (action === 'remove') {
           var _queries = [];
-          self.options.query.forEach(function (q, i) {
+          self.options.query.forEach(function(q, i) {
             if (q.filter) {
-              q.filter.forEach(function (f) {
+              q.filter.forEach(function(f) {
                 if (f[4] !== filter[0][4]) {
                   _queries.push(q);
                 }
               });
-            }
-            else
+            } else
               _queries.push(q);
           });
           self.options.query = _queries;
-        }
-        else {
-          self.options.query.forEach(function (q) {
+        } else {
+          self.options.query.forEach(function(q) {
             if (q.special)
               return;
             var _q = ce.cloneextend(q);
@@ -45043,7 +45020,7 @@ var Timeline = module.exports = function (options, callback) {
   //we call the core initialize option
   joola.viz.initialize(self, options || {});
 
-  self.draw(null, function (err, ref) {
+  self.draw(null, function(err, ref) {
     if (err)
       return callback(err);
     joola.viz.onscreen.push(self);
@@ -45065,12 +45042,14 @@ var Timeline = module.exports = function (options, callback) {
   return self;
 };
 
-joola.events.on('core.init.finish', function () {
+joola.events.on('core.init.finish', function() {
   var found;
-  if (typeof (jQuery) != 'undefined') {
-    $.fn.Timeline = function (options, callback) {
+  if (typeof(jQuery) != 'undefined') {
+    $.fn.Timeline = function(options, callback) {
       if (!options)
-        options = {force: false};
+        options = {
+          force: false
+        };
       else if (!options.hasOwnProperty('force'))
         options.force = true;
       var result = null;
@@ -45079,7 +45058,7 @@ joola.events.on('core.init.finish', function () {
         if (options.force && uuid) {
           var existing = null;
           found = false;
-          joola.viz.onscreen.forEach(function (viz) {
+          joola.viz.onscreen.forEach(function(viz) {
             if (viz.uuid == uuid && !found) {
               found = true;
               existing = viz;
@@ -45092,7 +45071,7 @@ joola.events.on('core.init.finish', function () {
         }
         //create new
         options.container = this.get(0);
-        result = new joola.viz.Timeline(options, function (err, timeline) {
+        result = new joola.viz.Timeline(options, function(err, timeline) {
           if (err)
             throw err;
           //timeline.draw(options, callback);
@@ -45100,11 +45079,10 @@ joola.events.on('core.init.finish', function () {
             return callback(null, timeline);
 
         }).options.$container;
-      }
-      else {
+      } else {
         //return existing
         found = false;
-        joola.viz.onscreen.forEach(function (viz) {
+        joola.viz.onscreen.forEach(function(viz) {
           if (viz.uuid == uuid && !found) {
             found = true;
             result = viz;
@@ -45162,71 +45140,76 @@ viz.Timeline = require('./Timeline');
 //onscreen
 viz.onscreen = [];
 
-viz.markContainer = function (container, attr) {
+viz.markContainer = function(container, attr) {
   container = $$(container);
   container.attr('jio-domain', 'joola');
   attr = attr.attr || attr;
-  attr.forEach(function (a) {
-    Object.keys(a).forEach(function (key) {
+  attr.forEach(function(a) {
+    Object.keys(a).forEach(function(key) {
       if (key === 'css' && a[key]) {
         var currentClasses = container.attr('class');
         container.attr('class', currentClasses + ' ' + a[key]);
-      }
-      else
+      } else
         container.attr('jio-' + key, a[key]);
     });
   });
 };
 
-viz.initialize = function (self, options, callback) {
+viz.initialize = function(self, options, callback) {
   joola.common.mixin(self.options, options, true);
   var verified = self.verify.apply(self);
   if (verified !== null)
     throw new Error(verified);
   if (!self.initialized) {
-    viz.markContainer(self.options.container, [
-      {type: self.type},
-      {uuid: self.uuid},
-      {css: self.options.css || null}
-    ]);
+    viz.markContainer(self.options.container, [{
+      type: self.type
+    }, {
+      uuid: self.uuid
+    }, {
+      css: self.options.css || null
+    }]);
     self.options.$container = $$(self.options.container);
     if (self.options.canvas) {
       self.options.canvas.addVisualization(self);
       //subscribe to default events
       self.options.canvas.setMaxListeners(100);
-      self.options.canvas.on('datechange', function (dates) {
+      self.options.canvas.on('datechange', function(dates) {
         if (!self.options)
           return;
         if (!self.options.query)
           return;
         //let's change our query and fetch again
         self.options.query = ce.clone(self.options.canvas.prepareQuery(self.options.query[0], dates));
-        viz.destroy(self, {loading: true});
+        viz.destroy(self, {
+          loading: true
+        });
         return viz.initialize(self, self.options);
       });
 
-      self.options.canvas.on('filterchange', function () {
+      self.options.canvas.on('filterchange', function() {
         if (!self.options)
           return;
         if (!self.options.query)
           return;
 
-        self.options.query.forEach(function (query) {
+        self.options.query.forEach(function(query) {
           if (!query.filters)
             query.filter = [];
-          self.options.canvas.options.filters.forEach(function (f) {
-            f.filters.forEach(function (f2) {
+          self.options.canvas.options.filters.forEach(function(f) {
+            f.filters.forEach(function(f2) {
               query.filter.push(f2);
             });
           });
         });
-        viz.destroy(self, {loading: true});
+        viz.destroy(self, {
+          loading: true
+        });
         return viz.initialize(self, self.options);
       });
     }
   }
   if (self.options.query) {
-    viz.fetch(self, self.options.query, function () {
+    viz.fetch(self, self.options.query, function() {
       if (callback && typeof callback === 'function')
         return callback(null, self);
     });
@@ -45235,10 +45218,10 @@ viz.initialize = function (self, options, callback) {
   return self;
 };
 
-viz.lookup = function (base, key) {
+viz.lookup = function(base, key) {
   if (!base)
     return null;
-  var result = _.filter(base, function (item) {
+  var result = _.filter(base, function(item) {
     return item.key === key;
   });
   if (result.length === 0)
@@ -45246,11 +45229,11 @@ viz.lookup = function (base, key) {
   return result[0];
 };
 
-viz.lookupDate = function (base, index) {
+viz.lookupDate = function(base, index) {
   return base[index];
 };
 
-viz.fetch = function (context, query, callback) {
+viz.fetch = function(context, query, callback) {
   if (!context.realtimeQueries)
     context.realtimeQueries = [];
   if (!callback && context && query) {
@@ -45258,31 +45241,32 @@ viz.fetch = function (context, query, callback) {
     query = context;
   }
   var _query = ce.clone(query);
-  viz.stop(context, function () {
+  viz.stop(context, function() {
     if (!Array.isArray(_query)) {
       if (context && context.options && context.options.canvas) {
         context.options.query.interval = context.options.query.interval || context.options.canvas.options.query.interval;
         context.options.query.timeframe = context.options.query.timeframe || context.options.canvas.options.query.timeframe;
       }
-    }
-    else {
+    } else {
       if (context && context.options && context.options.canvas) {
         context.options.query[0].interval = context.options.query[0].interval || context.options.canvas.options.query.interval;
         context.options.query[0].timeframe = context.options.query[0].timeframe || context.options.canvas.options.query.timeframe;
       }
     }
     //adjust offset
-    if (_query.timeframe && typeof _query.timeframe === 'object') {
-      if (_query.timeframe.start)
-        _query.timeframe.start.setHours(_query.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset));
-      if (_query.timeframe.end)
-        _query.timeframe.end.setHours(_query.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset));
-    }
+    _query.forEach(function(_q) {
+      if (_q.timeframe && typeof _q.timeframe === 'object') {
+        if (_q.timeframe.start)
+          _q.timeframe.start.setHours(_q.timeframe.start.getHours() + joola.timezone(joola.options.timezoneOffset, _q.timeframe.start));
+        if (_q.timeframe.end)
+          _q.timeframe.end.setHours(_q.timeframe.end.getHours() + joola.timezone(joola.options.timezoneOffset, _q.timeframe.end));
+      }
+    });
     var args = [];
     if (_query.authContext)
       args.push(_query.authContext);
     args.push(_query);
-    args.push(function (err, messages) {
+    args.push(function(err, messages) {
       if (err)
         return callback(err);
 
@@ -45292,13 +45276,13 @@ viz.fetch = function (context, query, callback) {
       if (context.reply)
         context.reply(messages, context.data);
 
-      messages.forEach(function (message, mindex) {
+      messages.forEach(function(message, mindex) {
         if (!context.data)
           context.data = [];
         var _data = [];
         if (context.data[mindex]) {
           _data = context.data[mindex];
-          _data.forEach(function (item) {
+          _data.forEach(function(item) {
             item.state = 'exit';
           });
         }
@@ -45306,7 +45290,7 @@ viz.fetch = function (context, query, callback) {
           joola.logger.debug('fetch took: ' + message.query.ts.duration.toString() + 'ms, results: ' + (message && message.documents ? message.documents.length.toString() : 'n/a'));
         if (message.query.realtimeUID && context.realtimeQueries.indexOf(message.query.realtimeUID) == -1)
           context.realtimeQueries.push(message.query.realtimeUID);
-        message.documents.forEach(function (doc, docindex) {
+        message.documents.forEach(function(doc, docindex) {
           doc = {
             dimensions: {},
             metrics: {},
@@ -45317,12 +45301,12 @@ viz.fetch = function (context, query, callback) {
             realtime: message.query.realtime
           };
           var key = '';
-          message.dimensions.forEach(function (d) {
+          message.dimensions.forEach(function(d) {
             key += doc.raw[d.key];
             doc.dimensions[d.key] = doc.raw[d.key];
             doc.meta[d.key] = d;
           });
-          message.metrics.forEach(function (m) {
+          message.metrics.forEach(function(m) {
             doc.metrics[m.key] = doc.raw[m.key];
             doc.meta[m.key] = m;
           });
@@ -45331,7 +45315,7 @@ viz.fetch = function (context, query, callback) {
           var exist = viz.lookup(_data, doc.key);
           if (exist) {
             var dirty = false;
-            Object.keys(exist.metrics).forEach(function (key) {
+            Object.keys(exist.metrics).forEach(function(key) {
               if (exist.metrics[key] !== doc.metrics[key]) {
                 dirty = true;
                 exist.metrics[key] = doc.metrics[key];
@@ -45341,8 +45325,7 @@ viz.fetch = function (context, query, callback) {
               exist.state = 'update';
             else
               exist.state = 'static';
-          }
-          else {
+          } else {
             _data.push(doc);
           }
         });
@@ -45350,7 +45333,7 @@ viz.fetch = function (context, query, callback) {
       });
 
       var handled = [];
-      context.data[0].forEach(function (data, pointIndex) {
+      context.data[0].forEach(function(data, pointIndex) {
         handled.push(data.key);
         var point = [data];
         var paired = {
@@ -45361,9 +45344,8 @@ viz.fetch = function (context, query, callback) {
           //find the pair
           if (Object.keys(data.dimensions).length === 1 && data.dimensions.timestamp) {
             paired = context.data[1][pointIndex] || paired;
-          }
-          else {
-            paired = _.find(context.data[1], function (item) {
+          } else {
+            paired = _.find(context.data[1], function(item) {
               return item.key === data.key;
             }) || paired;
           }
@@ -45374,13 +45356,11 @@ viz.fetch = function (context, query, callback) {
           if (context.options.enter)
             context.options.enter.apply(context, [point, context.data]);
           context.enter(point, context.data);
-        }
-        else if (data.state === 'update' || paired.state === 'update') {
+        } else if (data.state === 'update' || paired.state === 'update') {
           if (context.options.update)
             context.options.update.apply(context, [point, context.data]);
           context.update(point, context.data);
-        }
-        else if (data.state === 'exit' || paired.state === 'exit') {
+        } else if (data.state === 'exit' || paired.state === 'exit') {
           context.data[0].splice(pointIndex, 1);
           if (context.options.exit)
             context.options.exit.apply(context, [point, context.data]);
@@ -45388,11 +45368,10 @@ viz.fetch = function (context, query, callback) {
         }
       });
       if (context.data.length > 1) {
-        context.data[1].forEach(function (data, pointIndex) {
+        context.data[1].forEach(function(data, pointIndex) {
           if (handled.indexOf(data.key) === -1) {
             var paired = data;
-            var point = [
-              {
+            var point = [{
                 missing: true,
                 meta: paired.meta
               },
@@ -45403,13 +45382,11 @@ viz.fetch = function (context, query, callback) {
               if (context.options.enter)
                 context.options.enter.apply(context, [point, context.data]);
               context.enter(point, context.data);
-            }
-            else if (data.state === 'update' || paired.state === 'update') {
+            } else if (data.state === 'update' || paired.state === 'update') {
               if (context.options.update)
                 context.options.update.apply(context, [point, context.data]);
               context.update(point, context.data);
-            }
-            else if (data.state === 'exit' || paired.state === 'exit') {
+            } else if (data.state === 'exit' || paired.state === 'exit') {
               context.data[1].splice(pointIndex, 1);
               if (context.options.exit)
                 context.options.exit.apply(context, [point, context.data]);
@@ -45419,7 +45396,7 @@ viz.fetch = function (context, query, callback) {
         });
       }
       if (context.options.done)
-        context.options.done.apply(context, [context.data,messages]);
+        context.options.done.apply(context, [context.data, messages]);
       if (context.done)
         context.done(context.data, messages);
       return callback(null, context.data);
@@ -45430,27 +45407,25 @@ viz.fetch = function (context, query, callback) {
   });
 };
 
-viz.stop = function (self, callback) {
+viz.stop = function(self, callback) {
   if (!callback)
-    callback = function () {
-    };
+    callback = function() {};
   if (self.realtimeQueries) {
-    async.map(self.realtimeQueries, function (q, callback) {
+    async.map(self.realtimeQueries, function(q, callback) {
       joola.logger.debug('Stopping realtime query [' + q + '].');
       joola.query.stop(q, callback);
-    }, function (err) {
+    }, function(err) {
       if (err)
         return callback(err);
       return callback(null);
     });
-  }
-  else
+  } else
     return callback(null);
 };
 
-viz.destroy = function (self, vizOptions) {
+viz.destroy = function(self, vizOptions) {
   if (self.realtimeQueries) {
-    self.realtimeQueries.forEach(function (q) {
+    self.realtimeQueries.forEach(function(q) {
       joola.logger.debug('Stopping realtime query [' + q + '].');
       joola.query.stop(q);
     });

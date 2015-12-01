@@ -20,7 +20,7 @@ var Canvas = module.exports = function (options, callback) {
   if (!callback)
     callback = function () {
     };
-  joola.events.emit('canvas.init.start');
+  joola.events.emit('canvas.init.start', self);
   var self = this;
 
   this._id = '_canvas';
@@ -192,7 +192,6 @@ var Canvas = module.exports = function (options, callback) {
             var $this = $$(this);
             self.options.datepicker.$interval.find('.btn').removeClass('active');
             $this.addClass('active');
-
             self.options.datepicker._interval = $this.attr('data-id');
             self.emit('intervalchange', self.options.datepicker._interval);
           });
@@ -359,6 +358,8 @@ var Canvas = module.exports = function (options, callback) {
     if (typeof callback === 'function') {
       return callback(null, self);
     }
+
+    joola.events.emit('canvas.init.finish', self);
   };
 
   this.addVisualization = function (viz) {

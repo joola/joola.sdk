@@ -10,16 +10,19 @@
 
 var joola = require('../index');
 
-global.emptyfunc = function () {
+global.emptyfunc = function() {
 
 };
 
-joola.timezone = function (tz) {
+joola.timezone = function(tz, refdate) {
   if (tz)
     joola.options.timezoneOffset = tz;
 
   var offset = 0;
-  if (joola.options.timezoneOffset)
+  //if (joola.options.timezoneOffset)
+  if (refdate)
+    offset = joola.options.timezoneOffset || (new Date(refdate).getTimezoneOffset() / 60 * -1);
+  else
     offset = joola.options.timezoneOffset || (new Date().getTimezoneOffset() / 60 * -1);
 
   return offset;
