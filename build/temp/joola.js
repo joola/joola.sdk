@@ -33216,7 +33216,6 @@ module.exports={
     "eventemitter2": "~0.4.13",
     "jquery": "^2.1.4",
     "jquery-ui": "^1.10.5",
-    "jsdom": "^3.1.2",
     "moment": "^2.10.6",
     "socket.io-client": "^1.3.7",
     "traverse": "^0.6.6",
